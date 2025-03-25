@@ -1,0 +1,23 @@
+{
+    "PF2ESubsystems": {
+        "View": {
+            "Title": "Subsystems"
+        },
+        "Chase": {
+            "Category": "Chases",
+            "Name": "Chase"
+        },
+        "KeyBindings": {
+            "OpenSystemView": {
+                "Name": "Open SubSystem View",
+                "Hint": "Opens the subsystem window"
+            }
+        },
+        "Settings": {
+            "SubsystemsTheme": {
+                "Name": "Subsystems Theme",
+                "Hint": "Choose the visual theme for the module"
+            }
+        }
+    }
+}

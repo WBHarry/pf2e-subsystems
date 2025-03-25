@@ -1,0 +1,35 @@
+<div class="event-select-container">
+    <div class="events-outer-container">
+        <div class="system-title-container">
+            <div class="system-title-navigation tabs">
+                {{> "modules/pf2e-subsystems/templates/partials/navigate-back.hbs" label=(localize "Return To Subsystems") action="tab" group="main" tab="systemView" }}
+            </div>
+            <h2 class="system-title">{{localize "Chases"}}</h2>
+        </div>
+        <div class="events-header">
+            <div class="new-event-container">
+                <label>{{localize "Name"}}</label>
+                <div class="form-fields">
+                    <div class="form-fields">
+                        <input type="text" name="selected.newEventName" value="{{this.selected.newEventName}}" />
+                    </div>
+                </div>
+                <button data-action="addEvent" data-system="{{tab.id}}" {{#if (not this.selected.newEventName)}}disabled{{/if}}>Add New {{this.name}}</button>
+            </div>
+        </div>
+        
+        <div class="events-container">
+            {{#each this.events}}
+                <div class="event-container" data-action="selectEvent" data-event="{{this.id}}">
+                    <div class="event-container-header">
+                        <div class="event-title">{{this.name}}</div>
+                        <div class="event-toolbar">
+                            <i class="fa-solid fa-trash event-remove clickable-icon" data-action="removeEvent" data-system="{{../tab.id}}" data-id="{{this.id}}"></i>
+                        </div>
+                    </div>
+                    <img src="{{this.background}}" />
+                </div>
+            {{/each}}
+        </div>
+    </div>
+</div>

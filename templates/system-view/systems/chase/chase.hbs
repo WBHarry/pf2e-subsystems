@@ -1,0 +1,145 @@
+<div class="chase-outer-container">
+
+    <div class="chase-header-navigation">
+        {{> "modules/pf2e-subsystems/templates/partials/navigate-back.hbs" label=(localize "Return To Chases") action="navigateToSystem" }}
+    </div>
+    <div class="chase-container">
+        <div class="chase-sidebar">
+            <div class="description-outer-container primary-container active">
+                <div class="description-title-container primary-container">
+                    <div class="description-title-inner-container">
+                        <h4>{{localize "Premise"}}</h4>
+                    </div>
+                </div>
+                <div class="description-container">
+                    {{#if this.editMode}}
+                        {{!-- <prose-mirror class="data-input" name="{{concat "events." this.event.id ".premise"}}" value="{{this.event.premise}}">
+                            {{{this.event.enrichedPremise}}}
+                        </prose-mirror> --}}
+                        <textarea class="secondary-container arrow-key-element" name="{{concat "events." this.event.id ".premise"}}" value="{{this.event.premise}}">{{{this.event.enrichedPremise}}}</textarea>
+                    {{else}}
+                        <span class="text-container">{{{this.event.enrichedPremise}}}</span>
+                    {{/if}}
+                </div>
+            </div>
+            <div class="participants-outer-container primary-container active">
+                <div class="partcipants-title-container primary-container">
+                    <div class="participants-title-inner-container">
+                        {{#if this.editMode}}
+                            <div class="participants-party-container clickable-icon" title="{{localize "Add All Players"}}" data-action="addPlayerParticipants" data-event="{{this.event.id}}">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                        {{else}}
+                            <div class="participants-party-container">
+                                <i class="fa-solid fa-caret-up participant-party-control-upper clickable-icon" title="{{localize "Move all PCs to the next obstacle"}}" data-action="updatePlayerParticipantsObstacle" data-event="{{this.event.id}}" data-player="true" data-increase="true"></i>
+                                <i class="fa-solid fa-users"></i>
+                                <i class="fa-solid fa-caret-down participant-party-control-lower clickable-icon" title="{{localize "Move all PCs to the previous obstacle"}}" data-action="updatePlayerParticipantsObstacle" data-event="{{this.event.id}}" data-player="true"></i>
+                            </div>
+                        {{/if}}
+                        <h4>{{localize "Participants"}}</h4>
+                        {{#if this.editMode}}
+                            <i class="fa-solid fa-plus participants-title-add clickable-icon" data-action="addParticipant" data-event="{{this.event.id}}" title="{{localize "Add Participants"}}"></i>
+                        {{else}}
+                            <div class="participants-party-container npc">
+                                <i class="fa-solid fa-caret-up participant-party-control-upper clickable-icon" title="{{localize "Move all NPCs to the next obstacle"}}" data-action="updatePlayerParticipantsObstacle" data-event="{{this.event.id}}" data-increase="true"></i>
+                                <i class="fa-solid fa-skull"></i>
+                                <i class="fa-solid fa-caret-down participant-party-control-lower clickable-icon" title="{{localize "Move all NPCs to the previous obstacle"}}" data-action="updatePlayerParticipantsObstacle" data-event="{{this.event.id}}"></i>
+                            </div>
+                        {{/if}}
+                    </div>
+                    {{#if this.editMode}}<div class="participants-helper-text text-helper">{{localize "Add or drag in an actor"}}</div>{{/if}}
+                </div>
+                <div class="participants-container">
+                    {{#each this.event.participants as |participant|}}
+                        <div class="participant-container secondary-container">
+                            <img src={{participant.img}} />
+                            <div class="participant-data-container">
+                                <div class="participant-data-container-label">{{participant.name}}</div>
+                                <div class="participant-toolbar">
+                                    <i class="fa-solid fa-caret-up participant-control-upper clickable-icon {{#if (gte participant.obstacle (PF2ESubSLength ../event.obstacles))}}disabled{{/if}}" data-action="updateParticipantObstacle" data-event="{{../event.id}}" data-id="{{participant.id}}" data-obstacle="{{PF2ESubSAdd participant.obstacle 1}}"></i>
+                                    <div>{{participant.obstacle}}</div>
+                                    <i class="fa-solid fa-caret-down participant-control-lower clickable-icon {{#if (eq participant.obstacle 1)}}disabled{{/if}}" data-action="updateParticipantObstacle" data-event="{{../event.id}}" data-id="{{participant.id}}" data-obstacle="{{PF2ESubSSub participant.obstacle 1}}"></i>
+                                </div>
+                            </div>
+                        </div>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+        <div class="chase-main-container">
+            <div class="chase-header-container">
+                <div class="chase-header-title-container">
+                    <div class="chase-header-title title-container secondary-container">{{this.event.name}}</div>
+                </div>
+                <div class="chase-header-toolbar secondary-container">
+                    <button class="tertiary-container">Start Chase</button>
+                    <div class="toggle-switch">
+                        <i class="fa-solid fa-screwdriver-wrench"></i>
+                        <input type="checkbox" name="editMode" {{checked this.editMode}} title="{{localize "Toggle Edit Mode"}}" />
+                    </div>
+                </div>
+            </div>
+            <fieldset class="chase-event-container primary-container active">
+                <legend class="chase-event-display">
+                    {{#each this.event.obstacles as |obstacle id|}}
+                        {{> "modules/pf2e-subsystems/templates/partials/radio-button.hbs" selected=(eq obstacle.position ../currentObstacleNr) action="setCurrentObstacle" position=obstacle.position }}
+                    {{/each}}
+                    {{#if this.editMode}}<i class="fa-solid fa-plus chase-event-display-add clickable-icon" data-action="addObstacle" data-event="{{this.event.id}}" title="{{localize "Add Obstacle"}}"></i>{{/if}}
+                </legend>
+                <div class="chase-event-header primary-container">
+                    <div class="chase-event-header-inner">
+                        <div class="chase-event-header-title">
+                            {{#if this.editMode}}
+                                <input type="text" name="{{concat "events." this.event.id ".obstacles." this.currentObstacle.id ".name"}}" value="{{this.currentObstacle.name}}" />
+                                <i class="fa-solid fa-trash chase-event-header-title-delete clickable-icon {{#if (eq (PF2ESubSLength this.event.obstacles) 1)}}disabled{{/if}}" {{#if (gt (PF2ESubSLength this.event.obstacles) 1)}}data-action="removeObstacle"{{/if}} data-event="{{this.event.id}}" data-obstacle="{{this.currentObstacle.id}}"></i>
+                            {{else}}
+                                <div class="title-small-container">{{this.currentObstacle.name}}</div>
+                            {{/if}}
+                        </div>
+                    </div>
+                </div>
+                <div class="chase-event-inner-container">
+                    {{#if this.editMode}}
+                        <img class="clickable-icon" src="{{this.currentObstacle.img}}" data-action="editImage" data-path="{{concat "events." this.event.id ".obstacles." this.currentObstacle.id ".img" }}" />
+                    {{else}}
+                        <img src="{{this.currentObstacle.img}}" />
+                    {{/if}}
+
+                    {{#if this.editMode}}
+                        <div class="chase-event-chase-points-container">
+                            <div>{{localize "Chase Points:"}}</div>
+                            &nbsp;
+                            <input type="text" data-dtype="number" name="{{concat "events." this.event.id ".obstacles." this.currentObstacle.id ".chasePoints.goal"}}" value="{{this.currentObstacle.chasePoints.goal}}" />
+                        </div>
+                    {{else}}
+                        {{#if (gt this.currentObstacle.chasePoints.goal 0)}}
+                        <div class="chase-event-chase-points-container">
+                            <div>{{localize "Chase Points:"}}</div>
+                            &nbsp;
+                            <div class="chase-event-chase-points-inner-container">{{this.currentObstacle.chasePoints.current}}/{{this.currentObstacle.chasePoints.goal}}</div>
+                            <div class="chase-event-chase-points-tools">
+                                <i class="fa-solid fa-caret-up clickable-icon {{#if this.currentObstacle.chasePoints.finished}}disabled{{/if}}" {{#if (not this.currentObstacle.chasePoints.finsihed)}}data-action="updateChasePoints"{{/if}} data-event="{{this.event.id}}" data-obstacle="{{this.currentObstacle.id}}" data-increase="true"></i>
+                                <i class="fa-solid fa-caret-down clickable-icon {{#if this.currentObstacle.chasePoints.atStart}}disabled{{/if}}" {{#if (not this.currentObstacle.chasePoints.atStart)}}data-action="updateChasePoints"{{/if}} data-event="{{this.event.id}}" data-obstacle="{{this.currentObstacle.id}}"></i>
+                            </div>
+                        </div>
+                        {{/if}}
+                    {{/if}}
+                
+                    <div class="chase-event-data-container secondary-container">
+                        {{#if this.editMode}}
+                            <prose-mirror class="data-input arrow-key-element" name="{{concat "events." this.event.id ".obstacles." this.currentObstacle.id ".overcome"}}" value="{{this.currentObstacle.overcome}}">
+                                {{{this.currentObstacle.enrichedOvercome}}}
+                            </prose-mirror>
+                        {{else}}
+                            <span class="text-container">{{{this.currentObstacle.enrichedOvercome}}}</span>
+                        {{/if}}
+    {{!-- 
+                        {{#if this.editMode}}
+                        {{else}}
+                        {{/if}} --}}
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>

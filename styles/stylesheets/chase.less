@@ -1,0 +1,350 @@
+@import "../variables.less";
+
+.pf2e-subsystems {
+    .chase-view {
+        height: 100%;
+
+        .chase-outer-container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: @gapNormal;
+
+            .chase-header-container {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .chase-header-title-container {
+                    flex: 1;
+                    display: flex;
+                    align-items: center;
+
+                    .chase-header-title {
+                        border-width: @borderNormal;
+                        border-style: outset;
+                        border-radius: @borderRadiusNormal;
+                        padding: @paddingNormal;
+                        min-width: 120px;
+                        text-align: center;
+                    }
+                }
+
+                .chase-header-toolbar {
+                    display: flex;
+                    align-items: center;
+                    gap: @gapSmall;
+                    flex-wrap: nowrap;
+                    white-space: nowrap;
+                    border-width: @borderNormal;
+                    border-style: outset;
+                    border-radius: @borderRadiusNormal;
+                    padding: @paddingNormal;
+                }
+            }
+
+            .chase-action-container {
+                display: flex;
+                align-items: center;
+            }
+
+            .chase-container {
+                flex: 1;
+                display: flex;
+                gap: @gapLarge;
+                
+                .chase-sidebar {
+                    width: 200px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: @gapLarge;
+
+                    .description-outer-container {
+                        border-width: 2px;
+                        border-style: outset;
+                        border-radius: 4px;
+
+                        .description-title-container {
+                            position: relative;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            gap: @gapSmall;
+                            text-align: center;
+                            height: 45px;
+                            border-bottom-width: 1px;
+                            border-bottom-style: solid;
+
+                            .description-title-inner-container {
+                                flex: 1;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+
+                                h4 {
+                                    margin: 0;
+                                }
+                            }
+                        }
+
+                        .description-container {
+                            display: flex;
+                            flex-direction: column;
+                            height: 200px;
+                            padding: @paddingNormal;
+
+                            textarea {
+                                flex: 1;
+                                padding: @paddingNormal;
+                            }
+
+                            .text-container {
+                                font-style: italic;
+                            }
+                        }
+                    }
+
+                    .participants-outer-container {
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
+                        border-width: @borderNormal;
+                        border-style: outset;
+                        border-radius: @borderRadiusNormal;
+
+                        .partcipants-title-container {
+                            position: relative;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            gap: @gapSmall;
+                            text-align: center;
+                            height: 45px;
+                            border-bottom-width: 1px;
+                            border-bottom-style: solid;
+
+                            .participants-title-inner-container {
+                                flex: 1;
+                                width: 100%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: space-between;
+                                padding: 0 @paddingLarge;
+
+                                .participants-party-container {
+                                    height: 100%;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    font-size: 16px;
+
+                                    .participant-party-control-upper {
+                                        position: absolute;
+                                        top: 0px;
+                                    }
+
+                                    .participant-party-control-lower {
+                                        position: absolute;
+                                        bottom: 0px;
+                                    }
+                                }
+
+                                h4 {
+                                    margin: 0;
+                                }
+
+                                .participants-title-add {
+                                    position: absolute;
+                                    right: -18px;
+                                    font-size: 16px;
+                                }
+                            }
+
+                            .participants-helper-text {
+                                position: absolute;
+                                bottom: 0;
+                            }
+                        }
+
+                        .participants-container {
+                            flex: 1;
+                            padding: @paddingLarge;
+                            display: flex;
+                            flex-direction: column;
+                            gap: @gapNormal;
+
+                            .participant-container {
+                                display: flex;
+                                align-items: center;
+                                border-width: @borderNormal;
+                                border-style: outset;
+                                border-radius: 6px;
+
+                                img {
+                                    width: 42px;
+                                    height: 40px;
+                                    border-radius: 6px 0 0 6px;
+                                    border: 0;
+                                    border-right: 2px black;
+                                    border-right-style: double;
+                                }
+
+                                .participant-data-container {
+                                    flex: 1;
+                                    height: 100%;
+                                    padding: 0 @paddingNormal;
+                                    display: flex;
+                                    align-items: center;
+
+                                    .participant-data-container-label {
+                                        flex: 1;
+                                    }
+
+                                    .participant-toolbar {
+                                        position: relative;
+                                        display: flex;
+                                        justify-content: center;
+                                        gap: @gapSmall;
+                                        font-size: 16px;
+
+                                        .participant-control-upper {
+                                            position: absolute;
+                                            top: -10px;
+                                        }
+
+                                        .participant-control-lower {
+                                            position: absolute;
+                                            bottom: -10px;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .chase-main-container {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+
+                    .chase-event-container {
+                        margin: 0;
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
+                        border-width: @borderNormal; 
+                        border-style: outset;
+                        border-radius: @borderRadiusNormal;
+                        padding: 0;
+    
+                        .chase-event-display {
+                            position: relative;
+                            margin: 0 auto;
+                            display: flex;
+                            align-items: center;
+                            gap: @gapSmall;
+                            z-index: 2;
+    
+                            .chase-event-display-add {
+                                font-size: 10px;
+                            }
+                        }
+    
+                        .chase-event-header {
+                            position: relative;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            height: 45px;
+                            border-bottom-width: 1px;
+                            border-bottom-style: solid;
+                            padding: @gapNormal;
+                            margin-top: -4px;
+    
+                            .chase-event-header-inner {
+                                display: flex;
+                                flex-direction: column;
+                                align-items: center;
+                                justify-content: center;
+    
+                                .chase-event-header-title {
+                                    position: relative;
+                                    display: flex;
+                                    align-items: center;
+                                    text-align: center;
+    
+                                    .chase-event-header-title-delete {
+                                        position: absolute;
+                                        right: -20px;
+                                        font-size: 20px;
+                                    }
+                                }
+                            }
+                        }
+    
+                        .chase-event-inner-container {
+                            flex: 1;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            padding: @paddingLarge;
+                            gap: @gapNormal;
+    
+                            img {
+                                width: 60%;
+                                border: 0;
+                                border-radius: 6px;
+                            }
+    
+                            .chase-event-chase-points-container {
+                                position: relative;
+                                display: flex;
+                                align-items: center;
+                                flex-wrap: nowrap;
+                                white-space: nowrap;
+                                font-weight: bold;
+    
+                                input {
+                                    height: 17px;
+                                }
+    
+                                .chase-event-chase-points-inner-container {
+                                    
+                                }
+    
+                                .chase-event-chase-points-tools {
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: center;
+                                    position: absolute;
+                                    right: -12px;
+                                    font-size: 12px;
+                                }
+                            }
+    
+                            .chase-event-data-container {
+                                flex: 1;
+                                width: 100%;
+                                border-radius: @borderRadiusNormal;
+                                border-width: @borderNormal;
+                                border-style: outset;
+    
+                                .editor-container {
+                                    margin: 0 @marginLarge;
+                                }
+    
+                                .text-container {
+                                    height: 100%;
+                                    display: flex;
+                                    flex-direction: column;
+                                    padding: 0 @paddingLarge;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

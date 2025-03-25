@@ -1,0 +1,7 @@
+<div class="event-tab tab {{tab.cssClass}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+    {{#if (not this.selectedEvent)}}
+        {{> "modules/pf2e-subsystems/templates/partials/events.hbs" selected=this.selected tab=this.tab name=(localize "Chase") events=this.events }}
+    {{else}}
+        {{> "modules/pf2e-subsystems/templates/system-view/systems/chase/chase.hbs" editMode=this.editMode event=this.selectedEvent currentObstacleNr=this.currentObstacleNr currentObstacle=this.currentObstacle }}
+    {{/if}}
+</div>
