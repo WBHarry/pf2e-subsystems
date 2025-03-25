@@ -1,0 +1,1 @@
+A Foundry VTT module for the Pathfinder Second Edition (PF2E) system. It adds handling for the various subsystems.
