@@ -1,7 +1,8 @@
 import { Chase, Chases } from "../data/chase";
 import { MODULE_ID } from "../data/constants";
-import coreLight from "../styles/themes/coreLight";
-import subsystemsThemes, { subsystemsThemeChoices } from "../styles/themes/themes";
+import { subsystemsThemeChoices } from "../styles/themes/themes";
+
+export const currentVersion = '0.5.0';
 
 export const dataTypeSetup = () => {
     CONFIG.JournalEntryPage.dataModels = {
@@ -43,45 +44,9 @@ export const setupTheme = (theme) => {
   export const registerGameSettings = () => {
     configSettings();
     generalNonConfigSettings();
-    // vagueDescriptions();
-    // bestiaryLabels();
-    // bestiaryDisplay();
-    // bestiaryAppearance();
-    // bestiaryIntegration();
   }
 
   const configSettings = () => {
-    game.settings.register(MODULE_ID, "subsystems-theme", {
-        name: game.i18n.localize("PF2ESubsystems.Settings.SubsystemsTheme.Name"),
-        hint: game.i18n.localize("PF2ESubsystems.Settings.SubsystemsTheme.Hint"),
-        scope: "client",
-        config: true,
-        type: String,
-        choices: subsystemsThemeChoices,
-        requiresReload: true,
-        default: "coreLight",
-    });
-  }
-
-  const generalNonConfigSettings = () => {
-    game.settings.register(MODULE_ID, "chase", {
-      name: "",
-      hint: "",
-      scope: "world",
-      config: false,
-      type: Chases,
-      default: { events: {} },
-    });
-
-    game.settings.register(MODULE_ID, "subsystems-folders", {
-      name: game.i18n.localize("PF2ESubsystems.Settings.SubsystemsTheme.Name"),
-      hint: game.i18n.localize("PF2ESubsystems.Settings.SubsystemsTheme.Hint"),
-      scope: "world",
-      config: false,
-      type: Object,
-      default: {},
-    });
-
     game.settings.register(MODULE_ID, "subsystems-theme", {
       name: "Theme",
       hint: "",
@@ -98,5 +63,16 @@ export const setupTheme = (theme) => {
         game.user.setFlag(MODULE_ID, "subsystems-theme", value);
       },
       default: "default",
+    });
+  }
+
+  const generalNonConfigSettings = () => {
+    game.settings.register(MODULE_ID, "chase", {
+      name: "",
+      hint: "",
+      scope: "world",
+      config: false,
+      type: Chases,
+      default: { events: {} },
     });
   };

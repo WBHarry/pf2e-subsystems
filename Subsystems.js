@@ -228,125 +228,6 @@ class TypedObjectField extends foundry.data.fields.ObjectField {
   }
 }
 
-class MappingField extends foundry.data.fields.ObjectField {
-    constructor(model, options) {
-      if (!(model instanceof foundry.data.fields.DataField)) {
-        throw new Error(
-          "MappingField must have a DataField as its contained element",
-        );
-      }
-      super(options);
-  
-      /**
-       * The embedded DataField definition which is contained in this field.
-       * @type {DataField}
-       */
-      this.model = model;
-    }
-  
-    /* -------------------------------------------- */
-  
-    /** @inheritdoc */
-    static get _defaults() {
-      return foundry.utils.mergeObject(super._defaults, {
-        initialKeys: null,
-        initialValue: null,
-        initialKeysOnly: false,
-      });
-    }
-  
-    /* -------------------------------------------- */
-  
-    /** @inheritdoc */
-    _cleanType(value, options) {
-      Object.entries(value).forEach(
-        ([k, v]) => (value[k] = this.model.clean(v, options)),
-      );
-      return value;
-    }
-  
-    /* -------------------------------------------- */
-  
-    /** @inheritdoc */
-    getInitialValue(data) {
-      let keys = this.initialKeys;
-      const initial = super.getInitialValue(data);
-      if (!keys || !foundry.utils.isEmpty(initial)) return initial;
-      if (!(keys instanceof Array)) keys = Object.keys(keys);
-      for (const key of keys) initial[key] = this._getInitialValueForKey(key);
-      return initial;
-    }
-  
-    /* -------------------------------------------- */
-  
-    /**
-     * Get the initial value for the provided key.
-     * @param {string} key       Key within the object being built.
-     * @param {object} [object]  Any existing mapping data.
-     * @returns {*}              Initial value based on provided field type.
-     */
-    _getInitialValueForKey(key, object) {
-      const initial = this.model.getInitialValue();
-      return this.initialValue?.(key, initial, object) ?? initial;
-    }
-  
-    /* -------------------------------------------- */
-  
-    /** @override */
-    _validateType(value, options = {}) {
-      if (foundry.utils.getType(value) !== "Object")
-        throw new Error("must be an Object");
-      const errors = this._validateValues(value, options);
-      if (!foundry.utils.isEmpty(errors))
-        throw new foundry.data.fields.ModelValidationError(errors);
-    }
-  
-    /* -------------------------------------------- */
-  
-    /**
-     * Validate each value of the object.
-     * @param {object} value     The object to validate.
-     * @param {object} options   Validation options.
-     * @returns {Object<Error>}  An object of value-specific errors by key.
-     */
-    _validateValues(value, options) {
-      const errors = {};
-      for (const [k, v] of Object.entries(value)) {
-        const error = this.model.validate(v, options);
-        if (error) errors[k] = error;
-      }
-      return errors;
-    }
-  
-    /* -------------------------------------------- */
-  
-    /** @override */
-    initialize(value, model, options = {}) {
-      if (!value) return value;
-      const obj = {};
-      const initialKeys =
-        this.initialKeys instanceof Array
-          ? this.initialKeys
-          : Object.keys(this.initialKeys ?? {});
-      const keys = this.initialKeysOnly ? initialKeys : Object.keys(value);
-      for (const key of keys) {
-        const data = value[key] ?? this._getInitialValueForKey(key, value);
-        obj[key] = this.model.initialize(data, model, options);
-      }
-      return obj;
-    }
-  
-    /* -------------------------------------------- */
-  
-    /** @inheritdoc */
-    _getField(path) {
-      if (path.length === 0) return this;
-      else if (path.length === 1) return this.model;
-      path.shift();
-      return this.model._getField(path);
-    }
-  }
-
 /* !!V13!! Use TypedObjectField */ 
 class Chases extends foundry.abstract.DataModel {
   static defineSchema() {
@@ -382,6 +263,7 @@ class Chase extends foundry.abstract.DataModel {
           name: new fields.StringField({ required: true }),
           img: new fields.StringField({}),
           position: new fields.NumberField({ required: true, integer: true }),
+          locked: new fields.BooleanField({ required: true, initial: true }),
           chasePoints: new fields.SchemaField({
               goal: new fields.NumberField({ required: true, integer: true, initial: 0 }),
               current: new fields.NumberField({ required: true, integer: true, initial: 0 }),
@@ -399,30 +281,25 @@ class Chase extends foundry.abstract.DataModel {
       }
     }
 
-    get extendedParticipants(){
-      const party = game.actors.find(x => x.type === 'party');
-      if(!party) return;
-      
-      const playerParticipants = party.members.map(x => {
-        const existingParticipant = this.participants[x.id];
-        return {
-          id: x.id,
-          name: x.name,
-          img: x.img,
-          hidden: existingParticipant?.hidden ?? false,
-          position: existingParticipant?.position ?? 0,
-          player: true,
-          obstacle: existingParticipant?.obstacle ?? 1,
-        };
-      });
-
-      return Object.values(this.participants).reduce((acc, x) => {
-        if(!x.player){
-          acc.push(x);
+    get maxUnlockedObstacle(){
+      return Object.values(this.obstacles).reduce((acc, obstacle) => {
+        if(!obstacle.locked && obstacle.position > acc) {
+          return obstacle.position;
         }
 
         return acc;
-      }, playerParticipants);
+      }, 1);
+    }
+
+    get minLockedObstacle(){
+      const obstacles = Object.values(this.obstacles);
+      return obstacles.reduce((acc, obstacle) => {
+        if(obstacle.locked && obstacle.position < acc) {
+          return obstacle.position;
+        }
+
+        return acc;
+      }, obstacles.length+1);
     }
 
     get extendedObstacles(){
@@ -444,6 +321,27 @@ class Chase extends foundry.abstract.DataModel {
 }
 
 const MODULE_ID = 'pf2e-subsystems';
+const SOCKET_ID = `module.${MODULE_ID}`;
+
+const coreDark = {
+  "--pf2e-bestiary-tracking-application-image": "ignore",
+  "--pf2e-bestiary-tracking-application": "#12101fe6",
+  "--pf2e-bestiary-tracking-secondary-application": "#431b1b",
+  "--pf2e-bestiary-tracking-primary": "rgb(94 0 0)",
+  "--pf2e-bestiary-tracking-primary-faded": "rgb(94 0 0 / 50%)",
+  "--pf2e-bestiary-tracking-secondary": "#4b4b8c",
+  "--pf2e-bestiary-tracking-tertiary": "#007149",
+  "--pf2e-bestiary-tracking-primary-accent": "#ad0303",
+  "--pf2e-bestiary-tracking-tertiary-accent": "#76963f",
+  "--pf2e-bestiary-tracking-primary-color": "white",
+  "--pf2e-bestiary-tracking-icon-filter": "none",
+  "--pf2e-bestiary-tracking-main-hover": "white",
+  "--pf2e-bestiary-tracking-border": "#ababab",
+  "--pf2e-bestiary-tracking-secondary-border": "gold",
+  "--pf2e-bestiary-tracking-application-border": "wheat",
+  "--pf2e-bestiary-tracking-icon": "rgb(247, 243, 232)",
+  "--pf2e-bestiary-tracking-accent-icon": "gold",
+};
 
 const coreLight = {
   "--pf2e-bestiary-tracking-application-image": "../ui/parchment.jpg",
@@ -465,26 +363,6 @@ const coreLight = {
   "--pf2e-bestiary-tracking-secondary-border": "#82acff",
   "--pf2e-bestiary-tracking-application-border": "initial",
   "--pf2e-bestiary-tracking-icon": "black",
-  "--pf2e-bestiary-tracking-accent-icon": "gold",
-};
-
-const coreDark = {
-  "--pf2e-bestiary-tracking-application-image": "ignore",
-  "--pf2e-bestiary-tracking-application": "#12101fe6",
-  "--pf2e-bestiary-tracking-secondary-application": "#431b1b",
-  "--pf2e-bestiary-tracking-primary": "rgb(94 0 0)",
-  "--pf2e-bestiary-tracking-primary-faded": "rgb(94 0 0 / 50%)",
-  "--pf2e-bestiary-tracking-secondary": "#4b4b8c",
-  "--pf2e-bestiary-tracking-tertiary": "#007149",
-  "--pf2e-bestiary-tracking-primary-accent": "#ad0303",
-  "--pf2e-bestiary-tracking-tertiary-accent": "#76963f",
-  "--pf2e-bestiary-tracking-primary-color": "white",
-  "--pf2e-bestiary-tracking-icon-filter": "none",
-  "--pf2e-bestiary-tracking-main-hover": "white",
-  "--pf2e-bestiary-tracking-border": "#ababab",
-  "--pf2e-bestiary-tracking-secondary-border": "gold",
-  "--pf2e-bestiary-tracking-application-border": "wheat",
-  "--pf2e-bestiary-tracking-icon": "rgb(247, 243, 232)",
   "--pf2e-bestiary-tracking-accent-icon": "gold",
 };
 
@@ -583,6 +461,8 @@ const subsystemsThemeChoices = {
   water: "Water",
 };
 
+const currentVersion = '0.5.0';
+
 const setupTheme = (theme) => {
     const root = document.querySelector(":root");
     for (var property of Object.keys(theme)) {
@@ -616,45 +496,9 @@ const setupTheme = (theme) => {
   const registerGameSettings = () => {
     configSettings();
     generalNonConfigSettings();
-    // vagueDescriptions();
-    // bestiaryLabels();
-    // bestiaryDisplay();
-    // bestiaryAppearance();
-    // bestiaryIntegration();
   };
 
   const configSettings = () => {
-    game.settings.register(MODULE_ID, "subsystems-theme", {
-        name: game.i18n.localize("PF2ESubsystems.Settings.SubsystemsTheme.Name"),
-        hint: game.i18n.localize("PF2ESubsystems.Settings.SubsystemsTheme.Hint"),
-        scope: "client",
-        config: true,
-        type: String,
-        choices: subsystemsThemeChoices,
-        requiresReload: true,
-        default: "coreLight",
-    });
-  };
-
-  const generalNonConfigSettings = () => {
-    game.settings.register(MODULE_ID, "chase", {
-      name: "",
-      hint: "",
-      scope: "world",
-      config: false,
-      type: Chases,
-      default: { events: {} },
-    });
-
-    game.settings.register(MODULE_ID, "subsystems-folders", {
-      name: game.i18n.localize("PF2ESubsystems.Settings.SubsystemsTheme.Name"),
-      hint: game.i18n.localize("PF2ESubsystems.Settings.SubsystemsTheme.Hint"),
-      scope: "world",
-      config: false,
-      type: Object,
-      default: {},
-    });
-
     game.settings.register(MODULE_ID, "subsystems-theme", {
       name: "Theme",
       hint: "",
@@ -674,27 +518,64 @@ const setupTheme = (theme) => {
     });
   };
 
+  const generalNonConfigSettings = () => {
+    game.settings.register(MODULE_ID, "chase", {
+      name: "",
+      hint: "",
+      scope: "world",
+      config: false,
+      type: Chases,
+      default: { events: {} },
+    });
+  };
+
 async function updateDataModel(setting, data){
     const currentSetting = game.settings.get(MODULE_ID, setting);
     currentSetting.updateSource(data);
     await game.settings.set(MODULE_ID, setting, currentSetting);
 }
 
+function handleSocketEvent({ action = null, data = {} } = {}) {
+    switch (action) {
+      case socketEvent.UpdateSystemView:
+        Hooks.callAll(socketEvent.UpdateSystemView, data?.tab);
+        break;
+      case socketEvent.OpenSystemEvent:
+        new SystemView(data.tab, data.event).render(true);
+        break;
+    }
+  }
+  
+  const socketEvent = {
+    UpdateSystemView: "UpdateSystemView",
+    OpenSystemEvent: "OpenSystemEvent",
+  };
+
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
+
+const getDefaultSelected = (event) => ({
+  event: event ?? null,
+  chaseObstacle: 1,
+});
 
 class SystemView extends HandlebarsApplicationMixin(
     ApplicationV2,
   ) {
-    constructor() {
+    constructor(tab, event) {
       super({});
 
-      this.selected = {
-        event: null,
-        newEventName: null,
-        chaseObstacle: 1,
-      };
+      this.selected = getDefaultSelected(event);
+
+      if(tab) {
+        this.tabGroups.main = tab;
+      }
 
       this.editMode = false;
+
+      this.onUpdateView = Hooks.on(
+        socketEvent.UpdateSystemView,
+        this.onUpdateSystemView.bind(this),
+      );
     }
 
     #onKeyDown;
@@ -715,16 +596,23 @@ class SystemView extends HandlebarsApplicationMixin(
         editImage: this.editImage,
         selectEvent: this.selectEvent,
         addEvent: this.addEvent,
+        editEvent: this.editEvent,
+        toggleHideEvent: this.toggleHideEvent,
+        startEvent: this.startEvent,
         removeEvent: this.removeEvent,
         navigateToSystem: this.navigateToSystem,
+        copyStartEventLink: this.copyStartEventLink,
         /* Chases */
         addPlayerParticipants: this.addPlayerParticipants,
         addParticipant: this.addParticipant,
+        editParticipant: this.editParticipant,
+        removeParticipant: this.removeParticipant,
         updateParticipantObstacle: this.updateParticipantObstacle,
         updatePlayerParticipantsObstacle: this.updatePlayerParticipantsObstacle,
         addObstacle: this.addObstacle,
         removeObstacle: this.removeObstacle,
         setCurrentObstacle: this.setCurrentObstacle,
+        onToggleObstacleLock: this.onToggleObstacleLock,
         updateChasePoints: this.updateChasePoints,
         /*  */
       },
@@ -767,8 +655,28 @@ class SystemView extends HandlebarsApplicationMixin(
           group: 'main',
           id: 'chase',
           icon: null,
-          label: 'Chases',
+          label: game.i18n.localize('PF2ESubsystems.Events.Chase.Plural'),
           image: 'icons/skills/movement/feet-winged-boots-brown.webp',
+        },
+        influence: {
+          active: false,
+          cssClass: 'influence-view',
+          group: 'main',
+          id: 'influence',
+          icon: null,
+          label: game.i18n.localize('PF2ESubsystems.Events.Influence.Plural'),
+          image: 'icons/skills/social/diplomacy-handshake-yellow.webp',
+          disabled: true,
+        },
+        research: {
+          active: false,
+          cssClass: 'research-view',
+          group: 'main',
+          id: 'research',
+          icon: null,
+          label: game.i18n.localize('PF2ESubsystems.Events.Research.Plural'),
+          image: 'icons/skills/trades/academics-merchant-scribe.webp',
+          disabled: true,
         },
       };
   
@@ -790,7 +698,7 @@ class SystemView extends HandlebarsApplicationMixin(
           redirectToRoot: current ? [current] : [],
           callback: async path => {
             await updateDataModel(this.tabGroups.main, { [button.dataset.path]: path });
-            this.render({ parts: [this.tabGroups.main] });
+            this.updateView();
           },
           top: this.position.top + 40,
           left: this.position.left + 10
@@ -803,46 +711,125 @@ class SystemView extends HandlebarsApplicationMixin(
       this.render({ parts: [this.tabGroups.main] });
     }
 
-    static async addEvent(_, button){
-      if(this.selected.newEventName) {
-        const newId = foundry.utils.randomID();
-        const obstacleId = foundry.utils.randomID();
+    async getEventDialogData(existing) {
+      switch(this.tabGroups.main){
+        case 'chase':
+          return {  
+            content: await renderTemplate("modules/pf2e-subsystems/templates/system-view/systems/chase/chaseDataDialog.hbs", { name: existing?.name, background: existing?.background }),
+            title: game.i18n.localize(existing ? 'PF2ESubsystems.Chase.EditChase' : 'PF2ESubsystems.Chase.CreateChase'),
+            callback: (button) => {
+              const elements = button.form.elements;
+              if (existing){
+                return {
+                  ...existing,
+                  name: elements.name.value,
+                  background: elements.background.value,
+                }
+              }
 
-        const currentSettings = game.settings.get(MODULE_ID, button.dataset.system);
-        currentSettings.updateSource({ 
-          [`events.${newId}`]: {
-            id: newId,
-            name: this.selected.newEventName,
-            version: '0.8',
-            background: 'icons/magic/symbols/star-solid-gold.webp',
-            participants: {},
-            obstacles: {
-              [obstacleId]: {
-                id: obstacleId,
-                img: "icons/svg/cowled.svg",
-                name: 'New Obstacle',
-                position: 1,
-                chasePoints: {
-                  goal: 6,
-                  current: 0,
+              const obstacleId = foundry.utils.randomID();
+              return {
+                id: foundry.utils.randomID(),
+                name: elements.name.value ? elements.name.value : game.i18n.localize('PF2ESubsystems.View.NewEvent'),
+                version: currentVersion,
+                background: elements.background.value ? elements.background.value : 'icons/skills/movement/feet-winged-boots-glowing-yellow.webp',
+                participants: {},
+                obstacles: {
+                  [obstacleId]: {
+                    id: obstacleId,
+                    img: "icons/svg/cowled.svg",
+                    name: game.i18n.localize('PF2ESubsystems.Chase.NewObstacle'),
+                    position: 1,
+                    locked: false,
+                  }
                 },
-              }
+                notes: {
+                  player: {
+                    value: '',
+                  },
+                  gm: {
+                    value: '',
+                  }
+                }
+              };
             },
-            notes: {
-              player: {
-                value: '',
-              },
-              gm: {
-                value: '',
-              }
-            }
-          }
-        });
-        await game.settings.set(MODULE_ID, button.dataset.system, currentSettings);
-        
-        this.selected.newEventName = null;
-        this.render({ parts: [this.tabGroups.main] });
+            attachListeners: (dialog) => {
+              $(dialog.element).find('[data-action="browseBackground"]').on('click', event => {
+                event.preventDefault();
+                const current = 'icons/svg/cowled.svg';
+                new FilePicker({
+                  current,
+                  type: "image",
+                  redirectToRoot: [current] ,
+                  callback: async path => {
+                    $(dialog.element).find('[name="background"]')[0].value = path;
+                  },
+                  top: this.position.top + 40,
+                  left: this.position.left + 10
+                }).browse();
+              });
+            },
+          };
       }
+    }
+
+    async setEvent(existing){
+      const dialogData = await this.getEventDialogData(existing);
+      const dialogCallback = async (_, button) => {
+        const updateData = dialogData.callback(button);
+        await updateDataModel(this.tabGroups.main, { [`events.${updateData.id}`]: updateData });
+        this.render({ parts: [this.tabGroups.main] });
+      };
+
+      const dialog = await new foundry.applications.api.DialogV2({
+        buttons: [
+          {
+            action: "ok",
+            label: game.i18n.localize('PF2ESubsystems.Basic.Confirm'),
+            icon: "fas fa-check",
+            callback: dialogCallback
+          },
+          {
+            action: "cancel",
+            label: game.i18n.localize('PF2ESubsystems.Basic.Cancel'),
+            icon: "fa-solid fa-x",
+          },
+        ],
+        content: dialogData.content,
+        window: {
+          title: dialogData.title,
+        },
+        position: { width: 400 },
+      }).render(true);
+
+      dialogData?.attachListeners(dialog);
+    }
+
+    static async addEvent(){
+      await this.setEvent();
+    }
+
+    static async editEvent(_, button){
+      const existingEvent = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event];
+      await this.setEvent(existingEvent);
+    }
+
+    static async toggleHideEvent(_, button){
+      const hidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].hidden;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.hidden`]: !hidden });
+      this.updateView();
+    }
+
+    async onStartEvent(event) {
+      await updateDataModel(this.tabGroups.main, { [`events.${event}.hidden`]: false });
+      await game.socket.emit(SOCKET_ID, {
+        action: socketEvent.OpenSystemEvent,
+        data: { tab: this.tabGroups.main, event: event },
+      });
+    }
+
+    static async startEvent(_, button){
+      this.onStartEvent(button.dataset.event);
     }
 
     static async removeEvent(_, button){
@@ -851,12 +838,22 @@ class SystemView extends HandlebarsApplicationMixin(
     }
 
     static navigateToSystem(){
-      this.selected.event = null;
+      this.selected = getDefaultSelected();
       this.render({ parts: [this.tabGroups.main] });
     }
 
+    static copyStartEventLink(_, button){
+      const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event];
+      const startMacro = `game.modules.get('${MODULE_ID}').macros.startEvent('${this.tabGroups.main}', '${button.dataset.event}');`;
+      navigator.clipboard.writeText(startMacro).then(() => {
+        ui.notifications.info(
+          game.i18n.format("PF2ESubsystems.View.StartEventLinkCopied", { name: event.name }),
+        );
+      });
+    }
+
     onKeyDown(event){
-      if(this.tabGroups.main === 'chase'){
+      if(!this.editMode && this.tabGroups.main === 'chase'){
         if(this.selected.event){
           switch(event.key) {
             case 'ArrowLeft':
@@ -864,7 +861,9 @@ class SystemView extends HandlebarsApplicationMixin(
               this.render({ parts: [this.tabGroups.main] });
               break;
             case 'ArrowRight':
-              this.selected.chaseObstacle = Math.min(this.selected.chaseObstacle+1, Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event].obstacles).length);
+              const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event];
+              const maxObstacle = game.user.isGM ? Object.keys(event.obstacles).length : event.maxUnlockedObstacle;
+              this.selected.chaseObstacle = Math.min(this.selected.chaseObstacle+1, maxObstacle);
               this.render({ parts: [this.tabGroups.main] });
               break;
           }
@@ -886,20 +885,90 @@ class SystemView extends HandlebarsApplicationMixin(
         };
         
         return acc;
+
       }, {});
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.participants`]: players });
-      this.render({ parts: [this.tabGroups.main] });
+      this.updateView();
+    }
+
+    async setParticipant(event, existing) {
+      const callback = async (_, data) => {
+        const elements = data.form.elements;
+        if (existing){
+          await updateDataModel(this.tabGroups.main, { [`events.${event.id}.participants.${existing.id}`]: {
+            ...existing,
+            name: elements.name.value ? elements.name.value : existing.name,
+            img: elements.image.value ? elements.image.value : existing.img,
+          }});
+        }
+        else {
+          const participantId = foundry.utils.randomID();
+          await updateDataModel(this.tabGroups.main, { [`events.${event.id}.participants.${participantId}`]: {
+            id: participantId,
+            name: elements.name.value ? elements.name.value : game.i18n.localize('PF2ESubsystems.Chase.NewParticipant'),
+            img: elements.image.value ? elements.image.value : 'icons/svg/cowled.svg',
+            position: Object.keys(event.participants).length + 1,
+          }});
+        }
+
+        this.updateView();
+      };
+
+      const dialog = await new foundry.applications.api.DialogV2({
+        buttons: [
+          {
+            action: "ok",
+            label: game.i18n.localize('PF2ESubsystems.Basic.Confirm'),
+            icon: "fas fa-check",
+            callback: callback,
+          },
+          {
+            action: "cancel",
+            label: game.i18n.localize('PF2ESubsystems.Basic.Cancel'),
+            icon: "fa-solid fa-x",
+          },
+        ],
+        content: await renderTemplate("modules/pf2e-subsystems/templates/system-view/systems/chase/participantDataDialog.hbs", { name: existing?.name, image: existing?.img }),
+        window: {
+          title: existing ? game.i18n.localize('PF2ESubsystems.Chase.EditParticipant') : game.i18n.localize('PF2ESubsystems.Chase.CreateParticipant'),
+        },
+        position: { width: 400 },
+      }).render(true);
+
+      $(dialog.element).find('[data-action="browseParticipantImage"]').on('click', event => {
+        event.preventDefault();
+        const current = existing?.img ?? 'icons/svg/cowled.svg';
+        new FilePicker({
+          current,
+          type: "image",
+          redirectToRoot: current ? [current] : [],
+          callback: async path => {
+            $(dialog.element).find('[name="image"]')[0].value = path;
+          },
+          top: this.position.top + 40,
+          left: this.position.left + 10
+        }).browse();
+      });
+    } 
+
+    editParticipant(event) {
+      this.setParticipant();
     }
 
     static async addParticipant(_, button){
-      const newId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.participants.${newId}`]: { 
-        id: newId, 
-        name: 'New Participant',
-        img: 'icons/svg/cowled.svg',
-        obstacle: 1,
-      }});
-      this.render({ parts: [this.tabGroups.main] });
+      this.setParticipant(game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event]);
+    }
+
+    static async editParticipant(_, button){
+      const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event];
+      const existing = event.participants[button.dataset.participant];
+
+      this.setParticipant(event, existing);
+    }
+
+    static async removeParticipant(_, button){
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.participants.-=${button.dataset.participant}`]: null });
+      this.updateView();
     }
 
     static async updateParticipantObstacle(_, button) {
@@ -907,7 +976,7 @@ class SystemView extends HandlebarsApplicationMixin(
       if(obstacle === null) return;
 
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.participants.${button.dataset.id}.obstacle`]: obstacle});
-      this.render({ parts: [this.tabGroups.main] });
+      this.updateView();
     }
 
     static async updatePlayerParticipantsObstacle(_, button) {
@@ -923,7 +992,7 @@ class SystemView extends HandlebarsApplicationMixin(
         return acc;
       }, {});
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.participants`]: participantsUpdate});
-      this.render({ parts: [this.tabGroups.main] });
+      this.updateView();
     }
 
     static async addObstacle(_, button) {
@@ -933,12 +1002,12 @@ class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.obstacles.${newId}`]: {
         id: newId,
         img: "icons/svg/cowled.svg",
-        name: 'New Obstacle',
+        name: game.i18n.localize('PF2ESubsystems.Chase.NewObstacle'),
         position: currentObstacles+1,
+        locked: true,
       }});
 
       this.selected.chaseObstacle = newPosition;
-      
       this.render({ parts: [this.tabGroups.main] });
     }
 
@@ -957,13 +1026,27 @@ class SystemView extends HandlebarsApplicationMixin(
         return acc;
       }, {});
 
+      const participants = Object.values(chases.events[button.dataset.event].participants).reduce((acc, x) => {
+        if(x.obstacle >= removedPosition) {
+          acc[x.id] = {
+            ...x,
+            obstacle: x.obstacle === removedPosition ? removedPosition - 1 : x.obstacle - 1,
+          };
+        }
+
+        return acc;
+      }, {});
+
       await chases.updateSource({ [`events.${button.dataset.event}.obstacles.-=${button.dataset.obstacle}`]: null });
-      await chases.updateSource({ [`events.${button.dataset.event}.obstacles`]: obstacles }, { diff: false });
+      await chases.updateSource({ [`events.${button.dataset.event}`]: {
+        obstacles: obstacles,
+        participants: participants,
+      } }, { diff: false });
+
       await game.settings.set(MODULE_ID, this.tabGroups.main, chases);
 
       this.selected.chaseObstacle = Math.min(this.selected.chaseObstacle, Object.keys(obstacles).length);
-
-      this.render({ parts: [this.tabGroups.main] });
+      this.updateView();
     }
 
     static setCurrentObstacle(_, button) {
@@ -971,10 +1054,41 @@ class SystemView extends HandlebarsApplicationMixin(
       this.render({ parts: [this.tabGroups.main] });
     }
 
+    static async onToggleObstacleLock(event) {
+      await this.toggleObstacleLock(undefined, event.srcElement);
+    }
+
+    async toggleObstacleLock(e, baseButton) {
+      const button = baseButton ?? e.currentTarget;
+      const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event];
+      const currentObstacle = Object.values(event.obstacles).find(x => x.position === Number.parseInt(button.dataset.position));
+
+      if(currentObstacle.position === 1) {
+        ui.notifications.error(game.i18n.localize('PF2ESubsystems.Chase.Errors.LockFirstObstacle'));
+        return;
+      }
+
+      if(currentObstacle.locked){
+        if(currentObstacle.position > event.maxUnlockedObstacle+1) {
+          ui.notifications.error(game.i18n.localize('PF2ESubsystems.Chase.Errors.UnlockObstacle'));
+          return;
+        }
+      }
+      else {
+        if(currentObstacle.position < event.minLockedObstacle-1) {
+          ui.notifications.error(game.i18n.localize('PF2ESubsystems.Chase.Errors.LockObstacle'));
+          return;
+        }
+      }
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.obstacles.${currentObstacle.id}.locked`]: !currentObstacle.locked });
+      this.updateView();
+    }
+
     static async updateChasePoints(_, button) {
       const currentChasePoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].obstacles[button.dataset.obstacle].chasePoints.current;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.obstacles.${button.dataset.obstacle}.chasePoints.current`]: button.dataset.increase ? currentChasePoints+1 : currentChasePoints-1 });
-      this.render({ parts: [this.tabGroups.main] });
+      this.updateView();
     }
 
     _attachPartListeners(partId, htmlElement, options) {
@@ -982,9 +1096,27 @@ class SystemView extends HandlebarsApplicationMixin(
 
       switch(partId){
         case 'chase':
-          $(htmlElement).find('.arrow-key-element').on('keydown', event => event.stopPropagation());
+          $(htmlElement).find('.radio-button').on('contextmenu', this.toggleObstacleLock.bind(this));
+          $(htmlElement).find('.chase-event-chase-points-container input').on('change', this.updateObstacleChasePoints.bind(this));
           break;
       }
+    }
+
+    async updateObstacleChasePoints(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+      const newChasePoints = Number.parseInt(button.value);
+      if(!Number.isNaN(newChasePoints)){
+        const currentChasePoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].obstacles[button.dataset.obstacle].chasePoints;
+        await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}`]: {
+          [`obstacles.${button.dataset.obstacle}.chasePoints`]: {
+            goal: newChasePoints,
+            current: Math.min(currentChasePoints.current, newChasePoints),
+          },
+        }});
+      }
+
+      this.updateView();
     }
 
     _onFirstRender(context, options) {
@@ -1054,6 +1186,15 @@ class SystemView extends HandlebarsApplicationMixin(
       await super._preFirstRender(context, options);
     }
 
+    async updateView(){
+      await game.socket.emit(SOCKET_ID, {
+        action: socketEvent.UpdateSystemView,
+        data: { tab: this.tabGroups.main },
+      });
+
+      Hooks.callAll(socketEvent.UpdateSystemView, this.tabGroups.main);
+    }
+
     async _prepareContext(_options) {
       var context = await super._prepareContext(_options);
 
@@ -1065,40 +1206,60 @@ class SystemView extends HandlebarsApplicationMixin(
       return context;
     }
 
+    onUpdateSystemView(tab){
+      if(this.tabGroups.main === tab){
+        if(this.selected.event) {
+          const nrObstacles = Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event].obstacles).length;
+          this.selected.chaseObstacle = this.selected.chaseObstacle > nrObstacles ? this.selected.chaseObstacle-1 : this.selected.chaseObstacle; 
+        }
+        
+        this.render({ parts: [this.tabGroups.main] });
+      }
+    }
+
     static async updateData(event, element, formData) {
       const { selected, editMode, events }= foundry.utils.expandObject(formData.object);
       this.selected = foundry.utils.mergeObject(this.selected, selected);
       this.editMode = editMode;
 
       await updateDataModel(this.tabGroups.main, { events });
-
-      this.render({ parts: [this.tabGroups.main] });
+      this.updateView();
     }
 }
 
-const openSubsystemView = async () => {
-    new SystemView().render(true);
+const openSubsystemView = async (tab, event) => {
+    new SystemView(tab, event).render(true);
   };
+
+const startEvent = async (tab, event) => {
+  if(!tab) {
+    ui.notifications.error(game.i18n.localize('PF2ESubsystems.Macros.StartEvent.Errors.MissingTab'));
+    return;
+  }
+
+  if(!event) {
+    ui.notifications.error(game.i18n.localize('PF2ESubsystems.Macros.StartEvent.Errors.MissingEvent'));
+    return;
+  }
+
+  const eventEntity = game.settings.get(MODULE_ID, tab).events[event];
+  if(!eventEntity) {
+    ui.notifications.error(game.i18n.localize('PF2ESubsystems.Macros.StartEvent.Errors.MissingEventEntity'));
+    return;
+  }
+
+  const systemView = await new SystemView(tab, event).render(true);
+  systemView.onStartEvent(event);
+};
 
 var macros = /*#__PURE__*/Object.freeze({
   __proto__: null,
-  openSubsystemView: openSubsystemView
+  openSubsystemView: openSubsystemView,
+  startEvent: startEvent
 });
 
-function handleSocketEvent({ action = null, data = {} } = {}) {
-    switch (action) {
-      case socketEvent.UpdateSystemView:
-        Hooks.callAll(socketEvent.UpdateSystemView, {});
-        break;
-    }
-  }
-  
-  const socketEvent = {
-    UpdateSystemView: "UpdateSystemView",
-  };
-
 const handleMigration = async () => {
-    // await setupJournalStructure();
+    
 };
 
 class RegisterHandlebarsHelpers {
@@ -1124,18 +1285,18 @@ class RegisterHandlebarsHelpers {
 }
 
 Hooks.once("init", () => {
-    // dataTypeSetup();
     registerGameSettings();
     registerKeyBindings();
     RegisterHandlebarsHelpers.registerHelpers();
-    game.socket.on(`module.pf2e-subsystems`, handleSocketEvent);
+    game.socket.on(SOCKET_ID, handleSocketEvent);
 
     loadTemplates([
       "modules/pf2e-subsystems/templates/partials/navigate-back.hbs",
       "modules/pf2e-subsystems/templates/partials/events.hbs",
       "modules/pf2e-subsystems/templates/partials/radio-button.hbs",
       "modules/pf2e-subsystems/templates/system-view/systems/chase/chase.hbs",
-      "modules/pf2e-subsystems/templates/system-view/systems/chase/editChase.hbs",
+      "modules/pf2e-subsystems/templates/system-view/systems/chase/chaseDataDialog.hbs",
+      "modules/pf2e-subsystems/templates/system-view/systems/chase/participantDataDialog.hbs",
     ]);
 });
 

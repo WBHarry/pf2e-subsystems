@@ -7,10 +7,14 @@
             height: 100%;
             display: flex;
             flex-direction: column;
+            gap: @gapLarge;
             pointer-events: all;
 
             .header-section {
-                flex: none;
+                text-align: center;
+                border-bottom-width: 2px;
+                border-bottom-style: solid;
+                border-bottom-color: var(--pf2e-bestiary-tracking-primary-color);
             }
     
             .main-section {
@@ -25,8 +29,10 @@
 
                     .system-section {
                         display: flex;
+                        align-items: center;
+                        justify-content: center;
                         position: relative;
-                        width: calc(33% - 1px);
+                        width: calc(33% - 3px);
                         border-width: @borderNormal;
                         border-style: outset;
                         border-color: white;
@@ -47,6 +53,13 @@
                         img {
                             border: 0;
                             border-radius: 0;
+                        }
+
+                        // Temporary
+                        .locked-section {
+                            position: absolute;
+                            font-size: 96px;
+                            text-shadow: 0 0 5px var(--pf2e-bestiary-tracking-secondary-icon);
                         }
                     }
                 }
@@ -79,18 +92,29 @@
                     position: relative;
                     width: 100%;
                     display: flex;
+                    justify-content: center;
+                    border-bottom-width: 2px;
+                    border-bottom-style: solid;
+                    border-bottom-color: var(--pf2e-bestiary-tracking-primary-color);
 
                     .system-title-navigation {
+                        z-index: 2;
                         position: absolute;
                         left: 0;
-                        top: 8px;
                     }
 
-                    .system-title {
-                        flex: 1;
-                        text-align: center;
+                    .system-title-inner-container {
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
                         margin-top: 0;
-                        margin-bottom: @marginLarge;
+
+                        .system-title-add-button {
+                            position: absolute;
+                            right: -30px;
+                            font-size: 30px;
+                        }
                     }
                 }
 
@@ -115,7 +139,7 @@
                 }
 
                 .events-container {
-                    margin-top: @marginHuge;
+                    margin-top: @marginLarge;
                     display: grid;
                     grid-template-columns: repeat(4, 1fr);
                     gap: @gapHuge;
@@ -124,9 +148,15 @@
                         position: relative;
                         display: flex;
                         flex-direction: column;
+                        cursor: pointer;
 
-                        &:hover .event-container-header .event-toolbar .event-remove {
-                            display: block;
+                        &:hover .event-container-header .event-toolbar {
+                            overflow: auto;
+
+                            .event-toolbar-inner {
+                                top: 0;
+                            }
+                            
                         }
 
                         .event-container-header {
@@ -141,20 +171,36 @@
                             
                             .event-toolbar {
                                 position: absolute;
-                                top: 0;
-                                right: -18px;
-                                width: 18px;
-                                height: 100%;
+                                display: flex;
+                                gap: @gapNormal;
+                                top: 17px;
+                                right: 2px;
+                                height: calc(100% - 17px);
+                                overflow: hidden;
 
-                                .event-remove {                                    
-                                    display: none;
-                                    font-size: 18px;
-                                    
-                                    &:hover {
-                                        display: block;
+                                .event-toolbar-inner {
+                                    flex: 1;
+                                    position: relative;
+                                    padding: @paddingNormal;
+                                    border-style: dotted;
+                                    border-width: @borderNormal;
+                                    top: -79px;
+                                    height: 79px;
+                                    display: flex;
+                                    flex-direction: column;
+                                    gap: @gapNormal;
+                                    transition: top 0.3s;
+
+                                    .event-remove, .event-edit {                                    
+                                        font-size: 18px;
                                     }
                                 }
                             }
+                        }
+
+                        img {
+                            max-width: auto;
+
                         }
                     }
                 }

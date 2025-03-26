@@ -62,18 +62,22 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems input.secondary-container .data-icon {
   filter: var(--pf2e-bestiary-tracking-icon-filter);
 }
-.pf2e-subsystems .tertiary-container {
+.pf2e-subsystems .tertiary-container,
+.pf2e-subsystems input.tertiary-container {
   background-color: var(--pf2e-bestiary-tracking-tertiary);
   border-color: var(--pf2e-bestiary-tracking-border);
   color: var(--pf2e-bestiary-tracking-primary-color);
 }
-.pf2e-subsystems .tertiary-container.active {
+.pf2e-subsystems .tertiary-container.active,
+.pf2e-subsystems input.tertiary-container.active {
   background-color: var(--pf2e-bestiary-tracking-tertiary-accent);
 }
-.pf2e-subsystems .tertiary-container .data-icon {
+.pf2e-subsystems .tertiary-container .data-icon,
+.pf2e-subsystems input.tertiary-container .data-icon {
   filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%);
 }
-.pf2e-subsystems .tertiary-container option {
+.pf2e-subsystems .tertiary-container option,
+.pf2e-subsystems input.tertiary-container option {
   background-color: var(--pf2e-bestiary-tracking-tertiary);
   border-color: var(--pf2e-bestiary-tracking-border);
   color: var(--pf2e-bestiary-tracking-primary-color);
@@ -165,10 +169,14 @@ form.pf2e-subsystems.application > header .header-control {
   height: 100%;
   display: flex;
   flex-direction: column;
+  gap: 16px;
   pointer-events: all;
 }
 .pf2e-subsystems.systems-view .systems-container .header-section {
-  flex: none;
+  text-align: center;
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+  border-bottom-color: var(--pf2e-bestiary-tracking-primary-color);
 }
 .pf2e-subsystems.systems-view .systems-container .main-section {
   flex: 1;
@@ -182,8 +190,10 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems.systems-view .systems-container .main-section .systems-section .system-section {
   display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
-  width: calc(33% - 1px);
+  width: calc(33% - 3px);
   border-width: 2px;
   border-style: outset;
   border-color: white;
@@ -203,6 +213,11 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems.systems-view .systems-container .main-section .systems-section .system-section img {
   border: 0;
   border-radius: 0;
+}
+.pf2e-subsystems.systems-view .systems-container .main-section .systems-section .system-section .locked-section {
+  position: absolute;
+  font-size: 96px;
+  text-shadow: 0 0 5px var(--pf2e-bestiary-tracking-secondary-icon);
 }
 .pf2e-subsystems.systems-view .event-tab {
   height: 100%;
@@ -228,17 +243,27 @@ form.pf2e-subsystems.application > header .header-control {
   position: relative;
   width: 100%;
   display: flex;
+  justify-content: center;
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+  border-bottom-color: var(--pf2e-bestiary-tracking-primary-color);
 }
 .pf2e-subsystems.systems-view .event-select-container .events-outer-container .system-title-container .system-title-navigation {
+  z-index: 2;
   position: absolute;
   left: 0;
-  top: 8px;
 }
-.pf2e-subsystems.systems-view .event-select-container .events-outer-container .system-title-container .system-title {
-  flex: 1;
-  text-align: center;
+.pf2e-subsystems.systems-view .event-select-container .events-outer-container .system-title-container .system-title-inner-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-top: 0;
-  margin-bottom: 8px;
+}
+.pf2e-subsystems.systems-view .event-select-container .events-outer-container .system-title-container .system-title-inner-container .system-title-add-button {
+  position: absolute;
+  right: -30px;
+  font-size: 30px;
 }
 .pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-header {
   display: flex;
@@ -258,7 +283,7 @@ form.pf2e-subsystems.application > header .header-control {
   gap: 8px;
 }
 .pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-container {
-  margin-top: 32px;
+  margin-top: 8px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 32px;
@@ -267,9 +292,13 @@ form.pf2e-subsystems.application > header .header-control {
   position: relative;
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 }
-.pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-container .event-container:hover .event-container-header .event-toolbar .event-remove {
-  display: block;
+.pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-container .event-container:hover .event-container-header .event-toolbar {
+  overflow: auto;
+}
+.pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-container .event-container:hover .event-container-header .event-toolbar .event-toolbar-inner {
+  top: 0;
 }
 .pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-container .event-container .event-container-header {
   background-color: orange;
@@ -282,17 +311,32 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-container .event-container .event-container-header .event-toolbar {
   position: absolute;
-  top: 0;
-  right: -18px;
-  width: 18px;
-  height: 100%;
+  display: flex;
+  gap: 8px;
+  top: 17px;
+  right: 2px;
+  height: calc(100% - 17px);
+  overflow: hidden;
 }
-.pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-container .event-container .event-container-header .event-toolbar .event-remove {
-  display: none;
+.pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-container .event-container .event-container-header .event-toolbar .event-toolbar-inner {
+  flex: 1;
+  position: relative;
+  padding: 4px;
+  border-style: dotted;
+  border-width: 2px;
+  top: -79px;
+  height: 79px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: top 0.3s;
+}
+.pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-container .event-container .event-container-header .event-toolbar .event-toolbar-inner .event-remove,
+.pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-container .event-container .event-container-header .event-toolbar .event-toolbar-inner .event-edit {
   font-size: 18px;
 }
-.pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-container .event-container .event-container-header .event-toolbar .event-remove:hover {
-  display: block;
+.pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-container .event-container img {
+  max-width: auto;
 }
 .pf2e-subsystems .chase-view {
   height: 100%;
@@ -307,6 +351,7 @@ form.pf2e-subsystems.application > header .header-control {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
 }
 .pf2e-subsystems .chase-view .chase-outer-container .chase-header-container .chase-header-title-container {
   flex: 1;
@@ -314,8 +359,9 @@ form.pf2e-subsystems.application > header .header-control {
   align-items: center;
 }
 .pf2e-subsystems .chase-view .chase-outer-container .chase-header-container .chase-header-title-container .chase-header-title {
+  flex: 1;
   border-width: 2px;
-  border-style: outset;
+  border-style: solid;
   border-radius: 4px;
   padding: 4px;
   min-width: 120px;
@@ -328,7 +374,7 @@ form.pf2e-subsystems.application > header .header-control {
   flex-wrap: nowrap;
   white-space: nowrap;
   border-width: 2px;
-  border-style: outset;
+  border-style: solid;
   border-radius: 4px;
   padding: 4px;
 }
@@ -412,6 +458,9 @@ form.pf2e-subsystems.application > header .header-control {
   justify-content: space-between;
   padding: 0 8px;
 }
+.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .partcipants-title-container .participants-title-inner-container.standalone {
+  justify-content: center;
+}
 .pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .partcipants-title-container .participants-title-inner-container .participants-party-container {
   height: 100%;
   display: flex;
@@ -431,8 +480,6 @@ form.pf2e-subsystems.application > header .header-control {
   margin: 0;
 }
 .pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .partcipants-title-container .participants-title-inner-container .participants-title-add {
-  position: absolute;
-  right: -18px;
   font-size: 16px;
 }
 .pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .partcipants-title-container .participants-helper-text {
@@ -478,9 +525,24 @@ form.pf2e-subsystems.application > header .header-control {
   gap: 4px;
   font-size: 16px;
 }
+.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar.editing {
+  flex-direction: column;
+  margin: -3px -3px -3px 0;
+  height: 100%;
+  gap: 0px;
+}
+.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar.editing button {
+  flex: 1;
+  padding: 0;
+  margin: 0;
+  width: 24px;
+}
+.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar.editing button i {
+  margin: 0;
+}
 .pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar .participant-control-upper {
   position: absolute;
-  top: -10px;
+  top: -9px;
 }
 .pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar .participant-control-lower {
   position: absolute;
@@ -490,6 +552,7 @@ form.pf2e-subsystems.application > header .header-control {
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 6px;
 }
 .pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container {
   margin: 0;
@@ -537,8 +600,14 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container .chase-event-header .chase-event-header-inner .chase-event-header-title .chase-event-header-title-delete {
   position: absolute;
-  right: -20px;
+  right: -24px;
   font-size: 20px;
+}
+.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container .chase-event-header .chase-event-lock {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 24px;
 }
 .pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container .chase-event-inner-container {
   flex: 1;
@@ -563,6 +632,8 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container .chase-event-inner-container .chase-event-chase-points-container input {
   height: 17px;
+  width: 40px;
+  text-align: center;
 }
 .pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container .chase-event-inner-container .chase-event-chase-points-container .chase-event-chase-points-tools {
   display: flex;
@@ -590,6 +661,7 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .clickable-icon {
   cursor: pointer;
+  color: var(--pf2e-bestiary-tracking-primary-color);
 }
 .clickable-icon.disabled {
   opacity: 0.5;
@@ -598,15 +670,27 @@ form.pf2e-subsystems.application > header .header-control {
 .clickable-icon.selected {
   filter: drop-shadow(0 0 3px gold);
 }
-.pf2e-subsystems .text-helper {
+.pf2e-subsystems {
+  /* Texts */
+  /* Texts */
+}
+.pf2e-subsystems .text-helper,
+.pf2e-subsystems input.text-helper {
   font-size: 8px;
   font-style: italic;
 }
-.pf2e-subsystems .title-container {
+.pf2e-subsystems .title-large-container,
+.pf2e-subsystems input.title-large-container {
+  font-size: 32px;
+  font-weight: bold;
+}
+.pf2e-subsystems .title-container,
+.pf2e-subsystems input.title-container {
   font-size: 24px;
   font-weight: bold;
 }
-.pf2e-subsystems .title-small-container {
+.pf2e-subsystems .title-small-container,
+.pf2e-subsystems input.title-small-container {
   font-size: 20px;
   font-weight: bold;
 }
@@ -614,6 +698,7 @@ form.pf2e-subsystems.application > header .header-control {
   display: flex;
   align-items: center;
   gap: 8px;
+  color: var(--pf2e-bestiary-tracking-primary-color);
 }
 .pf2e-subsystems .navigate-container i {
   font-size: 16px;
@@ -623,22 +708,35 @@ form.pf2e-subsystems.application > header .header-control {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 10px;
-  width: 10px;
+  height: 14px;
+  width: 14px;
   border-radius: 50%;
   border-width: 1px;
   border-style: solid;
   background-color: white;
 }
+.pf2e-subsystems .radio-button.selected {
+  background-color: var(--pf2e-bestiary-tracking-tertiary);
+}
+.pf2e-subsystems .radio-button.selected .radio-button-locked {
+  color: var(--pf2e-bestiary-tracking-secondary-icon);
+  text-shadow: 0 0 5px var(--pf2e-bestiary-tracking-primary-color);
+}
 .pf2e-subsystems .radio-button .radio-button-selected {
-  height: 6px;
-  width: 6px;
+  height: 10px;
+  width: 10px;
   border-radius: 50%;
-  background-color: blue;
+  background-color: var(--pf2e-bestiary-tracking-tertiary);
   content: "";
+}
+.pf2e-subsystems .radio-button .radio-button-locked {
+  font-size: 10px;
+  color: black;
 }
 .pf2e-subsystems .toggle-switch {
   position: relative;
+  display: flex;
+  align-items: center;
 }
 .pf2e-subsystems .editor {
   height: 100%;

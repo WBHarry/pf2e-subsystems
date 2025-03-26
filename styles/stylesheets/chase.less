@@ -14,6 +14,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
+                gap: @gapLarge;
 
                 .chase-header-title-container {
                     flex: 1;
@@ -21,8 +22,9 @@
                     align-items: center;
 
                     .chase-header-title {
+                        flex: 1;
                         border-width: @borderNormal;
-                        border-style: outset;
+                        border-style: solid;
                         border-radius: @borderRadiusNormal;
                         padding: @paddingNormal;
                         min-width: 120px;
@@ -37,7 +39,7 @@
                     flex-wrap: nowrap;
                     white-space: nowrap;
                     border-width: @borderNormal;
-                    border-style: outset;
+                    border-style: solid;
                     border-radius: @borderRadiusNormal;
                     padding: @paddingNormal;
                 }
@@ -131,6 +133,10 @@
                                 justify-content: space-between;
                                 padding: 0 @paddingLarge;
 
+                                &.standalone {
+                                    justify-content: center;
+                                }
+
                                 .participants-party-container {
                                     height: 100%;
                                     display: flex;
@@ -154,8 +160,6 @@
                                 }
 
                                 .participants-title-add {
-                                    position: absolute;
-                                    right: -18px;
                                     font-size: 16px;
                                 }
                             }
@@ -207,9 +211,27 @@
                                         gap: @gapSmall;
                                         font-size: 16px;
 
+                                        &.editing {
+                                            flex-direction: column;
+                                            margin: -3px -3px -3px 0;
+                                            height: 100%;
+                                            gap: 0px;
+
+                                            button {
+                                                flex: 1;
+                                                padding: 0;
+                                                margin: 0;
+                                                width: 24px;
+
+                                                i {
+                                                    margin: 0;
+                                                }
+                                            }
+                                        }
+
                                         .participant-control-upper {
                                             position: absolute;
-                                            top: -10px;
+                                            top: -9px;
                                         }
 
                                         .participant-control-lower {
@@ -227,6 +249,7 @@
                     flex: 1;
                     display: flex;
                     flex-direction: column;
+                    gap: 6px;
 
                     .chase-event-container {
                         margin: 0;
@@ -276,11 +299,18 @@
     
                                     .chase-event-header-title-delete {
                                         position: absolute;
-                                        right: -20px;
+                                        right: -24px;
                                         font-size: 20px;
                                     }
                                 }
                             }
+
+                            .chase-event-lock {
+                                position: absolute;
+                                top: 4px;
+                                right: 4px;
+                                font-size: 24px;
+                            } 
                         }
     
                         .chase-event-inner-container {
@@ -307,10 +337,8 @@
     
                                 input {
                                     height: 17px;
-                                }
-    
-                                .chase-event-chase-points-inner-container {
-                                    
+                                    width: 40px;
+                                    text-align: center;
                                 }
     
                                 .chase-event-chase-points-tools {

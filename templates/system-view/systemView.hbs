@@ -1,17 +1,18 @@
 <div class="tab {{this.systems.systemView.cssClass}}" data-group="main" data-tab="systemView">
     <div class="systems-container primary-text-container">
-        <header class="header-section">
-            HeaderTest
+        <header class="header-section title-large-container primary-text-container">
+            {{localize "PF2ESubsystems.View.Subsystems"}}
         </header>
         <div class="main-section">
             <div class="systems-section sheet-tabs tabs">
             {{#each this.systems as |system key|}}
                     {{#if (not system.unselectable)}}
-                        <div class="system-section clickable-icon {{system.cssClass}}" data-action="tab" data-group={{system.group}} data-tab={{system.id}}>
+                        <div class="system-section clickable-icon {{#if system.disabled}}disabled{{/if}} {{system.cssClass}}" {{#if (not system.disabled)}}data-action="tab"{{/if}} data-group={{system.group}} data-tab={{system.id}}>
                             <div class="system-section-label">
                                 <div>{{system.label}}</div>
                             </div>
                             <img src="{{system.image}}" />
+                            {{#if system.disabled}}<i class="fa-solid fa-lock locked-section"></i>{{/if}}
                         </div>
                     {{/if}}
             {{/each}}

@@ -1,5 +1,7 @@
-<div class="radio-button clickable-icon" data-action="{{this.action}}" data-position="{{this.position}}">
-    {{#if this.selected}}
-        <div class="radio-button-selected"></div>
+<div class="radio-button {{#if this.selected}}selected{{/if}} clickable-icon" data-action="{{this.action}}" data-event="{{this.event}}" data-position="{{this.position}}">
+    {{#if this.locked}}
+        <div class="radio-button-locked">
+            <i class="fa-solid fa-lock locked-section"></i>
+        </div>
     {{/if}}
 </div>

@@ -2,33 +2,33 @@
     <div class="events-outer-container">
         <div class="system-title-container">
             <div class="system-title-navigation tabs">
-                {{> "modules/pf2e-subsystems/templates/partials/navigate-back.hbs" label=(localize "Return To Subsystems") action="tab" group="main" tab="systemView" }}
+                {{> "modules/pf2e-subsystems/templates/partials/navigate-back.hbs" label=(localize "PF2ESubsystems.View.ReturnToSubsystems") action="tab" group="main" tab="systemView" }}
             </div>
-            <h2 class="system-title">{{localize "Chases"}}</h2>
-        </div>
-        <div class="events-header">
-            <div class="new-event-container">
-                <label>{{localize "Name"}}</label>
-                <div class="form-fields">
-                    <div class="form-fields">
-                        <input type="text" name="selected.newEventName" value="{{this.selected.newEventName}}" />
-                    </div>
-                </div>
-                <button data-action="addEvent" data-system="{{tab.id}}" {{#if (not this.selected.newEventName)}}disabled{{/if}}>Add New {{this.name}}</button>
+            <div class="system-title-inner-container title-large-container primary-text-container">
+                <div>{{localize "PF2ESubsystems.Events.Chase.Plural"}}</div>
+                <i class="fa-solid fa-plus system-title-add-button primary-text-container clickable-icon" data-action="addEvent"></i>
             </div>
         </div>
-        
+                
         <div class="events-container">
             {{#each this.events}}
-                <div class="event-container" data-action="selectEvent" data-event="{{this.id}}">
-                    <div class="event-container-header">
-                        <div class="event-title">{{this.name}}</div>
-                        <div class="event-toolbar">
-                            <i class="fa-solid fa-trash event-remove clickable-icon" data-action="removeEvent" data-system="{{../tab.id}}" data-id="{{this.id}}"></i>
+                {{#if (or (not this.hidden) ../isGM)}}
+                    <div class="event-container" data-action="selectEvent" data-event="{{this.id}}">
+                        <div class="event-container-header">
+                            <div class="event-title">{{this.name}}</div>
+                            {{#if ../isGM}}
+                                <div class="event-toolbar">
+                                    <div class="event-toolbar-inner primary-container">
+                                        <i class="{{#if this.hidden}}fa-solid fa-eye{{else}}fa-solid fa-eye-slash{{/if}} clickable-icon" title="{{#if this.hidden}}{{localize "PF2ESubsystems.View.HideFromPlayers"}}{{else}}{{localize "PF2ESubsystems.View.RevealToPlayers"}}{{/if}}" data-action="toggleHideEvent" data-event="{{this.id}}"></i>
+                                        <i class="fa-solid fa-pen-to-square event-edit clickable-icon" title="{{concat (localize "PF2ESubsystems.Basic.Edit") " " this.name}}" data-action="editEvent" data-event="{{this.id}}"></i>
+                                        <i class="fa-solid fa-trash event-remove clickable-icon" title="{{concat (localize "PF2ESubsystems.Basic.Remove") " " this.name}}" data-action="removeEvent" data-id="{{this.id}}"></i>
+                                    </div>
+                                </div>
+                            {{/if}}
                         </div>
+                        <img src="{{this.background}}" />
                     </div>
-                    <img src="{{this.background}}" />
-                </div>
+                {{/if}}
             {{/each}}
         </div>
     </div>

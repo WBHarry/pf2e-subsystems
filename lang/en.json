@@ -1,15 +1,78 @@
 {
     "PF2ESubsystems": {
+        "Basic": {
+            "Confirm": "Confirm",
+            "Cancel": "Cancel",
+            "Edit": "Edit",
+            "Remove": "Remove",
+            "Players": "Players",
+            "Name": "Name",
+            "Image": "Image"
+        },
+        "Macros": {
+            "StartEvent": {
+                "Errors": {
+                    "MissingTab": "You didn't provide the tab parameter",
+                    "MissingEvent": "You didn't provide the event parameter",
+                    "MissingEventEntity": "The event you provided doesn't exist"
+                }
+            }
+        },
         "View": {
-            "Title": "Subsystems"
+            "Title": "Subsystems",
+            "NewEvent": "New Event",
+            "Subsystems": "Subsystems",
+            "ToggleEditMode": "Toggle Edit Mode",
+            "ReturnToSubsystems": "Return To Subsystems",
+            "HideFromPlayers": "Hide From Players",
+            "RevealToPlayers": "Reveal To Players",
+            "StartEventLinkCopied": "StartEvent Macro for {name} copied to clipboard."
+        },
+        "Events": {
+            "Chase": {
+                "Single": "Chase",
+                "Plural": "Chases"
+            },
+            "Influence": {
+                "Single": "Influence",
+                "Plural": "Influence"
+            },
+            "Research": {
+                "Single": "Research",
+                "Plural": "Research"
+            }
         },
         "Chase": {
-            "Category": "Chases",
-            "Name": "Chase"
+            "NavigateBack": "Return To Chases",
+            "EditChase": "Edit Chase",
+            "CreateChase": "Create New Chase",
+            "Premise": "Premise",
+            "NewObstacle": "New Obstacle",
+            "AddObstacle": "Add Obstacle",
+            "CreateParticipant": "Create New Participant",
+            "EditParticipant": "Edit Participant",
+            "NewParticipant": "New Participant",
+            "Participants": "Participants",
+            "AddParticipant": "Add Participant",
+            "AddAllPlayers": "Add All Players",
+            "AdvanceAllPCs": "Move all PCs to the next obstacle",
+            "RetreatAllPCs": "Move all PCs to the previous obstacle",
+            "AdvanceAllNPCs": "Move all NPCs to the next obstacle",
+            "RetreatAllNPCs": "Move all NPCs to the previous obstacle",
+            "AddOrDragInActor": "Add or drag in an actor.",
+            "StartChase": "Start Chase",
+            "ChasePoints": "Chase Points",
+            "CopyStartEventLink": "Copy a macro to start this event",
+            "Errors": {
+                "UnlockObstacle": "You have to unlock obstacles from start to end",
+                "LockObstacle": "You have to lock obstacles from end to start",
+                "LockFirstObstacle": "You can't lock the first obstacle"
+            }
+            
         },
         "KeyBindings": {
             "OpenSystemView": {
-                "Name": "Open SubSystem View",
+                "Name": "Open Subsystems View",
                 "Hint": "Opens the subsystem window"
             }
         },

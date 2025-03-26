@@ -2,23 +2,23 @@ import { registerGameSettings, registerKeyBindings, setupTheme } from "./scripts
 import * as macros from "./scripts/macros.js";
 import { handleSocketEvent } from "./scripts/socket.js";
 import { handleMigration } from "./scripts/migration.js";
-import { MODULE_ID } from "./data/constants.js";
+import { MODULE_ID, SOCKET_ID } from "./data/constants.js";
 import subsystemsThemes from "./styles/themes/themes.js";
 import RegisterHandlebarsHelpers from "./scripts/handlebarHelpers.js";
 
 Hooks.once("init", () => {
-    // dataTypeSetup();
     registerGameSettings();
     registerKeyBindings();
     RegisterHandlebarsHelpers.registerHelpers();
-    game.socket.on(`module.pf2e-subsystems`, handleSocketEvent);
+    game.socket.on(SOCKET_ID, handleSocketEvent);
 
     loadTemplates([
       "modules/pf2e-subsystems/templates/partials/navigate-back.hbs",
       "modules/pf2e-subsystems/templates/partials/events.hbs",
       "modules/pf2e-subsystems/templates/partials/radio-button.hbs",
       "modules/pf2e-subsystems/templates/system-view/systems/chase/chase.hbs",
-      "modules/pf2e-subsystems/templates/system-view/systems/chase/editChase.hbs",
+      "modules/pf2e-subsystems/templates/system-view/systems/chase/chaseDataDialog.hbs",
+      "modules/pf2e-subsystems/templates/system-view/systems/chase/participantDataDialog.hbs",
     ]);
 });
 

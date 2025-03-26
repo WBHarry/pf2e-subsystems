@@ -5,6 +5,7 @@
 
 .clickable-icon {
     cursor: pointer;
+    color: var(--pf2e-bestiary-tracking-primary-color);
 
     &.disabled {
       opacity: 0.5;
@@ -17,25 +18,33 @@
 }
 
 .pf2e-subsystems {
-  .text-helper {
+  /* Texts */
+  .text-helper, input.text-helper {
     font-size: @textHelper;
     font-style: italic;
   }
+
+  .title-large-container, input.title-large-container {
+    font-size: @textTitleLarge;
+    font-weight: bold;
+  }
   
-  .title-container {
+  .title-container, input.title-container {
     font-size: @textTitle;
     font-weight: bold;
   }
 
-  .title-small-container {
+  .title-small-container, input.title-small-container {
     font-size: @textTitleSmall;
     font-weight: bold;
   }
+  /* Texts */
 
   .navigate-container {
     display: flex;
     align-items: center;
     gap: @gapNormal;
+    color: var(--pf2e-bestiary-tracking-primary-color);
 
     i {
       font-size: 16px;
@@ -47,24 +56,40 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 10px;
-    width: 10px;
+    height: 14px;
+    width: 14px;
     border-radius: 50%;
     border-width: 1px;
     border-style: solid;
     background-color: white;
 
+    &.selected {
+      background-color: var(--pf2e-bestiary-tracking-tertiary);
+      
+      .radio-button-locked {
+        color: var(--pf2e-bestiary-tracking-secondary-icon);
+        text-shadow: 0 0 5px var(--pf2e-bestiary-tracking-primary-color);
+      }
+    }
+
     .radio-button-selected {
-      height: 6px;
-      width: 6px;
+      height: 10px;
+      width: 10px;
       border-radius: 50%;
-      background-color: blue;
+      background-color: var(--pf2e-bestiary-tracking-tertiary);
       content: "",
+    }
+
+    .radio-button-locked {
+      font-size: 10px;
+      color: black; // Fix this. Add var(secondary-color)?
     }
   }
 
   .toggle-switch {
     position: relative;
+    display: flex;
+    align-items: center;
   }
 
   .editor {

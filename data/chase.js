@@ -35,6 +35,7 @@ export class Chase extends foundry.abstract.DataModel {
           name: new fields.StringField({ required: true }),
           img: new fields.StringField({}),
           position: new fields.NumberField({ required: true, integer: true }),
+          locked: new fields.BooleanField({ required: true, initial: true }),
           chasePoints: new fields.SchemaField({
               goal: new fields.NumberField({ required: true, integer: true, initial: 0 }),
               current: new fields.NumberField({ required: true, integer: true, initial: 0 }),
@@ -52,30 +53,25 @@ export class Chase extends foundry.abstract.DataModel {
       }
     }
 
-    get extendedParticipants(){
-      const party = game.actors.find(x => x.type === 'party');
-      if(!party) return;
-      
-      const playerParticipants = party.members.map(x => {
-        const existingParticipant = this.participants[x.id];
-        return {
-          id: x.id,
-          name: x.name,
-          img: x.img,
-          hidden: existingParticipant?.hidden ?? false,
-          position: existingParticipant?.position ?? 0,
-          player: true,
-          obstacle: existingParticipant?.obstacle ?? 1,
-        };
-      });
-
-      return Object.values(this.participants).reduce((acc, x) => {
-        if(!x.player){
-          acc.push(x);
+    get maxUnlockedObstacle(){
+      return Object.values(this.obstacles).reduce((acc, obstacle) => {
+        if(!obstacle.locked && obstacle.position > acc) {
+          return obstacle.position;
         }
 
         return acc;
-      }, playerParticipants);
+      }, 1);
+    }
+
+    get minLockedObstacle(){
+      const obstacles = Object.values(this.obstacles);
+      return obstacles.reduce((acc, obstacle) => {
+        if(obstacle.locked && obstacle.position < acc) {
+          return obstacle.position;
+        }
+
+        return acc;
+      }, obstacles.length+1);
     }
 
     get extendedObstacles(){
