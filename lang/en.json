@@ -75,12 +75,6 @@
                 "Name": "Open Subsystems View",
                 "Hint": "Opens the subsystem window"
             }
-        },
-        "Settings": {
-            "SubsystemsTheme": {
-                "Name": "Subsystems Theme",
-                "Hint": "Choose the visual theme for the module"
-            }
         }
     }
 }

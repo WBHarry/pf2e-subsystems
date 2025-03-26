@@ -323,224 +323,37 @@ class Chase extends foundry.abstract.DataModel {
 const MODULE_ID = 'pf2e-subsystems';
 const SOCKET_ID = `module.${MODULE_ID}`;
 
-const coreDark = {
-  "--pf2e-bestiary-tracking-application-image": "ignore",
-  "--pf2e-bestiary-tracking-application": "#12101fe6",
-  "--pf2e-bestiary-tracking-secondary-application": "#431b1b",
-  "--pf2e-bestiary-tracking-primary": "rgb(94 0 0)",
-  "--pf2e-bestiary-tracking-primary-faded": "rgb(94 0 0 / 50%)",
-  "--pf2e-bestiary-tracking-secondary": "#4b4b8c",
-  "--pf2e-bestiary-tracking-tertiary": "#007149",
-  "--pf2e-bestiary-tracking-primary-accent": "#ad0303",
-  "--pf2e-bestiary-tracking-tertiary-accent": "#76963f",
-  "--pf2e-bestiary-tracking-primary-color": "white",
-  "--pf2e-bestiary-tracking-icon-filter": "none",
-  "--pf2e-bestiary-tracking-main-hover": "white",
-  "--pf2e-bestiary-tracking-border": "#ababab",
-  "--pf2e-bestiary-tracking-secondary-border": "gold",
-  "--pf2e-bestiary-tracking-application-border": "wheat",
-  "--pf2e-bestiary-tracking-icon": "rgb(247, 243, 232)",
-  "--pf2e-bestiary-tracking-accent-icon": "gold",
-};
-
-const coreLight = {
-  "--pf2e-bestiary-tracking-application-image": "../ui/parchment.jpg",
-  "--pf2e-bestiary-tracking-application-header": "rgb(68, 68, 68)",
-  "--pf2e-bestiary-tracking-application-image-repeat": "repeat",
-  "--pf2e-bestiary-tracking-application": "initial",
-  "--pf2e-bestiary-tracking-secondary-application": "#b8cccb",
-  "--pf2e-bestiary-tracking-primary": "rgb(212 189 172)",
-  "--pf2e-bestiary-tracking-primary-faded": "rgb(212 189 172 / 25%)",
-  "--pf2e-bestiary-tracking-secondary": "#62b356",
-  "--pf2e-bestiary-tracking-tertiary": "#62acce",
-  "--pf2e-bestiary-tracking-primary-accent": "#fff1db",
-  "--pf2e-bestiary-tracking-tertiary-accent": "#9de0ff",
-  "--pf2e-bestiary-tracking-primary-color": "black",
-  "--pf2e-bestiary-tracking-icon-filter":
-    "invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%)",
-  "--pf2e-bestiary-tracking-main-hover": "#1c8efe",
-  "--pf2e-bestiary-tracking-border": "black",
-  "--pf2e-bestiary-tracking-secondary-border": "#82acff",
-  "--pf2e-bestiary-tracking-application-border": "initial",
-  "--pf2e-bestiary-tracking-icon": "black",
-  "--pf2e-bestiary-tracking-accent-icon": "gold",
-};
-
-const nebula = {
-  "--pf2e-bestiary-tracking-application-image":
-    "modules/pf2e-bestiary-tracking/assets/Space.webp",
-  "--pf2e-bestiary-tracking-application-header": "transparent",
-  "--pf2e-bestiary-tracking-application-image-size": "cover",
-  "--pf2e-bestiary-tracking-application-image-repeat": "round",
-  "--pf2e-bestiary-tracking-application-secondary-image":
-    "linear-gradient(#8a549c, #9198e5)",
-  "--pf2e-bestiary-tracking-application": "",
-  "--pf2e-bestiary-tracking-secondary-application": "",
-  "--pf2e-bestiary-tracking-primary-outline": "drop-shadow(0 0 3px grey)",
-  "--pf2e-bestiary-tracking-primary": "rgb(115 169 188)",
-  "--pf2e-bestiary-tracking-primary-faded": "rgb(115 169 188 / 50%)",
-  "--pf2e-bestiary-tracking-secondary": "#cd7e23",
-  "--pf2e-bestiary-tracking-tertiary": "#7476a6",
-  "--pf2e-bestiary-tracking-primary-accent": "#0888b5",
-  "--pf2e-bestiary-tracking-tertiary-accent": "#888bc0",
-  "--pf2e-bestiary-tracking-primary-color": "rgb(247, 243, 232)",
-  "--pf2e-bestiary-tracking-icon-filter": "none",
-  "--pf2e-bestiary-tracking-main-hover": "",
-  "--pf2e-bestiary-tracking-border": "#e4e41e",
-  "--pf2e-bestiary-tracking-secondary-border": "gold",
-  "--pf2e-bestiary-tracking-application-border": "#e4e41e",
-  "--pf2e-bestiary-tracking-icon": "",
-  "--pf2e-bestiary-tracking-accent-icon": "",
-};
-
-const viscera = {
-  "--pf2e-bestiary-tracking-application-image":
-    "modules/pf2e-bestiary-tracking/assets/Viscera.webp",
-  "--pf2e-bestiary-tracking-application-header": "transparent",
-  "--pf2e-bestiary-tracking-application-image-size": "cover",
-  "--pf2e-bestiary-tracking-application-image-repeat": "initial",
-  "--pf2e-bestiary-tracking-application-secondary-image": "",
-  "--pf2e-bestiary-tracking-application": "",
-  "--pf2e-bestiary-tracking-secondary-application": "",
-  "--pf2e-bestiary-tracking-primary-outline": "drop-shadow(0 0 3px grey)",
-  "--pf2e-bestiary-tracking-primary": "rgb(129 63 63)",
-  "--pf2e-bestiary-tracking-primary-faded": "rgb(129 63 63 / 50%)",
-  "--pf2e-bestiary-tracking-secondary": "#483c70",
-  "--pf2e-bestiary-tracking-tertiary": "crimson",
-  "--pf2e-bestiary-tracking-primary-accent": "#9f2828",
-  "--pf2e-bestiary-tracking-tertiary-accent": "#c12c2c",
-  "--pf2e-bestiary-tracking-primary-color": "white",
-  "--pf2e-bestiary-tracking-icon-filter": "none",
-  "--pf2e-bestiary-tracking-main-hover": "red",
-  "--pf2e-bestiary-tracking-border": "orange",
-  "--pf2e-bestiary-tracking-secondary-border": "gold",
-  "--pf2e-bestiary-tracking-application-border": "orange",
-  "--pf2e-bestiary-tracking-icon": "",
-  "--pf2e-bestiary-tracking-accent-icon": "",
-};
-
-const water = {
-  "--pf2e-bestiary-tracking-application-image":
-    "modules/pf2e-bestiary-tracking/assets/Water.webp",
-  "--pf2e-bestiary-tracking-application-header": "transparent",
-  "--pf2e-bestiary-tracking-application-image-size": "cover",
-  "--pf2e-bestiary-tracking-application-image-repeat": "initial",
-  "--pf2e-bestiary-tracking-application-secondary-image": "",
-  "--pf2e-bestiary-tracking-application": "",
-  "--pf2e-bestiary-tracking-secondary-application": "",
-  "--pf2e-bestiary-tracking-primary-outline": "drop-shadow(0 0 3px grey)",
-  "--pf2e-bestiary-tracking-primary": "rgb(28 166 113)",
-  "--pf2e-bestiary-tracking-primary-faded": "rgb(28 166 113 / 50%)",
-  "--pf2e-bestiary-tracking-secondary": "#8b0d8b",
-  "--pf2e-bestiary-tracking-tertiary": "#602fa1",
-  "--pf2e-bestiary-tracking-primary-accent": "#0f7e2fbf",
-  "--pf2e-bestiary-tracking-tertiary-accent": "#681ad1",
-  "--pf2e-bestiary-tracking-primary-color": "rgb(247, 243, 232)",
-  "--pf2e-bestiary-tracking-icon-filter": "none",
-  "--pf2e-bestiary-tracking-main-hover": "white",
-  "--pf2e-bestiary-tracking-border": "#c7ffed",
-  "--pf2e-bestiary-tracking-secondary-border": "gold",
-  "--pf2e-bestiary-tracking-application-border": "#c7ffed",
-  "--pf2e-bestiary-tracking-icon": "",
-  "--pf2e-bestiary-tracking-accent-icon": "",
-};
-
-const subsystemsThemes = {
-  coreLight: coreLight,
-  coreDark: coreDark,
-  nebula: nebula,
-  viscera: viscera,
-  water: water,
-};
-
-const subsystemsThemeChoices = {
-  coreLight: "Core Light",
-  coreDark: "Core Dark",
-  nebula: "Nebula",
-  viscera: "Viscera",
-  water: "Water",
-};
-
 const currentVersion = '0.5.0';
 
-const setupTheme = (theme) => {
-    const root = document.querySelector(":root");
-    for (var property of Object.keys(theme)) {
-      if (
-        property === "--pf2e-bestiary-tracking-application-image" &&
-        theme[property] !== "ignore"
-      ) {
-        const baseUri = document.baseURI.split("game")[0];
-        root.style.setProperty(property, `url("${baseUri}${theme[property]}")`);
-      } else {
-        root.style.setProperty(property, theme[property]);
-      }
-    }
-  };
-  
-  const registerKeyBindings = () => {
-    game.keybindings.register(MODULE_ID, "open-system-view", {
-      name: game.i18n.localize("PF2ESubsystems.KeyBindings.OpenSystemView.Name"),
-      hint: game.i18n.localize("PF2ESubsystems.KeyBindings.OpenSystemView.Hint"),
-      uneditable: [],
-      editable: [],
-      onDown: () =>
-        game.modules.get(MODULE_ID).macros.openSubsystemView(),
-      onUp: () => {},
-      restricted: false,
-      reservedModifiers: [],
-      precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL,
-    });
-  };
-  
-  const registerGameSettings = () => {
-    configSettings();
-    generalNonConfigSettings();
-  };
+const registerKeyBindings = () => {
+  game.keybindings.register(MODULE_ID, "open-system-view", {
+    name: game.i18n.localize("PF2ESubsystems.KeyBindings.OpenSystemView.Name"),
+    hint: game.i18n.localize("PF2ESubsystems.KeyBindings.OpenSystemView.Hint"),
+    uneditable: [],
+    editable: [],
+    onDown: () =>
+      game.modules.get(MODULE_ID).macros.openSubsystemView(),
+    onUp: () => {},
+    restricted: false,
+    reservedModifiers: [],
+    precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL,
+  });
+};
 
-  const configSettings = () => {
-    game.settings.register(MODULE_ID, "subsystems-theme", {
-      name: "Subsystems Theme",
-      hint: "",
-      scope: "client",
-      config: true,
-      type: new foundry.data.fields.StringField({
-        choices: subsystemsThemeChoices,
-        required: true,
-      }),
-      requiresReload: true,
-      onChange: async (value) => {
-        if (!value) return;
-  
-        game.user.setFlag(MODULE_ID, "subsystems-theme", value);
-      },
-      default: "default",
-    });
-  };
+const registerGameSettings = () => {
+  generalNonConfigSettings();
+};
 
-  const generalNonConfigSettings = () => {
-    game.settings.register(MODULE_ID, "subsystems-default-theme", {
-      name: 'Subsystems Default Theme',
-      hint: '',
-      scope: "world",
-      config: true,
-      type: new foundry.data.fields.StringField({
-        choices: subsystemsThemeChoices,
-        required: true,
-      }),
-      requiresReload: true,
-      default: "coreLight",
-    });
-
-    game.settings.register(MODULE_ID, "chase", {
-      name: "",
-      hint: "",
-      scope: "world",
-      config: false,
-      type: Chases,
-      default: { events: {} },
-    });
-  };
+const generalNonConfigSettings = () => {
+  game.settings.register(MODULE_ID, "chase", {
+    name: "",
+    hint: "",
+    scope: "world",
+    config: false,
+    type: Chases,
+    default: { events: {} },
+  });
+};
 
 async function updateDataModel(setting, data){
     const currentSetting = game.settings.get(MODULE_ID, setting);
@@ -1317,25 +1130,5 @@ Hooks.once("ready", async () => {
     game.modules.get("pf2e-subsystems").macros = macros;
 
     handleMigration();
-});
-
-Hooks.once("setup", async () => {
-    const userTheme = game.user.getFlag(
-        MODULE_ID,
-        "subsystems-theme",
-      );
-      if (userTheme) {
-        await game.settings.set(MODULE_ID, "subsystems-theme", userTheme);
-      }
-    
-      const selectedTheme = game.settings.get(
-        MODULE_ID,
-        "subsystems-theme",
-      );
-      const theme =
-        selectedTheme === "default"
-          ? game.settings.get(MODULE_ID, "subsystems-default-theme")
-          : selectedTheme;
-    setupTheme(subsystemsThemes[theme]);
 });
 //# sourceMappingURL=Subsystems.js.map

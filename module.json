@@ -25,6 +25,16 @@
           "verified": "6.10.2"
         }
       }
+    ],
+    "requires": [
+      {
+        "id": "pf2e-subsystem-theming",
+        "type": "module",
+        "manifest": "https://github.com/WBHarry/pf2e-subsystem-theming/releases/latest/download/module.json",
+        "compatibility": {
+          "verified": "0.9.0"
+        }
+      }
     ]
   },
   "packs": [
