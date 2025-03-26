@@ -27,13 +27,13 @@ export const setupTheme = (theme) => {
   };
   
   export const registerKeyBindings = () => {
-    game.keybindings.register("pf2e-subsystems", "open-system-view", {
+    game.keybindings.register(MODULE_ID, "open-system-view", {
       name: game.i18n.localize("PF2ESubsystems.KeyBindings.OpenSystemView.Name"),
       hint: game.i18n.localize("PF2ESubsystems.KeyBindings.OpenSystemView.Hint"),
       uneditable: [],
       editable: [],
       onDown: () =>
-        game.modules.get("pf2e-subsystems").macros.openSubsystemView(),
+        game.modules.get(MODULE_ID).macros.openSubsystemView(),
       onUp: () => {},
       restricted: false,
       reservedModifiers: [],
@@ -48,7 +48,7 @@ export const setupTheme = (theme) => {
 
   const configSettings = () => {
     game.settings.register(MODULE_ID, "subsystems-theme", {
-      name: "Theme",
+      name: "Subsystems Theme",
       hint: "",
       scope: "client",
       config: true,
@@ -67,6 +67,19 @@ export const setupTheme = (theme) => {
   }
 
   const generalNonConfigSettings = () => {
+    game.settings.register(MODULE_ID, "subsystems-default-theme", {
+      name: 'Subsystems Default Theme',
+      hint: '',
+      scope: "world",
+      config: true,
+      type: new foundry.data.fields.StringField({
+        choices: subsystemsThemeChoices,
+        required: true,
+      }),
+      requiresReload: true,
+      default: "coreLight",
+    });
+
     game.settings.register(MODULE_ID, "chase", {
       name: "",
       hint: "",
