@@ -1,6 +1,6 @@
 <div class="event-tab tab {{tab.cssClass}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
     {{#if (not this.selectedEvent)}}
-        {{> "modules/pf2e-subsystems/templates/partials/events.hbs" tab=this.tab name=(localize "PF2ESubsystems.Events.Chase.Single") events=this.events }}
+        {{> "modules/pf2e-subsystems/templates/partials/events.hbs" tab=this.tab name=(localize "PF2ESubsystems.Events.Chase.Single") plural=(localize "PF2ESubsystems.Events.Chase.Plural") events=this.events }}
     {{else}}
         {{> "modules/pf2e-subsystems/templates/system-view/systems/chase/chase.hbs" editMode=this.editMode event=this.selectedEvent currentObstacleNr=this.currentObstacleNr currentObstacle=this.currentObstacle isGM=this.isGM }}
     {{/if}}

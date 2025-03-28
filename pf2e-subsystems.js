@@ -18,6 +18,7 @@ Hooks.once("init", () => {
       "modules/pf2e-subsystems/templates/system-view/systems/chase/chase.hbs",
       "modules/pf2e-subsystems/templates/system-view/systems/chase/chaseDataDialog.hbs",
       "modules/pf2e-subsystems/templates/system-view/systems/chase/participantDataDialog.hbs",
+      "modules/pf2e-subsystems/templates/system-view/systems/research/research.hbs",
     ]);
 });
 

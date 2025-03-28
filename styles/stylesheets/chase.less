@@ -3,80 +3,20 @@
 .pf2e-subsystems {
     .chase-view {
         height: 100%;
-
-        .chase-outer-container {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: @gapNormal;
-
-            .chase-header-container {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: @gapLarge;
-
-                .chase-header-title-container {
-                    flex: 1;
-                    display: flex;
-                    align-items: center;
-
-                    .chase-header-title {
-                        flex: 1;
-                        border-width: @borderNormal;
-                        border-style: solid;
-                        border-radius: @borderRadiusNormal;
-                        padding: @paddingNormal;
-                        min-width: 120px;
-                        text-align: center;
-                    }
-                }
-
-                .chase-header-toolbar {
-                    display: flex;
-                    align-items: center;
-                    gap: @gapSmall;
-                    flex-wrap: nowrap;
-                    white-space: nowrap;
-                    border-width: @borderNormal;
-                    border-style: solid;
-                    border-radius: @borderRadiusNormal;
-                    padding: @paddingNormal;
-                }
-            }
-
+        .event-outer-container {
             .chase-action-container {
                 display: flex;
                 align-items: center;
             }
 
-            .chase-container {
-                flex: 1;
-                display: flex;
-                gap: @gapLarge;
-                
-                .chase-sidebar {
-                    width: 200px;
-                    display: flex;
-                    flex-direction: column;
-                    gap: @gapLarge;
-
+            .event-container {                
+                .event-sidebar {
                     .description-outer-container {
                         border-width: 2px;
                         border-style: outset;
                         border-radius: 4px;
 
-                        .description-title-container {
-                            position: relative;
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                            gap: @gapSmall;
-                            text-align: center;
-                            height: 45px;
-                            border-bottom-width: 1px;
-                            border-bottom-style: solid;
-
+                        .title-container {
                             .description-title-inner-container {
                                 flex: 1;
                                 display: flex;
@@ -114,17 +54,7 @@
                         border-style: outset;
                         border-radius: @borderRadiusNormal;
 
-                        .partcipants-title-container {
-                            position: relative;
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                            gap: @gapSmall;
-                            text-align: center;
-                            height: 45px;
-                            border-bottom-width: 1px;
-                            border-bottom-style: solid;
-
+                        .title-container {
                             .participants-title-inner-container {
                                 flex: 1;
                                 width: 100%;
@@ -245,12 +175,7 @@
                     }
                 }
 
-                .chase-main-container {
-                    flex: 1;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 6px;
-
+                .event-main-container {
                     .chase-event-container {
                         margin: 0;
                         flex: 1;
@@ -274,16 +199,8 @@
                             }
                         }
     
-                        .chase-event-header {
-                            position: relative;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            height: 45px;
-                            border-bottom-width: 1px;
-                            border-bottom-style: solid;
-                            padding: @gapNormal;
-                            margin-top: -4px;
+                        .title-container {
+                            margin-top: -6px;
     
                             .chase-event-header-inner {
                                 display: flex;

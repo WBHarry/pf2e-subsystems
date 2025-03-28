@@ -8,6 +8,7 @@ const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
 const getDefaultSelected = (event) => ({
   event: event ?? null,
   chaseObstacle: 1,
+  research: {},
 });
 
 export default class SystemView extends HandlebarsApplicationMixin(
@@ -66,7 +67,18 @@ export default class SystemView extends HandlebarsApplicationMixin(
         setCurrentObstacle: this.setCurrentObstacle,
         onToggleObstacleLock: this.onToggleObstacleLock,
         updateChasePoints: this.updateChasePoints,
-        /*  */
+        /* Research */
+        addResearchBreakpoint: this.addResearchBreakpoint,
+        researchUpdateResearchPoints: this.researchUpdateResearchPoints,
+        removeResearchBreakpoint: this.removeResearchBreakpoint,
+        toggleResearchBreakpointHidden: this.toggleResearchBreakpointHidden,
+        addResearchCheck: this.addResearchCheck,
+        removeResearchCheck: this.removeResearchCheck,
+        toggleResearchCheckHidden: this.toggleResearchCheckHidden,
+        researchToggleOpenResearchCheck: this.researchToggleOpenResearchCheck,
+        researchAddResearchCheckSkillCheck: this.researchAddResearchCheckSkillCheck,
+        researchRemoveResearchCheckSkillCheck: this.researchRemoveResearchCheckSkillCheck,
+        researchToggleResearchCheckSkillCheckHidden: this.researchToggleResearchCheckSkillCheckHidden,
       },
       form: { handler: this.updateData, submitOnChange: true },
       window: {
@@ -83,6 +95,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
         id: 'chase',
         template: "modules/pf2e-subsystems/templates/system-view/systems/chase/chases.hbs",
       },
+      research: {
+        id: 'research',
+        template: "modules/pf2e-subsystems/templates/system-view/systems/research/researches.hbs",
+      },
     };
 
     tabGroups = {
@@ -90,7 +106,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
     };
 
     getTabs() {
-      const tabs = {
+      let tabs = {
         systemView: {
           active: true,
           cssClass: '',
@@ -128,9 +144,32 @@ export default class SystemView extends HandlebarsApplicationMixin(
           icon: null,
           label: game.i18n.localize('PF2ESubsystems.Events.Research.Plural'),
           image: 'icons/skills/trades/academics-merchant-scribe.webp',
-          disabled: true,
         },
       };
+
+      const researchTabs = {
+        description: {
+          active: true,
+          cssClass: '',
+          group: 'influenceResearchChecks',
+          id: 'description',
+          icon: null,
+          label: game.i18n.localize('PF2ESubsystems.Research.ResearchCheckTab.Description'),
+        },
+        skillChecks: {
+          active: true,
+          cssClass: '',
+          group: 'influenceResearchChecks',
+          id: 'skillChecks',
+          icon: null,
+          label: game.i18n.localize('PF2ESubsystems.Research.ResearchCheckTab.SkillChecks'),
+        }
+      };
+
+      tabs = {
+        ...tabs,
+        ...researchTabs,
+      }
   
       for (const v of Object.values(tabs)) {
         v.active = this.tabGroups[v.group]
@@ -161,6 +200,23 @@ export default class SystemView extends HandlebarsApplicationMixin(
     static selectEvent(_, button){
       this.selected.event = button.dataset.event;
       this.render({ parts: [this.tabGroups.main] });
+    }
+
+    filePickerListener(dialog) {
+      return $(dialog.element).find('[data-action="browseBackground"]').on('click', event => {
+        event.preventDefault();
+        const current = 'icons/svg/cowled.svg';
+        new FilePicker({
+          current,
+          type: "image",
+          redirectToRoot: current ? [current] : [],
+          callback: async path => {
+            $(dialog.element).find('[name="background"]')[0].value = path;
+          },
+          top: this.position.top + 40,
+          left: this.position.left + 10
+        }).browse();
+      });
     }
 
     async getEventDialogData(existing) {
@@ -195,32 +251,33 @@ export default class SystemView extends HandlebarsApplicationMixin(
                     locked: false,
                   }
                 },
-                notes: {
-                  player: {
-                    value: '',
-                  },
-                  gm: {
-                    value: '',
-                  }
-                }
               };
             },
-            attachListeners: (dialog) => {
-              $(dialog.element).find('[data-action="browseBackground"]').on('click', event => {
-                event.preventDefault();
-                const current = 'icons/svg/cowled.svg';
-                new FilePicker({
-                  current,
-                  type: "image",
-                  redirectToRoot: current ? [current] : [],
-                  callback: async path => {
-                    $(dialog.element).find('[name="background"]')[0].value = path;
-                  },
-                  top: this.position.top + 40,
-                  left: this.position.left + 10
-                }).browse();
-              });
+            attachListeners: this.filePickerListener,
+          };
+        case 'research':
+          return {  
+            content: await renderTemplate("modules/pf2e-subsystems/templates/system-view/systems/chase/chaseDataDialog.hbs", { name: existing?.name, background: existing?.background }),
+            title: game.i18n.localize(existing ? 'PF2ESubsystems.Research.EditResearch' : 'PF2ESubsystems.Research.CreateResearch'),
+            callback: (button) => {
+              const elements = button.form.elements;
+              if (existing){
+                return {
+                  ...existing,
+                  name: elements.name.value,
+                  background: elements.background.value,
+                }
+              }
+
+              const obstacleId = foundry.utils.randomID();
+              return {
+                id: foundry.utils.randomID(),
+                name: elements.name.value ? elements.name.value : game.i18n.localize('PF2ESubsystems.View.NewEvent'),
+                version: currentVersion,
+                background: elements.background.value ? elements.background.value : 'icons/skills/trades/academics-merchant-scribe.webp',
+              };
             },
+            attachListeners: this.filePickerListener,
           };
       }
     }
@@ -543,6 +600,75 @@ export default class SystemView extends HandlebarsApplicationMixin(
       this.updateView();
     }
 
+    static async addResearchBreakpoint(_, button) {
+      const breakpointId = foundry.utils.randomID();
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchBreakpoints.${breakpointId}`]: {
+        id: breakpointId,
+      }});
+      this.updateView();
+    }
+
+    static async researchUpdateResearchPoints(_, button) {
+      const currentResearchPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchPoints;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchPoints`]: button.dataset.increase ? currentResearchPoints + 1 : currentResearchPoints - 1});
+      this.updateView();
+    }
+
+    static async removeResearchBreakpoint(_, button){
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchBreakpoints.-=${button.dataset.breakpoint}`]: null});
+      this.updateView();
+    }
+
+    static async toggleResearchBreakpointHidden(_, button) {
+      const currentBreakpoint = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchBreakpoints[button.dataset.breakpoint];
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchBreakpoints.${button.dataset.breakpoint}.hidden`]: !currentBreakpoint.hidden })
+      this.updateView();
+    }
+
+    static async addResearchCheck(_, button) {
+      const researchCheckId = foundry.utils.randomID();
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${researchCheckId}`]: {
+        id: researchCheckId,
+      }});
+
+      this.updateView();
+    }
+
+    static async removeResearchCheck(_, button) {
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.-=${button.dataset.check}`]: null });
+      this.updateView();
+    }
+
+    static async toggleResearchCheckHidden(_, button) {
+      const currentResearchCheckHidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchChecks[button.dataset.check].hidden;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.hidden`]: !currentResearchCheckHidden });
+      this.updateView();
+    }
+
+    static async researchToggleOpenResearchCheck(_, button) {
+      this.selected.research.openResearchCheck = this.selected.research.openResearchCheck === button.dataset.check ? null : button.dataset.check;
+      this.render({ parts: [this.tabGroups.main] });
+    }
+
+    static async researchAddResearchCheckSkillCheck(_, button) {
+      const checkId = foundry.utils.randomID();
+      await updateDataModel(this.tabGroups.main, {[`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.${checkId}`]: {
+        id: checkId,
+      }});
+      this.updateView();
+    }
+
+    static async researchRemoveResearchCheckSkillCheck(_, button) {
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.-=${button.dataset.skillCheck}`]: null});
+      this.updateView();
+    }
+
+    static async researchToggleResearchCheckSkillCheckHidden(_, button) {
+      const checkhidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchChecks[button.dataset.check].skillChecks[button.dataset.skillCheck].hidden;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.${button.dataset.skillCheck}.hidden`]: !checkhidden });
+      this.updateView();
+    }
+
     _attachPartListeners(partId, htmlElement, options) {
       super._attachPartListeners(partId, htmlElement, options);
 
@@ -593,11 +719,11 @@ export default class SystemView extends HandlebarsApplicationMixin(
         case 'systemView': 
           break;
         case 'chase': 
-          const { events } = game.settings.get(MODULE_ID, 'chase');
+          const { events: chaseEvents } = game.settings.get(MODULE_ID, 'chase');
           
-          context.events = events;
+          context.events = chaseEvents;
           context.tab = context.systems.chase;
-          context.selectedEvent = context.selected.event ? Object.values(events).find(x => x.id === context.selected.event) : undefined;
+          context.selectedEvent = context.selected.event ? Object.values(chaseEvents).find(x => x.id === context.selected.event) : undefined;
           if(context.selectedEvent) {
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
           }
@@ -607,6 +733,41 @@ export default class SystemView extends HandlebarsApplicationMixin(
           if(context.currentObstacle) {
             context.currentObstacle.enrichedOvercome = await TextEditor.enrichHTML(context.currentObstacle.overcome);
           }
+
+          break;
+        case 'research': 
+          const { events: researchEvents } = game.settings.get(MODULE_ID, 'research');
+            
+          context.events = researchEvents;
+          context.tab = context.systems.research;
+          context.selectedEvent = context.selected.event ? Object.values(researchEvents).find(x => x.id === context.selected.event) : undefined;
+          if(context.selectedEvent) {
+            context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
+          
+            for(var key of Object.keys(context.selectedEvent.researchChecks)) {
+              context.selectedEvent.researchChecks[key].enrichedDescription = await TextEditor.enrichHTML(context.selectedEvent.researchChecks[key].description);
+            }
+
+            for(var key of Object.keys(context.selectedEvent.researchChecks)){
+              const researchCheck = context.selectedEvent.researchChecks[key];
+              for(var checkKey of Object.keys(researchCheck.skillChecks)) {
+                const checkSkill = researchCheck.skillChecks[checkKey];
+                checkSkill.element = await TextEditor.enrichHTML(`@Check[type:${checkSkill.skill}|dc:${checkSkill.dc}|simple:${checkSkill.simple}]`);
+              }
+            }
+          }
+
+          context.revealedResearchChecks = context.selectedEvent ? Object.values(context.selectedEvent.researchChecks).filter(x => !x.hidden).length : 0;
+          context.revealedResearchBreakpoints = context.selectedEvent ? Object.values(context.selectedEvent.researchBreakpoints).filter(x => !x.hidden).length : 0;
+          context.revealedResearchEvents = context.selectedEvent ? Object.values(context.selectedEvent.researchEvents).filter(x => !x.hidden).length : 0;
+          context.selected = this.selected.research;
+          context.skillOptions = [
+            ...Object.keys(CONFIG.PF2E.skills).map((skill) => ({
+              value: skill,
+              name: CONFIG.PF2E.skills[skill].label,
+            })),
+            { value: "perception", name: "PF2E.PerceptionLabel" },
+          ];
 
           break;
       }
@@ -660,11 +821,15 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
     onUpdateSystemView(tab){
       if(this.tabGroups.main === tab){
-        if(this.selected.event) {
-          const nrObstacles = Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event].obstacles).length;
-          this.selected.chaseObstacle = this.selected.chaseObstacle > nrObstacles ? this.selected.chaseObstacle-1 : this.selected.chaseObstacle; 
+        switch(this.tabGroups.main){
+          case 'chase':
+            if(this.selected.event) {
+              const nrObstacles = Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event].obstacles).length;
+              this.selected.chaseObstacle = this.selected.chaseObstacle > nrObstacles ? this.selected.chaseObstacle-1 : this.selected.chaseObstacle; 
+            }
+            break;
         }
-        
+
         this.render({ parts: [this.tabGroups.main] });
       }
     }

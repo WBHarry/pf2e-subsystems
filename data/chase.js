@@ -42,14 +42,6 @@ export class Chase extends foundry.abstract.DataModel {
           }),
           overcome: new fields.HTMLField({}),
         })),
-        notes: new fields.SchemaField({
-          player: new fields.SchemaField({
-            value: new fields.HTMLField({ required: true, initial: "" }),
-          }),
-          gm: new fields.SchemaField({
-            value: new fields.HTMLField({ required: true, initial: "" }),
-          }),
-        }),
       }
     }
 

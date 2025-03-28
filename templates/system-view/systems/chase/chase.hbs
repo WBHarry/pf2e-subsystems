@@ -1,21 +1,15 @@
-<div class="chase-outer-container">
-    
-    <div class="chase-header-navigation">
-        {{> "modules/pf2e-subsystems/templates/partials/navigate-back.hbs" label=(localize "PF2ESubsystems.Chase.NavigateBack") action="navigateToSystem" }}
-    </div>
-    <div class="chase-container">
-        <div class="chase-sidebar">
+<div class="event-outer-container">
+    {{> "modules/pf2e-subsystems/templates/partials/navigate-back.hbs" label=(localize "PF2ESubsystems.Chase.NavigateBack") action="navigateToSystem" }}
+    <div class="event-container">
+        <div class="event-sidebar">
             <div class="description-outer-container primary-container active">
-                <div class="description-title-container primary-container">
+                <div class="title-container primary-container">
                     <div class="description-title-inner-container">
                         <h4 class="primary-text-container">{{localize "PF2ESubsystems.Chase.Premise"}}</h4>
                     </div>
                 </div>
                 <div class="description-container">
                     {{#if this.editMode}}
-                        {{!-- <prose-mirror class="data-input" name="{{concat "events." this.event.id ".premise"}}" value="{{this.event.premise}}">
-                            {{{this.event.enrichedPremise}}}
-                        </prose-mirror> --}}
                         <textarea class="secondary-container" name="{{concat "events." this.event.id ".premise"}}" value="{{this.event.premise}}">{{{this.event.enrichedPremise}}}</textarea>
                     {{else}}
                         <span class="text-container">{{{this.event.enrichedPremise}}}</span>
@@ -23,7 +17,7 @@
                 </div>
             </div>
             <div class="participants-outer-container primary-container active">
-                <div class="partcipants-title-container primary-container">
+                <div class="title-container primary-container">
                     <div class="participants-title-inner-container {{#if (not this.isGM)}}standalone{{/if}}">
                         {{#if this.editMode}}
                             <div class="participants-party-container clickable-icon" title="{{localize "PF2ESubsystems.Chase.AddAllPlayers"}}" data-action="addPlayerParticipants" data-event="{{this.event.id}}">
@@ -76,19 +70,19 @@
                 </div>
             </div>
         </div>
-        <div class="chase-main-container">
-            <div class="chase-header-container">
-                <div class="chase-header-title-container">
-                    <div class="chase-header-title title-container secondary-container">{{this.event.name}}</div>
+        <div class="event-main-container">
+            <div class="event-header-container">
+                <div class="event-header-title-container">
+                    <div class="event-header-title title-container secondary-container">{{this.event.name}}</div>
                 </div>
                 {{#if this.isGM}}
-                    <div class="chase-header-toolbar secondary-container">
+                    <div class="event-header-toolbar secondary-container">
                         <button class="tertiary-container" data-action="startEvent" data-event="{{this.event.id}}">{{localize "PF2ESubsystems.Chase.StartChase"}}</button>
                         <div class="toggle-switch">
                             <i class="fa-solid fa-screwdriver-wrench"></i>
                             <input type="checkbox" name="editMode" {{checked this.editMode}} title="{{localize "PF2ESubsystems.View.ToggleEditMode"}}" />
                         </div>
-                        <i class="fa-solid fa-passport primary-hover-container" data-action="copyStartEventLink" data-event="{{this.event.id}}" title="{{localize "PF2ESubsystems.Chase.CopyStartEventLink"}}"></i>
+                        <i class="fa-solid fa-passport primary-hover-container" data-action="copyStartEventLink" data-event="{{this.event.id}}" title="{{localize "PF2ESubsystems.View.CopyStartEventLink"}}"></i>
                     </div>
                 {{/if}}
             </div>
@@ -101,7 +95,7 @@
                     {{/each}}
                     {{#if this.editMode}}<i class="fa-solid fa-plus chase-event-display-add clickable-icon" data-action="addObstacle" data-event="{{this.event.id}}" title="{{localize "PF2ESubsystems.Chase.AddObstacle"}}"></i>{{/if}}
                 </legend>
-                <div class="chase-event-header primary-container">
+                <div class="title-container primary-container">
                     <div class="chase-event-header-inner">
                         <div class="chase-event-header-title primay-text-container">
                             {{#if this.editMode}}

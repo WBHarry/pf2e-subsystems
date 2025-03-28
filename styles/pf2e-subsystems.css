@@ -68,8 +68,12 @@ form.pf2e-subsystems.application > header .header-control {
   border-color: var(--pf2e-subsystem-theming-border);
   color: var(--pf2e-subsystem-theming-primary-color);
 }
-.pf2e-subsystems .tertiary-container.active,
-.pf2e-subsystems input.tertiary-container.active {
+.pf2e-subsystems .tertiary-container.active:not(.editor),
+.pf2e-subsystems input.tertiary-container.active:not(.editor) {
+  background-color: var(--pf2e-subsystem-theming-tertiary-accent);
+}
+.pf2e-subsystems .tertiary-container.active > .editor-menu,
+.pf2e-subsystems input.tertiary-container.active > .editor-menu {
   background-color: var(--pf2e-subsystem-theming-tertiary-accent);
 }
 .pf2e-subsystems .tertiary-container .data-icon,
@@ -163,6 +167,22 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems .bookmark:hover {
   background-color: var(--pf2e-subsystem-theming-primary-accent);
+}
+.pf2e-subsystems.systems-view .window-content {
+  overflow: visible;
+  height: calc(100% - 75px);
+}
+.pf2e-subsystems.systems-view .window-header {
+  overflow-y: visible;
+  overflow-x: visible;
+  background-image: var(--pf2e-subsystem-theming-application-header-image);
+  background-size: var(--pf2e-subsystem-theming-application-header-image-size);
+  background-repeat: var(--pf2e-subsystem-theming-application-header-image-repeat);
+  background-position: var(--pf2e-subsystem-theming-application-header-image-position);
+  border-color: var(--pf2e-subsystem-theming-application-border);
+}
+.pf2e-subsystems.systems-view .window-header h1 {
+  text-shadow: 1px 1px 4px var(--pf2e-subsystem-theming-text-shadow);
 }
 .pf2e-subsystems.systems-view .systems-container {
   width: 100%;
@@ -337,27 +357,61 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-container .event-container img {
   max-width: auto;
 }
-.pf2e-subsystems .chase-view {
-  height: 100%;
-}
-.pf2e-subsystems .chase-view .chase-outer-container {
+.pf2e-subsystems.systems-view .event-outer-container {
   height: 100%;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-header-container {
+.pf2e-subsystems.systems-view .event-outer-container .event-container {
+  flex: 1;
+  display: flex;
+  gap: 16px;
+  overflow: hidden;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .title-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+  height: 45px;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-sidebar {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-sidebar .event-image {
+  width: 200px;
+  border-width: 2px;
+  border-style: outset;
+  border-radius: 4px;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: auto;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-container .event-header-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-header-container .chase-header-title-container {
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-container .event-header-container .event-header-title-container {
   flex: 1;
   display: flex;
   align-items: center;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-header-container .chase-header-title-container .chase-header-title {
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-container .event-header-container .event-header-title-container .event-header-title {
   flex: 1;
   border-width: 2px;
   border-style: solid;
@@ -366,7 +420,7 @@ form.pf2e-subsystems.application > header .header-control {
   min-width: 120px;
   text-align: center;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-header-container .chase-header-toolbar {
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-container .event-header-container .event-header-toolbar {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -377,60 +431,41 @@ form.pf2e-subsystems.application > header .header-control {
   border-radius: 4px;
   padding: 4px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-action-container {
+.pf2e-subsystems .chase-view {
+  height: 100%;
+}
+.pf2e-subsystems .chase-view .event-outer-container .chase-action-container {
   display: flex;
   align-items: center;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container {
-  flex: 1;
-  display: flex;
-  gap: 16px;
-}
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar {
-  width: 200px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .description-outer-container {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .description-outer-container {
   border-width: 2px;
   border-style: outset;
   border-radius: 4px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .description-outer-container .description-title-container {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  text-align: center;
-  height: 45px;
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
-}
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .description-outer-container .description-title-container .description-title-inner-container {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .description-outer-container .title-container .description-title-inner-container {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .description-outer-container .description-title-container .description-title-inner-container h4 {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .description-outer-container .title-container .description-title-inner-container h4 {
   margin: 0;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .description-outer-container .description-container {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .description-outer-container .description-container {
   display: flex;
   flex-direction: column;
   height: 200px;
   padding: 4px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .description-outer-container .description-container textarea {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .description-outer-container .description-container textarea {
   flex: 1;
   padding: 4px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .description-outer-container .description-container .text-container {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .description-outer-container .description-container .text-container {
   font-style: italic;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -438,18 +473,7 @@ form.pf2e-subsystems.application > header .header-control {
   border-style: outset;
   border-radius: 4px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .partcipants-title-container {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  text-align: center;
-  height: 45px;
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
-}
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .partcipants-title-container .participants-title-inner-container {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .title-container .participants-title-inner-container {
   flex: 1;
   width: 100%;
   display: flex;
@@ -457,49 +481,49 @@ form.pf2e-subsystems.application > header .header-control {
   justify-content: space-between;
   padding: 0 8px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .partcipants-title-container .participants-title-inner-container.standalone {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .title-container .participants-title-inner-container.standalone {
   justify-content: center;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .partcipants-title-container .participants-title-inner-container .participants-party-container {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .title-container .participants-title-inner-container .participants-party-container {
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 16px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .partcipants-title-container .participants-title-inner-container .participants-party-container .participant-party-control-upper {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .title-container .participants-title-inner-container .participants-party-container .participant-party-control-upper {
   position: absolute;
   top: 0px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .partcipants-title-container .participants-title-inner-container .participants-party-container .participant-party-control-lower {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .title-container .participants-title-inner-container .participants-party-container .participant-party-control-lower {
   position: absolute;
   bottom: 0px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .partcipants-title-container .participants-title-inner-container h4 {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .title-container .participants-title-inner-container h4 {
   margin: 0;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .partcipants-title-container .participants-title-inner-container .participants-title-add {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .title-container .participants-title-inner-container .participants-title-add {
   font-size: 16px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .partcipants-title-container .participants-helper-text {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .title-container .participants-helper-text {
   position: absolute;
   bottom: 0;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .participants-container {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container {
   flex: 1;
   padding: 8px;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .participants-container .participant-container {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container .participant-container {
   display: flex;
   align-items: center;
   border-width: 2px;
   border-style: outset;
   border-radius: 6px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .participants-container .participant-container img {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container .participant-container img {
   width: 42px;
   height: 40px;
   border-radius: 6px 0 0 6px;
@@ -507,53 +531,47 @@ form.pf2e-subsystems.application > header .header-control {
   border-right: 2px black;
   border-right-style: double;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container {
   flex: 1;
   height: 100%;
   padding: 0 4px;
   display: flex;
   align-items: center;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-data-container-label {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-data-container-label {
   flex: 1;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar {
   position: relative;
   display: flex;
   justify-content: center;
   gap: 4px;
   font-size: 16px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar.editing {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar.editing {
   flex-direction: column;
   margin: -3px -3px -3px 0;
   height: 100%;
   gap: 0px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar.editing button {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar.editing button {
   flex: 1;
   padding: 0;
   margin: 0;
   width: 24px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar.editing button i {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar.editing button i {
   margin: 0;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar .participant-control-upper {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar .participant-control-upper {
   position: absolute;
   top: -9px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar .participant-control-lower {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar .participant-control-lower {
   position: absolute;
   bottom: -10px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container {
   margin: 0;
   flex: 1;
   display: flex;
@@ -563,7 +581,7 @@ form.pf2e-subsystems.application > header .header-control {
   border-radius: 4px;
   padding: 0;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container .chase-event-display {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .chase-event-display {
   position: relative;
   margin: 0 auto;
   display: flex;
@@ -571,44 +589,36 @@ form.pf2e-subsystems.application > header .header-control {
   gap: 4px;
   z-index: 2;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container .chase-event-display .chase-event-display-add {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .chase-event-display .chase-event-display-add {
   font-size: 10px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container .chase-event-header {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 45px;
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
-  padding: 8px;
-  margin-top: -4px;
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .title-container {
+  margin-top: -6px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container .chase-event-header .chase-event-header-inner {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .title-container .chase-event-header-inner {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container .chase-event-header .chase-event-header-inner .chase-event-header-title {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .title-container .chase-event-header-inner .chase-event-header-title {
   position: relative;
   display: flex;
   align-items: center;
   text-align: center;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container .chase-event-header .chase-event-header-inner .chase-event-header-title .chase-event-header-title-delete {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .title-container .chase-event-header-inner .chase-event-header-title .chase-event-header-title-delete {
   position: absolute;
   right: -24px;
   font-size: 20px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container .chase-event-header .chase-event-lock {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .title-container .chase-event-lock {
   position: absolute;
   top: 4px;
   right: 4px;
   font-size: 24px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container .chase-event-inner-container {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .chase-event-inner-container {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -616,12 +626,12 @@ form.pf2e-subsystems.application > header .header-control {
   padding: 8px;
   gap: 8px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container .chase-event-inner-container img {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .chase-event-inner-container img {
   width: 60%;
   border: 0;
   border-radius: 6px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container .chase-event-inner-container .chase-event-chase-points-container {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .chase-event-inner-container .chase-event-chase-points-container {
   position: relative;
   display: flex;
   align-items: center;
@@ -629,12 +639,12 @@ form.pf2e-subsystems.application > header .header-control {
   white-space: nowrap;
   font-weight: bold;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container .chase-event-inner-container .chase-event-chase-points-container input {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .chase-event-inner-container .chase-event-chase-points-container input {
   height: 17px;
   width: 40px;
   text-align: center;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container .chase-event-inner-container .chase-event-chase-points-container .chase-event-chase-points-tools {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .chase-event-inner-container .chase-event-chase-points-container .chase-event-chase-points-tools {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -642,21 +652,221 @@ form.pf2e-subsystems.application > header .header-control {
   right: -12px;
   font-size: 12px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container .chase-event-inner-container .chase-event-data-container {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .chase-event-inner-container .chase-event-data-container {
   flex: 1;
   width: 100%;
   border-radius: 4px;
   border-width: 2px;
   border-style: outset;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container .chase-event-inner-container .chase-event-data-container .editor-container {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .chase-event-inner-container .chase-event-data-container .editor-container {
   margin: 0 8px;
 }
-.pf2e-subsystems .chase-view .chase-outer-container .chase-container .chase-main-container .chase-event-container .chase-event-inner-container .chase-event-data-container .text-container {
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .chase-event-inner-container .chase-event-data-container .text-container {
   height: 100%;
   display: flex;
   flex-direction: column;
   padding: 0 8px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-sidebar {
+  gap: 6px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-sidebar .research-points-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  border-width: 2px;
+  border-style: outset;
+  border-radius: 4px;
+  padding: 4px;
+  height: 55px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-sidebar .research-points-container .research-points-number-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-sidebar .research-points-container .research-points-number-container .research-points-number-upper {
+  position: absolute;
+  top: -8px;
+  font-size: 16px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-sidebar .research-points-container .research-points-number-container .research-points-number-lower {
+  position: absolute;
+  bottom: -8px;
+  font-size: 16px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-sidebar .research-premise {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-width: 2px;
+  border-style: outset;
+  border-radius: 4px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-sidebar .research-premise .research-premise-content {
+  flex: 1;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-sidebar .research-premise .research-premise-content textarea {
+  flex: 1;
+  padding: 4px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-sidebar .research-premise .research-premise-content .text-container {
+  font-style: italic;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .title-container .title-container-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .title-container .title-container-inner i {
+  position: absolute;
+  right: -24px;
+  font-size: 24px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container {
+  display: flex;
+  flex-direction: column;
+  border-width: 2px;
+  border-style: outset;
+  border-radius: 4px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container {
+  flex: 1;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-width: 1px;
+  border-style: solid;
+  padding: 4px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-header {
+  position: relative;
+  padding: 0 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-header .form-group {
+  width: 100%;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-header .research-check-subheader {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-header .research-check-delete-button {
+  position: absolute;
+  left: 2px;
+  font-size: 24px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-header .research-check-opener {
+  position: absolute;
+  right: 0;
+  font-size: 32px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-folding {
+  height: 0;
+  overflow: hidden;
+  transition: all 0.5;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-folding.unfolded {
+  height: auto;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-folding .research-check-small-input {
+  padding: 0 32px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-container {
+  border-width: 1px;
+  border-style: solid;
+  margin: 8px 0;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-container .research-check-skill-check-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 0;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-container .research-check-skill-check-title .research-check-skill-check-title-inner {
+  position: relative;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-container .research-check-skill-check-title .research-check-skill-check-title-inner i {
+  position: absolute;
+  right: -24px;
+  font-size: 24px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-breakpoints-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-width: 2px;
+  border-style: outset;
+  border-radius: 4px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-breakpoints-container .research-breakpoints-inner-container {
+  flex: 1;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-breakpoints-container .research-breakpoints-inner-container .research-breakpoint-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  border-width: 1px;
+  border-style: solid;
+  padding: 4px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-breakpoints-container .research-breakpoints-inner-container .research-breakpoint-container .research-breakpoint-number {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-breakpoints-container .research-breakpoints-inner-container .research-breakpoint-container .research-breakpoint-number .research-breakpoint-number-title {
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 4px;
+  padding: 2px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-breakpoints-container .research-breakpoints-inner-container .research-breakpoint-container .research-breakpoint-number input {
+  width: 66px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-breakpoints-container .research-breakpoints-inner-container .research-breakpoint-container textarea {
+  flex: 1;
+  padding: 8px;
+  height: 66px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-breakpoints-container .research-breakpoints-inner-container .research-breakpoint-container .research-breakpoint-text {
+  flex: 1;
+  height: 100%;
+  font-style: italic;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-breakpoints-container .research-breakpoints-inner-container .research-breakpoint-container .research-breakpoint-tool-icon {
+  align-self: center;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-events-container {
+  display: flex;
+  flex-direction: column;
+  border-width: 2px;
+  border-style: outset;
+  border-radius: 4px;
 }
 .clickable-icon {
   cursor: pointer;
@@ -676,6 +886,11 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems .text-helper,
 .pf2e-subsystems input.text-helper {
   font-size: 8px;
+  font-style: italic;
+}
+.pf2e-subsystems .text-helper-big,
+.pf2e-subsystems input.text-helper-big {
+  font-size: 12px;
   font-style: italic;
 }
 .pf2e-subsystems .title-large-container,

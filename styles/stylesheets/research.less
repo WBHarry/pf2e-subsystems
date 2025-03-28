@@ -1,0 +1,247 @@
+.pf2e-subsystems {
+    .research-view {
+        .event-outer-container {
+            .event-container {                
+                .event-sidebar {
+                    gap: 6px;
+
+                    .research-points-container {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        flex-wrap: nowrap;
+                        text-align: center;
+                        font-size: 22px;
+                        font-weight: bold;
+                        border-width: 2px;
+                        border-style: outset;
+                        border-radius: 4px;
+                        padding: @paddingNormal;
+                        height: 55px; // <-- Ugly. Should switch to better flex containers
+
+                        .research-points-number-container {
+                            position: relative;
+                            display: flex;
+                            justify-content: center;
+
+                            .research-points-number-upper {
+                                position: absolute;
+                                top: -8px;
+                                font-size: 16px;
+                            }
+
+                            .research-points-number-lower {
+                                position: absolute;
+                                bottom: -8px;
+                                font-size: 16px;
+                            }
+                        }
+                    }
+
+                    .research-premise {
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
+                        border-width: 2px;
+                        border-style: outset;
+                        border-radius: 4px;
+
+                        .research-premise-content {
+                            flex: 1;
+                            padding: @paddingNormal;
+                            display: flex;
+                            flex-direction: column;
+
+                            textarea {
+                                flex: 1;
+                                padding: @paddingNormal;
+                            }
+
+                            .text-container {
+                                font-style: italic;
+                            }
+                        }
+                    }
+                }
+
+                .event-main-container {
+                    .title-container {
+                        .title-container-inner {
+                            position: relative;
+                            display: flex;
+                            align-items: center;
+
+                            i {
+                                position: absolute;
+                                right: -24px;
+                                font-size: 24px;
+                            }
+                        }
+                    }
+
+                    .research-checks-container {
+                        display: flex;
+                        flex-direction: column;
+                        border-width: 2px;
+                        border-style: outset;
+                        border-radius: 4px;
+
+                        .research-checks-inner-container {
+                            flex: 1;
+                            padding: @paddingNormal;
+                            display: flex;
+                            flex-direction: column;
+
+                            .research-check-container {
+                                display: flex;
+                                flex-direction: column;
+                                gap: @gapSmall;
+                                border-width: 1px;
+                                border-style: solid;
+                                padding: @paddingNormal;
+
+                                .research-check-header {
+                                    position: relative;
+                                    padding: 0 32px;
+                                    display: flex;
+                                    flex-direction: column;
+                                    justify-content: center;
+                                    align-items: center;
+
+                                    .form-group {
+                                        width: 100%;
+                                    }
+
+                                    .research-check-subheader {
+                                        display: flex;
+                                        align-items: center;
+                                        flex-wrap: nowrap;
+                                    }
+
+                                    .research-check-delete-button {
+                                        position: absolute;
+                                        left: 2px;
+                                        font-size: 24px;
+                                    }
+
+                                    .research-check-opener {
+                                        position: absolute;
+                                        right: 0;
+                                        font-size: 32px;
+                                    }
+                                }
+
+                                .research-check-folding {
+                                    height: 0;
+                                    overflow: hidden;
+                                    transition: all 0.5;
+
+                                    &.unfolded {
+                                        height: auto;
+                                    }
+
+                                    .research-check-small-input {
+                                        padding: 0 32px;
+                                    }
+                                }
+
+                                .research-check-skill-checks-container {
+                                    border-width: 1px;
+                                    border-style: solid;
+                                    margin: @marginLarge 0;
+
+                                    .research-check-skill-check-title {
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        padding: 4px 0;
+                                        
+                                        .research-check-skill-check-title-inner {
+                                            position: relative;
+                                            
+                                            i {
+                                                position: absolute;
+                                                right: -24px;
+                                                font-size: 24px;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    .research-breakpoints-container {
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
+                        border-width: 2px;
+                        border-style: outset;
+                        border-radius: 4px;
+
+                        .research-breakpoints-inner-container {
+                            flex: 1;
+                            padding: @paddingNormal;
+                            display: flex;
+                            flex-direction: column;
+
+                            .research-breakpoint-container {
+                                display: flex;
+                                justify-content: space-between;
+                                gap: @gapSmall;
+                                border-width: 1px;
+                                border-style: solid;
+                                padding: @paddingNormal;
+
+                                .research-breakpoint-number {
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: center;
+                                    text-align: center;
+
+                                    .research-breakpoint-number-title {
+                                        border-width: 1px;
+                                        border-style: solid;
+                                        border-radius: 4px;
+                                        padding: @paddingSmall;
+                                    }
+
+                                    input {
+                                        width: 66px;
+                                    }
+                                }
+
+                                textarea {
+                                    flex: 1;
+                                    padding: @paddingLarge;
+                                    height: 66px;
+                                }
+
+                                .research-breakpoint-text {
+                                    flex: 1;
+                                    height: 100%;
+                                    font-style: italic;
+                                    display: flex;
+                                    flex-direction: column;
+                                    justify-content: center;
+                                }
+
+                                .research-breakpoint-tool-icon {
+                                    align-self: center;
+                                }
+                            }
+                        }
+                    }
+
+                    .research-events-container {
+                        display: flex;
+                        flex-direction: column;
+                        border-width: 2px;
+                        border-style: outset;
+                        border-radius: 4px;
+                    }
+                }
+            }
+        }
+    }
+}

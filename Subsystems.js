@@ -270,14 +270,6 @@ class Chase extends foundry.abstract.DataModel {
           }),
           overcome: new fields.HTMLField({}),
         })),
-        notes: new fields.SchemaField({
-          player: new fields.SchemaField({
-            value: new fields.HTMLField({ required: true, initial: "" }),
-          }),
-          gm: new fields.SchemaField({
-            value: new fields.HTMLField({ required: true, initial: "" }),
-          }),
-        }),
       }
     }
 
@@ -323,6 +315,66 @@ class Chase extends foundry.abstract.DataModel {
 const MODULE_ID = 'pf2e-subsystems';
 const SOCKET_ID = `module.${MODULE_ID}`;
 
+class Researches extends foundry.abstract.DataModel {
+  static defineSchema() {
+    const fields = foundry.data.fields;
+    return {
+      events: new TypedObjectField(new fields.EmbeddedDataField(Research)),
+    }
+  }
+}
+
+class Research extends foundry.abstract.DataModel {
+    static defineSchema() {
+      const fields = foundry.data.fields;
+      return {
+        id: new fields.StringField({ required: true }),
+        name: new fields.StringField({ required: true }),
+        version: new fields.StringField({ required: true }),
+        background: new fields.StringField({ required: true }),
+        premise: new fields.HTMLField({ required: true, initial: "" }),
+        tags: new fields.ArrayField(new fields.StringField(), { required: true, initial: [] }),
+        hidden: new fields.BooleanField({ initial: true }),
+        started: new fields.BooleanField({ required: true, initial: false }),
+        researchPoints: new fields.NumberField({ required: true, initial: 0 }),
+        researchChecks: new TypedObjectField(new fields.EmbeddedDataField(ResearchChecks)),
+        researchBreakpoints: new TypedObjectField(new fields.SchemaField({
+          id: new fields.StringField({ required: true }),
+          hidden: new fields.BooleanField({ required: true, initial: true }),
+          breakpoint: new fields.NumberField({ requird: true, initial: 5 }),
+          description: new fields.HTMLField(),
+        })),
+        researchEvents: new TypedObjectField(new fields.SchemaField({
+          id: new fields.StringField({ required: true }),
+          hidden: new fields.BooleanField({ required: true, initial: true }),
+          description: new fields.HTMLField(),
+        })),
+      }
+    }
+}
+
+class ResearchChecks extends foundry.abstract.DataModel {
+  static defineSchema() {
+    const fields = foundry.data.fields;
+    return {
+      id: new fields.StringField({ required: true }),
+      name: new fields.StringField({ required: true, initial: "New Check" }),
+      hidden: new fields.BooleanField({ required: true, initial: true }),
+      description: new fields.HTMLField(),
+      maximumResearchPoints: new fields.NumberField({ required: true, initial: 5 }),
+      skillChecks: new TypedObjectField(new fields.SchemaField({
+        id: new fields.StringField({ required: true }),
+        hidden: new fields.BooleanField({ required: true, initial: true }),
+        description: new fields.HTMLField(),
+        skill: new fields.StringField(),
+        lore: new fields.BooleanField({ required: true, initial: false }),
+        dc: new fields.NumberField({ required: true, initial: 10 }),
+        simple: new fields.BooleanField({ required: true, initial: false }),
+      }))
+    }
+  }
+}
+
 const currentVersion = '0.5.0';
 
 const registerKeyBindings = () => {
@@ -351,6 +403,14 @@ const generalNonConfigSettings = () => {
     scope: "world",
     config: false,
     type: Chases,
+    default: { events: {} },
+  });
+  game.settings.register(MODULE_ID, "research", {
+    name: "",
+    hint: "",
+    scope: "world",
+    config: false,
+    type: Researches,
     default: { events: {} },
   });
 };
@@ -382,6 +442,7 @@ const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
 const getDefaultSelected = (event) => ({
   event: event ?? null,
   chaseObstacle: 1,
+  research: {},
 });
 
 class SystemView extends HandlebarsApplicationMixin(
@@ -440,7 +501,18 @@ class SystemView extends HandlebarsApplicationMixin(
         setCurrentObstacle: this.setCurrentObstacle,
         onToggleObstacleLock: this.onToggleObstacleLock,
         updateChasePoints: this.updateChasePoints,
-        /*  */
+        /* Research */
+        addResearchBreakpoint: this.addResearchBreakpoint,
+        researchUpdateResearchPoints: this.researchUpdateResearchPoints,
+        removeResearchBreakpoint: this.removeResearchBreakpoint,
+        toggleResearchBreakpointHidden: this.toggleResearchBreakpointHidden,
+        addResearchCheck: this.addResearchCheck,
+        removeResearchCheck: this.removeResearchCheck,
+        toggleResearchCheckHidden: this.toggleResearchCheckHidden,
+        researchToggleOpenResearchCheck: this.researchToggleOpenResearchCheck,
+        researchAddResearchCheckSkillCheck: this.researchAddResearchCheckSkillCheck,
+        researchRemoveResearchCheckSkillCheck: this.researchRemoveResearchCheckSkillCheck,
+        researchToggleResearchCheckSkillCheckHidden: this.researchToggleResearchCheckSkillCheckHidden,
       },
       form: { handler: this.updateData, submitOnChange: true },
       window: {
@@ -457,6 +529,10 @@ class SystemView extends HandlebarsApplicationMixin(
         id: 'chase',
         template: "modules/pf2e-subsystems/templates/system-view/systems/chase/chases.hbs",
       },
+      research: {
+        id: 'research',
+        template: "modules/pf2e-subsystems/templates/system-view/systems/research/researches.hbs",
+      },
     };
 
     tabGroups = {
@@ -464,7 +540,7 @@ class SystemView extends HandlebarsApplicationMixin(
     };
 
     getTabs() {
-      const tabs = {
+      let tabs = {
         systemView: {
           active: true,
           cssClass: '',
@@ -502,8 +578,31 @@ class SystemView extends HandlebarsApplicationMixin(
           icon: null,
           label: game.i18n.localize('PF2ESubsystems.Events.Research.Plural'),
           image: 'icons/skills/trades/academics-merchant-scribe.webp',
-          disabled: true,
         },
+      };
+
+      const researchTabs = {
+        description: {
+          active: true,
+          cssClass: '',
+          group: 'influenceResearchChecks',
+          id: 'description',
+          icon: null,
+          label: game.i18n.localize('PF2ESubsystems.Research.ResearchCheckTab.Description'),
+        },
+        skillChecks: {
+          active: true,
+          cssClass: '',
+          group: 'influenceResearchChecks',
+          id: 'skillChecks',
+          icon: null,
+          label: game.i18n.localize('PF2ESubsystems.Research.ResearchCheckTab.SkillChecks'),
+        }
+      };
+
+      tabs = {
+        ...tabs,
+        ...researchTabs,
       };
   
       for (const v of Object.values(tabs)) {
@@ -535,6 +634,23 @@ class SystemView extends HandlebarsApplicationMixin(
     static selectEvent(_, button){
       this.selected.event = button.dataset.event;
       this.render({ parts: [this.tabGroups.main] });
+    }
+
+    filePickerListener(dialog) {
+      return $(dialog.element).find('[data-action="browseBackground"]').on('click', event => {
+        event.preventDefault();
+        const current = 'icons/svg/cowled.svg';
+        new FilePicker({
+          current,
+          type: "image",
+          redirectToRoot: [current] ,
+          callback: async path => {
+            $(dialog.element).find('[name="background"]')[0].value = path;
+          },
+          top: this.position.top + 40,
+          left: this.position.left + 10
+        }).browse();
+      });
     }
 
     async getEventDialogData(existing) {
@@ -569,32 +685,33 @@ class SystemView extends HandlebarsApplicationMixin(
                     locked: false,
                   }
                 },
-                notes: {
-                  player: {
-                    value: '',
-                  },
-                  gm: {
-                    value: '',
-                  }
-                }
               };
             },
-            attachListeners: (dialog) => {
-              $(dialog.element).find('[data-action="browseBackground"]').on('click', event => {
-                event.preventDefault();
-                const current = 'icons/svg/cowled.svg';
-                new FilePicker({
-                  current,
-                  type: "image",
-                  redirectToRoot: [current] ,
-                  callback: async path => {
-                    $(dialog.element).find('[name="background"]')[0].value = path;
-                  },
-                  top: this.position.top + 40,
-                  left: this.position.left + 10
-                }).browse();
-              });
+            attachListeners: this.filePickerListener,
+          };
+        case 'research':
+          return {  
+            content: await renderTemplate("modules/pf2e-subsystems/templates/system-view/systems/chase/chaseDataDialog.hbs", { name: existing?.name, background: existing?.background }),
+            title: game.i18n.localize(existing ? 'PF2ESubsystems.Research.EditResearch' : 'PF2ESubsystems.Research.CreateResearch'),
+            callback: (button) => {
+              const elements = button.form.elements;
+              if (existing){
+                return {
+                  ...existing,
+                  name: elements.name.value,
+                  background: elements.background.value,
+                }
+              }
+
+              foundry.utils.randomID();
+              return {
+                id: foundry.utils.randomID(),
+                name: elements.name.value ? elements.name.value : game.i18n.localize('PF2ESubsystems.View.NewEvent'),
+                version: currentVersion,
+                background: elements.background.value ? elements.background.value : 'icons/skills/trades/academics-merchant-scribe.webp',
+              };
             },
+            attachListeners: this.filePickerListener,
           };
       }
     }
@@ -917,6 +1034,75 @@ class SystemView extends HandlebarsApplicationMixin(
       this.updateView();
     }
 
+    static async addResearchBreakpoint(_, button) {
+      const breakpointId = foundry.utils.randomID();
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchBreakpoints.${breakpointId}`]: {
+        id: breakpointId,
+      }});
+      this.updateView();
+    }
+
+    static async researchUpdateResearchPoints(_, button) {
+      const currentResearchPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchPoints;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchPoints`]: button.dataset.increase ? currentResearchPoints + 1 : currentResearchPoints - 1});
+      this.updateView();
+    }
+
+    static async removeResearchBreakpoint(_, button){
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchBreakpoints.-=${button.dataset.breakpoint}`]: null});
+      this.updateView();
+    }
+
+    static async toggleResearchBreakpointHidden(_, button) {
+      const currentBreakpoint = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchBreakpoints[button.dataset.breakpoint];
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchBreakpoints.${button.dataset.breakpoint}.hidden`]: !currentBreakpoint.hidden });
+      this.updateView();
+    }
+
+    static async addResearchCheck(_, button) {
+      const researchCheckId = foundry.utils.randomID();
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${researchCheckId}`]: {
+        id: researchCheckId,
+      }});
+
+      this.updateView();
+    }
+
+    static async removeResearchCheck(_, button) {
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.-=${button.dataset.check}`]: null });
+      this.updateView();
+    }
+
+    static async toggleResearchCheckHidden(_, button) {
+      const currentResearchCheckHidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchChecks[button.dataset.check].hidden;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.hidden`]: !currentResearchCheckHidden });
+      this.updateView();
+    }
+
+    static async researchToggleOpenResearchCheck(_, button) {
+      this.selected.research.openResearchCheck = this.selected.research.openResearchCheck === button.dataset.check ? null : button.dataset.check;
+      this.render({ parts: [this.tabGroups.main] });
+    }
+
+    static async researchAddResearchCheckSkillCheck(_, button) {
+      const checkId = foundry.utils.randomID();
+      await updateDataModel(this.tabGroups.main, {[`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.${checkId}`]: {
+        id: checkId,
+      }});
+      this.updateView();
+    }
+
+    static async researchRemoveResearchCheckSkillCheck(_, button) {
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.-=${button.dataset.skillCheck}`]: null});
+      this.updateView();
+    }
+
+    static async researchToggleResearchCheckSkillCheckHidden(_, button) {
+      const checkhidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchChecks[button.dataset.check].skillChecks[button.dataset.skillCheck].hidden;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.${button.dataset.skillCheck}.hidden`]: !checkhidden });
+      this.updateView();
+    }
+
     _attachPartListeners(partId, htmlElement, options) {
       super._attachPartListeners(partId, htmlElement, options);
 
@@ -967,11 +1153,11 @@ class SystemView extends HandlebarsApplicationMixin(
         case 'systemView': 
           break;
         case 'chase': 
-          const { events } = game.settings.get(MODULE_ID, 'chase');
+          const { events: chaseEvents } = game.settings.get(MODULE_ID, 'chase');
           
-          context.events = events;
+          context.events = chaseEvents;
           context.tab = context.systems.chase;
-          context.selectedEvent = context.selected.event ? Object.values(events).find(x => x.id === context.selected.event) : undefined;
+          context.selectedEvent = context.selected.event ? Object.values(chaseEvents).find(x => x.id === context.selected.event) : undefined;
           if(context.selectedEvent) {
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
           }
@@ -981,6 +1167,41 @@ class SystemView extends HandlebarsApplicationMixin(
           if(context.currentObstacle) {
             context.currentObstacle.enrichedOvercome = await TextEditor.enrichHTML(context.currentObstacle.overcome);
           }
+
+          break;
+        case 'research': 
+          const { events: researchEvents } = game.settings.get(MODULE_ID, 'research');
+            
+          context.events = researchEvents;
+          context.tab = context.systems.research;
+          context.selectedEvent = context.selected.event ? Object.values(researchEvents).find(x => x.id === context.selected.event) : undefined;
+          if(context.selectedEvent) {
+            context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
+          
+            for(var key of Object.keys(context.selectedEvent.researchChecks)) {
+              context.selectedEvent.researchChecks[key].enrichedDescription = await TextEditor.enrichHTML(context.selectedEvent.researchChecks[key].description);
+            }
+
+            for(var key of Object.keys(context.selectedEvent.researchChecks)){
+              const researchCheck = context.selectedEvent.researchChecks[key];
+              for(var checkKey of Object.keys(researchCheck.skillChecks)) {
+                const checkSkill = researchCheck.skillChecks[checkKey];
+                checkSkill.element = await TextEditor.enrichHTML(`@Check[type:${checkSkill.skill}|dc:${checkSkill.dc}|simple:${checkSkill.simple}]`);
+              }
+            }
+          }
+
+          context.revealedResearchChecks = context.selectedEvent ? Object.values(context.selectedEvent.researchChecks).filter(x => !x.hidden).length : 0;
+          context.revealedResearchBreakpoints = context.selectedEvent ? Object.values(context.selectedEvent.researchBreakpoints).filter(x => !x.hidden).length : 0;
+          context.revealedResearchEvents = context.selectedEvent ? Object.values(context.selectedEvent.researchEvents).filter(x => !x.hidden).length : 0;
+          context.selected = this.selected.research;
+          context.skillOptions = [
+            ...Object.keys(CONFIG.PF2E.skills).map((skill) => ({
+              value: skill,
+              name: CONFIG.PF2E.skills[skill].label,
+            })),
+            { value: "perception", name: "PF2E.PerceptionLabel" },
+          ];
 
           break;
       }
@@ -1034,11 +1255,15 @@ class SystemView extends HandlebarsApplicationMixin(
 
     onUpdateSystemView(tab){
       if(this.tabGroups.main === tab){
-        if(this.selected.event) {
-          const nrObstacles = Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event].obstacles).length;
-          this.selected.chaseObstacle = this.selected.chaseObstacle > nrObstacles ? this.selected.chaseObstacle-1 : this.selected.chaseObstacle; 
+        switch(this.tabGroups.main){
+          case 'chase':
+            if(this.selected.event) {
+              const nrObstacles = Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event].obstacles).length;
+              this.selected.chaseObstacle = this.selected.chaseObstacle > nrObstacles ? this.selected.chaseObstacle-1 : this.selected.chaseObstacle; 
+            }
+            break;
         }
-        
+
         this.render({ parts: [this.tabGroups.main] });
       }
     }
@@ -1123,6 +1348,7 @@ Hooks.once("init", () => {
       "modules/pf2e-subsystems/templates/system-view/systems/chase/chase.hbs",
       "modules/pf2e-subsystems/templates/system-view/systems/chase/chaseDataDialog.hbs",
       "modules/pf2e-subsystems/templates/system-view/systems/chase/participantDataDialog.hbs",
+      "modules/pf2e-subsystems/templates/system-view/systems/research/research.hbs",
     ]);
 });
 

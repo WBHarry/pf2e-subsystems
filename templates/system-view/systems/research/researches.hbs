@@ -1,0 +1,7 @@
+<div class="event-tab tab {{tab.cssClass}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+    {{#if (not this.selectedEvent)}}
+        {{> "modules/pf2e-subsystems/templates/partials/events.hbs" tab=this.tab name=(localize "PF2ESubsystems.Events.Research.Single") plural=(localize "PF2ESubsystems.Events.Research.Plural") events=this.events }}
+    {{else}}
+        {{> "modules/pf2e-subsystems/templates/system-view/systems/research/research.hbs" editMode=this.editMode selected=this.selected event=this.selectedEvent isGM=this.isGM skillOptions=this.skillOptions }}
+    {{/if}}
+</div>

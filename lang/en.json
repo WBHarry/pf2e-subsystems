@@ -1,5 +1,6 @@
 {
     "PF2ESubsystems": {
+        "Name": "PF2e Subsystems",
         "Basic": {
             "Confirm": "Confirm",
             "Cancel": "Cancel",
@@ -26,7 +27,8 @@
             "ReturnToSubsystems": "Return To Subsystems",
             "HideFromPlayers": "Hide From Players",
             "RevealToPlayers": "Reveal To Players",
-            "StartEventLinkCopied": "StartEvent Macro for {name} copied to clipboard."
+            "StartEventLinkCopied": "StartEvent Macro for {name} copied to clipboard.",
+            "CopyStartEventLink": "Copy a macro to start this event"
         },
         "Events": {
             "Chase": {
@@ -62,13 +64,25 @@
             "AddOrDragInActor": "Add or drag in an actor.",
             "StartChase": "Start Chase",
             "ChasePoints": "Chase Points",
-            "CopyStartEventLink": "Copy a macro to start this event",
             "Errors": {
                 "UnlockObstacle": "You have to unlock obstacles from start to end",
                 "LockObstacle": "You have to lock obstacles from end to start",
                 "LockFirstObstacle": "You can't lock the first obstacle"
             }
             
+        },
+        "Research": {
+            "NavigateBack": "Return To Research",
+            "EditResearch": "Edit Research",
+            "CreateResearch": "Create New Research",
+            "StartResearch": "Start Research",
+            "MaxResearchPoints": "Maximum RP",
+            "Skill": "Skill",
+            "SkillChecks": "Skill Checks",
+            "ResearchCheckTab": {
+                "Description": "Description",
+                "SkillChecks": "Skill Checks"
+            }
         },
         "KeyBindings": {
             "OpenSystemView": {

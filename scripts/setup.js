@@ -1,5 +1,6 @@
 import { Chases } from "../data/chase";
 import { MODULE_ID } from "../data/constants";
+import { Researches } from "../data/research";
 
 export const currentVersion = '0.5.0';
 
@@ -33,6 +34,14 @@ const generalNonConfigSettings = () => {
     scope: "world",
     config: false,
     type: Chases,
+    default: { events: {} },
+  });
+  game.settings.register(MODULE_ID, "research", {
+    name: "",
+    hint: "",
+    scope: "world",
+    config: false,
+    type: Researches,
     default: { events: {} },
   });
 };

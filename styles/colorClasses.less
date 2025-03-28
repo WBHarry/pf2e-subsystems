@@ -82,7 +82,13 @@ form {
       color: var(--pf2e-subsystem-theming-primary-color);
   
       &.active {
-        background-color: var(--pf2e-subsystem-theming-tertiary-accent);
+        &:not(.editor) {
+          background-color: var(--pf2e-subsystem-theming-tertiary-accent);
+        }
+
+        > .editor-menu {
+          background-color: var(--pf2e-subsystem-theming-tertiary-accent);
+        }
       }
   
       .data-icon {

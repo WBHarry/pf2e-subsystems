@@ -2,6 +2,31 @@
 
 .pf2e-subsystems {
     &.systems-view {
+        .window-content {
+            overflow: visible;
+            height: calc(100% - 75px); // Ugly
+        }
+
+        .window-header {
+            overflow-y: visible;
+            overflow-x: visible;
+            background-image: var(--pf2e-subsystem-theming-application-header-image);
+            background-size: var(
+              --pf2e-subsystem-theming-application-header-image-size
+            );
+            background-repeat: var(
+              --pf2e-subsystem-theming-application-header-image-repeat
+            );
+            background-position: var(
+              --pf2e-subsystem-theming-application-header-image-position
+            );
+            border-color: var(--pf2e-subsystem-theming-application-border);
+      
+            h1 {
+              text-shadow: 1px 1px 4px var(--pf2e-subsystem-theming-text-shadow);
+            }
+          }
+
         .systems-container {
             width: 100%;
             height: 100%;
@@ -200,6 +225,91 @@
                         img {
                             max-width: auto;
 
+                        }
+                    }
+                }
+            }
+        }
+
+        
+        .event-outer-container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: @gapNormal;
+
+            .event-container {
+                flex: 1;
+                display: flex;
+                gap: @gapLarge;
+                overflow: hidden;
+
+                .title-container {
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 4px;
+                    text-align: center;
+                    height: 45px;
+                    border-bottom-width: 1px;
+                    border-bottom-style: solid;
+                }
+
+                .event-sidebar {
+                    width: 200px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: @gapLarge;
+
+                    .event-image {
+                        width: 200px;
+                        border-width: 2px;
+                        border-style: outset;
+                        border-radius: 4px;
+                    }
+                }
+
+                .event-main-container {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 6px;
+                    overflow: auto;
+
+                    .event-header-container {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        gap: @gapLarge;
+
+                        .event-header-title-container {
+                            flex: 1;
+                            display: flex;
+                            align-items: center;
+
+                            .event-header-title {
+                                flex: 1;
+                                border-width: @borderNormal;
+                                border-style: solid;
+                                border-radius: @borderRadiusNormal;
+                                padding: @paddingNormal;
+                                min-width: 120px;
+                                text-align: center;
+                            }
+                        }
+
+                        .event-header-toolbar {
+                            display: flex;
+                            align-items: center;
+                            gap: @gapSmall;
+                            flex-wrap: nowrap;
+                            white-space: nowrap;
+                            border-width: @borderNormal;
+                            border-style: solid;
+                            border-radius: @borderRadiusNormal;
+                            padding: @paddingNormal;
                         }
                     }
                 }
