@@ -1,2 +1,21 @@
 export const MODULE_ID = 'pf2e-subsystems';
 export const SOCKET_ID = `module.${MODULE_ID}`;
+
+export const timeUnits = {
+    year: {
+        value: 'year',
+        name: 'PF2ESubsystems.TimeUnits.Year.Plural',
+    },
+    month: {
+        value: 'month',
+        name: 'PF2ESubsystems.TimeUnits.Month.Plural',
+    },
+    day: {
+        value: 'day',
+        name: 'PF2ESubsystems.TimeUnits.Day.Plural',
+    },
+    hour: {
+        value: 'hour',
+        name: 'PF2ESubsystems.TimeUnits.Hour.Plural',
+    },
+}

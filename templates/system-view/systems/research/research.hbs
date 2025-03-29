@@ -4,9 +4,9 @@
         <div class="event-sidebar">
             <div class="event-image">
                 <img src="{{this.event.background}}" />
-            </div>
+                </div>
             <div class="research-points-container primary-container">
-                <div>{{localize "Research Points:"}}</div>
+                <div>{{localize "PF2ESubsystems.Research.ResearchPoints"}}:</div>
                 &nbsp;
                 <div class="research-points-number-container">
                     {{#if this.isGM}}<i class="fa-solid fa-caret-up clickable-icon research-points-number-upper" data-action="researchUpdateResearchPoints" data-event="{{this.event.id}}" data-increase="true"></i>{{/if}}
@@ -14,9 +14,39 @@
                     {{#if this.isGM}}<i class="fa-solid fa-caret-down clickable-icon {{#if (eq this.event.researchPoints 0)}}disabled{{/if}} research-points-number-lower" {{#if (gt this.event.researchPoints 0)}}data-action="researchUpdateResearchPoints"{{/if}} data-event="{{this.event.id}}"></i>{{/if}}
                 </div>
             </div>
-            <div class="research-premise primary-container active">
+            {{#if this.showTimeLimit}}
+                <div class="time-limit-container primary-container">
+                    {{#if this.editMode}}
+                        <div class="event-field-group">
+                            <div class="event-field-col-form text-normal">
+                                <div>{{localize "PF2ESubsystems.View.TimeUnit"}}</div>
+                                <select name="{{concat "events." this.event.id ".timeLimit.unit" }}" class="tertiary-container primary-text-container">
+                                    {{selectOptions this.timeUnits selected=this.event.timeLimit.unit valueAttr="value" labelAttr="name" localize=true}}
+                                </select>
+                            </div>
+                            <div class="event-field-col-form text-normal">
+                                <div>{{localize "PF2ESubsystems.View.MaxTime"}}</div>
+                                <input class="tertiary-container" type="text" data-dtype="number" name="{{concat "events." this.event.id ".timeLimit.max"}}" value="{{this.event.timeLimit.max}}" />
+                            </div>
+                        </div>
+                    {{else}}
+                        <div>{{localize "PF2ESubsystems.Research.TimeLimit"}}&nbsp;({{localize this.event.timeLimit.unitName}}):</div>
+                        &nbsp;
+                        <div class="flexrow">
+                            <div class="time-limit-number-container">
+                                {{#if this.isGM}}<i class="fa-solid fa-caret-up clickable-icon {{#if (gte this.event.timeLimit.current this.event.timeLimit.max)}}disabled{{/if}} time-limit-number-upper" {{#if (lt this.event.timeLimit.current this.event.timeLimit.max)}}data-action="researchUpdateTimeLimitCurrent"{{/if}} data-event="{{this.event.id}}" data-increase="true"></i>{{/if}}
+                                <div>{{this.event.timeLimit.current}}</div>
+                                {{#if this.isGM}}<i class="fa-solid fa-caret-down clickable-icon {{#if (eq this.event.timeLimit.current 0)}}disabled{{/if}} time-limit-number-lower" {{#if (gt this.event.timeLimit.current 0)}}data-action="researchUpdateTimeLimitCurrent"{{/if}} data-event="{{this.event.id}}"></i>{{/if}}
+                            </div>
+                            /
+                            <div>{{this.event.timeLimit.max}}</div>
+                        </div>
+                    {{/if}}
+                </div>
+            {{/if}}
+            <div class="research-premise primary-container accent">
                 <div class="title-container primary-container">
-                    {{localize "Premise"}}
+                    {{localize "PF2ESubsystems.Basic.Premise"}}
                 </div>
                 <div class="research-premise-content">
                     {{#if this.editMode}}
@@ -44,10 +74,10 @@
                 {{/if}}
             </div>
 
-            <div class="research-checks-container primary-container active">
+            <div class="research-checks-container primary-container accent">
                 <div class="title-container primary-container">
                     <div class="title-container-inner">
-                        {{localize "Research Checks"}}
+                        {{localize "PF2ESubsystems.Research.ResearchChecks"}}
                         {{#if this.editMode}}<i class="fa-solid fa-plus clickable-icon" data-action="addResearchCheck" data-event="{{this.event.id}}"></i>{{/if}}
                     </div>
                 </div>
@@ -61,63 +91,122 @@
                                     <div class="research-check-header">
                                         <i class="fa-solid fa-trash clickable-icon research-check-delete-button" data-action="removeResearchCheck" data-event="{{../event.id}}" data-check={{this.id}}></i>
 
-                                        <div class="form-group">
-                                            <label>{{localize "PF2ESubsystems.Basic.Name"}}</label>
-                                            <div class="form-fields">
-                                                <input class="tertiary-container" type="text" name="{{concat "events." ../event.id ".researchChecks." this.id ".name"}}" value="{{this.name}}" />
-                                            </div>
-                                        </div>
+                                        {{#if (eq this.id ../selected.openResearchCheck)}}
+                                            <nav class="tabs">
+                                                {{#each ../skillCheckTabs as |tab|}}
+                                                    <a 
+                                                        class="{{tab.cssClass}} tertiary-container" 
+                                                        data-action="tab" 
+                                                        data-group="{{tab.group}}" 
+                                                        data-tab="{{tab.id}}"
+                                                    >
+                                                        <i class="{{tab.icon}}"></i>
+                                                        <label>{{tab.label}}</label>
+                                                    </a>
+                                                {{/each}}
+                                            </nav>
+                                        {{else}}
+                                            <div class="title-small-container">{{this.name}}</div>
+                                        {{/if}}
                                         
                                         <i class="fa-solid {{#if (eq this.id ../selected.openResearchCheck)}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon research-check-opener" data-action="researchToggleOpenResearchCheck" data-check="{{this.id}}"></i> 
                                     </div>
-                                    <div class="research-check-folding {{#if (eq this.id ../selected.openResearchCheck)}}unfolded{{/if}}">
-                                        <div class="form-group research-check-small-input">
-                                            <label>{{localize "PF2ESubsystems.Research.MaxResearchPoints"}}</label>
-                                            <div class="form-fields">
-                                                <input class="tertiary-container" type="text" data-dtype="number" name="{{concat "events." ../event.id ".researchChecks." this.id ".maximumResearchPoints"}}" value="{{this.maximumResearchPoints}}" />
-                                            </div>
-                                        </div>
-
-                                        <div class="research-check-skill-checks-container tertiary-container">
-                                            <div class="research-check-skill-check-title title-small-container tertiary-container-active">
-                                                <div class="research-check-skill-check-title-inner">
-                                                    {{localize "PF2ESubsystems.Research.SkillChecks"}}
-                                                    <i class="fa-solid fa-plus clickable-icon" data-action="researchAddResearchCheckSkillCheck" data-event="{{../event.id}}" data-check="{{this.id}}"></i>
+                                    <div class="event-folding {{#if this.open}}unfolded{{/if}}">
+                                        <div class="event-tab tab {{../skillCheckTabs.description.cssClass}}" data-group="{{../skillCheckTabs.description.group}}" data-tab="{{../skillCheckTabs.description.id}}">
+                                            <div class="event-field-group">
+                                                <div class="event-field-form">
+                                                    <div>{{localize "PF2ESubsystems.Basic.Name"}}</div>
+                                                    <input class="tertiary-container" type="text" name="{{concat "events." ../event.id ".researchChecks." this.id ".name"}}" value="{{this.name}}" />
+                                                </div>
+                                                <div class="event-field-form">
+                                                    <div>{{localize "PF2ESubsystems.Research.MaxResearchPoints"}}</div>
+                                                    <input class="tertiary-container" type="text" data-dtype="number" name="{{concat "events." ../event.id ".researchChecks." this.id ".maximumResearchPoints"}}" value="{{this.maximumResearchPoints}}" />
                                                 </div>
                                             </div>
-                                            {{#each this.skillChecks}}
-                                                <div class="form-group research-check-small-input">
-                                                    <label>{{localize "PF2ESubsystems.Research.Skill"}}</label>
-                                                    <div class="form-fields">
-                                                        <select name="{{concat "events." ../../event.id ".researchChecks." ../id ".skillChecks." this.id ".skill" }}">
-                                                            {{selectOptions ../../skillOptions selected=this.skill valueAttr="value" labelAttr="name" localize=true}}
-                                                        </select>
-                                                    </div>
-                                                </div>                                      
-                                            {{/each}}
+                                            <prose-mirror class="data-input tertiary-container" name="{{concat "events." ../event.id ".researchChecks." this.id ".description"}}" value="{{this.description}}">
+                                                {{{this.enrichedDescription}}}
+                                            </prose-mirror>
                                         </div>
 
-                                        <prose-mirror class="data-input tertiary-container" name="{{concat "events." ../event.id ".researchChecks." this.id ".description"}}" value="{{this.description}}">
-                                            {{{this.enrichedDescription}}}
-                                        </prose-mirror>
+                                        <div class="event-tab tab {{../skillCheckTabs.skillChecks.cssClass}}" data-group="{{../skillCheckTabs.skillChecks.group}}" data-tab="{{../skillCheckTabs.skillChecks.id}}">
+                                            <div class="research-check-skill-checks-outer-container tertiary-container">
+                                                <div class="research-check-skill-check-title title-small-container tertiary-container-active">
+                                                    <div class="research-check-skill-check-title-inner">
+                                                        {{localize "PF2ESubsystems.Research.SkillChecks"}}
+                                                        <i class="fa-solid fa-plus clickable-icon" data-action="researchAddResearchCheckSkillCheck" data-event="{{../event.id}}" data-check="{{this.id}}"></i>
+                                                    </div>
+                                                </div>
+                                                {{#each this.skillChecks}}
+                                                    <div class="research-check-skill-checks-container">
+                                                        <div class="research-check-skill-checks-full-field">
+                                                            <label>{{localize "PF2ESubsystems.Basic.Description"}}</label>
+                                                            <input type="text" name="{{concat "events." ../../event.id ".researchChecks." ../id ".skillChecks." this.id ".description"}}" value="{{this.description}}" class="tertiary-container accent primary-text-container" />
+                                                        </div>
+                                                        {{#each this.skills}}
+                                                            <div class="research-check-skill-check-inner-container {{#if (not this.isFirst)}}padded{{/if}} tertiary-container accent">
+                                                                <i class="fa-solid fa-trash clickable-icon" data-action="researchRemoveSkill" data-event="{{../../../event.id}}" data-check="{{../../id}}" data-skill-check="{{../id}}" data-skill="{{this.id}}"></i>
+                                                                <div class="research-check-skill-check-value-container">
+                                                                    <div>{{localize "PF2ESubsystems.Research.Lore"}}</div>
+                                                                    <input type="checkbox" class="research-lore-input" data-event="{{../../../event.id}}" data-check="{{../../id}}" data-skill-check="{{../id}}" data-skill="{{this.id}}" {{checked this.lore}} />
+                                                                </div>
+                                                                <div class="research-check-skill-check-value-container full">
+                                                                    <div>{{localize "PF2ESubsystems.Research.Skill"}}</div>
+                                                                    {{#if this.lore}}
+                                                                        <input type="text" class="research-skill-check-input" data-event="{{../../../event.id}}" data-check="{{../../id}}" data-skill-check="{{../id}}" data-skill="{{this.id}}" value="{{this.skill}}" />
+                                                                    {{else}}
+                                                                        <select name="{{concat "events." ../../../event.id ".researchChecks." ../../id ".skillChecks." ../id ".skills." this.id ".skill" }}" class="primary-text-container">
+                                                                            {{selectOptions ../../../skillOptions selected=this.skill valueAttr="value" labelAttr="name" localize=true}}
+                                                                        </select>
+                                                                    {{/if}}
+                                                                </div>
+                                                                <div class="research-check-skill-check-value-container full">
+                                                                    <div>{{localize "PF2ESubsystems.Research.Action"}}</div>
+                                                                        <select name="{{concat "events." ../../../event.id ".researchChecks." ../../id ".skillChecks." ../id ".skills." this.id ".action" }}" class="primary-text-container">
+                                                                            {{selectOptions ../../../actionOptions selected=this.action valueAttr="value" labelAttr="name" localize=true blank="" }}
+                                                                        </select>
+                                                                </div>
+                                                                <div class="research-check-skill-check-value-container dc">
+                                                                    <div>{{localize "PF2ESubsystems.Basic.DC"}}</div>
+                                                                    <input type="text" data-dtype="number" name="{{concat "events." ../../../event.id ".researchChecks." ../../id ".skillChecks." ../id ".skills." this.id ".dc"}}" value="{{this.dc}}" />
+                                                                </div>
+                                                                <div class="research-check-skill-check-value-container">
+                                                                    {{localize "PF2ESubsystems.Research.Basic"}}
+                                                                    <input type="checkbox" name="{{concat "events." ../../../event.id ".researchChecks." ../../id ".skillChecks." ../id ".skillsd." this.id ".basic"}}" {{checked this.basic}} />
+                                                                </div>
+                                                                {{#if this.isFirst}}<i class="fa-solid fa-plus clickable-icon" data-action="researchAddSkill" data-event="{{../../../event.id}}" data-check="{{../../id}}" data-skill-check="{{../id}}" data-skill="{{this.id}}"></i>{{/if}}
+                                                            </div>        
+                                                        {{/each}}
+                                                    </div>                        
+                                                {{/each}}
+                                            </div>
+                                        </div>
                                     </div>
                                 {{else}}
                                     <div class="research-check-header">
                                         <div class="title-small-container">{{this.name}}</div>
                                         {{#if ../isGM}}
                                             <div class="research-check-subheader text-helper-big">
-                                                <div>{{localize "Max Research Points:"}}</div>
+                                                <div>{{localize "PF2ESubsystems.Research.MaxResearchPoints"}}:</div>
                                                 &nbsp;
                                                 <div>{{this.maximumResearchPoints}}</div>
                                             </div> 
                                         {{/if}}  
                                         <i class="fa-solid {{#if (eq this.id ../selected.openResearchCheck)}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon research-check-opener" data-action="researchToggleOpenResearchCheck" data-check="{{this.id}}"></i> 
                                     </div>
-                                    <div class="research-check-folding {{#if (eq this.id ../selected.openResearchCheck)}}unfolded{{/if}}">
+                                    <div class="event-folding {{#if this.open}}unfolded{{/if}}">
                                         <div class="research-check-description">{{{this.description}}}</div>
-                                        {{#each this.skillChecks}}
-                                            <div>{{{this.element}}}</div>
-                                        {{/each}}
+                                        <div class="research-check-skill-checks">
+                                            {{#each this.skillChecks}}
+                                                <div class="research-check-skill-check">
+                                                    <span class="research-check-skill-check-title">{{{this.description}}}</span>
+                                                    <div class="research-check-skill-check-buttons">
+                                                        {{#each this.skills}}
+                                                            <div class="research-check-skill-check-button">{{{this.element}}}</div>
+                                                        {{/each}}
+                                                    </div>
+                                                </div>
+                                            {{/each}}
+                                        </div>
                                     </div>
                                 {{/if}}
                             </div>
@@ -126,10 +215,10 @@
                 </div>
             </div>
 
-            <div class="research-breakpoints-container primary-container active">
+            <div class="research-breakpoints-container primary-container accent">
                 <div class="title-container primary-container">
                     <div class="title-container-inner">
-                        {{localize "Research Breakpoints"}}
+                        {{localize "PF2ESubsystems.Research.ResearchBreakpoints"}}
                         {{#if this.editMode}}<i class="fa-solid fa-plus clickable-icon" data-action="addResearchBreakpoint" data-event="{{this.event.id}}"></i>{{/if}}
                     </div>
                 </div>
@@ -138,33 +227,91 @@
                         ?
                     {{else}}
                         {{#each this.event.researchBreakpoints}}
-                            <div class="research-breakpoint-container secondary-container">
-                                {{#if ../editMode}}
-                                    <div class="research-breakpoint-number">
-                                        <div>{{localize "Breakpoint"}}</div>
-                                        <input type="text" data-dtype="number" name="{{concat "events." ../event.id ".researchBreakpoints." this.id ".breakpoint"}}" value="{{this.breakpoint}}" class="tertiary-container primary-text-container" />
-                                    </div>
-                                    <textarea class="tertiary-container primary-text-container" name="{{concat "events." ../event.id ".researchBreakpoints." this.id ".description"}}" value="{{this.description}}">{{{this.description}}}</textarea>
-                                    <i class="fa-solid fa-trash clickable-icon" data-action="removeResearchBreakpoint" data-event="{{../event.id}}" data-breakpoint="{{this.id}}"></i>
-                                {{else}}
-                                    <div class="research-breakpoint-number">
-                                        <div class="research-breakpoint-number-title tertiary-container">{{localize "Breakpoint"}}</div>
-                                        <div>{{this.breakpoint}}</div>
-                                    </div>
-                                    <div class="research-breakpoint-text primary-text-container">{{{this.description}}}</div>
-                                    <i class="research-breakpoint-tool-icon fa-solid {{#if this.hidden}}fa-eye-slash{{else}}fa-eye{{/if}} clickable-icon" data-action="toggleResearchBreakpointHidden" data-event="{{../event.id}}" data-breakpoint="{{this.id}}"></i>
-                                {{/if}}
-                            </div>
+                            {{#if (or ../isGM (not this.hidden))}}
+                                <div class="research-breakpoint-container secondary-container">
+                                    {{#if ../editMode}}
+                                        <div class="event-field-group research-breakpoint-number">
+                                            <div class="event-field-form">
+                                                <i class="fa-solid fa-trash clickable-icon research-breakpoint-delete-button" data-action="removeResearchBreakpoint" data-event="{{../event.id}}" data-breakpoint="{{this.id}}"></i>
+                                                <div>{{localize "PF2ESubsystems.Research.ResearchBreakpoint"}}</div>
+                                                <input type="text" data-dtype="number" name="{{concat "events." ../event.id ".researchBreakpoints." this.id ".breakpoint"}}" value="{{this.breakpoint}}" class="tertiary-container primary-text-container" />
+                                                <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon research-breakpoint-opener" data-action="toggleResearchOpenResearchBreakpoint" data-breakpoint="{{this.id}}"></i> 
+                                            </div>
+                                        </div>
+                                        <div class="event-folding {{#if this.open}}unfolded{{/if}}">
+                                            <prose-mirror class="data-input tertiary-container" name="{{concat "events." ../event.id ".researchBreakpoints." this.id ".description"}}" value="{{this.description}}">
+                                                {{{this.enrichedDescription}}}
+                                            </prose-mirror>
+                                        </div>
+                                    {{else}}
+                                        <div class="research-breakpoint-title">
+                                            <div class="research-breakpoint-title-inner">
+                                                <div class="title-small-container">
+                                                    {{this.breakpoint}}
+                                                    {{localize "PF2ESubsystems.Research.ResearchPoints"}}
+                                                </div>
+                                                {{#if ../isGM}}<i class="research-breakpoint-tool-icon fa-solid {{#if this.hidden}}fa-eye-slash{{else}}fa-eye{{/if}} clickable-icon" data-action="toggleResearchBreakpointHidden" data-event="{{../event.id}}" data-breakpoint="{{this.id}}"></i>{{/if}}
+                                            </div>
+                                            <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon research-breakpoint-opener" data-action="toggleResearchOpenResearchBreakpoint" data-breakpoint="{{this.id}}"></i> 
+                                        </div>
+
+                                        <div class="event-folding {{#if this.open}}unfolded{{/if}}">
+                                            <div class="research-event-text">{{{this.enrichedDescription}}}</div>
+                                        </div>
+                                    {{/if}}
+                                </div>
+                            {{/if}}
                         {{/each}}
                     {{/if}}
                 </div>
             </div>
 
-            {{#if (or (gt this.revealedResearchEvents 0) this.editMode)}}
-                <div class="research-events-container primary-container active">
-                    <div class="title-container primary-container">{{localize "Research Events"}}</div>
+            {{#if this.researchEventsShown}}
+                <div class="research-events-container primary-container accent">
+                    <div class="title-container primary-container">
+                        <div class="title-container-inner">
+                            {{localize "PF2ESubsystems.Research.ResearchEvents"}}
+                            {{#if this.editMode}}<i class="fa-solid fa-plus clickable-icon" data-action="addResearchEvent" data-event="{{this.event.id}}"></i>{{/if}}
+                        </div>
+                    </div>
                     <div class="research-events-inner-container primary-text-container">
-                        
+                        {{#each this.event.researchEvents}}
+                            {{#if (or ../isGM (not this.hidden))}}
+                                <div class="research-event-container secondary-container">
+                                    {{#if ../editMode}}
+                                        <div class="event-field-group research-event-header">
+                                            <div class="event-field-form">
+                                                <div>{{localize "PF2ESubsystems.Basic.Name"}}</div>
+                                                <input type="text" name="{{concat "events." ../event.id ".researchEvents." this.id ".name"}}" value="{{this.name}}" class="tertiary-container" />
+                                            </div>
+                                            <div class="event-field-form">
+                                                <div>{{localize "PF2ESubsystems.Research.Timing"}}</div>
+                                                <input type="text" name="{{concat "events." ../event.id ".researchEvents." this.id ".timing"}}" value="{{this.timing}}" class="tertiary-container" />
+                                            </div>
+                                            <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon research-event-opener" data-action="researchToggleOpenResearchEvent" data-event="{{this.id}}"></i> 
+                                        </div>
+                                        <div class="event-folding {{#if this.open}}unfolded{{/if}}">
+                                            <prose-mirror class="data-input tertiary-container" name="{{concat "events." ../event.id ".researchEvents." this.id ".description"}}" value="{{this.description}}">
+                                                {{{this.enrichedDescription}}}
+                                            </prose-mirror>
+                                        </div>
+                                    {{else}}
+                                        <div class="research-event-title">
+                                            <div class="research-event-title-inner">
+                                                <div class="title-small-container">{{this.name}}</div>
+                                                {{#if ../isGM}}<i class="fa-solid {{#if this.hidden}}fa-eye-slash{{else}}fa-eye{{/if}} clickable-icon" data-action="toggleResearchEventHidden" data-event="{{../event.id}}" data-research-event="{{this.id}}"></i>{{/if}}
+                                            </div>
+                                            <div class="text-helper-big">{{this.timing}}</div>
+                                            <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon research-event-opener" data-action="researchToggleOpenResearchEvent" data-event="{{this.id}}"></i> 
+                                        </div>
+
+                                        <div class="event-folding {{#if this.open}}unfolded{{/if}}">
+                                            <div class="research-event-text">{{{this.enrichedDescription}}}</div>
+                                        </div>
+                                    {{/if}}
+                                </div>
+                            {{/if}}
+                        {{/each}}
                     </div>
                 </div>
             {{/if}}

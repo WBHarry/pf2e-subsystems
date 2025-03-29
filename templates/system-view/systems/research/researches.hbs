@@ -2,6 +2,17 @@
     {{#if (not this.selectedEvent)}}
         {{> "modules/pf2e-subsystems/templates/partials/events.hbs" tab=this.tab name=(localize "PF2ESubsystems.Events.Research.Single") plural=(localize "PF2ESubsystems.Events.Research.Plural") events=this.events }}
     {{else}}
-        {{> "modules/pf2e-subsystems/templates/system-view/systems/research/research.hbs" editMode=this.editMode selected=this.selected event=this.selectedEvent isGM=this.isGM skillOptions=this.skillOptions }}
+        {{> "modules/pf2e-subsystems/templates/system-view/systems/research/research.hbs" 
+            editMode=this.editMode 
+            skillCheckTabs=skillCheckTabs 
+            selected=this.selected 
+            event=this.selectedEvent 
+            isGM=this.isGM 
+            skillOptions=this.skillOptions 
+            actionOptions=this.actionOptions 
+            researchEventsShown=this.researchEventsShown 
+            showTimeLimit=this.showTimeLimit
+            timeUnits=this.timeUnits
+        }}
     {{/if}}
 </div>

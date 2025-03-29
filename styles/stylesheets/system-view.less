@@ -244,6 +244,28 @@
                 gap: @gapLarge;
                 overflow: hidden;
 
+                .event-field-group {
+                    display: flex;
+                    align-items: center;
+                    gap: @gapNormal;
+
+                    .event-field-form {
+                        display: flex;
+                        align-items: center;
+                        gap: @gapSmall;
+                        flex: 1;
+                        flex-wrap: nowrap;
+                        white-space: nowrap;
+                    }
+
+                    .event-field-col-form {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        width: 100%;
+                    }
+                }
+
                 .title-container {
                     position: relative;
                     display: flex;
@@ -301,6 +323,7 @@
                         }
 
                         .event-header-toolbar {
+                            height: 100%;
                             display: flex;
                             align-items: center;
                             gap: @gapSmall;

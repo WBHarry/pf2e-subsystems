@@ -38,6 +38,39 @@
                         }
                     }
 
+                    .time-limit-container {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        flex-wrap: nowrap;
+                        text-align: center;
+                        border-width: 2px;
+                        border-style: outset;
+                        border-radius: 4px;
+                        padding: @paddingNormal;
+                        height: 55px;
+                        font-size: 22px;
+                        font-weight: bold;
+
+                        .time-limit-number-container {
+                            position: relative;
+                            display: flex;
+                            justify-content: center;
+
+                            .time-limit-number-upper {
+                                position: absolute;
+                                top: -8px;
+                                font-size: 16px;
+                            }
+
+                            .time-limit-number-lower {
+                                position: absolute;
+                                bottom: -8px;
+                                font-size: 16px;
+                            }
+                        }
+                    }
+
                     .research-premise {
                         flex: 1;
                         display: flex;
@@ -65,7 +98,7 @@
                 }
 
                 .event-main-container {
-                    .title-container {
+                    .title-container, .title-small-container {
                         .title-container-inner {
                             position: relative;
                             display: flex;
@@ -79,7 +112,18 @@
                         }
                     }
 
+                    .event-folding {
+                        height: 0;
+                        overflow: hidden;
+                        transition: all 0.5;
+
+                        &.unfolded {
+                            height: auto;
+                        }
+                    }
+
                     .research-checks-container {
+                        flex: 1;
                         display: flex;
                         flex-direction: column;
                         border-width: 2px;
@@ -95,7 +139,6 @@
                             .research-check-container {
                                 display: flex;
                                 flex-direction: column;
-                                gap: @gapSmall;
                                 border-width: 1px;
                                 border-style: solid;
                                 padding: @paddingNormal;
@@ -107,6 +150,21 @@
                                     flex-direction: column;
                                     justify-content: center;
                                     align-items: center;
+
+                                    nav {
+                                        width: 100%;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: @gapSmall;
+
+                                        a {
+                                            flex: 1;
+                                            padding: @paddingNormal;
+                                            border-width: 2px;
+                                            border-style: solid;
+                                            border-radius: 4px;
+                                        }
+                                    }
 
                                     .form-group {
                                         width: 100%;
@@ -121,7 +179,7 @@
                                     .research-check-delete-button {
                                         position: absolute;
                                         left: 2px;
-                                        font-size: 24px;
+                                        font-size: 18px;
                                     }
 
                                     .research-check-opener {
@@ -131,24 +189,43 @@
                                     }
                                 }
 
-                                .research-check-folding {
-                                    height: 0;
-                                    overflow: hidden;
-                                    transition: all 0.5;
+                                .research-check-description {
+                                    font-style: italic;
+                                }
 
-                                    &.unfolded {
-                                        height: auto;
-                                    }
+                                .research-check-skill-checks {
+                                    display: flex;
+                                    flex-direction: column;
+                                    gap: @gapNormal;
 
-                                    .research-check-small-input {
-                                        padding: 0 32px;
+                                    .research-check-skill-check {
+                                        display: flex;
+                                        flex-direction: column;
+                                        flex-wrap: wrap;
+                                        text-align: center;
+    
+                                        :not(.research-check-skill-check-button) {
+                                            flex-wrap: nowrap;
+                                            white-space: nowrap;
+                                        }
+    
+                                        .research-check-skill-check-buttons {
+                                            display: flex;
+                                            align-items: center;
+                                            gap: @gapSmall;
+                                        }
+    
+                                        .research-check-skill-check-title {
+                                            font-weight: bold;
+                                            margin-right: @marginNormal;
+                                        }
                                     }
                                 }
 
-                                .research-check-skill-checks-container {
+                                .research-check-skill-checks-outer-container {
                                     border-width: 1px;
                                     border-style: solid;
-                                    margin: @marginLarge 0;
+                                    padding: 0 @paddingLarge @paddingLarge @paddingLarge;
 
                                     .research-check-skill-check-title {
                                         display: flex;
@@ -166,13 +243,68 @@
                                             }
                                         }
                                     }
+
+                                    .research-check-skill-checks-container {
+                                        display: flex;
+                                        flex-direction: column;
+                                        gap: 2px;
+                                        border-width: 2px;
+                                        border-style: inset;
+                                        padding: 2px;
+
+                                        .research-check-skill-check-inner-container {
+                                            display: flex;
+                                            align-items: flex-start;
+                                            gap: @gapSmall;
+                                            border-width: 1px;
+                                            border-style: solid;
+                                            padding: 0 @paddingNormal;
+
+                                            &.padded {
+                                                padding-right: 20px;
+                                            }
+
+                                            i {
+                                                margin-top: @marginSmall;
+                                            }
+    
+                                            .research-check-skill-check-value-container {
+                                                display: flex;
+                                                flex-direction: column;
+                                                align-items: center;
+                                                justify-content: space-between;
+                                                height: 49px;
+    
+                                                select {
+                                                    text-align: center;
+                                                }
+
+                                                input {
+                                                    margin: 0 0 5px;
+                                                }
+
+                                                &.full {
+                                                    flex: 1;
+                                                }
+
+                                                &.dc input {
+                                                    width: 32px;
+                                                }
+                                            }
+                                        }
+
+                                        .research-check-skill-checks-full-field {
+                                            display: flex;
+                                            align-items: center;
+                                            gap: @gapNormal;
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
 
                     .research-breakpoints-container {
-                        flex: 1;
                         display: flex;
                         flex-direction: column;
                         border-width: 2px;
@@ -180,6 +312,7 @@
                         border-radius: 4px;
 
                         .research-breakpoints-inner-container {
+                            width: 100%;
                             flex: 1;
                             padding: @paddingNormal;
                             display: flex;
@@ -187,27 +320,32 @@
 
                             .research-breakpoint-container {
                                 display: flex;
-                                justify-content: space-between;
-                                gap: @gapSmall;
+                                flex-direction: column;
+                                padding: @paddingNormal;
                                 border-width: 1px;
                                 border-style: solid;
-                                padding: @paddingNormal;
+
+                                .research-breakpoint-delete-button {
+                                    position: absolute;
+                                    left: 2px;
+                                    font-size: 18px;
+                                }
+
+                                .research-breakpoint-opener {
+                                    position: absolute;
+                                    right: 0;
+                                    font-size: 32px;
+                                }
 
                                 .research-breakpoint-number {
-                                    display: flex;
-                                    flex-direction: column;
-                                    align-items: center;
-                                    text-align: center;
+                                    position: relative;
+                                    padding: 0 32px;
 
                                     .research-breakpoint-number-title {
                                         border-width: 1px;
                                         border-style: solid;
                                         border-radius: 4px;
                                         padding: @paddingSmall;
-                                    }
-
-                                    input {
-                                        width: 66px;
                                     }
                                 }
 
@@ -229,6 +367,28 @@
                                 .research-breakpoint-tool-icon {
                                     align-self: center;
                                 }
+
+                                
+                                .research-breakpoint-title {
+                                    position: relative;
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: center;
+                                    justify-content: center;
+                                    text-align: center;
+
+                                    .research-breakpoint-title-inner {
+                                        position: relative;
+                                        display: flex;
+                                        align-items: center;
+
+                                        i {
+                                            position: absolute;
+                                            right: -28px;
+                                            font-size: 20px;
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -239,6 +399,56 @@
                         border-width: 2px;
                         border-style: outset;
                         border-radius: 4px;
+
+                        .research-event-opener {
+                            position: absolute;
+                            right: 0;
+                            font-size: 32px;
+                        }
+
+                        .research-events-inner-container {
+                            display: flex;
+                            flex-direction: column;
+                            padding: @paddingNormal;
+
+                            .research-event-container {
+                                display: flex;
+                                flex-direction: column;
+                                padding: @paddingNormal;
+                                border-width: 1px;
+                                border-style: solid;
+
+                                .research-event-header {
+                                    position: relative;
+                                    padding: 0 32px;
+                                }
+
+                                .research-event-title {
+                                    position: relative;
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: center;
+                                    justify-content: center;
+                                    text-align: center;
+
+                                    .research-event-title-inner {
+                                        position: relative;
+                                        display: flex;
+                                        align-items: center;
+            
+                                        i {
+                                            position: absolute;
+                                            right: -28px;
+                                            font-size: 20px;
+                                        }
+                                    }
+                                }
+
+                                .research-event-text {
+                                    font-style: italic;
+                                }
+                            }
+                        }
                     }
                 }
             }

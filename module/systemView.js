@@ -1,4 +1,4 @@
-import { MODULE_ID, SOCKET_ID } from "../data/constants";
+import { MODULE_ID, SOCKET_ID, timeUnits } from "../data/constants";
 import { updateDataModel } from "../scripts/helpers";
 import { currentVersion } from "../scripts/setup";
 import { socketEvent } from "../scripts/socket";
@@ -68,10 +68,12 @@ export default class SystemView extends HandlebarsApplicationMixin(
         onToggleObstacleLock: this.onToggleObstacleLock,
         updateChasePoints: this.updateChasePoints,
         /* Research */
+        researchUpdateTimeLimitCurrent: this.researchUpdateTimeLimitCurrent,
         addResearchBreakpoint: this.addResearchBreakpoint,
         researchUpdateResearchPoints: this.researchUpdateResearchPoints,
         removeResearchBreakpoint: this.removeResearchBreakpoint,
         toggleResearchBreakpointHidden: this.toggleResearchBreakpointHidden,
+        toggleResearchOpenResearchBreakpoint: this.toggleResearchOpenResearchBreakpoint,
         addResearchCheck: this.addResearchCheck,
         removeResearchCheck: this.removeResearchCheck,
         toggleResearchCheckHidden: this.toggleResearchCheckHidden,
@@ -79,6 +81,13 @@ export default class SystemView extends HandlebarsApplicationMixin(
         researchAddResearchCheckSkillCheck: this.researchAddResearchCheckSkillCheck,
         researchRemoveResearchCheckSkillCheck: this.researchRemoveResearchCheckSkillCheck,
         researchToggleResearchCheckSkillCheckHidden: this.researchToggleResearchCheckSkillCheckHidden,
+        researchAddSkill: this.researchAddSkill,
+        researchRemoveSkill: this.researchRemoveSkill,
+        addResearchEvent: this.addResearchEvent,
+        removeResearchEvent: this.removeResearchEvent,
+        toggleResearchEventHidden: this.toggleResearchEventHidden,
+        researchToggleOpenResearchEvent: this.researchToggleOpenResearchEvent,
+
       },
       form: { handler: this.updateData, submitOnChange: true },
       window: {
@@ -103,10 +112,11 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
     tabGroups = {
       main: 'systemView',
+      influenceResearchChecks: 'description',
     };
 
     getTabs() {
-      let tabs = {
+      const tabs = {
         systemView: {
           active: true,
           cssClass: '',
@@ -146,8 +156,19 @@ export default class SystemView extends HandlebarsApplicationMixin(
           image: 'icons/skills/trades/academics-merchant-scribe.webp',
         },
       };
+  
+      for (const v of Object.values(tabs)) {
+        v.active = this.tabGroups[v.group]
+          ? this.tabGroups[v.group] === v.id
+          : v.active;
+        v.cssClass = v.active ? `${v.cssClass} active` : "";
+      }
+  
+      return tabs;
+    }
 
-      const researchTabs = {
+    getSkillCheckTabs() {
+      const tabs = {
         description: {
           active: true,
           cssClass: '',
@@ -165,11 +186,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
           label: game.i18n.localize('PF2ESubsystems.Research.ResearchCheckTab.SkillChecks'),
         }
       };
-
-      tabs = {
-        ...tabs,
-        ...researchTabs,
-      }
   
       for (const v of Object.values(tabs)) {
         v.active = this.tabGroups[v.group]
@@ -253,7 +269,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
                 },
               };
             },
-            attachListeners: this.filePickerListener,
+            attachListeners: this.filePickerListener.bind(this),
           };
         case 'research':
           return {  
@@ -277,7 +293,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
                 background: elements.background.value ? elements.background.value : 'icons/skills/trades/academics-merchant-scribe.webp',
               };
             },
-            attachListeners: this.filePickerListener,
+            attachListeners: this.filePickerListener.bind(this),
           };
       }
     }
@@ -600,6 +616,12 @@ export default class SystemView extends HandlebarsApplicationMixin(
       this.updateView();
     }
 
+    static async researchUpdateTimeLimitCurrent(_, button) {
+      const currentValue = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].timeLimit.current;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.timeLimit.current`]: button.dataset.increase ? currentValue + 1 : currentValue -1 });
+      this.updateView();
+    }
+
     static async addResearchBreakpoint(_, button) {
       const breakpointId = foundry.utils.randomID();
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchBreakpoints.${breakpointId}`]: {
@@ -623,6 +645,11 @@ export default class SystemView extends HandlebarsApplicationMixin(
       const currentBreakpoint = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchBreakpoints[button.dataset.breakpoint];
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchBreakpoints.${button.dataset.breakpoint}.hidden`]: !currentBreakpoint.hidden })
       this.updateView();
+    }
+
+    static toggleResearchOpenResearchBreakpoint(_, button) {
+      this.selected.research.openResearchBreakpoint = this.selected.research.openResearchBreakpoint === button.dataset.breakpoint ? null : button.dataset.breakpoint;
+      this.render({ parts: [this.tabGroups.main] }); 
     }
 
     static async addResearchCheck(_, button) {
@@ -652,8 +679,14 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
     static async researchAddResearchCheckSkillCheck(_, button) {
       const checkId = foundry.utils.randomID();
+      const skillId = foundry.utils.randomID();
       await updateDataModel(this.tabGroups.main, {[`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.${checkId}`]: {
         id: checkId,
+        skills: {
+          [skillId]: {
+            id: skillId,
+          }
+        }
       }});
       this.updateView();
     }
@@ -669,6 +702,82 @@ export default class SystemView extends HandlebarsApplicationMixin(
       this.updateView();
     }
 
+    static async researchAddSkill(_, button){
+      const skillId = foundry.utils.randomID();
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.${button.dataset.skillCheck}.skills.${skillId}`]: {
+        id: skillId,
+      }})
+      this.updateView();
+    }
+
+    static async researchRemoveSkill(_, button){
+      const currentNrSkills = Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchChecks[button.dataset.check].skillChecks[button.dataset.skillCheck].skills).length;
+      if(currentNrSkills === 1){
+        await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.-=${button.dataset.skillCheck}`]: null});
+      }
+      else {
+        await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.${button.dataset.skillCheck}.skills.-=${button.dataset.skill}`]: null});
+      }
+
+      this.updateView();
+    }
+
+    static async addResearchEvent(_, button){
+      const researchEventId = foundry.utils.randomID();
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchEvents.${researchEventId}`]: {
+        id: researchEventId,
+      }});
+      this.updateView();
+    }
+
+    static async removeResearchEvent(_, button){
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchEvents.-=${button.dataset.researchEvent}`]: null });
+      this.updateView();
+    }
+
+    static async toggleResearchEventHidden(_, button){
+      const currentHidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchEvents[button.dataset.researchEvent].hidden;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchEvents.${button.dataset.researchEvent}.hidden`]: !currentHidden });
+      this.updateView();
+    }
+
+    static async researchToggleOpenResearchEvent(_, button) {
+      this.selected.research.openResearchEvent = this.selected.research.openResearchEvent === button.dataset.event ? null : button.dataset.event;
+      this.render({ parts: [this.tabGroups.main] });
+    }
+
+    async updateResearchLore(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+      const newLore = button.checked;
+      
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.${button.dataset.skillCheck}.skills.${button.dataset.skill}`]: {
+        lore: newLore,
+        skill: newLore ? 'something-lore' : 'acrobatics',
+      }});
+      this.updateView();
+    }
+
+    async updateResearchSkillCheck(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+      const currentLore = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchChecks[button.dataset.check].skillChecks[button.dataset.skillCheck].skills[button.dataset.skill].lore;
+      let newSkill = button.value;
+
+      if(currentLore){
+        const loreMatch = newSkill.match('-lore');
+        if(!loreMatch || loreMatch.length === 0) {
+          newSkill = 'something-lore';
+          ui.notifications.warn(game.i18n.localize('PF2ESubsystems.Research.Errors.LoreError'));
+        }
+      }
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.${button.dataset.skillCheck}.skills.${button.dataset.skill}`]: {
+        skill: newSkill,
+      }});
+      this.updateView();
+    }
+
     _attachPartListeners(partId, htmlElement, options) {
       super._attachPartListeners(partId, htmlElement, options);
 
@@ -676,6 +785,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
         case 'chase':
           $(htmlElement).find('.radio-button').on('contextmenu', this.toggleObstacleLock.bind(this));
           $(htmlElement).find('.chase-event-chase-points-container input').on('change', this.updateObstacleChasePoints.bind(this));
+          break;
+        case 'research':
+          $(htmlElement).find('.research-lore-input').on('change', this.updateResearchLore.bind(this));
+          $(htmlElement).find('.research-skill-check-input').on('change', this.updateResearchSkillCheck.bind(this));
           break;
       }
     }
@@ -736,31 +849,62 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
           break;
         case 'research': 
-          const { events: researchEvents } = game.settings.get(MODULE_ID, 'research');
+          const { events: viewEvents } = game.settings.get(MODULE_ID, 'research');
             
-          context.events = researchEvents;
+          context.events = viewEvents;
           context.tab = context.systems.research;
-          context.selectedEvent = context.selected.event ? Object.values(researchEvents).find(x => x.id === context.selected.event) : undefined;
+          context.skillCheckTabs = this.getSkillCheckTabs();
+          context.selectedEvent = context.selected.event ? Object.values(viewEvents).find(x => x.id === context.selected.event) : undefined;
           if(context.selectedEvent) {
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
-          
-            for(var key of Object.keys(context.selectedEvent.researchChecks)) {
-              context.selectedEvent.researchChecks[key].enrichedDescription = await TextEditor.enrichHTML(context.selectedEvent.researchChecks[key].description);
-            }
+            context.showTimeLimit = this.editMode || context.selectedEvent.timeLimit.max;
+            context.selectedEvent.timeLimit.unitName = timeUnits[context.selectedEvent.timeLimit.unit]?.name;
 
             for(var key of Object.keys(context.selectedEvent.researchChecks)){
               const researchCheck = context.selectedEvent.researchChecks[key];
+              researchCheck.open = researchCheck.id === this.selected.research?.openResearchCheck;
+              researchCheck.enrichedDescription = await TextEditor.enrichHTML(researchCheck.description);
+              
               for(var checkKey of Object.keys(researchCheck.skillChecks)) {
                 const checkSkill = researchCheck.skillChecks[checkKey];
-                checkSkill.element = await TextEditor.enrichHTML(`@Check[type:${checkSkill.skill}|dc:${checkSkill.dc}|simple:${checkSkill.simple}]`);
+                checkSkill.enrichedDescription = await TextEditor.enrichHTML(checkSkill.description);
+
+                const skills = Object.keys(checkSkill.skills);
+                for(var skillKey of skills){
+                  const skillCheck = checkSkill.skills[skillKey];
+                  if(skillCheck.action) {
+                    skillCheck.element = await TextEditor.enrichHTML(`[[/act ${skillCheck.action} stat=${skillCheck.skill} dc=${skillCheck.dc}]]`);  
+                  }
+                  else {
+                    skillCheck.element = await TextEditor.enrichHTML(`@Check[type:${skillCheck.skill}|dc:${skillCheck.dc}|simple:${skillCheck.simple}]`);
+                  }
+                  skillCheck.isFirst = skills[0] === skillCheck.id;
+                }
               }
+            }
+
+            for(var key of Object.keys(context.selectedEvent.researchBreakpoints)) {
+              const researchBreakpoint = context.selectedEvent.researchBreakpoints[key];
+              researchBreakpoint.open = researchBreakpoint.id === this.selected.research?.openResearchBreakpoint;
+              researchBreakpoint.enrichedDescription = await TextEditor.enrichHTML(researchBreakpoint.description);
+            }
+
+            for(var key of Object.keys(context.selectedEvent.researchEvents)) {
+              const researchEvent = context.selectedEvent.researchEvents[key];
+              researchEvent.open = researchEvent.id === this.selected.research?.openResearchEvent;
+              researchEvent.enrichedDescription = await TextEditor.enrichHTML(researchEvent.description);
             }
           }
 
           context.revealedResearchChecks = context.selectedEvent ? Object.values(context.selectedEvent.researchChecks).filter(x => !x.hidden).length : 0;
           context.revealedResearchBreakpoints = context.selectedEvent ? Object.values(context.selectedEvent.researchBreakpoints).filter(x => !x.hidden).length : 0;
-          context.revealedResearchEvents = context.selectedEvent ? Object.values(context.selectedEvent.researchEvents).filter(x => !x.hidden).length : 0;
+
+          const researchEvents = context.selectedEvent ? Object.values(context.selectedEvent.researchEvents) : [];
+          const revealedResearchEvents = researchEvents.filter(x => !x.hidden);
+          context.researchEventsShown = this.editMode || revealedResearchEvents.length > 0 || (game.user.isGM && researchEvents.length > 0);
+          
           context.selected = this.selected.research;
+          context.timeUnits = timeUnits;
           context.skillOptions = [
             ...Object.keys(CONFIG.PF2E.skills).map((skill) => ({
               value: skill,
@@ -768,6 +912,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
             })),
             { value: "perception", name: "PF2E.PerceptionLabel" },
           ];
+          context.actionOptions = []; 
+          for(var action of game.pf2e.actions) {
+            context.actionOptions.push({ value: action.slug, name: game.i18n.localize(action.name) });
+          }
 
           break;
       }

@@ -2,7 +2,7 @@
     {{> "modules/pf2e-subsystems/templates/partials/navigate-back.hbs" label=(localize "PF2ESubsystems.Chase.NavigateBack") action="navigateToSystem" }}
     <div class="event-container">
         <div class="event-sidebar">
-            <div class="description-outer-container primary-container active">
+            <div class="description-outer-container primary-container accent">
                 <div class="title-container primary-container">
                     <div class="description-title-inner-container">
                         <h4 class="primary-text-container">{{localize "PF2ESubsystems.Chase.Premise"}}</h4>
@@ -16,7 +16,7 @@
                     {{/if}}
                 </div>
             </div>
-            <div class="participants-outer-container primary-container active">
+            <div class="participants-outer-container primary-container accent">
                 <div class="title-container primary-container">
                     <div class="participants-title-inner-container {{#if (not this.isGM)}}standalone{{/if}}">
                         {{#if this.editMode}}
@@ -86,7 +86,7 @@
                     </div>
                 {{/if}}
             </div>
-            <fieldset class="chase-event-container primary-container active">
+            <fieldset class="chase-event-container primary-container accent">
                 <legend class="chase-event-display">
                     {{#each this.event.obstacles as |obstacle id|}}
                         {{#if (or (not obstacle.locked) ../isGM)}}

@@ -8,7 +8,28 @@
             "Remove": "Remove",
             "Players": "Players",
             "Name": "Name",
-            "Image": "Image"
+            "Image": "Image",
+            "Description": "Description",
+            "DC": "DC",
+            "Premise": "Premise"
+        },
+        "TimeUnits": {
+            "Year": {
+                "Single": "Year",
+                "Plural": "Years"
+            },
+            "Month": {
+                "Single": "Month",
+                "Plural": "Months"
+            },
+            "Day": {
+                "Single": "Day",
+                "Plural": "Days"
+            },
+            "Hour": {
+                "Single": "Hour",
+                "Plural": "Hours"
+            }
         },
         "Macros": {
             "StartEvent": {
@@ -28,7 +49,10 @@
             "HideFromPlayers": "Hide From Players",
             "RevealToPlayers": "Reveal To Players",
             "StartEventLinkCopied": "StartEvent Macro for {name} copied to clipboard.",
-            "CopyStartEventLink": "Copy a macro to start this event"
+            "CopyStartEventLink": "Copy a macro to start this event",
+            "TimeUnit": "Time Unit",
+            "CurrentTime": "Current Time",
+            "MaxTime": "Max Time"
         },
         "Events": {
             "Chase": {
@@ -78,10 +102,23 @@
             "StartResearch": "Start Research",
             "MaxResearchPoints": "Maximum RP",
             "Skill": "Skill",
+            "Action": "Action",
+            "TimeLimit": "Time",
+            "ResearchChecks": "Research Checks",
+            "ResearchPoints": "Research Points",
             "SkillChecks": "Skill Checks",
+            "Lore": "Lore",
+            "Basic": "Basic",
+            "Timing": "Timing",
+            "ResearchEvents": "Research Events",
+            "ResearchBreakpoints": "Research Breakpoints",
+            "ResearchBreakpoint": "Breakpoint",
             "ResearchCheckTab": {
                 "Description": "Description",
                 "SkillChecks": "Skill Checks"
+            },
+            "Errors": {
+                "LoreError": "A lore skill must be in the format of 'something-lore'"
             }
         },
         "KeyBindings": {
