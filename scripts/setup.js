@@ -1,6 +1,8 @@
 import { Chases } from "../data/chase";
-import { MODULE_ID } from "../data/constants";
+import { MODULE_ID, settingIDs } from "../data/constants";
 import { Researches } from "../data/research";
+import { ChaseSettings, ResearchSettings } from "../data/settings";
+import SubsystemsMenu from "../module/SubsystemsMenu";
 
 export const currentVersion = '0.5.0';
 
@@ -22,9 +24,25 @@ export const registerKeyBindings = () => {
 export const registerGameSettings = () => {
   configSettings();
   generalNonConfigSettings();
+  registerMenus();
 }
 
 const configSettings = () => {
+  game.settings.register(MODULE_ID, settingIDs.research.settings, {
+    name: "",
+    hint: "",
+    scope: "world",
+    config: false,
+    type: ResearchSettings,
+  });
+
+  game.settings.register(MODULE_ID, settingIDs.chase.settings, {
+    name: "",
+    hint: "",
+    scope: "world",
+    config: false,
+    type: ChaseSettings,
+  });
 }
 
 const generalNonConfigSettings = () => {
@@ -43,5 +61,16 @@ const generalNonConfigSettings = () => {
     config: false,
     type: Researches,
     default: { events: {} },
+  });
+};
+
+const registerMenus = () => {
+  game.settings.registerMenu(MODULE_ID, settingIDs.menus.subsystems, {
+    name: game.i18n.localize("PF2ESubsystems.Menus.Subsystems.Name"),
+    label: game.i18n.localize("PF2ESubsystems.Menus.Subsystems.Label"),
+    hint: game.i18n.localize("PF2ESubsystems.Menus.Subsystems.Hint"),
+    icon: "fa-solid fa-list",
+    type: SubsystemsMenu,
+    restricted: true,
   });
 };

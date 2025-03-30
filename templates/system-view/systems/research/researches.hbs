@@ -1,6 +1,6 @@
 <div class="event-tab tab {{tab.cssClass}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
     {{#if (not this.selectedEvent)}}
-        {{> "modules/pf2e-subsystems/templates/partials/events.hbs" tab=this.tab name=(localize "PF2ESubsystems.Events.Research.Single") plural=(localize "PF2ESubsystems.Events.Research.Plural") events=this.events }}
+        {{> "modules/pf2e-subsystems/templates/partials/events.hbs" tab=this.tab name=(localize "PF2ESubsystems.Events.Research.Single") plural=(localize "PF2ESubsystems.Events.Research.Plural") events=this.events eventSearchValue=this.eventSearchValue }}
     {{else}}
         {{> "modules/pf2e-subsystems/templates/system-view/systems/research/research.hbs" 
             editMode=this.editMode 
@@ -13,6 +13,7 @@
             researchEventsShown=this.researchEventsShown 
             showTimeLimit=this.showTimeLimit
             timeUnits=this.timeUnits
+            settings=this.settings
         }}
     {{/if}}
 </div>

@@ -8,11 +8,15 @@ export function handleSocketEvent({ action = null, data = {} } = {}) {
       case socketEvent.OpenSystemEvent:
         new SystemView(data.tab, data.event).render(true);
         break;
+      case socketEvent.GMUpdate:
+        Hooks.callAll(socketEvent.GMUpdate, data);
+        break;
     }
   }
   
   export const socketEvent = {
     UpdateSystemView: "UpdateSystemView",
     OpenSystemEvent: "OpenSystemEvent",
+    GMUpdate: "GMUpdate",
   };
   

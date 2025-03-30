@@ -20,6 +20,10 @@ export class Chase extends foundry.abstract.DataModel {
         background: new fields.StringField({ required: true }),
         premise: new fields.HTMLField({ required: true, initial: "" }),
         hidden: new fields.BooleanField({ initial: true }),
+        rounds: new fields.SchemaField({
+          current: new fields.NumberField({ initial: 0 }),
+          max: new fields.NumberField({}), 
+        }),
         started: new fields.BooleanField({ required: true, initial: false }),
         participants: new TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
@@ -29,6 +33,7 @@ export class Chase extends foundry.abstract.DataModel {
           position: new fields.NumberField({ required: true, nullable: true, initial: 0 }),
           player: new fields.BooleanField({ required: true, initial: false }),
           obstacle: new fields.NumberField({ required: true, initial: 1 }),
+          hasActed: new fields.BooleanField({ required: true, initial: false }),
         })),
         obstacles: new TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),

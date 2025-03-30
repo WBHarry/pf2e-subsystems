@@ -1,0 +1,37 @@
+@import "../variables.less";
+
+.pf2e-subsystems.pf2e-subsystems-menu {
+    .menu-outer-container {
+        display: flex;
+        flex-direction: column;
+
+        .tabs {
+            gap: 0;
+
+            .system-tab {
+                flex: 1;
+                border-width: 2px;
+                border-style: outset;
+            }
+        }
+
+        .menu-group {
+            display: flex;
+            align-items: center;
+            gap: @gapNormal;
+
+            .menu-form {
+                display: flex;
+                align-items: center;
+                gap: @gapSmall;
+            }
+        }
+
+        .menu-main-container {
+            border-width: 2px;
+            border-style: outset;
+            padding: @paddingNormal;
+            margin-bottom: @marginLarge;
+        }
+    }
+}

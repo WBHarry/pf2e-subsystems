@@ -1,0 +1,14 @@
+<div class="tab {{this.tabs.research.cssClass}}" data-group="main" data-tab="research">
+    <div class="menu-outer-container">
+        {{> "modules/pf2e-subsystems/templates/menu/subsystem-menu/partials/system-tabs.hbs" tabs=this.tabs }}
+        <div class="menu-main-container primary-container">
+            <div class="menu-group">
+                <div class="menu-form">
+                    <div>{{localize "PF2ESubsystems.Menus.Subsystems.Research.HideResearchCheckMaxRP"}}</div>
+                    <input type="checkbox" name="research.hiddenFields.researchCheckMaxRP" {{checked this.settings.hiddenFields.researchCheckMaxRP}} />
+                </div>
+            </div>
+        </div>
+        {{> "modules/pf2e-subsystems/templates/menu/subsystem-menu/partials/system-footer.hbs" }}
+    </div>
+</div>

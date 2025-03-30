@@ -3,8 +3,6 @@
         .event-outer-container {
             .event-container {                
                 .event-sidebar {
-                    gap: 6px;
-
                     .research-points-container {
                         display: flex;
                         justify-content: center;
@@ -151,6 +149,10 @@
                                     justify-content: center;
                                     align-items: center;
 
+                                    &.extended {
+                                        padding: 0 64px;
+                                    }
+
                                     nav {
                                         width: 100%;
                                         display: flex;
@@ -179,6 +181,12 @@
                                     .research-check-delete-button {
                                         position: absolute;
                                         left: 2px;
+                                        font-size: 18px;
+                                    }
+
+                                    .research-check-hider {
+                                        position: absolute;
+                                        right: 32px;
                                         font-size: 18px;
                                     }
 
@@ -331,6 +339,12 @@
                                     font-size: 18px;
                                 }
 
+                                .research-breakpoint-hider {
+                                    position: absolute;
+                                    right: 32px;
+                                    font-size: 18px;
+                                }
+
                                 .research-breakpoint-opener {
                                     position: absolute;
                                     right: 0;
@@ -363,11 +377,6 @@
                                     flex-direction: column;
                                     justify-content: center;
                                 }
-
-                                .research-breakpoint-tool-icon {
-                                    align-self: center;
-                                }
-
                                 
                                 .research-breakpoint-title {
                                     position: relative;
@@ -399,6 +408,12 @@
                         border-width: 2px;
                         border-style: outset;
                         border-radius: 4px;
+
+                        .research-event-hider {
+                            position: absolute;
+                            right: 32px;
+                            font-size: 18px;
+                        }
 
                         .research-event-opener {
                             position: absolute;

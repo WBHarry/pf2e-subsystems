@@ -19,3 +19,15 @@ export const timeUnits = {
         name: 'PF2ESubsystems.TimeUnits.Hour.Plural',
     },
 }
+
+export const settingIDs = {
+    menus: {
+        subsystems: "subsystems-menu"
+    },
+    chase: {
+        settings: "chase-settings",
+    },
+    research: {
+        settings: "research-settings",
+    },
+}

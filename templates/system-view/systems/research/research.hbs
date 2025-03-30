@@ -182,15 +182,18 @@
                                         </div>
                                     </div>
                                 {{else}}
-                                    <div class="research-check-header">
-                                        <div class="title-small-container">{{this.name}}</div>
-                                        {{#if ../isGM}}
+                                    <div class="research-check-header {{#if ../isGM}}extended{{/if}}">
+                                        <div class="title-small-container">
+                                            {{this.name}}
+                                        </div>
+                                        {{#if (or ../isGM (not ../settings.hiddenFields.researchCheckMaxRP))}}
                                             <div class="research-check-subheader text-helper-big">
                                                 <div>{{localize "PF2ESubsystems.Research.MaxResearchPoints"}}:</div>
                                                 &nbsp;
                                                 <div>{{this.maximumResearchPoints}}</div>
                                             </div> 
                                         {{/if}}  
+                                        {{#if ../isGM}}<i class="fa-solid {{#if this.hidden}}fa-eye-slash{{else}}fa-eye{{/if}} clickable-icon research-check-hider" data-action="toggleResearchCheckHidden" data-event="{{../event.id}}" data-check="{{this.id}}"></i>{{/if}}
                                         <i class="fa-solid {{#if (eq this.id ../selected.openResearchCheck)}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon research-check-opener" data-action="researchToggleOpenResearchCheck" data-check="{{this.id}}"></i> 
                                     </div>
                                     <div class="event-folding {{#if this.open}}unfolded{{/if}}">
@@ -250,8 +253,8 @@
                                                     {{this.breakpoint}}
                                                     {{localize "PF2ESubsystems.Research.ResearchPoints"}}
                                                 </div>
-                                                {{#if ../isGM}}<i class="research-breakpoint-tool-icon fa-solid {{#if this.hidden}}fa-eye-slash{{else}}fa-eye{{/if}} clickable-icon" data-action="toggleResearchBreakpointHidden" data-event="{{../event.id}}" data-breakpoint="{{this.id}}"></i>{{/if}}
                                             </div>
+                                            {{#if ../isGM}}<i class="fa-solid {{#if this.hidden}}fa-eye-slash{{else}}fa-eye{{/if}} clickable-icon research-breakpoint-hider" data-action="toggleResearchBreakpointHidden" data-event="{{../event.id}}" data-breakpoint="{{this.id}}"></i>{{/if}}
                                             <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon research-breakpoint-opener" data-action="toggleResearchOpenResearchBreakpoint" data-breakpoint="{{this.id}}"></i> 
                                         </div>
 
@@ -299,9 +302,9 @@
                                         <div class="research-event-title">
                                             <div class="research-event-title-inner">
                                                 <div class="title-small-container">{{this.name}}</div>
-                                                {{#if ../isGM}}<i class="fa-solid {{#if this.hidden}}fa-eye-slash{{else}}fa-eye{{/if}} clickable-icon" data-action="toggleResearchEventHidden" data-event="{{../event.id}}" data-research-event="{{this.id}}"></i>{{/if}}
                                             </div>
                                             <div class="text-helper-big">{{this.timing}}</div>
+                                            {{#if ../isGM}}<i class="fa-solid {{#if this.hidden}}fa-eye-slash{{else}}fa-eye{{/if}} clickable-icon research-event-hider" data-action="toggleResearchEventHidden" data-event="{{../event.id}}" data-research-event="{{this.id}}"></i>{{/if}}
                                             <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon research-event-opener" data-action="researchToggleOpenResearchEvent" data-event="{{this.id}}"></i> 
                                         </div>
 

@@ -1,7 +1,14 @@
-import { MODULE_ID } from "../data/constants";
+import { SOCKET_ID } from "../data/constants";
+import { socketEvent } from "./socket";
 
 export async function updateDataModel(setting, data){
-    const currentSetting = game.settings.get(MODULE_ID, setting);
-    currentSetting.updateSource(data);
-    await game.settings.set(MODULE_ID, setting, currentSetting);
+    if(game.user.isGM){
+        Hooks.callAll(socketEvent.GMUpdate, { setting, data });
+    }
+    else {
+        game.socket.emit(SOCKET_ID, {
+            action: socketEvent.GMUpdate,
+            data: { setting, data },
+        });
+    }
 }

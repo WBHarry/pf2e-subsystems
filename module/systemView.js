@@ -1,4 +1,4 @@
-import { MODULE_ID, SOCKET_ID, timeUnits } from "../data/constants";
+import { MODULE_ID, settingIDs, SOCKET_ID, timeUnits } from "../data/constants";
 import { updateDataModel } from "../scripts/helpers";
 import { currentVersion } from "../scripts/setup";
 import { socketEvent } from "../scripts/socket";
@@ -18,6 +18,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
       super({});
 
       this.selected = getDefaultSelected(event);
+      this.eventSearchValue = "";
 
       if(tab) {
         this.tabGroups.main = tab;
@@ -56,10 +57,12 @@ export default class SystemView extends HandlebarsApplicationMixin(
         navigateToSystem: this.navigateToSystem,
         copyStartEventLink: this.copyStartEventLink,
         /* Chases */
+        researchUpdateRoundsCurrent: this.researchUpdateRoundsCurrent,
         addPlayerParticipants: this.addPlayerParticipants,
         addParticipant: this.addParticipant,
         editParticipant: this.editParticipant,
         removeParticipant: this.removeParticipant,
+        toggleParticipantHasActed: this.toggleParticipantHasActed,
         updateParticipantObstacle: this.updateParticipantObstacle,
         updatePlayerParticipantsObstacle: this.updatePlayerParticipantsObstacle,
         addObstacle: this.addObstacle,
@@ -136,16 +139,16 @@ export default class SystemView extends HandlebarsApplicationMixin(
           label: game.i18n.localize('PF2ESubsystems.Events.Chase.Plural'),
           image: 'icons/skills/movement/feet-winged-boots-brown.webp',
         },
-        influence: {
-          active: false,
-          cssClass: 'influence-view',
-          group: 'main',
-          id: 'influence',
-          icon: null,
-          label: game.i18n.localize('PF2ESubsystems.Events.Influence.Plural'),
-          image: 'icons/skills/social/diplomacy-handshake-yellow.webp',
-          disabled: true,
-        },
+        // influence: {
+        //   active: false,
+        //   cssClass: 'influence-view',
+        //   group: 'main',
+        //   id: 'influence',
+        //   icon: null,
+        //   label: game.i18n.localize('PF2ESubsystems.Events.Influence.Plural'),
+        //   image: 'icons/skills/social/diplomacy-handshake-yellow.webp',
+        //   disabled: true,
+        // },
         research: {
           active: false,
           cssClass: 'research-view',
@@ -197,6 +200,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
       return tabs;
     }
 
+    changeTab(tab, group, options) {
+      super.changeTab(tab, group, options);
+    }
+
     static editImage(_, button) {
       const current = foundry.utils.getProperty(game.settings.get(MODULE_ID, this.tabGroups.main), button.dataset.path);
       const fp = new FilePicker({
@@ -205,7 +212,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
           redirectToRoot: current ? [current] : [],
           callback: async path => {
             await updateDataModel(this.tabGroups.main, { [button.dataset.path]: path });
-            this.updateView();
           },
           top: this.position.top + 40,
           left: this.position.left + 10
@@ -342,7 +348,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
     static async toggleHideEvent(_, button){
       const hidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].hidden;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.hidden`]: !hidden });
-      this.updateView();
     }
 
     async onStartEvent(event) {
@@ -396,6 +401,19 @@ export default class SystemView extends HandlebarsApplicationMixin(
       }
     }
 
+    static async researchUpdateRoundsCurrent(_, button) {
+      const currentEvent = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event];
+      const currentValue = currentEvent.rounds.current;
+      const updatedParticipants = Object.keys(currentEvent.participants).reduce((acc, key) => {
+        acc[key] = { hasActed: false };
+        return acc;
+      }, {});  
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}`]: {
+        ['rounds.current']: button.dataset.increase ? currentValue + 1 : currentValue -1,
+        participants: updatedParticipants,
+      }})
+    }
+
     static async addPlayerParticipants(_, button){
       const currentParticipants = Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].participants);
       const players = game.actors.find(x => x.type === 'party').members.filter(x => !currentParticipants.some(key => x.id === key)).reduce((acc, x, index) => {
@@ -413,7 +431,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
       }, {});
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.participants`]: players });
-      this.updateView();
     }
 
     async setParticipant(event, existing) {
@@ -435,8 +452,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
             position: Object.keys(event.participants).length + 1,
           }});
         }
-
-        this.updateView();
       };
 
       const dialog = await new foundry.applications.api.DialogV2({
@@ -493,7 +508,11 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
     static async removeParticipant(_, button){
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.participants.-=${button.dataset.participant}`]: null });
-      this.updateView();
+    }
+
+    static async toggleParticipantHasActed(_, button){
+      const currentHasActed = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].participants[button.dataset.participant].hasActed;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.participants.${button.dataset.participant}.hasActed`]: !currentHasActed });
     }
 
     static async updateParticipantObstacle(_, button) {
@@ -501,7 +520,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
       if(obstacle === null) return;
 
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.participants.${button.dataset.id}.obstacle`]: obstacle});
-      this.updateView();
     }
 
     static async updatePlayerParticipantsObstacle(_, button) {
@@ -517,7 +535,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
         return acc;
       }, {});
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.participants`]: participantsUpdate});
-      this.updateView();
     }
 
     static async addObstacle(_, button) {
@@ -571,7 +588,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
       await game.settings.set(MODULE_ID, this.tabGroups.main, chases);
 
       this.selected.chaseObstacle = Math.min(this.selected.chaseObstacle, Object.keys(obstacles).length);
-      this.updateView();
     }
 
     static setCurrentObstacle(_, button) {
@@ -607,19 +623,16 @@ export default class SystemView extends HandlebarsApplicationMixin(
       }
 
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.obstacles.${currentObstacle.id}.locked`]: !currentObstacle.locked });
-      this.updateView();
     }
 
     static async updateChasePoints(_, button) {
       const currentChasePoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].obstacles[button.dataset.obstacle].chasePoints.current;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.obstacles.${button.dataset.obstacle}.chasePoints.current`]: button.dataset.increase ? currentChasePoints+1 : currentChasePoints-1 });
-      this.updateView();
     }
 
     static async researchUpdateTimeLimitCurrent(_, button) {
       const currentValue = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].timeLimit.current;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.timeLimit.current`]: button.dataset.increase ? currentValue + 1 : currentValue -1 });
-      this.updateView();
     }
 
     static async addResearchBreakpoint(_, button) {
@@ -627,24 +640,20 @@ export default class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchBreakpoints.${breakpointId}`]: {
         id: breakpointId,
       }});
-      this.updateView();
     }
 
     static async researchUpdateResearchPoints(_, button) {
       const currentResearchPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchPoints;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchPoints`]: button.dataset.increase ? currentResearchPoints + 1 : currentResearchPoints - 1});
-      this.updateView();
     }
 
     static async removeResearchBreakpoint(_, button){
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchBreakpoints.-=${button.dataset.breakpoint}`]: null});
-      this.updateView();
     }
 
     static async toggleResearchBreakpointHidden(_, button) {
       const currentBreakpoint = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchBreakpoints[button.dataset.breakpoint];
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchBreakpoints.${button.dataset.breakpoint}.hidden`]: !currentBreakpoint.hidden })
-      this.updateView();
     }
 
     static toggleResearchOpenResearchBreakpoint(_, button) {
@@ -657,19 +666,15 @@ export default class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${researchCheckId}`]: {
         id: researchCheckId,
       }});
-
-      this.updateView();
     }
 
     static async removeResearchCheck(_, button) {
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.-=${button.dataset.check}`]: null });
-      this.updateView();
     }
 
     static async toggleResearchCheckHidden(_, button) {
       const currentResearchCheckHidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchChecks[button.dataset.check].hidden;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.hidden`]: !currentResearchCheckHidden });
-      this.updateView();
     }
 
     static async researchToggleOpenResearchCheck(_, button) {
@@ -688,18 +693,15 @@ export default class SystemView extends HandlebarsApplicationMixin(
           }
         }
       }});
-      this.updateView();
     }
 
     static async researchRemoveResearchCheckSkillCheck(_, button) {
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.-=${button.dataset.skillCheck}`]: null});
-      this.updateView();
     }
 
     static async researchToggleResearchCheckSkillCheckHidden(_, button) {
       const checkhidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchChecks[button.dataset.check].skillChecks[button.dataset.skillCheck].hidden;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.${button.dataset.skillCheck}.hidden`]: !checkhidden });
-      this.updateView();
     }
 
     static async researchAddSkill(_, button){
@@ -707,7 +709,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.${button.dataset.skillCheck}.skills.${skillId}`]: {
         id: skillId,
       }})
-      this.updateView();
     }
 
     static async researchRemoveSkill(_, button){
@@ -718,8 +719,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
       else {
         await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.${button.dataset.skillCheck}.skills.-=${button.dataset.skill}`]: null});
       }
-
-      this.updateView();
     }
 
     static async addResearchEvent(_, button){
@@ -727,18 +726,15 @@ export default class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchEvents.${researchEventId}`]: {
         id: researchEventId,
       }});
-      this.updateView();
     }
 
     static async removeResearchEvent(_, button){
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchEvents.-=${button.dataset.researchEvent}`]: null });
-      this.updateView();
     }
 
     static async toggleResearchEventHidden(_, button){
       const currentHidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchEvents[button.dataset.researchEvent].hidden;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchEvents.${button.dataset.researchEvent}.hidden`]: !currentHidden });
-      this.updateView();
     }
 
     static async researchToggleOpenResearchEvent(_, button) {
@@ -755,7 +751,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
         lore: newLore,
         skill: newLore ? 'something-lore' : 'acrobatics',
       }});
-      this.updateView();
     }
 
     async updateResearchSkillCheck(event) {
@@ -775,7 +770,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.${button.dataset.skillCheck}.skills.${button.dataset.skill}`]: {
         skill: newSkill,
       }});
-      this.updateView();
     }
 
     _attachPartListeners(partId, htmlElement, options) {
@@ -806,8 +800,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
           },
         }})
       }
-
-      this.updateView();
     }
 
     _onFirstRender(context, options) {
@@ -834,11 +826,13 @@ export default class SystemView extends HandlebarsApplicationMixin(
         case 'chase': 
           const { events: chaseEvents } = game.settings.get(MODULE_ID, 'chase');
           
-          context.events = chaseEvents;
+          context.settings = game.settings.get(MODULE_ID, settingIDs.chase.settings);
+          context.events = this.filterEvents(chaseEvents);
           context.tab = context.systems.chase;
-          context.selectedEvent = context.selected.event ? Object.values(chaseEvents).find(x => x.id === context.selected.event) : undefined;
+          context.selectedEvent = context.selected.event ? Object.values(context.events).find(x => x.id === context.selected.event) : undefined;
           if(context.selectedEvent) {
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
+            context.showRounds = this.editMode || context.selectedEvent.rounds.max;
           }
           
           context.currentObstacleNr = this.selected.chaseObstacle ?? 1;
@@ -851,10 +845,11 @@ export default class SystemView extends HandlebarsApplicationMixin(
         case 'research': 
           const { events: viewEvents } = game.settings.get(MODULE_ID, 'research');
             
-          context.events = viewEvents;
+          context.settings = game.settings.get(MODULE_ID, settingIDs.research.settings);
+          context.events = this.filterEvents(viewEvents);
           context.tab = context.systems.research;
           context.skillCheckTabs = this.getSkillCheckTabs();
-          context.selectedEvent = context.selected.event ? Object.values(viewEvents).find(x => x.id === context.selected.event) : undefined;
+          context.selectedEvent = context.selected.event ? Object.values(context.events).find(x => x.id === context.selected.event) : undefined;
           if(context.selectedEvent) {
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
             context.showTimeLimit = this.editMode || context.selectedEvent.timeLimit.max;
@@ -947,15 +942,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
       await super._preFirstRender(context, options);
     }
 
-    async updateView(){
-      await game.socket.emit(SOCKET_ID, {
-        action: socketEvent.UpdateSystemView,
-        data: { tab: this.tabGroups.main },
-      });
-
-      Hooks.callAll(socketEvent.UpdateSystemView, this.tabGroups.main);
-    }
-
     async _prepareContext(_options) {
       var context = await super._prepareContext(_options);
 
@@ -963,8 +949,20 @@ export default class SystemView extends HandlebarsApplicationMixin(
       context.systems = this.getTabs();
       context.selected = this.selected;
       context.editMode = this.editMode;
+      context.eventSearchValue = this.eventSearchValue;
+      context.playerId = game.user.character?.id;
 
       return context;
+    }
+
+    filterEvents(events){
+      return this.eventSearchValue?.length === 0 ? events : Object.keys(events).reduce((acc, key) => {
+        const event = events[key];
+        const matches = event.name.match(this.eventSearchValue);
+        if(matches && matches.length > 0) acc[key] = events[key];
+
+        return acc;
+      }, {});
     }
 
     onUpdateSystemView(tab){
@@ -983,11 +981,11 @@ export default class SystemView extends HandlebarsApplicationMixin(
     }
 
     static async updateData(event, element, formData) {
-      const { selected, editMode, events }= foundry.utils.expandObject(formData.object);
+      const { selected, editMode, events, eventSearchValue }= foundry.utils.expandObject(formData.object);
       this.selected = foundry.utils.mergeObject(this.selected, selected);
       this.editMode = editMode;
+      this.eventSearchValue = eventSearchValue;
 
       await updateDataModel(this.tabGroups.main, { events });
-      this.updateView();
     }
 };

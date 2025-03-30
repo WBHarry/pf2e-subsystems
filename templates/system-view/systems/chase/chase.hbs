@@ -5,7 +5,7 @@
             <div class="description-outer-container primary-container accent">
                 <div class="title-container primary-container">
                     <div class="description-title-inner-container">
-                        <h4 class="primary-text-container">{{localize "PF2ESubsystems.Chase.Premise"}}</h4>
+                        <div class="primary-text-container">{{localize "PF2ESubsystems.Chase.Premise"}}</div>
                     </div>
                 </div>
                 <div class="description-container">
@@ -16,6 +16,32 @@
                     {{/if}}
                 </div>
             </div>
+            {{#if this.showRounds}}
+                <div class="rounds-outer-container title-container primary-container">
+                    <div class="rounds-title-inner-container">
+                        {{#if this.editMode}}
+                            <div class="event-field-group">
+                                <div class="event-field-form">
+                                    <div class="primary-text-container">{{localize "PF2ESubsystems.Chase.MaxRounds"}}</div>
+                                    <input type="text" data-dtype="number" name="{{concat "events." this.event.id ".rounds.max"}}" value="{{this.event.rounds.max}}" class="secondary-container" />
+                                </div>
+                            </div>
+                        {{else}}
+                            <div class="primary-text-container">{{localize "PF2ESubsystems.Chase.Rounds"}}:</div>
+                            &nbsp;
+                            <div class="flexrow">
+                                <div class="rounds-number-container">
+                                    {{#if this.isGM}}<i class="fa-solid fa-caret-up clickable-icon {{#if (gte this.event.rounds.current this.event.rounds.max)}}disabled{{/if}} rounds-control-upper" {{#if (lt this.event.rounds.current this.event.rounds.max)}}data-action="researchUpdateRoundsCurrent"{{/if}} data-event="{{this.event.id}}" data-increase="true"></i>{{/if}}
+                                    <div>{{this.event.rounds.current}}</div>
+                                    {{#if this.isGM}}<i class="fa-solid fa-caret-down clickable-icon {{#if (eq this.event.rounds.current 0)}}disabled{{/if}} rounds-control-lower" {{#if (gt this.event.rounds.current 0)}}data-action="researchUpdateRoundsCurrent"{{/if}} data-event="{{this.event.id}}"></i>{{/if}}
+                                </div>
+                                /
+                                <div>{{this.event.rounds.max}}</div>
+                            </div>
+                        {{/if}}
+                    </div>
+                </div>
+            {{/if}}
             <div class="participants-outer-container primary-container accent">
                 <div class="title-container primary-container">
                     <div class="participants-title-inner-container {{#if (not this.isGM)}}standalone{{/if}}">
@@ -32,7 +58,7 @@
                                 </div>
                             {{/if}}
                         {{/if}}
-                        <h4 class="primary-text-container">{{localize "PF2ESubsystems.Chase.Participants"}}</h4>
+                        <div class="primary-text-container">{{localize "PF2ESubsystems.Chase.Participants"}}</div>
                         {{#if this.editMode}}
                             <i class="fa-solid fa-plus participants-title-add clickable-icon" data-action="addParticipant" data-event="{{this.event.id}}" title="{{localize "PF2ESubsystems.Chase.AddParticipant"}}"></i>
                         {{else}}
@@ -49,7 +75,7 @@
                 </div>
                 <div class="participants-container">
                     {{#each this.event.participants as |participant|}}
-                        <div class="participant-container secondary-container">
+                        <div class="participant-container secondary-container {{#if (and (not ../editMode) this.hasActed)}}accent{{/if}}">
                             <img src={{participant.img}} />
                             <div class="participant-data-container">
                                 <div class="participant-data-container-label">{{participant.name}}</div>
@@ -58,11 +84,13 @@
                                         <button class="tertiary-container" data-action="editParticipant" data-event="{{../event.id}}" data-participant="{{participant.id}}"><i class="fa-solid fa-pen-to-square clickable-icon"></i></button>
                                         <button class="tertiary-container" data-action="removeParticipant" data-event="{{../event.id}}" data-participant="{{participant.id}}"><i class="fa-solid fa-trash clickable-icon"></i></button>
                                     {{else}}
-                                        {{#if ../isGM}}<i class="fa-solid fa-caret-up participant-control-upper clickable-icon {{#if (gte participant.obstacle (PF2ESubSLength ../event.obstacles))}}disabled{{/if}}" data-action="updateParticipantObstacle" data-event="{{../event.id}}" data-id="{{participant.id}}" data-obstacle="{{PF2ESubSAdd participant.obstacle 1}}"></i>{{/if}}
-                                        <div>{{participant.obstacle}}</div>
-                                        {{#if ../isGM}}<i class="fa-solid fa-caret-down participant-control-lower clickable-icon {{#if (eq participant.obstacle 1)}}disabled{{/if}}" data-action="updateParticipantObstacle" data-event="{{../event.id}}" data-id="{{participant.id}}" data-obstacle="{{PF2ESubSSub participant.obstacle 1}}"></i>{{/if}}
+                                        <div class="participant-toolbar-number">
+                                            {{#if (or ../isGM (and ../settings.playersCanEditPosition (eq participant.id ../playerId)))}}<i class="fa-solid fa-caret-up participant-control-upper clickable-icon {{#if (gte participant.obstacle (PF2ESubSLength ../event.obstacles))}}disabled{{/if}}" data-action="updateParticipantObstacle" data-event="{{../event.id}}" data-id="{{participant.id}}" data-obstacle="{{PF2ESubSAdd participant.obstacle 1}}"></i>{{/if}}
+                                            <div>{{participant.obstacle}}</div>
+                                            {{#if (or ../isGM (and ../settings.playersCanEditPosition (eq participant.id ../playerId)))}}<i class="fa-solid fa-caret-down participant-control-lower clickable-icon {{#if (eq participant.obstacle 1)}}disabled{{/if}}" data-action="updateParticipantObstacle" data-event="{{../event.id}}" data-id="{{participant.id}}" data-obstacle="{{PF2ESubSSub participant.obstacle 1}}"></i>{{/if}}
+                                        </div>
+                                        <i class="fa-solid fa-check participant-checkmark clickable-icon {{#if this.hasActed}}has-acted{{/if}}" data-action="toggleParticipantHasActed" data-event="{{../event.id}}" data-participant="{{this.id}}"></i>
                                     {{/if}}
-                                    
                                 </div>
                             </div>
                         </div>
@@ -102,7 +130,7 @@
                                 <input type="text" class="title-small-container tertiary-container" name="{{concat "events." this.event.id ".obstacles." this.currentObstacle.id ".name"}}" value="{{this.currentObstacle.name}}" />
                                 <i class="fa-solid fa-trash chase-event-header-title-delete clickable-icon {{#if (eq (PF2ESubSLength this.event.obstacles) 1)}}disabled{{/if}}" {{#if (gt (PF2ESubSLength this.event.obstacles) 1)}}data-action="removeObstacle"{{/if}} data-event="{{this.event.id}}" data-obstacle="{{this.currentObstacle.id}}"></i>
                             {{else}}
-                                <div class="title-small-container">
+                                <div>
                                     <span>{{this.currentObstacle.name}}</span>
                                 </div>
                             {{/if}}

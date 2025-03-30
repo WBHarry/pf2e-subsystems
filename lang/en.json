@@ -4,6 +4,7 @@
         "Basic": {
             "Confirm": "Confirm",
             "Cancel": "Cancel",
+            "Save": "Save",
             "Edit": "Edit",
             "Remove": "Remove",
             "Players": "Players",
@@ -40,6 +41,20 @@
                 }
             }
         },
+        "Menus": {
+            "Subsystems": {
+                "Name": "Subsystems",
+                "Label": "Subsystems Menu",
+                "Hint": "Change settings on different subsystems",
+                "Title": "Subsystems Menu",
+                "Chase": {
+                    "PlayersCanEditPosition": "Allow players to edit their position"
+                },
+                "Research": {
+                    "HideResearchCheckMaxRP": "Hide the Max RP of Research Checks to players"
+                }
+            }
+        },
         "View": {
             "Title": "Subsystems",
             "NewEvent": "New Event",
@@ -73,6 +88,8 @@
             "EditChase": "Edit Chase",
             "CreateChase": "Create New Chase",
             "Premise": "Premise",
+            "Rounds": "Rounds",
+            "MaxRounds": "Max Rounds",
             "NewObstacle": "New Obstacle",
             "AddObstacle": "Add Obstacle",
             "CreateParticipant": "Create New Participant",
