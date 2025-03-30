@@ -8,6 +8,12 @@
                     <input type="checkbox" name="chase.playersCanEditPosition" {{checked this.settings.playersCanEditPosition}} />
                 </div>
             </div>
+            <div class="menu-group">
+                <div class="menu-form">
+                    <div>{{localize "PF2ESubsystems.Menus.Subsystems.Chase.HideObstacleLockIcon"}}</div>
+                    <input type="checkbox" name="chase.hideObstacleLockIcon" {{checked this.settings.hideObstacleLockIcon}} />
+                </div>
+            </div>
         </div>
         {{> "modules/pf2e-subsystems/templates/menu/subsystem-menu/partials/system-footer.hbs" }}
     </div>

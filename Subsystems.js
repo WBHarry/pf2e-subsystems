@@ -439,6 +439,7 @@ class ChaseSettings extends foundry.abstract.DataModel {
     const fields = foundry.data.fields;
     return {
       playersCanEditPosition: new fields.BooleanField({ required: true, initial: false }),
+      hideObstacleLockIcon: new fields.BooleanField({ required: true, initial: false }),
     }
   }
 }
@@ -666,6 +667,15 @@ async function updateDataModel(setting, data){
             action: socketEvent.GMUpdate,
             data: { setting, data },
         });
+    }
+}
+
+function translateSubsystem(tab) {
+    switch(tab) {
+        case 'chase':
+            return game.i18n.localize("PF2ESubsystems.Events.Chase.Single");
+        case 'research':
+            return game.i18n.localize("PF2ESubsystems.Events.Research.Single");
     }
 }
 
@@ -1029,6 +1039,13 @@ class SystemView extends HandlebarsApplicationMixin(
     }
 
     static async removeEvent(_, button){
+      const confirmed = await Dialog.confirm({
+        title: game.i18n.localize("PF2ESubsystems.View.ConfirmDeleteEventTitle"),
+        content: game.i18n.format("PF2ESubsystems.View.ConfirmDeleteEventText", { type: translateSubsystem(this.tabGroups.main) }),
+      });
+
+      if(!confirmed) return;
+
       await updateDataModel(this.tabGroups.main, { [`events.-=${button.dataset.id}`]: null });
       this.render({ parts: [this.tabGroups.main] });
     }

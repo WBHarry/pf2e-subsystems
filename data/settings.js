@@ -16,6 +16,7 @@ export class ChaseSettings extends foundry.abstract.DataModel {
     const fields = foundry.data.fields;
     return {
       playersCanEditPosition: new fields.BooleanField({ required: true, initial: false }),
+      hideObstacleLockIcon: new fields.BooleanField({ required: true, initial: false }),
     }
   }
 }

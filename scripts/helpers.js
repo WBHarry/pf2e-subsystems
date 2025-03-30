@@ -12,3 +12,12 @@ export async function updateDataModel(setting, data){
         });
     }
 }
+
+export function translateSubsystem(tab) {
+    switch(tab) {
+        case 'chase':
+            return game.i18n.localize("PF2ESubsystems.Events.Chase.Single");
+        case 'research':
+            return game.i18n.localize("PF2ESubsystems.Events.Research.Single");
+    }
+}

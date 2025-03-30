@@ -1,5 +1,5 @@
 import { MODULE_ID, settingIDs, SOCKET_ID, timeUnits } from "../data/constants";
-import { updateDataModel } from "../scripts/helpers";
+import { translateSubsystem, updateDataModel } from "../scripts/helpers";
 import { currentVersion } from "../scripts/setup";
 import { socketEvent } from "../scripts/socket";
 
@@ -363,6 +363,13 @@ export default class SystemView extends HandlebarsApplicationMixin(
     }
 
     static async removeEvent(_, button){
+      const confirmed = await Dialog.confirm({
+        title: game.i18n.localize("PF2ESubsystems.View.ConfirmDeleteEventTitle"),
+        content: game.i18n.format("PF2ESubsystems.View.ConfirmDeleteEventText", { type: translateSubsystem(this.tabGroups.main) }),
+      });
+
+      if(!confirmed) return;
+
       await updateDataModel(this.tabGroups.main, { [`events.-=${button.dataset.id}`]: null });
       this.render({ parts: [this.tabGroups.main] });
     }

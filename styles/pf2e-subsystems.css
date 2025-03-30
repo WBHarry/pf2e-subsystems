@@ -365,6 +365,9 @@ form.pf2e-subsystems.application > header .header-control {
   flex-direction: column;
   gap: 8px;
 }
+.pf2e-subsystems.systems-view .event-outer-container .event-section-placeholder {
+  font-style: italic;
+}
 .pf2e-subsystems.systems-view .event-outer-container .event-container {
   flex: 1;
   display: flex;
@@ -596,27 +599,27 @@ form.pf2e-subsystems.application > header .header-control {
   align-items: center;
   gap: 8px;
 }
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar.editing {
+  flex-direction: column;
+  margin: -3px -3px -3px 0;
+  height: 100%;
+  gap: 0px;
+}
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar.editing button {
+  flex: 1;
+  padding: 0;
+  margin: 0;
+  width: 24px;
+}
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar.editing button i {
+  margin: 0;
+}
 .pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar .participant-toolbar-number {
   position: relative;
   display: flex;
   justify-content: center;
   gap: 4px;
   font-size: 16px;
-}
-.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar .participant-toolbar-number.editing {
-  flex-direction: column;
-  margin: -3px -3px -3px 0;
-  height: 100%;
-  gap: 0px;
-}
-.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar .participant-toolbar-number.editing button {
-  flex: 1;
-  padding: 0;
-  margin: 0;
-  width: 24px;
-}
-.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar .participant-toolbar-number.editing button i {
-  margin: 0;
 }
 .pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar .participant-toolbar-number .participant-control-upper {
   position: absolute;
@@ -663,6 +666,7 @@ form.pf2e-subsystems.application > header .header-control {
   margin-top: -6px;
 }
 .pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .title-container .chase-event-header-inner {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -681,9 +685,12 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .title-container .chase-event-lock {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 0;
+  right: -24px;
   font-size: 24px;
+}
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .title-container .chase-event-lock.fa-lock-open {
+  right: -30px;
 }
 .pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .chase-event-inner-container {
   flex: 1;
@@ -894,7 +901,7 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-header .research-check-hider {
   position: absolute;
-  right: 32px;
+  left: 4px;
   font-size: 18px;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-header .research-check-opener {
@@ -1022,7 +1029,7 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-breakpoints-container .research-breakpoints-inner-container .research-breakpoint-container .research-breakpoint-hider {
   position: absolute;
-  right: 32px;
+  left: 4px;
   font-size: 18px;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-breakpoints-container .research-breakpoints-inner-container .research-breakpoint-container .research-breakpoint-opener {
@@ -1053,9 +1060,6 @@ form.pf2e-subsystems.application > header .header-control {
   flex-direction: column;
   justify-content: center;
 }
-.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-breakpoints-container .research-breakpoints-inner-container .research-breakpoint-container .research-breakpoint-tool-icon {
-  align-self: center;
-}
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-breakpoints-container .research-breakpoints-inner-container .research-breakpoint-container .research-breakpoint-title {
   position: relative;
   display: flex;
@@ -1083,7 +1087,7 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-events-container .research-event-hider {
   position: absolute;
-  right: 32px;
+  left: 4px;
   font-size: 18px;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-events-container .research-event-opener {

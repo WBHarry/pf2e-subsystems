@@ -19,7 +19,7 @@
                             {{#if ../isGM}}
                                 <div class="event-toolbar">
                                     <div class="event-toolbar-inner primary-container">
-                                        <i class="{{#if this.hidden}}fa-solid fa-eye{{else}}fa-solid fa-eye-slash{{/if}} clickable-icon" title="{{#if this.hidden}}{{localize "PF2ESubsystems.View.HideFromPlayers"}}{{else}}{{localize "PF2ESubsystems.View.RevealToPlayers"}}{{/if}}" data-action="toggleHideEvent" data-event="{{this.id}}"></i>
+                                        <i class="{{#if this.hidden}}fa-solid fa-eye-slash{{else}}fa-solid fa-eye{{/if}} clickable-icon" title="{{#if this.hidden}}{{localize "PF2ESubsystems.View.RevealToPlayers"}}{{else}}{{localize "PF2ESubsystems.View.HideFromPlayers"}}{{/if}}" data-action="toggleHideEvent" data-event="{{this.id}}"></i>
                                         <i class="fa-solid fa-pen-to-square event-edit clickable-icon" title="{{concat (localize "PF2ESubsystems.Basic.Edit") " " this.name}}" data-action="editEvent" data-event="{{this.id}}"></i>
                                         <i class="fa-solid fa-trash event-remove clickable-icon" title="{{concat (localize "PF2ESubsystems.Basic.Remove") " " this.name}}" data-action="removeEvent" data-id="{{this.id}}"></i>
                                     </div>

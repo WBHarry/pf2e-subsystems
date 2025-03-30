@@ -133,12 +133,12 @@
                                 <div>
                                     <span>{{this.currentObstacle.name}}</span>
                                 </div>
+                                {{#if (and (not this.settings.hideObstacleLockIcon) (and this.isGM (not (eq this.currentObstacle.position 1))))}}
+                                    <i class="fa-solid {{#if this.currentObstacle.locked}}fa-lock{{else}}fa-lock-open{{/if}} chase-event-lock clickable-icon" data-action="onToggleObstacleLock" data-event="{{this.event.id}}" data-position="{{this.currentObstacle.position}}"></i>
+                                {{/if}}
                             {{/if}}
                         </div>
                     </div>
-                    {{#if (and this.isGM (not (eq this.currentObstacle.position 1)))}}
-                        <i class="fa-solid {{#if this.currentObstacle.locked}}fa-lock{{else}}fa-lock-open{{/if}} chase-event-lock clickable-icon" data-action="onToggleObstacleLock" data-event="{{this.event.id}}" data-position="{{this.currentObstacle.position}}"></i>
-                    {{/if}}
                 </div>
                 <div class="chase-event-inner-container">
                     {{#if this.editMode}}

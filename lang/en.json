@@ -48,7 +48,8 @@
                 "Hint": "Change settings on different subsystems",
                 "Title": "Subsystems Menu",
                 "Chase": {
-                    "PlayersCanEditPosition": "Allow players to edit their position"
+                    "PlayersCanEditPosition": "Allow players to edit their position",
+                    "HideObstacleLockIcon": "Hide obstacle lock icon"
                 },
                 "Research": {
                     "HideResearchCheckMaxRP": "Hide the Max RP of Research Checks to players"
@@ -67,7 +68,9 @@
             "CopyStartEventLink": "Copy a macro to start this event",
             "TimeUnit": "Time Unit",
             "CurrentTime": "Current Time",
-            "MaxTime": "Max Time"
+            "MaxTime": "Max Time",
+            "ConfirmDeleteEventTitle": "Delete Subsystem Event",
+            "ConfirmDeleteEventText": "Are you sure you want to delete the {type} event?"
         },
         "Events": {
             "Chase": {
@@ -130,6 +133,8 @@
             "ResearchEvents": "Research Events",
             "ResearchBreakpoints": "Research Breakpoints",
             "ResearchBreakpoint": "Breakpoint",
+            "ResearchChecksUnknown": "You know of no ways to research..",
+            "ResearchBreakpointsUnknown": "You've made no research breakthroughs..",
             "ResearchCheckTab": {
                 "Description": "Description",
                 "SkillChecks": "Skill Checks"
