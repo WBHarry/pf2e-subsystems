@@ -6,6 +6,11 @@ export async function updateDataModel(setting, data){
         Hooks.callAll(socketEvent.GMUpdate, { setting, data });
     }
     else {
+        if(!game.users.some(x => x.isGM)){
+            ui.notifications.error(game.i18n.localize('PF2ESubsystems.View.Errors.GMMissing'));
+            return;
+        }
+
         game.socket.emit(SOCKET_ID, {
             action: socketEvent.GMUpdate,
             data: { setting, data },

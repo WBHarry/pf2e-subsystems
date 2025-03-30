@@ -567,7 +567,7 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$1(
   }
 }
 
-const currentVersion = '0.5.0';
+const currentVersion = '0.5.1';
 
 const registerKeyBindings = () => {
   game.keybindings.register(MODULE_ID, "open-system-view", {
@@ -663,6 +663,11 @@ async function updateDataModel(setting, data){
         Hooks.callAll(socketEvent.GMUpdate, { setting, data });
     }
     else {
+        if(!game.users.some(x => x.isGM)){
+            ui.notifications.error(game.i18n.localize('PF2ESubsystems.View.Errors.GMMissing'));
+            return;
+        }
+
         game.socket.emit(SOCKET_ID, {
             action: socketEvent.GMUpdate,
             data: { setting, data },
@@ -772,6 +777,9 @@ class SystemView extends HandlebarsApplicationMixin(
       window: {
         resizable: true,
       },
+      dragDrop: [
+        { dragSelector: null, dropSelector: ".participants-outer-container" },
+      ],
     };
 
     static PARTS = {
@@ -788,6 +796,10 @@ class SystemView extends HandlebarsApplicationMixin(
         template: "modules/pf2e-subsystems/templates/system-view/systems/research/researches.hbs",
       },
     };
+
+    _onRender(context, options) {
+      this._dragDrop = this._createDragDropHandlers.bind(this)();
+    }
 
     tabGroups = {
       main: 'systemView',
@@ -1671,6 +1683,45 @@ class SystemView extends HandlebarsApplicationMixin(
 
       await updateDataModel(this.tabGroups.main, { events });
     }
+
+    _createDragDropHandlers() {
+      return this.options.dragDrop.map((d) => {
+        d.callbacks = {
+          drop: this._onDrop.bind(this),
+        };
+  
+        const newHandler = new DragDrop(d);
+        newHandler.bind(this.element);
+  
+        return newHandler;
+      });
+    }
+
+    async _onDrop(event) {
+      if (!game.user.isGM) return;
+    
+      const data = JSON.parse(event.dataTransfer.getData('text/plain'));
+      if(event.currentTarget.classList.contains('participants-outer-container')){
+        if(data?.type !== 'Actor') {
+          return;
+        }
+
+        const actor = await fromUuid(data.uuid);
+        const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event];
+        if(Object.keys(event.participants).includes(actor.id)){
+          ui.notifications.warn(game.i18n.localize('PF2ESubsystems.Chase.Errors.ParticipantAlreadyExists'));
+          return;
+        }
+
+        await updateDataModel(this.tabGroups.main, { [`events.${event.id}.participants.${actor.id}`]: {
+          id: actor.id,
+          name: actor.name,
+          img: actor.img,
+          player: actor.system.details.alliance === 'party',
+          position: Object.keys(event.participants).length + 1,
+        }});
+      }
+    }
 }
 
 const openSubsystemView = async (tab, event) => {
@@ -1730,6 +1781,20 @@ class RegisterHandlebarsHelpers {
     }
 }
 
+class ChaseTour extends Tour {
+    #systemView;
+
+    async _preStep() {
+      await super._preStep();
+      const currentStep = this.currentStep;
+      if(currentStep.id == "create-chase") {
+        this.#systemView = await new SystemView('chase').render(true);
+      } else {
+        console.log("MyTours | Tours _preStep: ",currentStep.id);
+      }
+    }
+}
+
 Hooks.once("init", () => {
     registerGameSettings();
     registerKeyBindings();
@@ -1754,6 +1819,10 @@ Hooks.once("ready", async () => {
 
     handleMigration();
 });
+
+// Hooks.once("setup", async () => {
+//   registerMyTours();
+// });
 
 Hooks.on(socketEvent.GMUpdate, async ({ setting, data }) => {
   if(game.user.isGM){

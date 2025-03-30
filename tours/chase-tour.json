@@ -1,0 +1,14 @@
+{
+    "title": "Chat Guide",
+    "description": "How to use the chat",
+    "canBeResumed": false,
+    "display": true,
+    "steps": [
+        {
+            "id": "create-chase",
+            "selector": "#testid",
+            "title": "Create A Chase",
+            "content": "Click to add a chase. Hover an existing chase to access Reveal/Hide, Edit and Remove functionality."
+        }
+    ]
+}

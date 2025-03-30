@@ -70,7 +70,10 @@
             "CurrentTime": "Current Time",
             "MaxTime": "Max Time",
             "ConfirmDeleteEventTitle": "Delete Subsystem Event",
-            "ConfirmDeleteEventText": "Are you sure you want to delete the {type} event?"
+            "ConfirmDeleteEventText": "Are you sure you want to delete the {type} event?",
+            "Errors": {
+                "GMMissing": "A logged in GM is required to do this!"
+            }
         },
         "Events": {
             "Chase": {
@@ -111,7 +114,8 @@
             "Errors": {
                 "UnlockObstacle": "You have to unlock obstacles from start to end",
                 "LockObstacle": "You have to lock obstacles from end to start",
-                "LockFirstObstacle": "You can't lock the first obstacle"
+                "LockFirstObstacle": "You can't lock the first obstacle",
+                "ParticipantAlreadyExists": "That actor is already a participant!"
             }
             
         },

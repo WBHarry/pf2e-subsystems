@@ -96,6 +96,9 @@ export default class SystemView extends HandlebarsApplicationMixin(
       window: {
         resizable: true,
       },
+      dragDrop: [
+        { dragSelector: null, dropSelector: ".participants-outer-container" },
+      ],
     };
 
     static PARTS = {
@@ -112,6 +115,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
         template: "modules/pf2e-subsystems/templates/system-view/systems/research/researches.hbs",
       },
     };
+
+    _onRender(context, options) {
+      this._dragDrop = this._createDragDropHandlers.bind(this)();
+    }
 
     tabGroups = {
       main: 'systemView',
@@ -994,5 +1001,44 @@ export default class SystemView extends HandlebarsApplicationMixin(
       this.eventSearchValue = eventSearchValue;
 
       await updateDataModel(this.tabGroups.main, { events });
+    }
+
+    _createDragDropHandlers() {
+      return this.options.dragDrop.map((d) => {
+        d.callbacks = {
+          drop: this._onDrop.bind(this),
+        };
+  
+        const newHandler = new DragDrop(d);
+        newHandler.bind(this.element);
+  
+        return newHandler;
+      });
+    }
+
+    async _onDrop(event) {
+      if (!game.user.isGM) return;
+    
+      const data = JSON.parse(event.dataTransfer.getData('text/plain'));
+      if(event.currentTarget.classList.contains('participants-outer-container')){
+        if(data?.type !== 'Actor') {
+          return;
+        }
+
+        const actor = await fromUuid(data.uuid);
+        const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event];
+        if(Object.keys(event.participants).includes(actor.id)){
+          ui.notifications.warn(game.i18n.localize('PF2ESubsystems.Chase.Errors.ParticipantAlreadyExists'));
+          return;
+        }
+
+        await updateDataModel(this.tabGroups.main, { [`events.${event.id}.participants.${actor.id}`]: {
+          id: actor.id,
+          name: actor.name,
+          img: actor.img,
+          player: actor.system.details.alliance === 'party',
+          position: Object.keys(event.participants).length + 1,
+        }});
+      }
     }
 };
