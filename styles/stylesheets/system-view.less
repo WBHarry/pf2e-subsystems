@@ -240,8 +240,65 @@
             flex-direction: column;
             gap: @gapNormal;
 
+            .event-clipboard-fallback {
+                height: 16px;
+                position: relative;
+                display: flex;
+                align-items: center;
+                width: 100%;
+                padding: @paddingNormal 18px @paddingNormal 0;
+                overflow: hidden;
+                border-width: 1px;
+                border-style: solid;
+                border-radius: 6px;
+
+                input {
+                    font-size: 14px;
+                    text-overflow: ellipsis;
+                    border: 0;
+                }
+
+                button {
+                    position: absolute;
+                    right: -1px;
+                    width: auto;
+                    margin: 0;
+                    border-radius: 0;
+                    border-width: 0;
+                    height: 100%;
+                    border-width: 0;
+                    border-left-width: 1px;
+
+                    i {
+                        margin: 0;
+                        font-size: 12px;
+                    }
+                }
+            }
+
             .event-section-placeholder {
                 font-style: italic;
+            }
+
+            .edit-mode-box-container {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 16px;
+                height: 16px;
+                border-style: solid;
+                border-width: 1px;
+                border-color: var(--pf2e-subsystem-theming-secondary-border);
+                border-radius: 6px;
+                content: "";
+
+                i {
+                    position: absolute;
+                    font-size: 12px;
+                    filter: var(--pf2e-subsystem-theming-primary-outline);
+                    color: var(--pf2e-subsystem-theming-secondary-border);
+                }
             }
 
             .event-container {
@@ -310,7 +367,7 @@
                         display: flex;
                         align-items: center;
                         justify-content: space-between;
-                        gap: @gapLarge;
+                        gap: @gapNormal;
 
                         .event-header-title-container {
                             flex: 1;
@@ -339,6 +396,18 @@
                             border-style: solid;
                             border-radius: @borderRadiusNormal;
                             padding: @paddingNormal;
+
+                            .event-header-toolbar-edit-container {
+                                display: flex;
+                                align-items: center;
+                                gap: @gapSmall;
+
+                                .event-header-toolbar-edit-container-label {
+                                    &.highlighted {
+                                        filter: drop-shadow(0 0 3px var(--pf2e-subsystem-theming-secondary-border));
+                                    }
+                                }
+                            }
                         }
                     }
                 }

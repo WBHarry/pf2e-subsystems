@@ -365,8 +365,58 @@ form.pf2e-subsystems.application > header .header-control {
   flex-direction: column;
   gap: 8px;
 }
+.pf2e-subsystems.systems-view .event-outer-container .event-clipboard-fallback {
+  height: 16px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 4px 18px 4px 0;
+  overflow: hidden;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 6px;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-clipboard-fallback input {
+  font-size: 14px;
+  text-overflow: ellipsis;
+  border: 0;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-clipboard-fallback button {
+  position: absolute;
+  right: -1px;
+  width: auto;
+  margin: 0;
+  border-radius: 0;
+  height: 100%;
+  border-width: 0;
+  border-left-width: 1px;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-clipboard-fallback button i {
+  margin: 0;
+  font-size: 12px;
+}
 .pf2e-subsystems.systems-view .event-outer-container .event-section-placeholder {
   font-style: italic;
+}
+.pf2e-subsystems.systems-view .event-outer-container .edit-mode-box-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: var(--pf2e-subsystem-theming-secondary-border);
+  border-radius: 6px;
+  content: "";
+}
+.pf2e-subsystems.systems-view .event-outer-container .edit-mode-box-container i {
+  position: absolute;
+  font-size: 12px;
+  filter: var(--pf2e-subsystem-theming-primary-outline);
+  color: var(--pf2e-subsystem-theming-secondary-border);
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container {
   flex: 1;
@@ -428,7 +478,7 @@ form.pf2e-subsystems.application > header .header-control {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 8px;
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-container .event-header-container .event-header-title-container {
   flex: 1;
@@ -455,6 +505,14 @@ form.pf2e-subsystems.application > header .header-control {
   border-style: solid;
   border-radius: 4px;
   padding: 4px;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-container .event-header-container .event-header-toolbar .event-header-toolbar-edit-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-container .event-header-container .event-header-toolbar .event-header-toolbar-edit-container .event-header-toolbar-edit-container-label.highlighted {
+  filter: drop-shadow(0 0 3px var(--pf2e-subsystem-theming-secondary-border));
 }
 .pf2e-subsystems .chase-view {
   height: 100%;
@@ -1090,6 +1148,11 @@ form.pf2e-subsystems.application > header .header-control {
   left: 4px;
   font-size: 18px;
 }
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-events-container .research-event-delete-button {
+  position: absolute;
+  left: 2px;
+  font-size: 18px;
+}
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-events-container .research-event-opener {
   position: absolute;
   right: 0;
@@ -1242,11 +1305,6 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems .radio-button .radio-button-locked {
   font-size: 10px;
   color: black;
-}
-.pf2e-subsystems .toggle-switch {
-  position: relative;
-  display: flex;
-  align-items: center;
 }
 .pf2e-subsystems .editor {
   height: 100%;

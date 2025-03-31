@@ -1,5 +1,13 @@
 <div class="event-outer-container">
-    {{> "modules/pf2e-subsystems/templates/partials/navigate-back.hbs" label=(localize "PF2ESubsystems.Research.NavigateBack") action="navigateToSystem" }}
+    <div class="flexrow">
+        {{> "modules/pf2e-subsystems/templates/partials/navigate-back.hbs" label=(localize "PF2ESubsystems.Research.NavigateBack") action="navigateToSystem" }}
+        {{#if this.clipboardFallback}}
+            <div class="event-clipboard-fallback secondary-container">
+                <input type="text" value="{{this.clipboardFallback}}" class="clipboard-fallback-input secondary-container" />
+                <button data-action="closeClipboardFallback" class="tertiary-container"><i class="fa-solid fa-x"></i></button>
+            </div>
+        {{/if}}
+    </div>
     <div class="event-container">
         <div class="event-sidebar">
             <div class="event-image">
@@ -65,10 +73,12 @@
                 {{#if this.isGM}}
                     <div class="event-header-toolbar secondary-container">
                         <button class="tertiary-container" data-action="startEvent" data-event="{{this.event.id}}">{{localize "PF2ESubsystems.Research.StartResearch"}}</button>
-                        <div class="toggle-switch">
-                            <i class="fa-solid fa-screwdriver-wrench"></i>
-                            <input type="checkbox" name="editMode" {{checked this.editMode}} title="{{localize "PF2ESubsystems.View.ToggleEditMode"}}" />
-                        </div>
+                        <button class="tertiary-container event-header-toolbar-edit-container" data-action="editEventToggle">
+                            <span class="event-header-toolbar-edit-container-label {{#if this.editMode}}highlighted{{/if}}">{{localize "PF2ESubsystems.Research.EditResearch"}}</span>
+                            <div class="edit-mode-box-container {{#if this.editMode}}secondary-container{{/if}}">
+                                {{#if this.editMode}}<i class="fa-solid fa-screwdriver-wrench"></i>{{/if}}
+                            </div>
+                        </button>
                         <i class="fa-solid fa-passport primary-hover-container" data-action="copyStartEventLink" data-event="{{this.event.id}}" title="{{localize "PF2ESubsystems.View.CopyStartEventLink"}}"></i>
                     </div>
                 {{/if}}
@@ -285,6 +295,7 @@
                                 <div class="research-event-container secondary-container">
                                     {{#if ../editMode}}
                                         <div class="event-field-group research-event-header">
+                                            <i class="fa-solid fa-trash clickable-icon research-event-delete-button" data-action="removeResearchEvent" data-event="{{../event.id}}" data-research-event={{this.id}}></i>
                                             <div class="event-field-form">
                                                 <div>{{localize "PF2ESubsystems.Basic.Name"}}</div>
                                                 <input type="text" name="{{concat "events." ../event.id ".researchEvents." this.id ".name"}}" value="{{this.name}}" class="tertiary-container" />

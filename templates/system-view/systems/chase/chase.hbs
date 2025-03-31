@@ -1,5 +1,13 @@
 <div class="event-outer-container">
-    {{> "modules/pf2e-subsystems/templates/partials/navigate-back.hbs" label=(localize "PF2ESubsystems.Chase.NavigateBack") action="navigateToSystem" }}
+    <div class="flexrow">
+        {{> "modules/pf2e-subsystems/templates/partials/navigate-back.hbs" label=(localize "PF2ESubsystems.Chase.NavigateBack") action="navigateToSystem" }}
+        {{#if this.clipboardFallback}}
+            <div class="event-clipboard-fallback secondary-container">
+                <input type="text" value="{{this.clipboardFallback}}" class="clipboard-fallback-input secondary-container" />
+                <button data-action="closeClipboardFallback" class="tertiary-container"><i class="fa-solid fa-x"></i></button>
+            </div>
+        {{/if}}
+    </div>
     <div class="event-container">
         <div class="event-sidebar">
             <div class="description-outer-container primary-container accent">
@@ -85,11 +93,23 @@
                                         <button class="tertiary-container" data-action="removeParticipant" data-event="{{../event.id}}" data-participant="{{participant.id}}"><i class="fa-solid fa-trash clickable-icon"></i></button>
                                     {{else}}
                                         <div class="participant-toolbar-number">
-                                            {{#if (or ../isGM (and ../settings.playersCanEditPosition (eq participant.id ../playerId)))}}<i class="fa-solid fa-caret-up participant-control-upper clickable-icon {{#if (gte participant.obstacle (PF2ESubSLength ../event.obstacles))}}disabled{{/if}}" data-action="updateParticipantObstacle" data-event="{{../event.id}}" data-id="{{participant.id}}" data-obstacle="{{PF2ESubSAdd participant.obstacle 1}}"></i>{{/if}}
+                                            {{#if (or ../isGM (and ../settings.playersCanEditPosition (eq participant.id ../playerId)))}}
+                                                <i 
+                                                    title="{{localize "PF2ESubsystems.Chase.AdvanceObstacle"}}"
+                                                    class="fa-solid fa-caret-up participant-control-upper clickable-icon {{#if (gte participant.obstacle (PF2ESubSLength ../event.obstacles))}}disabled{{/if}}" 
+                                                    data-action="updateParticipantObstacle" data-event="{{../event.id}}" data-id="{{participant.id}}" data-obstacle="{{PF2ESubSAdd participant.obstacle 1}}"
+                                                ></i>
+                                            {{/if}}
                                             <div>{{participant.obstacle}}</div>
-                                            {{#if (or ../isGM (and ../settings.playersCanEditPosition (eq participant.id ../playerId)))}}<i class="fa-solid fa-caret-down participant-control-lower clickable-icon {{#if (eq participant.obstacle 1)}}disabled{{/if}}" data-action="updateParticipantObstacle" data-event="{{../event.id}}" data-id="{{participant.id}}" data-obstacle="{{PF2ESubSSub participant.obstacle 1}}"></i>{{/if}}
+                                            {{#if (or ../isGM (and ../settings.playersCanEditPosition (eq participant.id ../playerId)))}}
+                                                <i 
+                                                    title="{{localize "PF2ESubsystems.Chase.RetreatObstacle"}}"
+                                                    class="fa-solid fa-caret-down participant-control-lower clickable-icon {{#if (eq participant.obstacle 1)}}disabled{{/if}}" 
+                                                    data-action="updateParticipantObstacle" data-event="{{../event.id}}" data-id="{{participant.id}}" data-obstacle="{{PF2ESubSSub participant.obstacle 1}}"
+                                                ></i>
+                                            {{/if}}
                                         </div>
-                                        <i class="fa-solid fa-check participant-checkmark clickable-icon {{#if this.hasActed}}has-acted{{/if}}" data-action="toggleParticipantHasActed" data-event="{{../event.id}}" data-participant="{{this.id}}"></i>
+                                        <i class="fa-solid fa-check participant-checkmark clickable-icon {{#if this.hasActed}}has-acted{{/if}}" data-action="toggleParticipantHasActed" data-event="{{../event.id}}" data-participant="{{this.id}}" title="{{localize "PF2ESubsystems.Chase.MarkPlayerActed"}}"></i>
                                     {{/if}}
                                 </div>
                             </div>
@@ -106,10 +126,12 @@
                 {{#if this.isGM}}
                     <div class="event-header-toolbar secondary-container">
                         <button class="tertiary-container" data-action="startEvent" data-event="{{this.event.id}}">{{localize "PF2ESubsystems.Chase.StartChase"}}</button>
-                        <div class="toggle-switch">
-                            <i class="fa-solid fa-screwdriver-wrench"></i>
-                            <input type="checkbox" name="editMode" {{checked this.editMode}} title="{{localize "PF2ESubsystems.View.ToggleEditMode"}}" />
-                        </div>
+                        <button class="tertiary-container event-header-toolbar-edit-container" data-action="editEventToggle">
+                            <span class="event-header-toolbar-edit-container-label {{#if this.editMode}}highlighted{{/if}}">{{localize "PF2ESubsystems.Chase.EditChase"}}</span>
+                            <div class="edit-mode-box-container {{#if this.editMode}}secondary-container{{/if}}">
+                                {{#if this.editMode}}<i class="fa-solid fa-screwdriver-wrench"></i>{{/if}}
+                            </div>
+                        </button>
                         <i class="fa-solid fa-passport primary-hover-container" data-action="copyStartEventLink" data-event="{{this.event.id}}" title="{{localize "PF2ESubsystems.View.CopyStartEventLink"}}"></i>
                     </div>
                 {{/if}}

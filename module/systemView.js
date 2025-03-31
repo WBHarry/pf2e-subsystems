@@ -1,5 +1,5 @@
 import { MODULE_ID, settingIDs, SOCKET_ID, timeUnits } from "../data/constants";
-import { translateSubsystem, updateDataModel } from "../scripts/helpers";
+import { copyToClipboard, translateSubsystem, updateDataModel } from "../scripts/helpers";
 import { currentVersion } from "../scripts/setup";
 import { socketEvent } from "../scripts/socket";
 
@@ -25,6 +25,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
       }
 
       this.editMode = false;
+      this.clipboardFallback = false;
 
       this.onUpdateView = Hooks.on(
         socketEvent.UpdateSystemView,
@@ -51,11 +52,13 @@ export default class SystemView extends HandlebarsApplicationMixin(
         selectEvent: this.selectEvent,
         addEvent: this.addEvent,
         editEvent: this.editEvent,
+        editEventToggle: this.editEventToggle,
         toggleHideEvent: this.toggleHideEvent,
         startEvent: this.startEvent,
         removeEvent: this.removeEvent,
         navigateToSystem: this.navigateToSystem,
         copyStartEventLink: this.copyStartEventLink,
+        closeClipboardFallback: this.closeClipboardFallback,
         /* Chases */
         researchUpdateRoundsCurrent: this.researchUpdateRoundsCurrent,
         addPlayerParticipants: this.addPlayerParticipants,
@@ -352,6 +355,11 @@ export default class SystemView extends HandlebarsApplicationMixin(
       await this.setEvent(existingEvent);
     }
 
+    static editEventToggle(){
+      this.editMode = !this.editMode;
+      this.render({ parts: [this.tabGroups.main] });
+    }
+
     static async toggleHideEvent(_, button){
       const hidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].hidden;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.hidden`]: !hidden });
@@ -389,11 +397,19 @@ export default class SystemView extends HandlebarsApplicationMixin(
     static copyStartEventLink(_, button){
       const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event];
       const startMacro = `game.modules.get('${MODULE_ID}').macros.startEvent('${this.tabGroups.main}', '${button.dataset.event}');`;
-      navigator.clipboard.writeText(startMacro).then(() => {
+      copyToClipboard(startMacro).then(() => {
         ui.notifications.info(
           game.i18n.format("PF2ESubsystems.View.StartEventLinkCopied", { name: event.name }),
         );
+      }).catch(() => {
+        this.clipboardFallback = startMacro;
+        this.render({ parts: [this.tabGroups.main] });
       });
+    }
+
+    static closeClipboardFallback(){
+      this.clipboardFallback = null;
+      this.render({ parts: [this.tabGroups.main] });
     }
 
     onKeyDown(event){
@@ -789,6 +805,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
     _attachPartListeners(partId, htmlElement, options) {
       super._attachPartListeners(partId, htmlElement, options);
 
+      $(htmlElement).find('.clipboard-fallback-input').on('change', event => event.preventDefault());
       switch(partId){
         case 'chase':
           $(htmlElement).find('.radio-button').on('contextmenu', this.toggleObstacleLock.bind(this));
@@ -965,6 +982,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
       context.editMode = this.editMode;
       context.eventSearchValue = this.eventSearchValue;
       context.playerId = game.user.character?.id;
+      context.clipboardFallback = this.clipboardFallback;
 
       return context;
     }

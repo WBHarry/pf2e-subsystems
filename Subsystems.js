@@ -684,6 +684,34 @@ function translateSubsystem(tab) {
     }
 }
 
+async function copyToClipboard(textToCopy) {
+    if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(textToCopy);
+    } else {
+        return new Promise(async function (resolve, reject){
+            // Use the 'out of viewport hidden text area' trick
+            const textArea = document.createElement("textarea");
+            textArea.value = textToCopy;
+                
+            // Move textarea out of the viewport so it's not visible
+            textArea.style.position = "absolute";
+            textArea.style.left = "-999999px";
+                
+            document.body.prepend(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+            } catch (error) {
+                reject();
+            } finally {
+                textArea.remove();
+                resolve();
+            }
+        });
+
+    }
+}
+
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
 
 const getDefaultSelected = (event) => ({
@@ -706,6 +734,7 @@ class SystemView extends HandlebarsApplicationMixin(
       }
 
       this.editMode = false;
+      this.clipboardFallback = false;
 
       this.onUpdateView = Hooks.on(
         socketEvent.UpdateSystemView,
@@ -732,11 +761,13 @@ class SystemView extends HandlebarsApplicationMixin(
         selectEvent: this.selectEvent,
         addEvent: this.addEvent,
         editEvent: this.editEvent,
+        editEventToggle: this.editEventToggle,
         toggleHideEvent: this.toggleHideEvent,
         startEvent: this.startEvent,
         removeEvent: this.removeEvent,
         navigateToSystem: this.navigateToSystem,
         copyStartEventLink: this.copyStartEventLink,
+        closeClipboardFallback: this.closeClipboardFallback,
         /* Chases */
         researchUpdateRoundsCurrent: this.researchUpdateRoundsCurrent,
         addPlayerParticipants: this.addPlayerParticipants,
@@ -1033,6 +1064,11 @@ class SystemView extends HandlebarsApplicationMixin(
       await this.setEvent(existingEvent);
     }
 
+    static editEventToggle(){
+      this.editMode = !this.editMode;
+      this.render({ parts: [this.tabGroups.main] });
+    }
+
     static async toggleHideEvent(_, button){
       const hidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].hidden;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.hidden`]: !hidden });
@@ -1070,11 +1106,19 @@ class SystemView extends HandlebarsApplicationMixin(
     static copyStartEventLink(_, button){
       const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event];
       const startMacro = `game.modules.get('${MODULE_ID}').macros.startEvent('${this.tabGroups.main}', '${button.dataset.event}');`;
-      navigator.clipboard.writeText(startMacro).then(() => {
+      copyToClipboard(startMacro).then(() => {
         ui.notifications.info(
           game.i18n.format("PF2ESubsystems.View.StartEventLinkCopied", { name: event.name }),
         );
+      }).catch(() => {
+        this.clipboardFallback = startMacro;
+        this.render({ parts: [this.tabGroups.main] });
       });
+    }
+
+    static closeClipboardFallback(){
+      this.clipboardFallback = null;
+      this.render({ parts: [this.tabGroups.main] });
     }
 
     onKeyDown(event){
@@ -1470,6 +1514,7 @@ class SystemView extends HandlebarsApplicationMixin(
     _attachPartListeners(partId, htmlElement, options) {
       super._attachPartListeners(partId, htmlElement, options);
 
+      $(htmlElement).find('.clipboard-fallback-input').on('change', event => event.preventDefault());
       switch(partId){
         case 'chase':
           $(htmlElement).find('.radio-button').on('contextmenu', this.toggleObstacleLock.bind(this));
@@ -1646,6 +1691,7 @@ class SystemView extends HandlebarsApplicationMixin(
       context.editMode = this.editMode;
       context.eventSearchValue = this.eventSearchValue;
       context.playerId = game.user.character?.id;
+      context.clipboardFallback = this.clipboardFallback;
 
       return context;
     }
