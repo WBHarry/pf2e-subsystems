@@ -1974,4 +1974,19 @@ async function registerTours() {
     console.error("MyTour | Error registering tours: ",error);
   }
 }
+
+Hooks.on("renderJournalDirectory", async (tab, html) => {
+  if (tab.id === "journal") {
+    const buttons = $(tab.element).find(".directory-footer.action-buttons");
+    buttons.prepend(`
+            <button id="pf2e-subsystems">
+                <i class="fa-solid fa-list" />
+                <span style="font-size: var(--font-size-14); font-family: var(--font-primary); font-weight: 400;">${game.i18n.localize("PF2ESubsystems.Name")}</span>
+            </button>`);
+
+    $(buttons).find("#pf2e-subsystems")[0].onclick = () => {
+      new SystemView().render(true);
+    };
+  }
+});
 //# sourceMappingURL=Subsystems.js.map
