@@ -4,7 +4,8 @@ import { handleSocketEvent, socketEvent } from "./scripts/socket.js";
 import { handleMigration } from "./scripts/migration.js";
 import { MODULE_ID, SOCKET_ID, tourIDs } from "./data/constants.js";
 import RegisterHandlebarsHelpers from "./scripts/handlebarHelpers.js";
-import { ChaseTour } from "./module/tours/chaseTour.js";
+import { ChaseTour } from "./tours/chase/ChaseTour.js";
+import { ResearchTour } from "./tours/research/ResearchTour.js";
 
 Hooks.once("init", () => {
     registerGameSettings();
@@ -31,9 +32,9 @@ Hooks.once("ready", async () => {
     handleMigration();
 });
 
-// Hooks.once("setup", async () => {
-//   registerMyTours();
-// });
+Hooks.once("setup", async () => {
+  registerTours();
+});
 
 Hooks.on(socketEvent.GMUpdate, async ({ setting, data }) => {
   if(game.user.isGM){
@@ -50,12 +51,10 @@ Hooks.on(socketEvent.GMUpdate, async ({ setting, data }) => {
   }
 });
 
-async function registerMyTours() {
+async function registerTours() {
   try {
-    game.tours.register(MODULE_ID, tourIDs.chase, await ChaseTour.fromJSON(`/modules/${MODULE_ID}/tours/chase-tour.json`));
-    if(game.user.isGM) {
-      // game.tours.register(MODULE_ID, 'settings', await MyTour.fromJSON(`/modules/${MODULE_ID}/tours/settings.json`));
-    }
+    game.tours.register(MODULE_ID, tourIDs.chase, await ChaseTour.fromJSON(`/modules/${MODULE_ID}/tours/chase/chase-tour.json`));
+    game.tours.register(MODULE_ID, tourIDs.research, await ResearchTour.fromJSON(`/modules/${MODULE_ID}/tours/research/research-tour.json`));
   } catch (error) {
     console.error("MyTour | Error registering tours: ",error);
   }

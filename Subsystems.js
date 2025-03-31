@@ -351,6 +351,11 @@ const settingIDs = {
     },
 };
 
+const tourIDs = {
+    chase: "pf2e-subsystems-chase",
+    research: "pf2e-subsystems-research",
+};
+
 class Researches extends foundry.abstract.DataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
@@ -567,7 +572,7 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$1(
   }
 }
 
-const currentVersion = '0.5.1';
+const currentVersion = '0.5.2';
 
 const registerKeyBindings = () => {
   game.keybindings.register(MODULE_ID, "open-system-view", {
@@ -723,7 +728,7 @@ const getDefaultSelected = (event) => ({
 class SystemView extends HandlebarsApplicationMixin(
     ApplicationV2,
   ) {
-    constructor(tab, event) {
+    constructor(tab, event, isTour) {
       super({});
 
       this.selected = getDefaultSelected(event);
@@ -735,6 +740,7 @@ class SystemView extends HandlebarsApplicationMixin(
 
       this.editMode = false;
       this.clipboardFallback = false;
+      this.isTour = isTour;
 
       this.onUpdateView = Hooks.on(
         socketEvent.UpdateSystemView,
@@ -768,6 +774,7 @@ class SystemView extends HandlebarsApplicationMixin(
         navigateToSystem: this.navigateToSystem,
         copyStartEventLink: this.copyStartEventLink,
         closeClipboardFallback: this.closeClipboardFallback,
+        startEventTour: this.startEventTour,
         /* Chases */
         researchUpdateRoundsCurrent: this.researchUpdateRoundsCurrent,
         addPlayerParticipants: this.addPlayerParticipants,
@@ -1121,8 +1128,12 @@ class SystemView extends HandlebarsApplicationMixin(
       this.render({ parts: [this.tabGroups.main] });
     }
 
+    static startEventTour(){
+      game.tours.get(`${MODULE_ID}.pf2e-subsystems-${this.tabGroups.main}`).start();
+    }
+
     onKeyDown(event){
-      if(!this.editMode && this.tabGroups.main === 'chase'){
+      if(!this.editMode && !this.isTour && this.tabGroups.main === 'chase'){
         if(this.selected.event){
           switch(event.key) {
             case 'ArrowLeft':
@@ -1567,9 +1578,8 @@ class SystemView extends HandlebarsApplicationMixin(
           const { events: chaseEvents } = game.settings.get(MODULE_ID, 'chase');
           
           context.settings = game.settings.get(MODULE_ID, settingIDs.chase.settings);
-          context.events = this.filterEvents(chaseEvents);
           context.tab = context.systems.chase;
-          context.selectedEvent = context.selected.event ? Object.values(context.events).find(x => x.id === context.selected.event) : undefined;
+          await this.setupEvents(chaseEvents, context);
           if(context.selectedEvent) {
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
             context.showRounds = this.editMode || context.selectedEvent.rounds.max;
@@ -1586,10 +1596,9 @@ class SystemView extends HandlebarsApplicationMixin(
           const { events: viewEvents } = game.settings.get(MODULE_ID, 'research');
             
           context.settings = game.settings.get(MODULE_ID, settingIDs.research.settings);
-          context.events = this.filterEvents(viewEvents);
           context.tab = context.systems.research;
           context.skillCheckTabs = this.getSkillCheckTabs();
-          context.selectedEvent = context.selected.event ? Object.values(context.events).find(x => x.id === context.selected.event) : undefined;
+          await this.setupEvents(viewEvents, context);
           if(context.selectedEvent) {
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
             context.showTimeLimit = this.editMode || context.selectedEvent.timeLimit.max;
@@ -1724,10 +1733,28 @@ class SystemView extends HandlebarsApplicationMixin(
     static async updateData(event, element, formData) {
       const { selected, editMode, events, eventSearchValue }= foundry.utils.expandObject(formData.object);
       this.selected = foundry.utils.mergeObject(this.selected, selected);
-      this.editMode = editMode;
       this.eventSearchValue = eventSearchValue;
 
       await updateDataModel(this.tabGroups.main, { events });
+    }
+
+    async setupEvents(chaseEvents, context){
+      if(!this.isTour){
+        await Promise.resolve(new Promise((resolve) => {
+          context.events = this.filterEvents(chaseEvents);
+          context.selectedEvent = context.selected.event ? Object.values(context.events).find(x => x.id === context.selected.event) : undefined;
+          resolve();
+        }));
+      }
+      else {
+        await Promise.resolve(
+        fetch(`../modules/${MODULE_ID}/tours/${this.tabGroups.main}/${this.tabGroups.main}-tour.json`)
+          .then(res => res.json())
+          .then(json => {
+            context.events = json.events;
+            context.selectedEvent = context.selected.event ? Object.values(context.events).find(x => x.id === context.selected.event) : undefined;
+          }));
+      }
     }
 
     _createDragDropHandlers() {
@@ -1833,11 +1860,65 @@ class ChaseTour extends Tour {
     async _preStep() {
       await super._preStep();
       const currentStep = this.currentStep;
-      if(currentStep.id == "create-chase") {
-        this.#systemView = await new SystemView('chase').render(true);
-      } else {
-        console.log("MyTours | Tours _preStep: ",currentStep.id);
+      switch(currentStep.id){
+        case 'create-chase':
+          this.#systemView = await new SystemView('chase', null, true).render(true);
+          break;
+        case 'chase-overview-1':
+          this.#systemView.selected.event = 'tour-event';
+          await this.#systemView.render({ parts: ['chase'], force: true });
+          break;
       }
+    }
+
+    async progress(stepIndex) {
+      super.progress(stepIndex);
+    }
+
+    exit(){
+      this.#systemView.close();
+      this.#systemView = null;
+      super.exit();
+    }
+    
+    async complete(){
+      this.#systemView.close();
+      this.#systemView = null;
+      super.complete();
+    }
+}
+
+class ResearchTour extends Tour {
+    #systemView;
+
+    async _preStep() {
+      await super._preStep();
+      const currentStep = this.currentStep;
+      switch(currentStep.id){
+        case 'create-research':
+          this.#systemView = await new SystemView('research', null, true).render(true);
+          break;
+        case 'research-overview-1':
+          this.#systemView.selected.event = 'tour-event';
+          await this.#systemView.render({ parts: ['research'], force: true });
+          break;
+      }
+    }
+
+    async progress(stepIndex) {
+      super.progress(stepIndex);
+    }
+
+    exit(){
+      this.#systemView.close();
+      this.#systemView = null;
+      super.exit();
+    }
+    
+    async complete(){
+      this.#systemView.close();
+      this.#systemView = null;
+      super.complete();
     }
 }
 
@@ -1866,9 +1947,9 @@ Hooks.once("ready", async () => {
     handleMigration();
 });
 
-// Hooks.once("setup", async () => {
-//   registerMyTours();
-// });
+Hooks.once("setup", async () => {
+  registerTours();
+});
 
 Hooks.on(socketEvent.GMUpdate, async ({ setting, data }) => {
   if(game.user.isGM){
@@ -1884,4 +1965,13 @@ Hooks.on(socketEvent.GMUpdate, async ({ setting, data }) => {
     Hooks.callAll(socketEvent.UpdateSystemView, setting);
   }
 });
+
+async function registerTours() {
+  try {
+    game.tours.register(MODULE_ID, tourIDs.chase, await ChaseTour.fromJSON(`/modules/${MODULE_ID}/tours/chase/chase-tour.json`));
+    game.tours.register(MODULE_ID, tourIDs.research, await ResearchTour.fromJSON(`/modules/${MODULE_ID}/tours/research/research-tour.json`));
+  } catch (error) {
+    console.error("MyTour | Error registering tours: ",error);
+  }
+}
 //# sourceMappingURL=Subsystems.js.map

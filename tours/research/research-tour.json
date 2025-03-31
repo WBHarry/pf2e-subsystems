@@ -1,0 +1,262 @@
+{
+    "title": "Research Subsystem",
+    "description": "How to use research",
+    "canBeResumed": false,
+    "display": true,
+    "steps": [
+        {
+            "id": "create-research",
+            "selector": ".research-view .system-title-inner-container",
+            "title": "Create Research Event",
+            "content": "Click to add a research event.\n(You can use the <strong>←</strong> and → arrow keys to navigate the Tour!)"
+        },
+        {
+            "id": "edit-research",
+            "selector": ".research-view .event-container",
+            "title": "Edit Research Event",
+            "content": "Hover an existing research event to access Reveal/Hide, Edit and Remove functionality.\nClick to enter the research event."
+        },
+        {
+            "id": "research-overview-1",
+            "selector": ".research-points-container",
+            "title": "Research Overview",
+            "content": "The current research points earned by the party. Increase and decrease them."
+        },
+        {
+            "id": "research-overview-2",
+            "selector": ".time-limit-container",
+            "title": "Research Overview",
+            "content": "The time limit for the research event. Increase and decrease it.\nIf you set the maximum time to 0 in edit mode this section won't be shown!."
+        },
+        {
+            "id": "research-overview-3",
+            "selector": ".research-premise",
+            "title": "Research Overview",
+            "content": "The narrative premise of the research event"
+        },
+        {
+            "id": "research-overview-4",
+            "selector": ".event-header-toolbar",
+            "title": "Research Overview",
+            "content": "<strong>Start Research</strong>: This will open up this research window for all online players so you can run it.\n<strong>Edit Research</strong>: This toggles you into edit mode to setup your research event.\n<strong>Macro</strong>: The third icon copies a macro you can use to open this event."
+        },
+        {
+            "id": "research-overview-5",
+            "selector": ".research-checks-container",
+            "title": "Research Overview",
+            "content": "The suggested research checks the party can earn research points through."
+        },
+        {
+            "id": "research-overview-6",
+            "selector": ".research-breakpoints-container",
+            "title": "Research Overview",
+            "content": "The research breakthroughs players earn when they gain sufficient research points."
+        },
+        {
+            "id": "research-overview-7",
+            "selector": ".research-breakpoints-container .fa-eye-slash",
+            "title": "Research Overview",
+            "content": "Reveal them to the players throughout the research event!"
+        },
+        {
+            "id": "research-overview-8",
+            "selector": ".research-events-container",
+            "title": "Research Overview",
+            "content": "Optional events that can occur during the research event at certain timings or when certain things occur.\nIf you don't add any of these, then this section won't be shown!"
+        }
+    ],
+    "events": {
+        "tour-event": {
+            "id": "tour-event",
+            "name": "The Hag's Secret",
+            "version": "",
+            "background": "icons/magic/symbols/runes-carved-stone-green.webp",
+            "premise": "Finally. You've come upon the swamp hag's abode within Heretic Swamp. The inside and surrounding area may just provide some insight into the curse that's befallen the village..",
+            "tags": [],
+            "hidden": false,
+            "timeLimit": {
+                "unit": "day",
+                "current": "1",
+                "max": "5"
+            },
+            "started": false,
+            "researchPoints": 5,
+            "researchChecks": {
+                "check-1": {
+                    "id": "check-1",
+                    "name": "Sprite Swarm",
+                    "hidden": false,
+                    "description": "Thousands of iridescent sprites flit about the entrance, eager to offer tidbits of information",
+                    "maximumResearchPoints": 5,
+                    "skillChecks": {
+                        "skill-check-1": {
+                            "id": "skill-check-1",
+                            "hidden": false,
+                            "description": "Politely ask the sprites for information",
+                            "skills": {
+                                "skill-1": {
+                                    "id": "skill-1",
+                                    "skill": "diplomacy",
+                                    "action": null,
+                                    "lore": false,
+                                    "dc": 23,
+                                    "basic": false
+                                },
+                                "skill-2": {
+                                    "id": "skill-2",
+                                    "skill": "society",
+                                    "action": null,
+                                    "lore": false,
+                                    "dc": 23,
+                                    "basic": false
+                                }
+                            }
+                        },
+                        "skill-check-2": {
+                            "id": "skill-check-2",
+                            "hidden": false,
+                            "description": "Catch one in the hand",
+                            "skills": {
+                                "skill-1": {
+                                    "id": "skill-1",
+                                    "skill": "athletics",
+                                    "action": null,
+                                    "lore": false,
+                                    "dc": 28,
+                                    "basic": false
+                                }
+                            }
+                        }
+                    }
+                },
+                "check-2": {
+                    "id": "check-2",
+                    "name": "Field of Tomeflowers",
+                    "hidden": false,
+                    "description": "By the crossing the babbling brook, 5-foot stems open up into colorful petaled tomes",
+                    "maximumResearchPoints": 10,
+                    "skillChecks": {
+                        "skill-check-1": {
+                            "id": "skill-check-1",
+                            "hidden": false,
+                            "description": "Read the tomes",
+                            "skills": {
+                                "skill-1": {
+                                    "id": "skill-1",
+                                    "skill": "academia-lore",
+                                    "action": null,
+                                    "lore": true,
+                                    "dc": 18,
+                                    "basic": false
+                                },
+                                "skill-2": {
+                                    "id": "skill-2",
+                                    "skill": "library-lore",
+                                    "action": null,
+                                    "lore": true,
+                                    "dc": 18,
+                                    "basic": false
+                                }
+                            }
+                        },
+                        "skill-check-2": {
+                            "id": "skill-check-2",
+                            "hidden": false,
+                            "description": "Understand strange marginalia",
+                            "skills": {
+                                "skill-1": {
+                                    "id": "skill-1",
+                                    "skill": "occultism",
+                                    "action": null,
+                                    "lore": false,
+                                    "dc": 23,
+                                    "basic": false
+                                }
+                            }
+                        }
+                    }
+                },
+                "check-3": {
+                    "id": "check-3",
+                    "name": "Loremother Tree",
+                    "hidden": false,
+                    "description": "In the center of the forest, an ancient oak slumbers, willing to share its wisdom with any who can commune with it",
+                    "maximumResearchPoints": 15,
+                    "skillChecks": {
+                        "skill-check-1": {
+                            "id": "skill-check-1",
+                            "hidden": false,
+                            "description": "Awaken the oak through music",
+                            "skills": {
+                                "skill-1": {
+                                    "id": "skill-1",
+                                    "skill": "performance",
+                                    "action": null,
+                                    "lore": false,
+                                    "dc": 21,
+                                    "basic": false
+                                }
+                            }
+                        },
+                        "skill-check-2": {
+                            "id": "skill-check-2",
+                            "hidden": false,
+                            "description": "Interpret primal magic dreams",
+                            "skills": {
+                                "skill-1": {
+                                    "id": "skill-1",
+                                    "skill": "nature",
+                                    "action": null,
+                                    "lore": false,
+                                    "dc": 23,
+                                    "basic": false
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "researchBreakpoints": {
+                "breakpoint-1": {
+                    "id": "breakpoint-1",
+                    "hidden": false,
+                    "breakpoint": 5,
+                    "description": "The PCs learn of apocryphal fey legends that say the coven members were once cruel fey queens now twisted by inner corruption. They learn basic details about hags and the hag mother's Call."
+                },
+                "breakpoint-2": {
+                    "id": "breakpoint-2",
+                    "hidden": true,
+                    "breakpoint": 10,
+                    "description": "The PCs learn that the coven gathers on a nearby mountaintop every full moon. Attaining this knowledge comes at a cost: hag malice solidifies into two will-o'-wisps, which attack the PCs."
+                },
+                "breakpoint-3": {
+                    "id": "breakpoint-3",
+                    "hidden": true,
+                    "breakpoint": 15,
+                    "description": "The PCs learn that a specific magical incantation is needed to reach the hag's mountaintop. Though they don't quite discover the incantation, they discover among magical writings a page containing the uncommon spell read omens."
+                },
+                "breakpoint-4": {
+                    "id": "breakpoint-4",
+                    "hidden": true,
+                    "breakpoint": 20,
+                    "description": "The Loremother Tree awakens long enough to tell the PCs the incantation, but warns them that the hags possess powerful magic that has struck down many heroes. The tree then returns to slumber. Replace the Loremother Tree's Performance Research check with a DC 28 Diplomacy check to convince the tree to share further knowledge."
+                },
+                "breakpoint-5": {
+                    "id": "breakpoint-5",
+                    "hidden": true,
+                    "breakpoint": 30,
+                    "description": "A dryad emerges from the trunk of the Loremother Tree and tells the PCs about the hags' spell—a unique polymorph ability that turns people into toads. She also gives each PC a small flower charm for protection that grants each PC a +3 status bonus to their saving throws against the hags' Toad Form ability. Unfortunately, this draws the hags' attention, who send two living wildfires to burn the glade down. If the PCs don't defeat the fire elementals, the creatures destroy any remaining information in the glade."
+                }
+            },
+            "researchEvents": {
+                "event-1": {
+                    "id": "event-1",
+                    "name": "The Hag Returns",
+                    "hidden": true,
+                    "timing": "Day 4",
+                    "description": "Uh-oh."
+                }
+            }
+        }
+    }
+}

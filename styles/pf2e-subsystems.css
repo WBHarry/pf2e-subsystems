@@ -360,10 +360,20 @@ form.pf2e-subsystems.application > header .header-control {
   max-width: auto;
 }
 .pf2e-subsystems.systems-view .event-outer-container {
+  position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-information {
+  position: absolute;
+  font-size: 24px;
+  left: 171px;
+  color: var(--pf2e-subsystem-theming-primary-color);
+  border-style: solid;
+  border-radius: 50%;
+  border-color: var(--pf2e-subsystem-theming-secondary-border);
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-clipboard-fallback {
   height: 16px;

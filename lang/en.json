@@ -71,6 +71,7 @@
             "MaxTime": "Max Time",
             "ConfirmDeleteEventTitle": "Delete Subsystem Event",
             "ConfirmDeleteEventText": "Are you sure you want to delete the {type} event?",
+            "OpenEventTour": "Open a tour explaining parts of the subsystem",
             "Errors": {
                 "GMMissing": "A logged in GM is required to do this!"
             }

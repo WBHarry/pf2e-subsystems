@@ -1,0 +1,257 @@
+{
+    "title": "Chase Subsystem",
+    "description": "How to use chases",
+    "canBeResumed": false,
+    "display": true,
+    "steps": [
+        {
+            "id": "create-chase",
+            "selector": ".system-title-add-button",
+            "title": "Create A Chase",
+            "content": "Click to add a chase.\n(You can use the <strong>←</strong> and → arrow keys to navigate the Tour!)"
+        },
+        {
+            "id": "edit-chase",
+            "selector": ".event-container",
+            "title": "Edit A Chase",
+            "content": "Hover an existing chase to access Reveal/Hide, Edit and Remove functionality.\nClick to enter the chase event."
+        },
+        {
+            "id": "chase-overview-1",
+            "selector": ".description-outer-container",
+            "title": "Chase Overview",
+            "content": "The narrative premise of the chase"
+        },
+        {
+            "id": "chase-overview-2",
+            "selector": ".rounds-outer-container",
+            "title": "Chase Overview",
+            "content": "The numbers of rounds the chase will last for and the current round."
+        },
+        {
+            "id": "chase-overview-3",
+            "selector": ".participants-outer-container",
+            "title": "Chase Overview",
+            "content": "The Participants in the chase. The numbers next to each participant is the obstacle they are currently on."
+        },
+        {
+            "id": "chase-overview-4",
+            "selector": ".participants-party-container",
+            "title": "Chase Overview",
+            "content": "You can move the whole PC party to the next or previous obstacle simultaneously."
+        },
+        {
+            "id": "chase-overview-5",
+            "selector": ".participants-party-container.npc",
+            "title": "Chase Overview",
+            "content": "You can move all the NPCs to the next or previous obstacle simultaneously."
+        },
+        {
+            "id": "chase-overview-6",
+            "selector": ".participant-checkmark[data-participant=\"id-3\"]",
+            "title": "Chase Overview",
+            "content": "The checkmark lets you mark that they have acted this round.\nWhen you change the round, all checkmarks are reset."
+        },
+        {
+            "id": "chase-overview-7",
+            "selector": ".chase-event-display",
+            "title": "Chase Overview",
+            "content": "You can navigate between obstacles by clicking on the circular buttons, or by using the ← and → arrows keys.\nPlayers can only navigate between unlocked obstacles.\nGMs unlock obstacles by rightclicking the circular buttons or by using the optional big lock button."
+        },
+        {
+            "id": "chase-overview-8",
+            "selector": ".event-header-toolbar",
+            "title": "Chase Overview",
+            "content": "<strong>Start Chase</strong>: This will open up this chase window for all online players so you can run it.\n<strong>Edit Chase</strong>: This toggles you into edit mode to setup your chase.\n<strong>Macro</strong>: The third icon copies a macro you can use to open this event."
+        },
+        {
+            "id": "chase-overview-9",
+            "selector": ".chase-event-container",
+            "title": "Chase Overview",
+            "content": "A large picture to set the mood for the obstacle, and a text containing the challenge itself, however you wish to present it."
+        },
+        {
+            "id": "chase-overview-10",
+            "selector": ".chase-event-chase-points-container",
+            "title": "Chase Overview",
+            "content": "Keep of the chase points for the current obstacle!\nIncrease and decrease them as the players succeed and fail. (Bwahah~)"
+        },
+        {
+            "id": "chase-overview-11",
+            "selector": ".chase-event-data-container",
+            "title": "Chase Overview",
+            "content": "A normal text editor, so you can get roll buttons through normal methods such as:\n<strong>@Check[type:athletics|dc:10]</strong>\n<strong>[[/act treat-poison stat=medicine dc=16]]</strong>"
+        }
+    ],
+    "events": {
+        "tour-event": {
+            "id": "tour-event",
+            "name": "Lavaland Chase",
+            "version": "",
+            "background": "icons/environment/wilderness/cave-entrance-vulcano.webp",
+            "premise": "Your travels to retrieve the legendary artifact have led you to these lands of sulfur, heat and parched throats. Your attempts at questioning the resident fire lizards backfired, and you find yourselves in a deadly chase throughout dangerous terrain!",
+            "hidden": false,
+            "rounds": {
+                "current": 1,
+                "max": 5
+            },
+            "started": true,
+            "participants": {
+                "participant-1": {
+                    "id": "id-1",
+                    "name": "Ezren",
+                    "img": "systems/pf2e/icons/iconics/EzrenFull.webp",
+                    "hidden": false,
+                    "position": 1,
+                    "player": true,
+                    "obstacle": 1,
+                    "hasActed": false
+                },
+                "participant-2": {
+                    "id": "id-2",
+                    "name": "Yoon",
+                    "img": "systems/pf2e/icons/iconics/YoonFull.webp",
+                    "hidden": false,
+                    "position": 2,
+                    "player": true,
+                    "obstacle": 1,
+                    "hasActed": false
+                },
+                "participant-3": {
+                    "id": "id-3",
+                    "name": "Kyra",
+                    "img": "systems/pf2e/icons/iconics/KyraFull.webp",
+                    "hidden": false,
+                    "position": 3,
+                    "player": true,
+                    "obstacle": 1,
+                    "hasActed": false
+                }
+            },
+            "obstacles": {
+                "obstacle-1": {
+                    "id": "obstacle-1",
+                    "name": "Lava Geysers",
+                    "img": "icons/environment/wilderness/cave-entrance-vulcano.webp",
+                    "position": 1,
+                    "locked": false,
+                    "chasePoints": {
+                        "goal": 6,
+                        "current": 0
+                    },
+                    "overcome": "<i>As you rush through the ashen landscape, the ground suddenly beings to shake. What seemed like harmless holes in the ground suddenly start to spew out molten rock and bursts of flame as you rush through!</i>\n<strong>Dodge And Weave!</strong>: @Check[type:acrobatics|dc:22]\n<strong>Find A Path Through!</strong>: @Check[type:survival|dc:20] @Check[type:nature|dc:24]"
+                },
+                "obstacle-2": {
+                    "id": "obstacle-2",
+                    "name": "Lava Geysers",
+                    "img": "icons/environment/wilderness/cave-entrance-vulcano.webp",
+                    "position": 2,
+                    "locked": false,
+                    "chasePoints": {
+                        "goal": 6,
+                        "current": 0
+                    },
+                    "overcome": ""
+                },
+                "obstacle-3": {
+                    "id": "obstacle-3",
+                    "name": "Lava Geysers",
+                    "img": "icons/environment/wilderness/cave-entrance-vulcano.webp",
+                    "position": 3,
+                    "locked": true,
+                    "chasePoints": {
+                        "goal": 6,
+                        "current": 0
+                    },
+                    "overcome": ""
+                },
+                "obstacle-4": {
+                    "id": "obstacle-4",
+                    "name": "Lava Geysers",
+                    "img": "icons/environment/wilderness/cave-entrance-vulcano.webp",
+                    "position": 4,
+                    "locked": true,
+                    "chasePoints": {
+                        "goal": 6,
+                        "current": 0
+                    },
+                    "overcome": ""
+                },
+                "obstacle-5": {
+                    "id": "obstacle-5",
+                    "name": "Lava Geysers",
+                    "img": "icons/environment/wilderness/cave-entrance-vulcano.webp",
+                    "position": 5,
+                    "locked": true,
+                    "chasePoints": {
+                        "goal": 6,
+                        "current": 0
+                    },
+                    "overcome": ""
+                }
+            },
+            "extendedObstacles": {
+                "obstacle-1": {
+                    "id": "obstacle-1",
+                    "name": "Lava Geysers",
+                    "img": "icons/environment/wilderness/cave-entrance-vulcano.webp",
+                    "position": 1,
+                    "locked": false,
+                    "chasePoints": {
+                        "goal": 6,
+                        "current": 0
+                    },
+                    "overcome": "<i>As you rush through the ashen landscape, the ground suddenly beings to shake. What seemed like harmless holes in the ground suddenly start to spew out molten rock and bursts of flame as you rush through!</i>\n\n<div style=\"display: flex; align-items: center; gap: 2px;\"><strong>Dodge And Weave!:</strong> @Check[type:acrobatics|dc:22]</div>\n<div style=\"display: flex; align-items: center; gap: 2px;\"><strong>Find A Path Through!:</strong> @Check[type:survival|dc:20] @Check[type:nature|dc:24]</div>"
+                },
+                "obstacle-2": {
+                    "id": "obstacle-2",
+                    "name": "Lava Geysers",
+                    "img": "icons/environment/wilderness/cave-entrance-vulcano.webp",
+                    "position": 2,
+                    "locked": false,
+                    "chasePoints": {
+                        "goal": 6,
+                        "current": 0
+                    },
+                    "overcome": ""
+                },
+                "obstacle-3": {
+                    "id": "obstacle-3",
+                    "name": "Lava Geysers",
+                    "img": "icons/environment/wilderness/cave-entrance-vulcano.webp",
+                    "position": 3,
+                    "locked": true,
+                    "chasePoints": {
+                        "goal": 6,
+                        "current": 0
+                    },
+                    "overcome": ""
+                },
+                "obstacle-4": {
+                    "id": "obstacle-4",
+                    "name": "Lava Geysers",
+                    "img": "icons/environment/wilderness/cave-entrance-vulcano.webp",
+                    "position": 4,
+                    "locked": true,
+                    "chasePoints": {
+                        "goal": 6,
+                        "current": 0
+                    },
+                    "overcome": ""
+                },
+                "obstacle-5": {
+                    "id": "obstacle-5",
+                    "name": "Lava Geysers",
+                    "img": "icons/environment/wilderness/cave-entrance-vulcano.webp",
+                    "position": 5,
+                    "locked": true,
+                    "chasePoints": {
+                        "goal": 6,
+                        "current": 0
+                    },
+                    "overcome": ""
+                }
+            }
+        }
+    }
+}

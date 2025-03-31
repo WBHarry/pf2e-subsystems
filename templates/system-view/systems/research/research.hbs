@@ -1,6 +1,7 @@
 <div class="event-outer-container">
     <div class="flexrow">
         {{> "modules/pf2e-subsystems/templates/partials/navigate-back.hbs" label=(localize "PF2ESubsystems.Research.NavigateBack") action="navigateToSystem" }}
+        <i class="event-information clickable-icon fa-solid fa-circle-info" data-action="startEventTour" title="{{localize "PF2ESubsystems.View.OpenEventTour"}}"></i>
         {{#if this.clipboardFallback}}
             <div class="event-clipboard-fallback secondary-container">
                 <input type="text" value="{{this.clipboardFallback}}" class="clipboard-fallback-input secondary-container" />

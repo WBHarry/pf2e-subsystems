@@ -34,5 +34,5 @@ export const settingIDs = {
 
 export const tourIDs = {
     chase: "pf2e-subsystems-chase",
-    research: "pf2e-subsystems-research,"
+    research: "pf2e-subsystems-research",
 }

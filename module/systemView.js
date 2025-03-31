@@ -14,7 +14,7 @@ const getDefaultSelected = (event) => ({
 export default class SystemView extends HandlebarsApplicationMixin(
     ApplicationV2,
   ) {
-    constructor(tab, event) {
+    constructor(tab, event, isTour) {
       super({});
 
       this.selected = getDefaultSelected(event);
@@ -26,6 +26,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
       this.editMode = false;
       this.clipboardFallback = false;
+      this.isTour = isTour;
 
       this.onUpdateView = Hooks.on(
         socketEvent.UpdateSystemView,
@@ -59,6 +60,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
         navigateToSystem: this.navigateToSystem,
         copyStartEventLink: this.copyStartEventLink,
         closeClipboardFallback: this.closeClipboardFallback,
+        startEventTour: this.startEventTour,
         /* Chases */
         researchUpdateRoundsCurrent: this.researchUpdateRoundsCurrent,
         addPlayerParticipants: this.addPlayerParticipants,
@@ -412,8 +414,12 @@ export default class SystemView extends HandlebarsApplicationMixin(
       this.render({ parts: [this.tabGroups.main] });
     }
 
+    static startEventTour(){
+      game.tours.get(`${MODULE_ID}.pf2e-subsystems-${this.tabGroups.main}`).start();
+    }
+
     onKeyDown(event){
-      if(!this.editMode && this.tabGroups.main === 'chase'){
+      if(!this.editMode && !this.isTour && this.tabGroups.main === 'chase'){
         if(this.selected.event){
           switch(event.key) {
             case 'ArrowLeft':
@@ -858,9 +864,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
           const { events: chaseEvents } = game.settings.get(MODULE_ID, 'chase');
           
           context.settings = game.settings.get(MODULE_ID, settingIDs.chase.settings);
-          context.events = this.filterEvents(chaseEvents);
           context.tab = context.systems.chase;
-          context.selectedEvent = context.selected.event ? Object.values(context.events).find(x => x.id === context.selected.event) : undefined;
+          await this.setupEvents(chaseEvents, context);
           if(context.selectedEvent) {
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
             context.showRounds = this.editMode || context.selectedEvent.rounds.max;
@@ -877,10 +882,9 @@ export default class SystemView extends HandlebarsApplicationMixin(
           const { events: viewEvents } = game.settings.get(MODULE_ID, 'research');
             
           context.settings = game.settings.get(MODULE_ID, settingIDs.research.settings);
-          context.events = this.filterEvents(viewEvents);
           context.tab = context.systems.research;
           context.skillCheckTabs = this.getSkillCheckTabs();
-          context.selectedEvent = context.selected.event ? Object.values(context.events).find(x => x.id === context.selected.event) : undefined;
+          await this.setupEvents(viewEvents, context);
           if(context.selectedEvent) {
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
             context.showTimeLimit = this.editMode || context.selectedEvent.timeLimit.max;
@@ -1015,10 +1019,28 @@ export default class SystemView extends HandlebarsApplicationMixin(
     static async updateData(event, element, formData) {
       const { selected, editMode, events, eventSearchValue }= foundry.utils.expandObject(formData.object);
       this.selected = foundry.utils.mergeObject(this.selected, selected);
-      this.editMode = editMode;
       this.eventSearchValue = eventSearchValue;
 
       await updateDataModel(this.tabGroups.main, { events });
+    }
+
+    async setupEvents(chaseEvents, context){
+      if(!this.isTour){
+        await Promise.resolve(new Promise((resolve) => {
+          context.events = this.filterEvents(chaseEvents);
+          context.selectedEvent = context.selected.event ? Object.values(context.events).find(x => x.id === context.selected.event) : undefined;
+          resolve();
+        }));
+      }
+      else {
+        await Promise.resolve(
+        fetch(`../modules/${MODULE_ID}/tours/${this.tabGroups.main}/${this.tabGroups.main}-tour.json`)
+          .then(res => res.json())
+          .then(json => {
+            context.events = json.events;
+            context.selectedEvent = context.selected.event ? Object.values(context.events).find(x => x.id === context.selected.event) : undefined;
+          }));
+      }
     }
 
     _createDragDropHandlers() {
