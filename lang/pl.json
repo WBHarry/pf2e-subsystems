@@ -1,0 +1,161 @@
+{
+    "PF2ESubsystems": {
+        "Name": "PF2e Podsystemy",
+        "Basic": {
+            "Confirm": "Potwierdź",
+            "Cancel": "Anuluj",
+            "Save": "Zapisz",
+            "Edit": "Edytuj",
+            "Remove": "Usuń",
+            "Players": "Gracze",
+            "Name": "Nazwa",
+            "Image": "Obraz",
+            "Description": "Opis",
+            "DC": "ST",
+            "Premise": "Założenie"
+        },
+        "TimeUnits": {
+            "Year": {
+                "Single": "Rok",
+                "Plural": "Lata"
+            },
+            "Month": {
+                "Single": "Miesiąc",
+                "Plural": "Miesiące"
+            },
+            "Day": {
+                "Single": "Dzień",
+                "Plural": "Dni"
+            },
+            "Hour": {
+                "Single": "Godzina",
+                "Plural": "Godziny"
+            }
+        },
+        "Macros": {
+            "StartEvent": {
+                "Errors": {
+                    "MissingTab": "Nie podałeś parametru zakładki",
+                    "MissingEvent": "Nie podałeś parametru wydarzenia",
+                    "MissingEventEntity": "Podane wydarzenie nie istnieje"
+                }
+            }
+        },
+        "Menus": {
+            "Subsystems": {
+                "Name": "Podsystemy",
+                "Label": "Menu podsystemów",
+                "Hint": "Zmiana ustawień w różnych podsystemach",
+                "Title": "Menu podsystemów",
+                "Chase": {
+                    "PlayersCanEditPosition": "Umożliwienie graczom edytowania ich pozycji",
+                    "HideObstacleLockIcon": "Ukryj ikonę blokady przeszkód"
+                },
+                "Research": {
+                    "HideResearchCheckMaxRP": "Ukryj maksymalne PB testów Badania przed graczami."
+                }
+            }
+        },
+        "View": {
+            "Title": "Podsystemy",
+            "NewEvent": "Nowe wydarzenie",
+            "Subsystems": "Podsystemy",
+            "ToggleEditMode": "Przełącz tryb edycji",
+            "ReturnToSubsystems": "Powrót do podsystemów",
+            "HideFromPlayers": "Ukryj przed graczami",
+            "RevealToPlayers": "Ujawnij graczom",
+            "StartEventLinkCopied": "StartEvent Makro dla {name} skopiowane do schowka.",
+            "CopyStartEventLink": "Skopiuj makro, aby uruchomić to wydarzenie",
+            "TimeUnit": "Jednostka czasu",
+            "CurrentTime": "Bieżący czas",
+            "MaxTime": "Maksymalny czas",
+            "ConfirmDeleteEventTitle": "Usuń wydarzenie podsystemu",
+            "ConfirmDeleteEventText": "Czy na pewno chcesz usunąć wydarzenie {type}?",
+            "OpenEventTour": "Otwórz wycieczkę objaśniającą części podsystemu",
+            "Errors": {
+                "GMMissing": "Aby to zrobić, wymagany jest zalogowany MG!"
+            }
+        },
+        "Events": {
+            "Chase": {
+                "Single": "Pościg",
+                "Plural": "Pościgi"
+            },
+            "Influence": {
+                "Single": "Wpływ",
+                "Plural": "Wpływy"
+            },
+            "Research": {
+                "Single": "Badanie",
+                "Plural": "Badania"
+            }
+        },
+        "Chase": {
+            "NavigateBack": "Powrót do Pościgów",
+            "EditChase": "Edytuj Pościg",
+            "CreateChase": "Utwórz nowy Pościg",
+            "Premise": "Założenie",
+            "Rounds": "Rundy",
+            "MaxRounds": "Maksymalna liczba rund",
+            "NewObstacle": "Nowa przeszkoda",
+            "AddObstacle": "Dodaj przeszkodę",
+            "AdvanceObstacle": "Przenieś bohatera do następnej przeszkody",
+            "RetreatObstacle": "Przenieś bohatera do poprzedniej przeszkody",
+            "MarkPlayerActed": "Oznacz, że gracz wykonał akcję",
+            "CreateParticipant": "Utwórz nowego uczestnika",
+            "EditParticipant": "Edytuj uczestnika",
+            "NewParticipant": "Nowy uczestnik",
+            "Participants": "Uczestnicy",
+            "AddParticipant": "Dodaj uczestnika",
+            "AddAllPlayers": "Dodaj wszystkich graczy",
+            "AdvanceAllPCs": "Przenieś wszystkich bohaterów do następnej przeszkody",
+            "RetreatAllPCs": "Przenieś wszystkich bohaterów do poprzedniej przeszkody",
+            "AdvanceAllNPCs": "Przenieś wszystkich bohaterów niezależnych do następnej przeszkody",
+            "RetreatAllNPCs": "Przenieś wszystkich bohaterów niezależnych do poprzedniej przeszkody",
+            "AddOrDragInActor": "Dodaj lub przeciągnij aktora.",
+            "StartChase": "Rozpocznij Pościg",
+            "ChasePoints": "Punkty Pościgu",
+            "Errors": {
+                "UnlockObstacle": "Musisz odblokować przeszkody od początku do końca",
+                "LockObstacle": "Musisz zablokować przeszkody od końca do początku",
+                "LockFirstObstacle": "Nie można zablokować pierwszej przeszkody",
+                "ParticipantAlreadyExists": "Ten aktor jest już uczestnikiem!"
+            }
+            
+        },
+        "Research": {
+            "NavigateBack": "Powrót do Badań",
+            "EditResearch": "Edytuj Badanie",
+            "CreateResearch": "Utwórz nowe Badanie",
+            "StartResearch": "Rozpocznij Badanie",
+            "MaxResearchPoints": "Maksymalny PB",
+            "Skill": "Umiejętność",
+            "Action": "Akcja",
+            "TimeLimit": "Czas",
+            "ResearchChecks": "Testy Badań",
+            "ResearchPoints": "Punkty Badań",
+            "SkillChecks": "Testy umiejętności",
+            "Lore": "Wiedza",
+            "Basic": "Podstawowy",
+            "Timing": "Okres czasu",
+            "ResearchEvents": "Wydarzenia związane z Badaniami",
+            "ResearchBreakpoints": "Przełomowe odkrycia Badań",
+            "ResearchBreakpoint": "Przełomowe odkrycie",
+            "ResearchChecksUnknown": "Nie znasz żadnych sposobów, aby zbadać...",
+            "ResearchBreakpointsUnknown": "Nie dokonałeś żadnych przełomowych odkryć...",
+            "ResearchCheckTab": {
+                "Description": "Opis",
+                "SkillChecks": "Testy umiejętności"
+            },
+            "Errors": {
+                "LoreError": "Umiejętność wiedzy musi być w formacie 'coś-lore'"
+            }
+        },
+        "KeyBindings": {
+            "OpenSystemView": {
+                "Name": "Otwórz widok podsystemów",
+                "Hint": "Otwiera okno podsystemu"
+            }
+        }
+    }
+}
