@@ -209,7 +209,7 @@
                                             <i class="fa-solid {{#if (eq this.id ../selected.openResearchCheck)}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon research-check-opener" data-action="researchToggleOpenResearchCheck" data-check="{{this.id}}"></i> 
                                         </div>
                                         <div class="event-folding {{#if this.open}}unfolded{{/if}}">
-                                            <div class="research-check-description">{{{this.description}}}</div>
+                                            <div class="research-check-description">{{{this.enrichedDescription}}}</div>
                                             <div class="research-check-skill-checks">
                                                 {{#each this.skillChecks}}
                                                     <div class="research-check-skill-check">

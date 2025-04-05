@@ -1,6 +1,26 @@
 export const MODULE_ID = 'pf2e-subsystems';
 export const SOCKET_ID = `module.${MODULE_ID}`;
 
+export const settingIDs = {
+    menus: {
+        subsystems: "subsystems-menu"
+    },
+    chase: {
+        settings: "chase-settings",
+    },
+    research: {
+        settings: "research-settings",
+    },
+    infiltration: {
+        settings: 'infiltration-settings',
+    },
+}
+
+export const tourIDs = {
+    chase: "pf2e-subsystems-chase",
+    research: "pf2e-subsystems-research",
+}
+
 export const timeUnits = {
     year: {
         value: 'year',
@@ -20,19 +40,52 @@ export const timeUnits = {
     },
 }
 
-export const settingIDs = {
-    menus: {
-        subsystems: "subsystems-menu"
+export const dcAdjustments = {
+    incrediblyHard: {
+        value: 'incrediblyHard',
+        name: 'PF2E.DCAdjustmentIncrediblyHard',
     },
-    chase: {
-        settings: "chase-settings",
+    veryHard: {
+        value: 'veryHard',
+        name: 'PF2E.DCAdjustmentVeryHard',
     },
-    research: {
-        settings: "research-settings",
+    hard: {
+        value: 'hard',
+        name: 'PF2E.DCAdjustmentHard',
     },
-}
+    standard: {
+        value: 'standard',
+        name: 'PF2E.DCAdjustmentNormal',
+    },
+    easy: {
+        value: 'easy',
+        name: 'PF2E.DCAdjustmentEasy',
+    },
+    veryEasy: {
+        value: 'veryEasy',
+        name: 'PF2E.DCAdjustmentVeryEasy',
+    },
+    incrediblyEasy: {
+        value: 'incrediblyEasy',
+        name: 'PF2E.DCAdjustmentIncrediblyEasy'
+    }
+};
 
-export const tourIDs = {
-    chase: "pf2e-subsystems-chase",
-    research: "pf2e-subsystems-research",
+export const degreesOfSuccess = {
+    criticalSuccess: {
+        value: 'criticalSuccess',
+        name: 'PF2E.Check.Result.Degree.Check.criticalSuccess'
+    },
+    success: {
+        value: 'success',
+        name: 'PF2E.Check.Result.Degree.Check.success'
+    },
+    failure: {
+        value: 'failure',
+        name: 'PF2E.Check.Result.Degree.Check.failure'
+    },
+    criticalFailure: {
+        value: 'criticalFailure',
+        name: 'PF2E.Check.Result.Degree.Check.criticalFailure'
+    }
 }

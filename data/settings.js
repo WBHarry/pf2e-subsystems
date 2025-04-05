@@ -20,3 +20,11 @@ export class ChaseSettings extends foundry.abstract.DataModel {
     }
   }
 }
+
+export class InfiltrationSettings extends foundry.abstract.DataModel {
+  static defineSchema() {
+    const fields = foundry.data.fields;
+    return {
+    }
+  }
+}

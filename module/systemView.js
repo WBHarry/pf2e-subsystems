@@ -1,5 +1,5 @@
-import { MODULE_ID, settingIDs, SOCKET_ID, timeUnits } from "../data/constants";
-import { copyToClipboard, translateSubsystem, updateDataModel } from "../scripts/helpers";
+import { dcAdjustments, degreesOfSuccess, MODULE_ID, settingIDs, SOCKET_ID, timeUnits } from "../data/constants";
+import { copyToClipboard, getDCAdjustmentNumber, getSelfDC, setupTagify, translateSubsystem, updateDataModel } from "../scripts/helpers";
 import { currentVersion } from "../scripts/setup";
 import { socketEvent } from "../scripts/socket";
 
@@ -9,6 +9,7 @@ const getDefaultSelected = (event) => ({
   event: event ?? null,
   chaseObstacle: 1,
   research: {},
+  infiltration: {},
 });
 
 export default class SystemView extends HandlebarsApplicationMixin(
@@ -95,7 +96,30 @@ export default class SystemView extends HandlebarsApplicationMixin(
         removeResearchEvent: this.removeResearchEvent,
         toggleResearchEventHidden: this.toggleResearchEventHidden,
         researchToggleOpenResearchEvent: this.researchToggleOpenResearchEvent,
+        /* Infiltration */
+        addInfiltrationObstacle: this.addInfiltrationObstacle,
+        removeInfiltrationObstacle: this.removeInfiltrationObstacle,
+        infiltrationObstaclePointsUpdate: this.infiltrationObstaclePointsUpdate,
+        infiltrationObstacleIndividualPointsUpdate: this.infiltrationObstacleIndividualPointsUpdate,
+        infiltrationAddObstacleSkill: this.infiltrationAddObstacleSkill,
+        infiltrationRemoveObstacleSkill: this.infiltrationRemoveObstacleSkill,
+        infiltrationObstacleToggleAdjustment: this.infiltrationObstacleToggleAdjustment,
 
+        addInfiltrationOpportunity: this.addInfiltrationOpportunity,
+        addInfiltrationComplication: this.addInfiltrationComplication,
+        infiltrationToggleOpportunityHidden: this.infiltrationToggleOpportunityHidden,
+        infiltrationToggleOpenOpportunity: this.infiltrationToggleOpenOpportunity,
+        infiltrationToggleComplicationHidden: this.infiltrationToggleComplicationHidden,
+        infiltrationToggleOpenComplication: this.infiltrationToggleOpenComplication,
+        removeInfiltrationOpportunity: this.removeInfiltrationOpportunity,
+        removeInfiltrationComplication: this.removeInfiltrationComplication,
+        infiltrationUpdateAwarenessPoints: this.infiltrationUpdateAwarenessPoints,
+        infiltrationAddComplicationSkill: this.infiltrationAddComplicationSkill,
+        infiltrationRemoveComplicationSkill: this.infiltrationRemoveComplicationSkill,
+        infiltrationComplicationResultSelect: this.infiltrationComplicationResultSelect,
+        infiltrationComplicationResultToggle: this.infiltrationComplicationResultToggle,
+        infiltrationComplicationToggleResultsOutcome: this.infiltrationComplicationToggleResultsOutcome,
+        infiltrationComplicationToggleAdjustment: this.infiltrationComplicationToggleAdjustment,
       },
       form: { handler: this.updateData, submitOnChange: true },
       window: {
@@ -119,6 +143,13 @@ export default class SystemView extends HandlebarsApplicationMixin(
         id: 'research',
         template: "modules/pf2e-subsystems/templates/system-view/systems/research/researches.hbs",
       },
+      infiltration: {
+        id: 'infiltration',
+        template: "modules/pf2e-subsystems/templates/system-view/systems/infiltration/infiltrations.hbs",
+        scrollable: [
+          ".event-main-container",
+        ],
+      },
     };
 
     _onRender(context, options) {
@@ -128,6 +159,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
     tabGroups = {
       main: 'systemView',
       influenceResearchChecks: 'description',
+      infiltrationObstacleSkills: 'description',
+      infiltrationComplication: 'description',
     };
 
     getTabs() {
@@ -170,6 +203,15 @@ export default class SystemView extends HandlebarsApplicationMixin(
           label: game.i18n.localize('PF2ESubsystems.Events.Research.Plural'),
           image: 'icons/skills/trades/academics-merchant-scribe.webp',
         },
+        infiltration: {
+          active: false,
+          cssClass: 'infiltration-view',
+          group: 'main',
+          id: 'infiltration',
+          icon: null,
+          label: game.i18n.localize('PF2ESubsystems.Events.Infiltration.Plural'),
+          image: 'icons/magic/unholy/silhouette-robe-evil-power.webp',
+        },
       };
   
       for (const v of Object.values(tabs)) {
@@ -182,7 +224,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
       return tabs;
     }
 
-    getSkillCheckTabs() {
+    getResearchSkillCheckTabs() {
       const tabs = {
         description: {
           active: true,
@@ -200,6 +242,74 @@ export default class SystemView extends HandlebarsApplicationMixin(
           icon: null,
           label: game.i18n.localize('PF2ESubsystems.Research.ResearchCheckTab.SkillChecks'),
         }
+      };
+  
+      for (const v of Object.values(tabs)) {
+        v.active = this.tabGroups[v.group]
+          ? this.tabGroups[v.group] === v.id
+          : v.active;
+        v.cssClass = v.active ? `${v.cssClass} active` : "";
+      }
+  
+      return tabs;
+    }
+
+    getInfiltrationComplicationTabs() {
+      const tabs = {
+        description: {
+          active: true,
+          cssClass: '',
+          group: 'infiltrationComplication',
+          id: 'description',
+          icon: null,
+          label: game.i18n.localize('PF2ESubsystems.Infiltration.InfiltrationComplicationTab.Description'),
+        },
+        skillChecks: {
+          active: false,
+          cssClass: '',
+          group: 'infiltrationComplication',
+          id: 'skillChecks',
+          icon: null,
+          label: game.i18n.localize('PF2ESubsystems.Infiltration.InfiltrationComplicationTab.SkillChecks'),
+        },
+        results: {
+          active: false,
+          cssClass: '',
+          group: 'infiltrationComplication',
+          id: 'results',
+          icon: null,
+          label: game.i18n.localize('PF2ESubsystems.Infiltration.InfiltrationComplicationTab.Results'),
+        }
+      };
+  
+      for (const v of Object.values(tabs)) {
+        v.active = this.tabGroups[v.group]
+          ? this.tabGroups[v.group] === v.id
+          : v.active;
+        v.cssClass = v.active ? `${v.cssClass} active` : "";
+      }
+  
+      return tabs;
+    }
+
+    getInfiltrationObstacleTabs() {
+      const tabs = {
+        description: {
+          active: true,
+          cssClass: '',
+          group: 'infiltrationObstacleSkills',
+          id: 'description',
+          icon: null,
+          label: game.i18n.localize('PF2ESubsystems.Infiltration.InfiltrationObstacleSkillsTab.Description'),
+        },
+        skillChecks: {
+          active: false,
+          cssClass: '',
+          group: 'infiltrationObstacleSkills',
+          id: 'skillChecks',
+          icon: null,
+          label: game.i18n.localize('PF2ESubsystems.Infiltration.InfiltrationObstacleSkillsTab.SkillChecks'),
+        },
       };
   
       for (const v of Object.values(tabs)) {
@@ -280,7 +390,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
                   [obstacleId]: {
                     id: obstacleId,
                     img: "icons/svg/cowled.svg",
-                    name: game.i18n.localize('PF2ESubsystems.Chase.NewObstacle'),
+                    name: game.i18n.localize('PF2ESubsystems.View.NewObstacle'),
                     position: 1,
                     locked: false,
                   }
@@ -309,6 +419,47 @@ export default class SystemView extends HandlebarsApplicationMixin(
                 name: elements.name.value ? elements.name.value : game.i18n.localize('PF2ESubsystems.View.NewEvent'),
                 version: currentVersion,
                 background: elements.background.value ? elements.background.value : 'icons/skills/trades/academics-merchant-scribe.webp',
+              };
+            },
+            attachListeners: this.filePickerListener.bind(this),
+          };
+        case 'infiltration':
+          return {  
+            content: await renderTemplate("modules/pf2e-subsystems/templates/system-view/systems/chase/chaseDataDialog.hbs", { name: existing?.name, background: existing?.background }),
+            title: game.i18n.localize(existing ? 'PF2ESubsystems.Infiltration.EditInfiltration' : 'PF2ESubsystems.Infiltration.CreateInfiltration'),
+            callback: (button) => {
+              const elements = button.form.elements;
+              if (existing){
+                return {
+                  ...existing,
+                  name: elements.name.value,
+                  background: elements.background.value,
+                }
+              }
+
+              const obstacleId = foundry.utils.randomID();
+              const skillCheckId = foundry.utils.randomID();
+              const skillId = foundry.utils.randomID();
+              return {
+                id: foundry.utils.randomID(),
+                name: elements.name.value ? elements.name.value : game.i18n.localize('PF2ESubsystems.View.NewEvent'),
+                version: currentVersion,
+                background: elements.background.value ? elements.background.value : 'icons/magic/unholy/silhouette-robe-evil-power.webp',
+                obstacles: {
+                  [obstacleId]: {
+                    id: obstacleId,
+                    img: "icons/svg/cowled.svg",
+                    name: game.i18n.localize('PF2ESubsystems.View.NewObstacle'),
+                    position: 1,
+                    locked: false,
+                    [`skillChecks.${skillCheckId}`]: {
+                      id: skillCheckId,
+                      [`skills.${skillId}`]: {
+                        id: skillId,
+                      }
+                    },
+                  }
+                },
               };
             },
             attachListeners: this.filePickerListener.bind(this),
@@ -419,7 +570,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
     }
 
     onKeyDown(event){
-      if(!this.editMode && !this.isTour && this.tabGroups.main === 'chase'){
+      /* Obstacle navigation */
+      if(!this.editMode && !this.isTour && ['chase', 'infiltration'].includes(this.tabGroups.main)){
         if(this.selected.event){
           switch(event.key) {
             case 'ArrowLeft':
@@ -580,7 +732,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.obstacles.${newId}`]: {
         id: newId,
         img: "icons/svg/cowled.svg",
-        name: game.i18n.localize('PF2ESubsystems.Chase.NewObstacle'),
+        name: game.i18n.localize('PF2ESubsystems.View.NewObstacle'),
         position: currentObstacles+1,
         locked: true,
       }});
@@ -624,6 +776,13 @@ export default class SystemView extends HandlebarsApplicationMixin(
       await game.settings.set(MODULE_ID, this.tabGroups.main, chases);
 
       this.selected.chaseObstacle = Math.min(this.selected.chaseObstacle, Object.keys(obstacles).length);
+
+      await game.socket.emit(SOCKET_ID, {
+        action: socketEvent.UpdateSystemView,
+        data: { tab: this.tabGroups.main },
+      });
+  
+      this.render({ parts: [this.tabGroups.main] });
     }
 
     static setCurrentObstacle(_, button) {
@@ -778,6 +937,192 @@ export default class SystemView extends HandlebarsApplicationMixin(
       this.render({ parts: [this.tabGroups.main] });
     }
 
+    //#region Infiltration
+    static async addInfiltrationObstacle(_, button) {
+      const newId = foundry.utils.randomID();
+      const skillCheckId = foundry.utils.randomID();
+      const skillId = foundry.utils.randomID();
+
+      const currentObstacles = Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].obstacles).length;
+      const newPosition = currentObstacles+1;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.obstacles.${newId}`]: {
+        id: newId,
+        img: "icons/svg/cowled.svg",
+        name: game.i18n.localize('PF2ESubsystems.View.NewObstacle'),
+        position: currentObstacles+1,
+        locked: true,
+        [`skillChecks.${skillCheckId}`]: {
+          id: skillCheckId,
+          [`skills.${skillId}`]: {
+            id: skillId,
+          }
+        },
+      }});
+
+      this.selected.chaseObstacle = newPosition;
+      this.render({ parts: [this.tabGroups.main] });
+    }
+    
+    static async removeInfiltrationObstacle(_, button) {
+      const infiltrations = game.settings.get(MODULE_ID, this.tabGroups.main);
+      const removedPosition = infiltrations.events[button.dataset.event].obstacles[button.dataset.obstacle].position;
+      const obstacles = Object.keys(infiltrations.events[button.dataset.event].obstacles).reduce((acc, x) => {
+        const obstacle = infiltrations.events[button.dataset.event].obstacles[x];
+        if(obstacle.id !== button.dataset.obstacle) {
+          acc[x] = {
+            ...obstacle,
+            position: obstacle.position > removedPosition ? obstacle.position -1 : obstacle.position,
+          };
+        }
+
+        return acc;
+      }, {});
+
+      await infiltrations.updateSource({ [`events.${button.dataset.event}.obstacles.-=${button.dataset.obstacle}`]: null });
+      await infiltrations.updateSource({ [`events.${button.dataset.event}`]: {
+        obstacles: obstacles,
+      } }, { diff: false });
+
+      await game.settings.set(MODULE_ID, this.tabGroups.main, infiltrations);
+
+      this.selected.chaseObstacle = Math.min(this.selected.chaseObstacle, Object.keys(obstacles).length);
+
+      await game.socket.emit(SOCKET_ID, {
+        action: socketEvent.UpdateSystemView,
+        data: { tab: this.tabGroups.main },
+      });
+  
+      this.render({ parts: [this.tabGroups.main] });
+    }
+
+    static async infiltrationObstaclePointsUpdate(_, button) {
+      const currentPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].obstacles[button.dataset.obstacle].infiltrationPoints.current;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.obstacles.${button.dataset.obstacle}.infiltrationPoints.current`]: button.dataset.increase ? currentPoints + 1 : currentPoints - 1 });
+    }
+
+    static async infiltrationObstacleIndividualPointsUpdate(_, button) {
+      const currentPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].obstacles[button.dataset.obstacle].infiltrationPointData[button.dataset.player] ?? 0;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.obstacles.${button.dataset.obstacle}.infiltrationPointData.${button.dataset.player}`]: button.dataset.increase ? currentPoints + 1 : currentPoints - 1 });
+    }
+
+    static async infiltrationAddObstacleSkill(_, button) {
+      const skillId = foundry.utils.randomID();
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.obstacles.${button.dataset.obstacle}.skillChecks.${button.dataset.skillCheck}.skills.${skillId}`]: {
+          id: skillId,
+      }});
+    }
+
+    static async infiltrationRemoveObstacleSkill(_, button) {
+      const skillCheck = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].obstacles[button.dataset.obstacle].skillChecks[button.dataset.skillCheck];
+      if(Object.keys(skillCheck.skills) === 1){
+        await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.obstacles.${button.dataset.obstacle}.skillChecks.-=${button.dataset.skillCheck}`]: null });
+      }
+      else {
+        await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.obstacles.${button.dataset.obstacle}.skillChecks.${button.dataset.skillCheck}.skills.-=${button.dataset.skill}`]: null });
+      }
+    }
+
+    static async infiltrationObstacleToggleAdjustment(_, button) {
+      const currentAdjustment = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].obstacles[button.dataset.obstacle].skillChecks[button.dataset.skillCheck].selectedAdjustment;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.obstacles.${button.dataset.obstacle}.skillChecks.${button.dataset.skillCheck}.selectedAdjustment`]: currentAdjustment === button.dataset.adjustment ? null : button.dataset.adjustment });
+    }
+
+    static async addInfiltrationOpportunity(_, button) {
+      const opportunityId = foundry.utils.randomID();
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.opportunities.${opportunityId}`]: {
+        id: opportunityId,
+        name: game.i18n.localize("PF2ESubsystems.Infiltration.NewOpportunity"),
+      }});
+    }
+
+    static async addInfiltrationComplication(_, button) {
+      const complicationId = foundry.utils.randomID();
+      const skillCheckId = foundry.utils.randomID();
+      const skillId = foundry.utils.randomID();
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${complicationId}`]: {
+        id: complicationId,
+        name: game.i18n.localize("PF2ESubsystems.Infiltration.NewComplication"),
+        [`skillChecks.${skillCheckId}`]: {
+          id: skillCheckId,
+          [`skills.${skillId}`]: {
+            id: skillId,
+          }
+        },
+      }});
+    }
+
+    static async infiltrationToggleOpportunityHidden(_, button) {
+      const currentHidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].opportunities[button.dataset.opportunity].hidden;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.opportunities.${button.dataset.opportunity}.hidden`]: !currentHidden });
+    }
+
+    static async infiltrationToggleOpenOpportunity(_, button) {
+      this.selected.openInfiltrationOpportunity = this.selected.openInfiltrationOpportunity === button.dataset.opportunity ? null : button.dataset.opportunity;
+      this.render({ parts: [this.tabGroups.main] }); 
+    }
+
+    static async infiltrationToggleComplicationHidden(_, button) {
+      const currentHidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].complications[button.dataset.complication].hidden;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.hidden`]: !currentHidden });
+    }
+
+    static async infiltrationToggleOpenComplication(_, button) {
+      this.selected.openInfiltrationComplication = this.selected.openInfiltrationComplication === button.dataset.complication ? null : button.dataset.complication;
+      this.render({ parts: [this.tabGroups.main] }); 
+    }
+
+    static async removeInfiltrationOpportunity(_, button) {
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.opportunities.-=${button.dataset.opportunity}`]: null });
+    }
+
+    static async removeInfiltrationComplication(_, button) {
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.-=${button.dataset.complication}`]: null });
+    }
+
+    static async infiltrationUpdateAwarenessPoints(_, button) {
+      const currentPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].awarenessPoints;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.awarenessPoints`]: button.dataset.increase ? currentPoints + 1 : currentPoints - 1 });
+    }
+
+    static async infiltrationAddComplicationSkill(_, button) {
+      const skillId = foundry.utils.randomID();
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.skillChecks.${button.dataset.skillCheck}.skills.${skillId}`]: {
+          id: skillId,
+      }});
+    }
+
+    static async infiltrationRemoveComplicationSkill(_, button) {
+      const skillCheck = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].complications[button.dataset.complication].skillChecks[button.dataset.skillCheck];
+      if(Object.keys(skillCheck.skills) === 1){
+        await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.skillChecks.-=${button.dataset.skillCheck}`]: null });
+      }
+      else {
+        await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.skillChecks.${button.dataset.skillCheck}.skills.-=${button.dataset.skill}`]: null });
+      }
+    }
+
+    static async infiltrationComplicationResultSelect(_, button) {
+      this.selected.infiltration.complicationResultSelect = this.selected.infiltration.complicationResultSelect === button.dataset.result ? null : button.dataset.result;
+      this.render({ parts: [this.tabGroups.main] });
+    }
+
+    static async infiltrationComplicationResultToggle(event, button) {
+      event.stopPropagation();
+      const currentInUse = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].complications[button.dataset.complication].results[button.dataset.result].inUse;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.results.${button.dataset.result}.inUse`]: !currentInUse });
+    }
+
+    static async infiltrationComplicationToggleResultsOutcome(_, button) {
+      const currentResultsOutcome = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].complications[button.dataset.complication].resultsOutcome;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.resultsOutcome`]: currentResultsOutcome === button.dataset.result ? null : button.dataset.result });
+    }
+    
+    static async infiltrationComplicationToggleAdjustment(_, button) {
+      const currentAdjustment = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].complications[button.dataset.complication].skillChecks[button.dataset.skillCheck].selectedAdjustment;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.skillChecks.${button.dataset.skillCheck}.selectedAdjustment`]: currentAdjustment === button.dataset.adjustment ? null : button.dataset.adjustment });
+    }
+    //#endregion 
+
     async updateResearchLore(event) {
       event.stopPropagation();
       const button = event.currentTarget;
@@ -808,6 +1153,107 @@ export default class SystemView extends HandlebarsApplicationMixin(
       }});
     }
 
+    async updateComplicationInfiltrationPoints(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+      const newMax = Number.parseInt(button.value);
+      const complication = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].complications[button.dataset.complication];
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}`]: {
+        infiltrationPoints: {
+          current: Math.min(complication.infiltrationPoints.current, newMax),
+          max: newMax,
+        }
+      }});
+    }
+
+    async updateObstacleLeveldDC(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.obstacles.${button.dataset.obstacle}.skillChecks.${button.dataset.skillCheck}`]: {
+        difficulty: {
+          leveledDC: button.checked,
+          DC: button.checked ? null : 10,
+        }
+      }});
+    }
+
+    async updateObstacleLore(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.obstacles.${button.dataset.obstacle}.skillChecks.${button.dataset.skillCheck}.skills.${button.dataset.skill}`]: {
+        lore: button.checked,
+        skill: button.checked ? 'something-lore' : 'acrobatics',
+      }});
+    }
+
+    async updateComplicationLeveldDC(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.skillChecks.${button.dataset.skillCheck}`]: {
+        difficulty: {
+          leveledDC: button.checked,
+          DC: button.checked ? null : 10,
+        }
+      }});
+    }
+
+    async updateComplicationLore(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.skillChecks.${button.dataset.skillCheck}.skills.${button.dataset.skill}`]: {
+        lore: button.checked,
+        skill: button.checked ? 'something-lore' : 'acrobatics',
+      }});
+    }
+
+    async infiltrationObstacleUpdateDCAdjustment(event) {
+      const button = event.detail.tagify.DOM.originalInput;
+      const value = event.detail?.value
+      ? JSON.parse(event.detail.value)
+      : [];
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.obstacles.${button.dataset.obstacle}.skillChecks.${button.dataset.skillCheck}.dcAdjustments`]: value.map(x => x.value) });
+    }
+
+    async infiltrationObstacleRemoveDCAdjustment(event) {
+      const button = $(event[0].node).parent().parent().find('input.obstacle-dc-adjustment')[0];
+      const settingId = this.tabGroups.main;
+      return new Promise(async function (resolve) {
+        const skillCheck = game.settings.get(MODULE_ID, settingId).events[button.dataset.event].obstacles[button.dataset.obstacle].skillChecks[button.dataset.skillCheck];
+        const newValue = skillCheck.dcAdjustments.filter(x => x !== event[0].data.value);
+        await updateDataModel(settingId, { [`events.${button.dataset.event}.obstacles.${button.dataset.obstacle}.skillChecks.${button.dataset.skillCheck}`]: {
+          dcAdjustments: newValue,
+          selectedAdjustment: skillCheck.selectedAdjustment === event[0].data.value ? null : skillCheck.selectedAdjustment,
+        }});
+        resolve();
+      });
+    }
+ 
+    async infiltrationComplicationUpdateDCAdjustment(event) {
+      const button = event.detail.tagify.DOM.originalInput;
+      const value = event.detail?.value
+      ? JSON.parse(event.detail.value)
+      : [];
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.skillChecks.${button.dataset.skillCheck}.dcAdjustments`]: value.map(x => x.value) });
+    }
+
+    async infiltrationComplicationRemoveDCAdjustment(event) {
+      const button = $(event[0].node).parent().parent().find('input.complication-dc-adjustment')[0];
+      const settingId = this.tabGroups.main;
+      return new Promise(async function (resolve) {
+        const skillCheck = game.settings.get(MODULE_ID, settingId).events[button.dataset.event].complications[button.dataset.complication].skillChecks[button.dataset.skillCheck];
+        const newValue = skillCheck.dcAdjustments.filter(x => x !== event[0].data.value);
+        await updateDataModel(settingId, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.skillChecks.${button.dataset.skillCheck}`]: {
+          dcAdjustments: newValue,
+          selectedAdjustment: skillCheck.selectedAdjustment === event[0].data.value ? null : skillCheck.selectedAdjustment,
+        }});
+        resolve();
+      });
+    }
+
     _attachPartListeners(partId, htmlElement, options) {
       super._attachPartListeners(partId, htmlElement, options);
 
@@ -820,6 +1266,20 @@ export default class SystemView extends HandlebarsApplicationMixin(
         case 'research':
           $(htmlElement).find('.research-lore-input').on('change', this.updateResearchLore.bind(this));
           $(htmlElement).find('.research-skill-check-input').on('change', this.updateResearchSkillCheck.bind(this));
+          break;
+        case 'infiltration':
+          $(htmlElement).find('.complication-max-infiltration-pointers').on('change', this.updateComplicationInfiltrationPoints.bind(this));
+          $(htmlElement).find('.obstacle-complication-leveled-DC').on('change', this.updateObstacleLeveldDC.bind(this));
+          $(htmlElement).find('.infiltration-obstacle-lore').on('change', this.updateObstacleLore.bind(this));
+          $(htmlElement).find('.infiltration-complication-leveled-DC').on('change', this.updateComplicationLeveldDC.bind(this));
+          $(htmlElement).find('.infiltration-complication-lore').on('change', this.updateComplicationLore.bind(this));
+          
+          const adjustmentOptions = Object.values(dcAdjustments);
+  
+
+          setupTagify(htmlElement, '.complication-dc-adjustment', adjustmentOptions, this.infiltrationComplicationUpdateDCAdjustment.bind(this), this.infiltrationComplicationRemoveDCAdjustment.bind(this));
+          setupTagify(htmlElement, '.obstacle-dc-adjustment', adjustmentOptions, this.infiltrationObstacleUpdateDCAdjustment.bind(this), this.infiltrationObstacleRemoveDCAdjustment.bind(this));
+
           break;
       }
     }
@@ -883,7 +1343,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
             
           context.settings = game.settings.get(MODULE_ID, settingIDs.research.settings);
           context.tab = context.systems.research;
-          context.skillCheckTabs = this.getSkillCheckTabs();
+          context.skillCheckTabs = this.getResearchSkillCheckTabs();
           await this.setupEvents(viewEvents, context);
           if(context.selectedEvent) {
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
@@ -935,6 +1395,159 @@ export default class SystemView extends HandlebarsApplicationMixin(
           
           context.selected = this.selected.research;
           context.timeUnits = timeUnits;
+          context.skillOptions = [
+            ...Object.keys(CONFIG.PF2E.skills).map((skill) => ({
+              value: skill,
+              name: CONFIG.PF2E.skills[skill].label,
+            })),
+            { value: "perception", name: "PF2E.PerceptionLabel" },
+          ];
+          context.actionOptions = []; 
+          for(var action of game.pf2e.actions) {
+            context.actionOptions.push({ value: action.slug, name: game.i18n.localize(action.name) });
+          }
+
+          break;
+        case 'infiltration':
+          const { events: infiltrationEvents } = game.settings.get(MODULE_ID, 'infiltration');
+          
+          context.settings = game.settings.get(MODULE_ID, settingIDs.infiltration.settings);
+          context.tab = context.systems.infiltration;
+          context.obstacleTabs  = this.getInfiltrationObstacleTabs();
+          context.complicationTabs = this.getInfiltrationComplicationTabs();
+          context.currentObstacleNr = this.selected.chaseObstacle ?? 1;
+
+          const disableRollButton = (disable, html) => {
+            if(!disable) return html;
+            return html.match(/style="/) ? html.replace(/style="/, 'style="opacity: 0.4; pointer-events: none; ') : html.replace(/<a/, '<a style="opacity: 0.4; pointer-events: none; "').replace(/<span/, '<span style="opacity: 0.4; pointer-events: none; "');
+          } 
+
+          await this.setupEvents(infiltrationEvents, context);
+          if(context.selectedEvent) {
+            context.infiltrationPoints = context.selectedEvent.infiltrationPoints;
+            context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
+            context.selectedEvent.extendedComplications = context.selectedEvent.complicationsData;
+
+            const obstacleBase = Object.values(context.selectedEvent.obstacles).find(x => x.position === context.currentObstacleNr);
+            context.currentObstacle = !obstacleBase ? null : {
+              ...obstacleBase,
+              enrichedDescription: await TextEditor.enrichHTML(obstacleBase.description),
+              individualInfiltrationPoints: !obstacleBase.individual ? [] : game.actors.find(x => x.type === 'party').members.reduce((acc, curr) => {
+                acc[curr.id] = {
+                  id: curr.id,
+                  name: curr.name,
+                  value: obstacleBase.infiltrationPointData[curr.id] ?? 0,
+                };
+
+                return acc;
+              }, {}),
+              skillChecks: Object.values(obstacleBase.skillChecks).reduce((acc, skillCheck) => {
+                acc[skillCheck.id] = {
+                  ...skillCheck,
+                  columns: Object.values(skillCheck.skills).reduce((acc, skill) => {
+                    acc.lore.push({ 
+                      event: context.selectedEvent.id,
+                      obstacle: obstacleBase.id,
+                      skillCheck: skillCheck.id,
+                      id: skill.id,
+                      lore: skill.lore,
+                    });
+                    acc.skill.push({ 
+                      event: context.selectedEvent.id,
+                      obstacle: obstacleBase.id,
+                      skillCheck: skillCheck.id,
+                      id: skill.id,
+                      skill: skill.skill,
+                      lore: skill.lore,
+                    });
+                    acc.action.push({ 
+                      event: context.selectedEvent.id,
+                      obstacle: obstacleBase.id,
+                      skillCheck: skillCheck.id,
+                      id: skill.id,
+                      action: skill.action,
+                    });
+                    acc.variant.push({ 
+                      event: context.selectedEvent.id,
+                      obstacle: obstacleBase.id,
+                      skillCheck: skillCheck.id,
+                      id: skill.id,
+                      variantOptions: skill.action ? [...game.pf2e.actions.get(skill.action).variants].map(x => ({ value: x.slug, name: x.name })) : [],
+                      variant: skill.variant,
+                    });
+    
+                    return acc;
+                  }, { lore: [], skill: [], action: [], variant: [] }),
+                }
+    
+                return acc;
+              }, {})
+            }; 
+
+            for(var key of Object.keys(context.currentObstacle.skillChecks)){
+              const skillCheck = context.currentObstacle.skillChecks[key];
+              skillCheck.dcAdjustmentValues = skillCheck.dcAdjustments.map(x => ({
+                name: game.i18n.localize(dcAdjustments[x].name),
+                value: x,
+              }));
+
+              let dc = skillCheck.difficulty.leveledDC ? getSelfDC() : skillCheck.difficulty.DC;
+              dc = skillCheck.selectedAdjustment ? dc+getDCAdjustmentNumber(skillCheck.selectedAdjustment) : dc;
+              const disableElement = skillCheck.dcAdjustments.length > 0 && !skillCheck.selectedAdjustment;
+              for(var key of Object.keys(skillCheck.skills)){
+                const skill = skillCheck.skills[key];
+                if(skill.action) {
+                  skill.element = disableRollButton(disableElement, await TextEditor.enrichHTML(`[[/act ${skill.action} ${skill.variant ? `variant=${skill.variant} ` : ''}stat=${skill.skill} dc=${dc}]]`));  
+                }
+                else {
+                  skill.element = disableRollButton(disableElement, await TextEditor.enrichHTML(`@Check[type:${skill.skill}|dc:${dc}|simple:${skill.simple}]`));
+                }
+              }
+            }
+
+            for(var key of Object.keys(context.selectedEvent.opportunities)){
+              var opportunity = context.selectedEvent.opportunities[key];
+              opportunity.open = this.selected.openInfiltrationOpportunity === opportunity.id;
+              opportunity.enrichedDescription = await TextEditor.enrichHTML(opportunity.description);
+            }
+
+            for(var key of Object.keys(context.selectedEvent.extendedComplications)){
+              const complication = context.selectedEvent.extendedComplications[key];
+              complication.open = this.selected.openInfiltrationComplication === complication.id;
+              complication.enrichedDescription = await TextEditor.enrichHTML(complication.description);
+
+              for(var key of Object.keys(complication.skillChecks)){
+                const skillCheck = complication.skillChecks[key];
+                skillCheck.dcAdjustmentValues = skillCheck.dcAdjustments.map(x => ({
+                  name: game.i18n.localize(dcAdjustments[x].name),
+                  value: x,
+                }));
+
+                let dc = skillCheck.difficulty.leveledDC ? getSelfDC() : skillCheck.difficulty.DC;
+                dc = skillCheck.selectedAdjustment ? dc+getDCAdjustmentNumber(skillCheck.selectedAdjustment) : dc;
+                const disableElement = skillCheck.dcAdjustments.length > 0 && !skillCheck.selectedAdjustment;
+                for(var key of Object.keys(skillCheck.skills)){
+                  const skill = skillCheck.skills[key];
+                  if(skill.action) {
+                    skill.element = disableRollButton(disableElement, await TextEditor.enrichHTML(`[[/act ${skill.action} ${skill.variant ? `variant=${skill.variant} ` : ''}stat=${skill.skill} dc=${dc}]]`));  
+                  }
+                  else {
+                    skill.element = disableRollButton(disableElement, await TextEditor.enrichHTML(`@Check[type:${skill.skill}|dc:${dc}|simple:${skill.simple}]`));
+                  }
+                }
+              }
+
+              for(var key of Object.keys(complication.results)) {
+                var result = complication.results[key];
+                result.name = game.i18n.localize(degreesOfSuccess[result.degreeOfSuccess].name);
+                result.selected = this.selected.infiltration.complicationResultSelect === result.degreeOfSuccess;
+                result.enrichedDescription = await TextEditor.enrichHTML(result.description);
+              }
+
+              complication.selectedResult = Object.values(complication.results).find(x => x.degreeOfSuccess === this.selected.infiltration.complicationResultSelect);
+            }
+          }
+
           context.skillOptions = [
             ...Object.keys(CONFIG.PF2E.skills).map((skill) => ({
               value: skill,

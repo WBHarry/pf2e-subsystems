@@ -1,0 +1,12 @@
+{{#if this.isGM}}
+    <div class="event-header-toolbar secondary-container">
+        <button class="tertiary-container" data-action="startEvent" data-event="{{this.event.id}}">{{localize "PF2ESubsystems.View.StartEvent"}}</button>
+        <button class="tertiary-container event-header-toolbar-edit-container" data-action="editEventToggle">
+            <span class="event-header-toolbar-edit-container-label {{#if this.editMode}}highlighted{{/if}}">{{localize "PF2ESubsystems.View.EditEvent"}}</span>
+            <div class="edit-mode-box-container {{#if this.editMode}}secondary-container{{/if}}">
+                {{#if this.editMode}}<i class="fa-solid fa-screwdriver-wrench"></i>{{/if}}
+            </div>
+        </button>
+        <i class="fa-solid fa-passport primary-hover-container" data-action="copyStartEventLink" data-event="{{this.event.id}}" title="{{localize "PF2ESubsystems.View.CopyStartEventLink"}}"></i>
+    </div>
+{{/if}}

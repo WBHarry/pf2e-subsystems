@@ -1,7 +1,8 @@
 import { Chases } from "../data/chase";
 import { MODULE_ID, settingIDs } from "../data/constants";
+import { Infiltrations } from "../data/infiltration";
 import { Researches } from "../data/research";
-import { ChaseSettings, ResearchSettings } from "../data/settings";
+import { ChaseSettings, InfiltrationSettings, ResearchSettings } from "../data/settings";
 import SubsystemsMenu from "../module/SubsystemsMenu";
 
 export const currentVersion = '0.5.2';
@@ -43,6 +44,14 @@ const configSettings = () => {
     config: false,
     type: ChaseSettings,
   });
+
+  game.settings.register(MODULE_ID, settingIDs.infiltration.settings, {
+    name: "",
+    hint: "",
+    scope: "world",
+    config: false,
+    type: InfiltrationSettings,
+  });
 }
 
 const generalNonConfigSettings = () => {
@@ -60,6 +69,14 @@ const generalNonConfigSettings = () => {
     scope: "world",
     config: false,
     type: Researches,
+    default: { events: {} },
+  });
+  game.settings.register(MODULE_ID, "infiltration", {
+    name: "",
+    hint: "",
+    scope: "world",
+    config: false,
+    type: Infiltrations,
     default: { events: {} },
   });
 };

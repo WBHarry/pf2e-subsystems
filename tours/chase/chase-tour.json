@@ -201,7 +201,7 @@
                         "goal": 6,
                         "current": 0
                     },
-                    "overcome": "<i>As you rush through the ashen landscape, the ground suddenly beings to shake. What seemed like harmless holes in the ground suddenly start to spew out molten rock and bursts of flame as you rush through!</i>\n\n<div style=\"display: flex; align-items: center; gap: 2px;\"><strong>Dodge And Weave!:</strong> @Check[type:acrobatics|dc:22]</div>\n<div style=\"display: flex; align-items: center; gap: 2px;\"><strong>Find A Path Through!:</strong> @Check[type:survival|dc:20] @Check[type:nature|dc:24]</div>"
+                    "overcome": "<i>As you rush through the ashen landscape, the ground suddenly begins to shake. What seemed like harmless holes in the ground suddenly start to spew out molten rock and bursts of flame as you rush through!</i>\n\n<div style=\"display: flex; align-items: center; gap: 2px;\"><strong>Dodge And Weave!:</strong> @Check[type:acrobatics|dc:22]</div>\n<div style=\"display: flex; align-items: center; gap: 2px;\"><strong>Find A Path Through!:</strong> @Check[type:survival|dc:20] @Check[type:nature|dc:24]</div>"
                 },
                 "obstacle-2": {
                     "id": "obstacle-2",

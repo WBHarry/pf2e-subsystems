@@ -3,7 +3,9 @@
 @import "./stylesheets/system-view.less";
 @import "./stylesheets/chase.less";
 @import "./stylesheets/research.less";
+@import "./stylesheets//infiltration.less";
 @import "./stylesheets//subsystem-menu.less";
+@import (inline) "../node_modules/@yaireo/tagify/dist/tagify.css";
 
 .clickable-icon {
     cursor: pointer;
@@ -28,6 +30,18 @@
 
   .text-normal, input.text-normal {
     font-size: @textNormal;
+
+    &.italic {
+      font-style: italic;
+    }
+
+    &.bold {
+      font-weight: bold;
+    }
+
+    &.centered {
+      text-align: center;
+    }
   }
 
   .text-helper-big, input.text-helper-big {
@@ -49,7 +63,85 @@
     font-size: @textTitleSmall;
     font-weight: bold;
   }
-  /* Texts */
+
+  /* Tagify */
+  .tagify {
+    border-width: 1px;
+    border-radius: 6px;
+    border-color: var(--pf2e-subsystem-theming-border);
+
+    &.tertiary-container {
+      background-color: var(--pf2e-subsystem-theming-tertiary);
+    }
+  }
+
+  /* Visibility */
+  .inactive {
+    opacity: 0.4;
+  }
+
+  .event-skill-grid {
+    display: grid;
+    grid-auto-flow: column;
+    column-gap: @gapSmall;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 6px;
+    border-color: var(--pf2e-subsystem-theming-border);
+    
+    .event-skill-grid-col {
+      display: grid;
+      grid-auto-flow: row;
+      text-align: center;
+
+      .event-skill-grid-cell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        width: 100%;
+        height: 30px;
+        margin-bottom: @marginNormal;
+
+        &.header {
+          border-bottom-width: 1px;
+          border-bottom-style: solid;
+          border-bottom-color: var(--pf2e-subsystem-theming-border);
+        }
+
+        &:not(.header) {
+          
+        }
+      }
+
+      input {
+        margin: 0;
+      }
+
+      select {
+        padding: 0;
+      }
+    }
+
+    &.tertiary-container {
+      .event-skill-grid-col {
+        &:not(:last-child) {
+          .event-skill-grid-cell {
+            // margin-right: @marginLarge;
+          }
+        }
+
+        .event-skill-grid-cell {
+          &.header {
+            background-color: var(--pf2e-subsystem-theming-tertiary-accent);
+          }
+          &.body {
+            // background-color: var(--pf2e-subsystem-theming-tertiary-accent);
+          }
+        }
+      }
+    }
+  }
 
   .navigate-container {
     display: flex;

@@ -1,0 +1,164 @@
+.pf2e-subsystems {
+    .infiltration-view {
+        // height: 100%;
+        .event-outer-container {
+            .event-container { 
+                
+                .infiltration-obstacle-image-container {
+                    display: flex;
+                    align-items: center;
+                    gap: @gapNormal;
+
+                    &.edit {
+                        justify-content: center;
+                    }
+
+                    .infiltration-obstacle-image-inner-container {
+                        height: 100%;
+                        display: flex;
+                        flex-direction: column;
+                        width: 50%;
+
+                        .infiltration-points-container {
+
+                        }
+
+                        .infiltration-obstacle-description {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            align-items: center;
+                            flex: 1;
+                        }
+                    }
+
+                    .infiltration-obstacle-image {
+                        width: 50%;
+                        border: 0;
+                    }
+                }
+
+                .infiltration-points-individual-container {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-around;
+                    gap: @gapLarge;
+
+                    .infiltration-points-individual-inner-container {
+                        display: flex;
+                        flex-direction: column;
+                        gap: @gapSmall;
+                    }
+                }
+                
+                .event-sidebar {
+                    .description-outer-container {
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
+
+                        .description-container {
+                            padding: @paddingNormal;
+                            flex: 1;
+                            display: flex;
+                            flex-direction: column;
+
+                            textarea {
+                                flex: 1;
+                            }
+                        }
+                    }
+
+                    .awareness-points-container {
+   
+                    }
+                }
+
+                .event-main-view-container {
+                    .infiltration-points-container {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: @gapSmall;
+                    }
+                }
+
+                .obstacle-dc-adjustment, .complication-dc-adjustment {
+                    flex: 1;
+                }
+
+                .infiltration-complication-skill-container {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+
+                    .infiltration-complication-skill-buttons {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: @gapSmall;
+                        flex-wrap: wrap;
+                    }
+
+                    .infiltration-complication-skill-adjustment {
+                        border-radius: 1px;
+                        border-style: solid;
+                        border-radius: 6px;
+                        padding: @paddingNormal;
+                    }
+                }
+
+                .event-section-body {
+                    .infiltration-result-buttons {
+                        display: flex;
+                        align-items: center;
+                        gap: @gapSmall;
+
+                        .infiltration-result-button {
+                            opacity: 0.4;
+                            display: flex;
+                            align-items: center;
+                            gap: @gapSmall;
+                            flex-wrap: nowrap;
+                            white-space: nowrap;
+                            pointer-events: none;
+    
+                            &.active {
+                                opacity: 1;
+                                pointer-events: all;
+                            }
+    
+                            i {
+                                pointer-events: all;
+                            }
+                        }
+                    }
+
+                    .infiltration-results-container {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-evenly;
+                        gap: @gapSmall;
+
+                        .infiltration-result-container {
+                            text-align: center;
+                            border-width: 1px;
+                            border-style: solid;
+                            border-radius: 6px;
+                            padding: @paddingSmall;
+
+                            &.inactive {
+                                opacity: 0.4;
+                            }
+
+                            > p {
+                                margin: 0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
