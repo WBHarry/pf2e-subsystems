@@ -18,12 +18,14 @@ Hooks.once("init", () => {
       "modules/pf2e-subsystems/templates/partials/navigate-back.hbs",
       "modules/pf2e-subsystems/templates/partials/events.hbs",
       "modules/pf2e-subsystems/templates/partials/radio-button.hbs",
+      "modules/pf2e-subsystems/templates/partials/event-toolbar.hbs",
       "modules/pf2e-subsystems/templates/system-view/systems/chase/chase.hbs",
       "modules/pf2e-subsystems/templates/system-view/systems/chase/chaseDataDialog.hbs",
       "modules/pf2e-subsystems/templates/system-view/systems/chase/participantDataDialog.hbs",
       "modules/pf2e-subsystems/templates/system-view/systems/research/research.hbs",
       "modules/pf2e-subsystems/templates/menu/subsystem-menu/partials/system-tabs.hbs",
-      "modules/pf2e-subsystems/templates/menu/subsystem-menu/partials/system-footer.hbs"
+      "modules/pf2e-subsystems/templates/menu/subsystem-menu/partials/system-footer.hbs",
+      "modules/pf2e-subsystems/templates/system-view/systems/infiltration/infiltration.hbs",
     ]);
 });
 

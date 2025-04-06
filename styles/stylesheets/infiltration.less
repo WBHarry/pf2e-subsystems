@@ -1,0 +1,273 @@
+.pf2e-subsystems {
+    .infiltration-view {
+        // height: 100%;
+        .event-outer-container {
+            .event-container { 
+
+                .infiltration-complications-container {
+
+                    .infiltration-complications-inner-container {
+                        display: flex;
+                        flex-direction: column;
+                    }
+                }
+                
+                .infiltration-obstacle-image-container {
+                    display: flex;
+                    align-items: center;
+                    gap: @gapNormal;
+
+                    &.edit {
+                        justify-content: center;
+                    }
+
+                    .infiltration-obstacle-image-inner-container {
+                        height: 100%;
+                        display: flex;
+                        flex-direction: column;
+                        width: 50%;
+
+                        .infiltration-points-container {
+
+                        }
+
+                        .infiltration-obstacle-description {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            align-items: center;
+                            flex: 1;
+                        }
+                    }
+
+                    .infiltration-obstacle-image {
+                        width: 50%;
+                        border: 0;
+                    }
+                }
+
+                .objective-obstacle-add-button {
+                    width: fit-content;
+                    margin-bottom: -@gapSmall;
+                }
+
+                .infiltration-points-individual-container {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-around;
+                    gap: @gapLarge;
+
+                    .infiltration-points-individual-inner-container {
+                        display: flex;
+                        flex-direction: column;
+                        gap: @gapSmall;
+                    }
+                }
+                
+                .event-sidebar {
+                    .description-outer-container {
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
+
+                        .description-container {
+                            padding: @paddingNormal;
+                            flex: 1;
+                            display: flex;
+                            flex-direction: column;
+
+                            textarea {
+                                flex: 1;
+                            }
+                        }
+                    }
+
+                    .awareness-points-container {
+                        display: flex;
+                        flex-direction: column;
+
+                        &.edit-mode {
+                            flex: 1;
+                        }
+                        
+                        .awareness-points-inner-container {
+                            display: flex;
+                            align-items: center;
+                            position: relative;
+                        }
+
+                        .awareness-point-breakpoints-container {
+                            display: flex;
+                            flex-direction: column;
+                            gap: @gapSmall;
+                            margin: @marginNormal;
+                            flex: 1;
+
+                            .awareness-point-breakpoint-container {
+                                display: flex;
+                                flex-direction: column;
+                                align-items: center;
+                                padding: 0 @paddingNormal;
+                                position: relative;
+                                border-width: 1px;
+                                border-style: solid;
+                                border-radius: 6px;
+
+                                &.open {
+                                    flex: 1;
+
+                                    .awareness-point-breakpoint-main-container {
+                                        textarea {
+                                            flex: 1;
+                                        }
+                                    }
+                                }
+
+                                .awareness-point-breakpoint-inner-container{
+                                    display: flex;
+                                    align-items: center;
+                                    gap: @gapSmall;
+                                    padding: @paddingNormal @paddingHuge;
+                                }
+
+                                .awareness-point-breakpoint-main-container {
+                                    overflow: hidden;
+                                    height: 0;
+                                    display: flex;
+                                    flex-direction: column;
+                                    gap: @gapNormal;
+            
+                                    textarea {
+                                        padding: 0 @paddingNormal;
+                                    }
+        
+                                    > p {
+                                        margin: 0;
+                                    }
+        
+                                    &.expanded {
+                                        flex: 1;
+                                    }
+                                }
+
+                                .awareness-point-breakpoint-enable {
+                                    position: absolute;
+                                    left: 28px;
+                                    font-size: 24px;
+                                    opacity: 0.4;
+
+                                    &.active {
+                                        opacity: 1;
+                                    }
+                                }
+
+                                .awareness-point-breakpoint-hider {
+                                    position: absolute;
+                                    left: 4px;
+                                    font-size: 16px;
+                                }
+
+                                .awareness-point-breakpoint-delete {
+                                    position: absolute;
+                                    left: 3px;
+                                    font-size: 16px;
+                                }
+
+                                .awareness-point-breakpoint-open {
+                                    position: absolute;
+                                    right: 2px;
+                                    font-size: 24px;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .event-main-view-container {
+                    .infiltration-points-container {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: @gapSmall;
+                    }
+                }
+
+                .obstacle-dc-adjustment, .complication-dc-adjustment {
+                    flex: 1;
+                }
+
+                .infiltration-complication-skill-container {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+
+                    .infiltration-complication-skill-buttons {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: @gapSmall;
+                        flex-wrap: wrap;
+                    }
+
+                    .infiltration-complication-skill-adjustment {
+                        border-radius: 1px;
+                        border-style: solid;
+                        border-radius: 6px;
+                        padding: @paddingNormal;
+                    }
+                }
+
+                .event-section-body {
+                    .infiltration-result-buttons {
+                        display: flex;
+                        align-items: center;
+                        gap: @gapSmall;
+
+                        .infiltration-result-button {
+                            opacity: 0.4;
+                            display: flex;
+                            align-items: center;
+                            gap: @gapSmall;
+                            flex-wrap: nowrap;
+                            white-space: nowrap;
+                            pointer-events: none;
+    
+                            &.active {
+                                opacity: 1;
+                                pointer-events: all;
+                            }
+    
+                            i {
+                                pointer-events: all;
+                            }
+                        }
+                    }
+
+                    .infiltration-results-container {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-evenly;
+                        gap: @gapSmall;
+
+                        .infiltration-result-container {
+                            text-align: center;
+                            border-width: 1px;
+                            border-style: solid;
+                            border-radius: 6px;
+                            padding: @paddingSmall;
+
+                            &.inactive {
+                                opacity: 0.4;
+                            }
+
+                            > p {
+                                margin: 0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

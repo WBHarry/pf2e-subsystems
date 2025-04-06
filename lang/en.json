@@ -12,7 +12,8 @@
             "Image": "Image",
             "Description": "Description",
             "DC": "DC",
-            "Premise": "Premise"
+            "Premise": "Premise",
+            "SkillChecks": "Skill Checks"
         },
         "TimeUnits": {
             "Year": {
@@ -53,6 +54,11 @@
                 },
                 "Research": {
                     "HideResearchCheckMaxRP": "Hide the Max RP of Research Checks to players"
+                },
+                "Infiltration": {
+                    "DefaultAwarenessBreakpoints": "Default Awareness Breakpoints",
+                    "AutoApplyAwareness": "Auto apply awareness DC modifiers",
+                    "AutoRevealAwareness": "Auto reveal awareness breakpoints"
                 }
             }
         },
@@ -64,6 +70,8 @@
             "ReturnToSubsystems": "Return To Subsystems",
             "HideFromPlayers": "Hide From Players",
             "RevealToPlayers": "Reveal To Players",
+            "StartEvent": "Start Event",
+            "EditEvent": "Edit Event",
             "StartEventLinkCopied": "StartEvent Macro for {name} copied to clipboard.",
             "CopyStartEventLink": "Copy a macro to start this event",
             "TimeUnit": "Time Unit",
@@ -72,6 +80,7 @@
             "ConfirmDeleteEventTitle": "Delete Subsystem Event",
             "ConfirmDeleteEventText": "Are you sure you want to delete the {type} event?",
             "OpenEventTour": "Open a tour explaining parts of the subsystem",
+            "NewObstacle": "New Obstacle",
             "Errors": {
                 "GMMissing": "A logged in GM is required to do this!"
             }
@@ -88,6 +97,10 @@
             "Research": {
                 "Single": "Research",
                 "Plural": "Research"
+            },
+            "Infiltration": {
+                "Single": "Infiltration",
+                "Plural": "Infiltrations"
             }
         },
         "Chase": {
@@ -97,7 +110,6 @@
             "Premise": "Premise",
             "Rounds": "Rounds",
             "MaxRounds": "Max Rounds",
-            "NewObstacle": "New Obstacle",
             "AddObstacle": "Add Obstacle",
             "AdvanceObstacle": "Move PC to the next obstacle",
             "RetreatObstacle": "Move PC to the previous obstacle",
@@ -149,6 +161,44 @@
             },
             "Errors": {
                 "LoreError": "A lore skill must be in the format of 'something-lore'"
+            }
+        },
+        "Infiltration": {
+            "NavigateBack": "Return To Infiltrations",
+            "EditInfiltration": "Edit Infiltration",
+            "CreateInfiltration": "Create New Infiltration",
+            "AddObjective": "Add Objective",
+            "InfiltrationPoints": "Infiltration Points",
+            "NewObjective": "New Objective",
+            "Individual": "Individual",
+            "AwarenessPoints": "Awareness",
+            "EdgePoints": "Edge Points",
+            "Opportunities": "Opportunities",
+            "Complications": "Complications",
+            "NewOpportunity": "New Opportunity",
+            "NewComplication": "New Complication",
+            "Requirements": "Requirements",
+            "OpportunityDescription": "Describe this opportunity here",
+            "Trigger": "Trigger",
+            "MaxInfiltrationPoints": "Influence (Optional)",
+            "ComplicationsDescription": "Describe this complication here",
+            "ComplicationResultDescription": "Describe the result here",
+            "InfiltrationObstacleSkillsTab": {
+                "Description": "Description",
+                "SkillChecks": "Checks"
+            },
+            "InfiltrationComplicationTab": {
+                "Description": "Description",
+                "SkillChecks": "Checks",
+                "Results": "Results"
+            },
+            "Awareness": {
+                "DefaultBreakpoint5": "Suspicions are raised. Increase the DCs for obstacles by 1. The first time the PCs reach this tier, a complication occurs.",
+                "DefaultBreakpoint10": "The first time the PCs reach this tier, a complication occurs.",
+                "DefaultBreakpoint15": "Increase the DCs for obstacles by a total of 2, and the first time the PCs reach this tier, a complication occurs.",
+                "DefaultBreakpoint20": "The infiltration fails.",
+                "NewAwarenessBreakpoint": "New Breakpoint",
+                "ActivateAwarenessBreakpoint": "Activate awareness breakpoint"
             }
         },
         "KeyBindings": {

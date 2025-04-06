@@ -1,0 +1,22 @@
+<div class="event-tab tab {{tab.cssClass}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+    {{#if (not this.selectedEvent)}}
+        {{> "modules/pf2e-subsystems/templates/partials/events.hbs" tab=this.tab name=(localize "PF2ESubsystems.Events.Infiltration.Single") plural=(localize "PF2ESubsystems.Events.Infiltration.Plural") events=this.events eventSearchValue=this.eventSearchValue }}
+    {{else}}
+        {{> "modules/pf2e-subsystems/templates/system-view/systems/infiltration/infiltration.hbs" 
+            editMode=this.editMode 
+            selected=this.selected 
+            event=this.selectedEvent 
+            isGM=this.isGM 
+            settings=this.settings
+            clipboardFallback=this.clipboardFallback
+            currentObjectiveNr=this.currentObjectiveNr
+            currentObjective=this.currentObjective
+            infiltrationPoints=this.infiltrationPoints
+            obstacleTabs=this.obstacleTabs
+            complicationTabs=this.complicationTabs
+            skillOptions=this.skillOptions
+            actionOptions=this.actionOptions
+            partyMembers=this.partyMembers
+        }}
+    {{/if}}
+</div>
