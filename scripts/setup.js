@@ -35,6 +35,7 @@ const configSettings = () => {
     scope: "world",
     config: false,
     type: ResearchSettings,
+    default: {},
   });
 
   game.settings.register(MODULE_ID, settingIDs.chase.settings, {
@@ -43,6 +44,7 @@ const configSettings = () => {
     scope: "world",
     config: false,
     type: ChaseSettings,
+    default: {},
   });
 
   game.settings.register(MODULE_ID, settingIDs.infiltration.settings, {
@@ -51,6 +53,8 @@ const configSettings = () => {
     scope: "world",
     config: false,
     type: InfiltrationSettings,
+    default: {},
+    // defaults: InfiltrationSettings.getDefault(),
   });
 }
 

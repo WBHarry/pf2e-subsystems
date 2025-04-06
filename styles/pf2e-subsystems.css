@@ -243,6 +243,9 @@ form.pf2e-subsystems.application > header .header-control {
   height: 100%;
   width: 100%;
 }
+.pf2e-subsystems.systems-view .event-tab.unused {
+  opacity: 0.4;
+}
 .pf2e-subsystems.systems-view .event-tab .event-tab-container {
   height: 100%;
   display: flex;
@@ -401,6 +404,24 @@ form.pf2e-subsystems.application > header .header-control {
   flex-direction: column;
   gap: 8px;
 }
+.pf2e-subsystems.systems-view .event-outer-container .event-tabs {
+  display: flex;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 6px;
+  gap: 0;
+  flex: none;
+  width: 218px;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-tabs .event-tab {
+  padding: 2px;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-tabs .event-tab:first-of-type {
+  border-radius: 6px 0 0 6px;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-tabs .event-tab:last-of-type {
+  border-radius: 0 6px 6px 0;
+}
 .pf2e-subsystems.systems-view .event-outer-container .event-information {
   position: absolute;
   font-size: 21px;
@@ -468,6 +489,7 @@ form.pf2e-subsystems.application > header .header-control {
   display: flex;
   gap: 16px;
   overflow: hidden;
+  /* Rename to Expandable-Container or something */
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-inner-tabs {
   width: 100%;
@@ -498,6 +520,53 @@ form.pf2e-subsystems.application > header .header-control {
   bottom: -8px;
   font-size: 16px;
 }
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section-header-container {
+  position: relative;
+  padding: 0 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section-header-container .subtext {
+  display: flex;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section-header-container .subtext.col {
+  flex-direction: column;
+  text-align: center;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section-header-container .subtext .subtext-title {
+  font-weight: bold;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section-header-container .event-section-delete-button {
+  position: absolute;
+  left: 2px;
+  font-size: 18px;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section-header-container .event-section-hider {
+  position: absolute;
+  left: 4px;
+  font-size: 18px;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section-header-container .event-section-opener {
+  position: absolute;
+  right: 0;
+  font-size: 32px;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section-body {
+  overflow: hidden;
+  height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section-body > p {
+  margin: 0;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section-body.expanded {
+  height: auto;
+  margin-top: 8px;
+}
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-section {
   border-width: 2px;
   border-style: outset;
@@ -522,63 +591,6 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-view-container .event-section-container .event-section-inner-container {
   border-width: 1px;
   border-style: solid;
-}
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section .event-section-container .event-section-header-container,
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-view-container .event-section-container .event-section-header-container {
-  position: relative;
-  padding: 0 32px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section .event-section-container .event-section-header-container .subtext,
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-view-container .event-section-container .event-section-header-container .subtext {
-  display: flex;
-}
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section .event-section-container .event-section-header-container .subtext.col,
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-view-container .event-section-container .event-section-header-container .subtext.col {
-  flex-direction: column;
-  text-align: center;
-}
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section .event-section-container .event-section-header-container .subtext .subtext-title,
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-view-container .event-section-container .event-section-header-container .subtext .subtext-title {
-  font-weight: bold;
-}
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section .event-section-container .event-section-header-container .event-section-delete-button,
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-view-container .event-section-container .event-section-header-container .event-section-delete-button {
-  position: absolute;
-  left: 2px;
-  font-size: 18px;
-}
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section .event-section-container .event-section-header-container .event-section-hider,
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-view-container .event-section-container .event-section-header-container .event-section-hider {
-  position: absolute;
-  left: 4px;
-  font-size: 18px;
-}
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section .event-section-container .event-section-header-container .event-section-opener,
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-view-container .event-section-container .event-section-header-container .event-section-opener {
-  position: absolute;
-  right: 0;
-  font-size: 32px;
-}
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section .event-section-container .event-section-body,
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-view-container .event-section-container .event-section-body {
-  overflow: hidden;
-  height: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section .event-section-container .event-section-body > p,
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-view-container .event-section-container .event-section-body > p {
-  margin: 0;
-}
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section .event-section-container .event-section-body.expanded,
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-view-container .event-section-container .event-section-body.expanded {
-  height: auto;
-  margin-top: 8px;
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-radio-container {
   margin: 0;
@@ -1575,7 +1587,8 @@ form.pf2e-subsystems.application > header .header-control {
   gap: 4px;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .obstacle-dc-adjustment,
-.pf2e-subsystems .infiltration-view .event-outer-container .event-container .complication-dc-adjustment {
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .complication-dc-adjustment,
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complication-skill-adjustment {
   flex: 1;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complication-skill-container {
@@ -1596,6 +1609,7 @@ form.pf2e-subsystems.application > header .header-control {
   border-style: solid;
   border-radius: 6px;
   padding: 4px;
+  white-space: nowrap;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .event-section-body .infiltration-result-buttons {
   display: flex;
@@ -1636,6 +1650,78 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .event-section-body .infiltration-results-container .infiltration-result-container > p {
   margin: 0;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .preparation-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  padding: 4px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 6px;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .preparation-toolbar button {
+  flex: 0;
+  white-space: nowrap;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .preparation-toolbar button i {
+  margin-right: 4px;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .preparation-toolbar .preparation-toolbar-inner {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 24px;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .preparation-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: auto;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .preparation-cards-container .preparation-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 6px;
+  padding: 4px;
+  gap: 4px;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .preparation-cards-container .preparation-card.medium {
+  width: calc(25% - 1px);
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .preparation-cards-container .preparation-card.small {
+  width: calc(25% - 3px);
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .preparation-cards-container .preparation-card .preparation-card-title {
+  align-self: center;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .preparation-cards-container .preparation-card .preparation-card-tags {
+  position: absolute;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  width: 150px;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .preparation-cards-container .preparation-card .preparation-card-tags .preparation-card-tag {
+  padding: 2px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 6px;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .preparation-cards-container .preparation-card .infiltration-preparations-activity-tags {
+  flex: 1;
 }
 .pf2e-subsystems.pf2e-subsystems-menu .menu-outer-container {
   display: flex;

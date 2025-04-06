@@ -183,11 +183,28 @@
             "MaxInfiltrationPoints": "Influence (Optional)",
             "ComplicationsDescription": "Describe this complication here",
             "ComplicationResultDescription": "Describe the result here",
+            "Preparations": {
+                "NewPreparationActivity": "New Activity",
+                "MaxAttempts": "Max Attempts",
+                "EdgeLabel": "Edge Label",
+                "IsUsed": "Preparations Active",
+                "NotUsed": "Preparations Inactivated"
+            },
+            "InfiltrationTab": {
+                "Infiltration": "Infiltration",
+                "Preparations": "Preparations"
+            },
             "InfiltrationObstacleSkillsTab": {
                 "Description": "Description",
-                "SkillChecks": "Checks"
+                "SkillChecks": "Checks",
+                "Results": "Results"
             },
             "InfiltrationComplicationTab": {
+                "Description": "Description",
+                "SkillChecks": "Checks",
+                "Results": "Results"
+            },
+            "InfiltrationActivityTab": {
                 "Description": "Description",
                 "SkillChecks": "Checks",
                 "Results": "Results"

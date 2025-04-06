@@ -192,7 +192,7 @@
                     }
                 }
 
-                .obstacle-dc-adjustment, .complication-dc-adjustment {
+                .obstacle-dc-adjustment, .complication-dc-adjustment, .infiltration-complication-skill-adjustment {
                     flex: 1;
                 }
 
@@ -215,6 +215,7 @@
                         border-style: solid;
                         border-radius: 6px;
                         padding: @paddingNormal;
+                        white-space: nowrap;
                     }
                 }
 
@@ -263,6 +264,91 @@
 
                             > p {
                                 margin: 0;
+                            }
+                        }
+                    }
+                }
+
+                .preparation-container {
+                    display: flex;
+                    flex-direction: column;
+                    gap: @gapNormal;
+                    height: 100%;
+                    
+                    .preparation-toolbar {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        height: 40px;
+                        padding: @paddingNormal;
+                        border-width: 1px;
+                        border-style: solid;
+                        border-radius: 6px;
+
+                        button {
+                            flex: 0;
+                            white-space: nowrap;
+                            
+                            i {
+                                margin-right: @marginNormal;
+                            }
+                        }
+
+                        .preparation-toolbar-inner {
+                            display: flex;
+                            align-items: center;
+                            gap: @gapSmall;
+                            font-size: 24px;
+                        }
+                    }
+
+                    .preparation-cards-container {
+                        display: flex;
+                        flex-direction: column;
+                        gap: @gapSmall;
+                        overflow: auto;
+
+                        .preparation-card {
+                            display: flex;
+                            flex-direction: column;
+                            width: 100%;
+                            border-width: 2px;
+                            border-style: solid;
+                            border-radius: 6px;
+                            padding: @paddingNormal;
+                            gap: @gapSmall;
+
+                            &.medium {
+                                width: calc(25% - 1px);
+                            }
+
+                            &.small {
+                                width: calc(25% - 3px);
+                            }
+
+                            .preparation-card-title {
+                                align-self: center;
+                            }
+
+                            .preparation-card-tags {
+                                position: absolute;
+                                left: 0;
+                                display: flex;
+                                align-items: center;
+                                gap: @gapSmall;
+                                flex-wrap: wrap;
+                                width: 150px;
+
+                                .preparation-card-tag {
+                                    padding: @paddingSmall;
+                                    border-width: 1px;
+                                    border-style: solid;
+                                    border-radius: 6px;
+                                }
+                            }
+
+                            .infiltration-preparations-activity-tags {
+                                flex: 1;
                             }
                         }
                     }

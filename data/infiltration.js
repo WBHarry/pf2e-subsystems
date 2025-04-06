@@ -113,7 +113,7 @@ export class Infiltration extends foundry.abstract.DataModel {
           requirements: new fields.StringField(),
           description: new fields.HTMLField(),
         })),
-        preparations: new TypedObjectField(new fields.EmbeddedDataField(Preparations)),
+        preparations: new fields.EmbeddedDataField(Preparations),
       }
     }
 
@@ -127,28 +127,6 @@ export class Infiltration extends foundry.abstract.DataModel {
         return acc;
       }, 0);
     }
-
-    // get infiltrationPoints() {
-    //   const partyMembers = game.actors.find(x => x.type === 'party').members;
-
-    //   return Object.values(this.obstacles).reduce((acc, obstacle) => {
-    //     if(obstacle.individual){
-    //       acc += partyMembers.reduce((acc, member) => {
-    //         const data = obstacle.infiltrationPointData[member.id];
-    //         if(data < acc){
-    //           acc = data;
-    //         }
-
-    //         return acc;
-    //       }, Math.max(...Object.values(obstacle.infiltrationPointData)));
-    //     }
-    //     else {
-    //       acc += obstacle.infiltrationPoints.current ?? 0;
-    //     }
-
-    //     return acc;
-    //   }, 0);
-    // }
 
     get complicationsData() {
       return Object.values(this.complications).reduce((acc, complication) => {
@@ -200,6 +178,109 @@ export class Infiltration extends foundry.abstract.DataModel {
         return acc;
       }, {});
     }
+
+    get preparationsActivitesData() {
+      return Object.values(this.preparations.activities).reduce((acc, activity) => {
+        acc[activity.id] = {
+          ...activity,
+          skillChecks: Object.values(activity.skillChecks).reduce((acc, skillCheck) => {
+            acc[skillCheck.id] = {
+              ...skillCheck,
+              columns: Object.values(skillCheck.skills).reduce((acc, skill) => {
+                acc.lore.push({ 
+                  event: this.id,
+                  activity: activity.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  lore: skill.lore,
+                });
+                acc.skill.push({ 
+                  event: this.id,
+                  activity: activity.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  skill: skill.skill,
+                  lore: skill.lore,
+                });
+                acc.action.push({ 
+                  event: this.id,
+                  activity: activity.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  action: skill.action,
+                });
+                acc.variant.push({ 
+                  event: this.id,
+                  activity: activity.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  variantOptions: skill.action ? [...game.pf2e.actions.get(skill.action).variants].map(x => ({ value: x.slug, name: x.name })) : [],
+                  variant: skill.variant,
+                });
+  
+                return acc;
+              }, { lore: [], skill: [], action: [], variant: [] }),
+            }
+  
+            return acc;
+          }, {}),
+        };
+  
+        return acc;
+      }, {});
+    }
+}
+
+export class Preparations extends foundry.abstract.DataModel {
+  static defineSchema() {
+    const fields = foundry.data.fields;
+
+    return {
+      usesPreparation: new fields.BooleanField({ required: true, initial: false }),
+      activities: new TypedObjectField(new fields.SchemaField({
+        id: new fields.StringField({ required: true }),
+        name: new fields.StringField(),
+        tags: new fields.ArrayField(new fields.StringField()),
+        cost: new fields.HTMLField(),
+        requirements: new fields.HTMLField(),
+        description: new fields.HTMLField(),
+        skillChecks: new TypedObjectField(new fields.SchemaField({
+          id: new fields.StringField({ required: true }),
+          hidden: new fields.BooleanField({ required: true, initial: true }),
+          description: new fields.HTMLField(),
+          dcAdjustments: new fields.ArrayField(new fields.StringField()),
+          selectedAdjustment: new fields.StringField(),
+          difficulty: new fields.SchemaField({
+            leveledDC: new fields.BooleanField({ required: true, initial: true }),
+            DC: new fields.NumberField(),
+          }),
+          skills: new TypedObjectField(new fields.SchemaField({
+            id: new fields.StringField({ required: true }),
+            skill: new fields.StringField(),
+            action: new fields.StringField(),
+            variant: new fields.StringField(),
+            lore: new fields.BooleanField({ required: true, initial: false }),
+          })),
+        })),
+        results: new fields.SchemaField({
+          criticalSuccess: degreeOfSuccessFields(degreesOfSuccess.criticalSuccess.value),
+          success: degreeOfSuccessFields(degreesOfSuccess.success.value),
+          failure: degreeOfSuccessFields(degreesOfSuccess.failure.value),
+          criticalFailure: degreeOfSuccessFields(degreesOfSuccess.criticalFailure.value),
+        }),
+        resultsOutcome: new fields.StringField(),
+        // consequences: new TypedObjectField(new fields.SchemaField({
+        //   degreeOfSuccess: new fields.StringField({ required: true, initial: 'success' }),
+        //   description: new fields.HTMLField(),
+        //   edgePoints: new fields.NumberField({ required: true, initial: 0 }),
+        //   awarenessPoints: new fields.NumberField({ required: true, initial: 0 }),
+        //   instances: new fields.NumberField({ required: true, initial: 0 }),
+        // })),
+        edgeLabel: new fields.StringField(),
+        maxAttempts: new fields.NumberField({ required: true, initial: 1 }),
+      }))
+    }
+  }
 }
 
 const degreeOfSuccessFields = (degreeOfSuccess) => new foundry.data.fields.SchemaField({
@@ -207,28 +288,3 @@ const degreeOfSuccessFields = (degreeOfSuccess) => new foundry.data.fields.Schem
   description: new foundry.data.fields.HTMLField(),
   inUse: new foundry.data.fields.BooleanField({ required: true, initial: false }),
 });
-
-export class Preparations extends foundry.abstract.DataModel {
-  static defineSchema() {
-    const fields = foundry.data.fields;
-    return {
-      premise: new fields.HTMLField(),
-      activites: new TypedObjectField(new fields.SchemaField({
-        id: new fields.StringField({ required: true }),
-        name: new fields.StringField(),
-        tags: new fields.ArrayField(new fields.StringField()),
-        cost: new fields.HTMLField(),
-        requirements: new fields.HTMLField(),
-        description: new fields.HTMLField(),
-        consequences: new TypedObjectField(new fields.SchemaField({
-          degreeOfSuccess: new fields.StringField({ required: true, initial: 'success' }),
-          description: new fields.HTMLField(),
-        })),
-        edgePoints: new fields.SchemaField({
-          current: new fields.NumberField({ required: true, initial: 0 }),
-          max: new fields.NumberField({ required: true, initial: 2 }),
-        })
-      }))
-    }
-  }
-}

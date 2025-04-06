@@ -434,6 +434,253 @@ const defaultInfiltrationAwarenessBreakpoints = {
     }
 };
 
+const defaultInfiltrationPreparations = {
+    bribeContact: {
+        id: 'bribeContact',
+        name: 'Bribe Contact',
+        tags: ['downtime', 'secret'],
+        cost: 'A bribe worth at least one-tenth of the Currency per Additional PC listed on Table 10–9: Party Treasure by Level. Doubling this amount grants a +2 circumstance bonus to the check.',
+        requirements: `You've successfully Gained a Contact.`,
+        description: 'You offer a bribe to your contact to help the heist in some way.',
+        results: {
+            success: {
+                degreesOfSuccess: 'success',
+                description: 'The contact accepts the bribe and you gain 1 EP.',
+                inUse: true,
+            },
+            failure: {
+                degreeOfSuccess: 'failure',
+                description: 'You believe you successfully Bribed your Contact and gained 1 EP, but in fact the contact informs the opposition of the attempted bribery, adding 1 AP to the infiltration. The GM can reveal that this Edge Point grants no benefit at any point during the infiltration, as befits the story.',
+                inUse: true,
+            },
+            criticalFailure: {
+                degreeOfSuccess: 'criticalFailure',
+                description: 'As failure, but adding 2 AP to the infiltration.',
+                inUse: true,
+            }
+        },
+        skillChecks: {
+            '1': {
+                id: '1',
+                dcAdjustments: [dcAdjustments.hard.value, dcAdjustments.veryHard.value],
+                skills: {
+                    '1': {
+                        id: '1',
+                        skill: 'deception',
+                    },
+                    '2': {
+                        id: '2',
+                        skill: 'diplomacy',
+                    }
+                }
+            },
+        },
+        edgeLabel: "Contact",
+        maxAttempts: 1,
+    },
+    forgeDocuments: {
+        id: 'forgeDocuments',
+        name: 'Forge Documents',
+        tags: ['downtime', 'secret'],
+        description: 'You prepare forgeries that might serve as convincing props. Attempt a hard or very hard Society check.',
+        results: {
+            success: {
+                degreesOfSuccess: 'success',
+                description: 'You create convincing forgeries and gain 1 EP you can use only when presenting some form of paperwork.',
+                inUse: true,
+            },
+            failure: {
+                degreeOfSuccess: 'failure',
+                description: 'You create unconvincing documents. You gain 1 EP that (unknown to you) grants no benefit when used.',
+                inUse: true,
+            },
+            criticalFailure: {
+                degreeOfSuccess: 'criticalFailure',
+                description: 'As a failure, but a PC who tries to use the Edge Point gets a critical failure, even if they use the Edge Point after rolling a failure.',
+                inUse: true,
+            }
+        },
+        skillChecks: {
+            '1': {
+                id: '1',
+                dcAdjustments: [dcAdjustments.hard.value, dcAdjustments.veryHard.value],
+                skills: {
+                    '1': {
+                        id: '1',
+                        skill: 'society',
+                    }
+                }
+            },
+        },
+        edgeLabel: "Forged Documents",
+        maxAttempts: 1,
+    },
+    gainContact: {
+        id: 'gainContact',
+        name: 'Gain Contact',
+        tags: ['downtime'],
+        description: 'You try to make contact with an individual who can aid you in the infiltration. Attempt a normal, hard, or very hard DC Diplomacy or Society check, or a check using a Lore skill appropriate to your prospective contact.',
+        results: {
+            success: {
+                degreesOfSuccess: 'success',
+                description: 'You make contact and gain 1 EP.',
+                inUse: true,
+            },
+            failure: {
+                degreeOfSuccess: 'failure',
+                description: 'You fail to make contact.',
+                inUse: true,
+            },
+            criticalFailure: {
+                degreeOfSuccess: 'criticalFailure',
+                description: 'You insult or spook the contact in some way. Future attempts take a –2 circumstance penalty. <strong>Special</strong> Multiple critical failures might cause the contact to work against the PCs in some way, likely increasing the party’s Awareness Points.',
+                inUse: true,
+            }
+        },
+        skillChecks: {
+            '1': {
+                id: '1',
+                dcAdjustments: [dcAdjustments.standard.value, dcAdjustments.hard.value, dcAdjustments.veryHard.value],
+                skills: {
+                    '1': {
+                        id: '1',
+                        skill: 'diplomacy',
+                    },
+                    '2': {
+                        id: '2',
+                        skill: 'society',
+                    }
+                }
+            },
+        },
+        edgeLabel: "Contact",
+        maxAttempts: 1,
+    },
+    gossip: {
+        id: 'gossip',
+        name: 'Gossip',
+        tags: ['downtime', 'secret'],
+        description: 'You seek out rumors about the infiltration’s target. Attempt a normal, hard, or very hard Diplomacy check.',
+        results: {
+            criticalSuccess: {
+                degreeOfSuccess: 'criticalSuccess',
+                description: 'You gain inside information about the location or group you’re trying to infiltrate. This grants you a +2 circumstance bonus to future checks you attempt for preparation activities for this infiltration. If you share this information, those you share it with also gain this bonus.',
+                inUse: true,
+            },
+            success: {
+                degreesOfSuccess: 'success',
+                description: 'You gain inside information about the place or group you’re attempting to infiltrate that aids your planning.',
+                inUse: true,
+            },
+            failure: {
+                degreeOfSuccess: 'failure',
+                description: 'You learn nothing.',
+                inUse: true,
+            },
+            criticalFailure: {
+                degreeOfSuccess: 'criticalFailure',
+                description: 'You hear a few mistaken rumors and take a –2 circumstance penalty to your next check for a preparation activity. Word spreads around that you’re asking after that group or individual, increasing your Awareness Points by 1.',
+                inUse: true,   
+            }
+        },
+        skillChecks: {
+            '1': {
+                id: '1',
+                dcAdjustments: [dcAdjustments.standard.value, dcAdjustments.hard.value, dcAdjustments.veryHard.value],
+                skills: {
+                    '1': {
+                        id: '1',
+                        skill: 'diplomacy',
+                    }
+                }
+            },
+        },
+        edgeLabel: "Gossip",
+        maxAttempts: 1,
+    },
+    scoutLocation: {
+        id: 'scoutLocation',
+        name: 'Scout Location',
+        tags: ['downtime', 'secret'],
+        description: 'You spend time observing the place or group you wish to infiltrate. Attempt a normal, hard, or very hard DC Perception, Society or Stealth check.',
+        results: {
+            success: {
+                degreesOfSuccess: 'success',
+                description: 'You make observations that provide 1 EP.',
+                inUse: true,
+            },
+            failure: {
+                degreeOfSuccess: 'failure',
+                description: 'You learn nothing particularly noteworthy.',
+                inUse: true,
+            },
+            criticalFailure: {
+                degreeOfSuccess: 'criticalFailure',
+                description: 'You misjudge some aspect of what you observed, gaining 1 EP that results in a critical failure instead of a success when used, even if a PC uses the Edge Point after rolling a failure.',
+                inUse: true,
+            }
+        },
+        skillChecks: {
+            '1': {
+                id: '1',
+                dcAdjustments: [dcAdjustments.standard.value, dcAdjustments.hard.value, dcAdjustments.veryHard.value],
+                skills: {
+                    '1': {
+                        id: '1',
+                        skill: 'diplomacy',
+                    },
+                }
+            },
+        },
+        edgeLabel: "Scouting Info",
+        maxAttempts: 1,
+    },
+    secureDisguises: {
+        id: 'secureDisguises',
+        name: 'Secure Disguises',
+        tags: ['downtime'],
+        description: 'You seek to procure or create disguises. Attempt a normal, hard, or very hard Crafting, Deception, Performance, or Society check.',
+        results: {
+            success: {
+                degreesOfSuccess: 'success',
+                description: 'You procure or creates disguises, gaining 1 EP that can be used only to maintain a cover identity.',
+                inUse: true,
+            },
+            failure: {
+                degreeOfSuccess: 'failure',
+                description: 'Your efforts result in an unusable disguise.',
+                inUse: true,
+            },
+        },
+        skillChecks: {
+            '1': {
+                id: '1',
+                dcAdjustments: [dcAdjustments.hard.value, dcAdjustments.veryHard.value],
+                skills: {
+                    '1': {
+                        id: '1',
+                        skill: 'crafting',
+                    },
+                    '2': {
+                        id: '2',
+                        skill: 'deception',
+                    },
+                    '3': {
+                        id: '3',
+                        skill: 'performance',
+                    },
+                    '4': {
+                        id: '4',
+                        skill: 'society',
+                    }
+                }
+            },
+        },
+        edgeLabel: "Disguise",
+        maxAttempts: 1,
+    }
+};
+
 class Infiltrations extends foundry.abstract.DataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
@@ -546,7 +793,7 @@ class Infiltration extends foundry.abstract.DataModel {
           requirements: new fields.StringField(),
           description: new fields.HTMLField(),
         })),
-        preparations: new TypedObjectField(new fields.EmbeddedDataField(Preparations)),
+        preparations: new fields.EmbeddedDataField(Preparations),
       }
     }
 
@@ -560,28 +807,6 @@ class Infiltration extends foundry.abstract.DataModel {
         return acc;
       }, 0);
     }
-
-    // get infiltrationPoints() {
-    //   const partyMembers = game.actors.find(x => x.type === 'party').members;
-
-    //   return Object.values(this.obstacles).reduce((acc, obstacle) => {
-    //     if(obstacle.individual){
-    //       acc += partyMembers.reduce((acc, member) => {
-    //         const data = obstacle.infiltrationPointData[member.id];
-    //         if(data < acc){
-    //           acc = data;
-    //         }
-
-    //         return acc;
-    //       }, Math.max(...Object.values(obstacle.infiltrationPointData)));
-    //     }
-    //     else {
-    //       acc += obstacle.infiltrationPoints.current ?? 0;
-    //     }
-
-    //     return acc;
-    //   }, 0);
-    // }
 
     get complicationsData() {
       return Object.values(this.complications).reduce((acc, complication) => {
@@ -633,6 +858,109 @@ class Infiltration extends foundry.abstract.DataModel {
         return acc;
       }, {});
     }
+
+    get preparationsActivitesData() {
+      return Object.values(this.preparations.activities).reduce((acc, activity) => {
+        acc[activity.id] = {
+          ...activity,
+          skillChecks: Object.values(activity.skillChecks).reduce((acc, skillCheck) => {
+            acc[skillCheck.id] = {
+              ...skillCheck,
+              columns: Object.values(skillCheck.skills).reduce((acc, skill) => {
+                acc.lore.push({ 
+                  event: this.id,
+                  activity: activity.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  lore: skill.lore,
+                });
+                acc.skill.push({ 
+                  event: this.id,
+                  activity: activity.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  skill: skill.skill,
+                  lore: skill.lore,
+                });
+                acc.action.push({ 
+                  event: this.id,
+                  activity: activity.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  action: skill.action,
+                });
+                acc.variant.push({ 
+                  event: this.id,
+                  activity: activity.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  variantOptions: skill.action ? [...game.pf2e.actions.get(skill.action).variants].map(x => ({ value: x.slug, name: x.name })) : [],
+                  variant: skill.variant,
+                });
+  
+                return acc;
+              }, { lore: [], skill: [], action: [], variant: [] }),
+            };
+  
+            return acc;
+          }, {}),
+        };
+  
+        return acc;
+      }, {});
+    }
+}
+
+class Preparations extends foundry.abstract.DataModel {
+  static defineSchema() {
+    const fields = foundry.data.fields;
+
+    return {
+      usesPreparation: new fields.BooleanField({ required: true, initial: false }),
+      activities: new TypedObjectField(new fields.SchemaField({
+        id: new fields.StringField({ required: true }),
+        name: new fields.StringField(),
+        tags: new fields.ArrayField(new fields.StringField()),
+        cost: new fields.HTMLField(),
+        requirements: new fields.HTMLField(),
+        description: new fields.HTMLField(),
+        skillChecks: new TypedObjectField(new fields.SchemaField({
+          id: new fields.StringField({ required: true }),
+          hidden: new fields.BooleanField({ required: true, initial: true }),
+          description: new fields.HTMLField(),
+          dcAdjustments: new fields.ArrayField(new fields.StringField()),
+          selectedAdjustment: new fields.StringField(),
+          difficulty: new fields.SchemaField({
+            leveledDC: new fields.BooleanField({ required: true, initial: true }),
+            DC: new fields.NumberField(),
+          }),
+          skills: new TypedObjectField(new fields.SchemaField({
+            id: new fields.StringField({ required: true }),
+            skill: new fields.StringField(),
+            action: new fields.StringField(),
+            variant: new fields.StringField(),
+            lore: new fields.BooleanField({ required: true, initial: false }),
+          })),
+        })),
+        results: new fields.SchemaField({
+          criticalSuccess: degreeOfSuccessFields(degreesOfSuccess.criticalSuccess.value),
+          success: degreeOfSuccessFields(degreesOfSuccess.success.value),
+          failure: degreeOfSuccessFields(degreesOfSuccess.failure.value),
+          criticalFailure: degreeOfSuccessFields(degreesOfSuccess.criticalFailure.value),
+        }),
+        resultsOutcome: new fields.StringField(),
+        // consequences: new TypedObjectField(new fields.SchemaField({
+        //   degreeOfSuccess: new fields.StringField({ required: true, initial: 'success' }),
+        //   description: new fields.HTMLField(),
+        //   edgePoints: new fields.NumberField({ required: true, initial: 0 }),
+        //   awarenessPoints: new fields.NumberField({ required: true, initial: 0 }),
+        //   instances: new fields.NumberField({ required: true, initial: 0 }),
+        // })),
+        edgeLabel: new fields.StringField(),
+        maxAttempts: new fields.NumberField({ required: true, initial: 1 }),
+      }))
+    }
+  }
 }
 
 const degreeOfSuccessFields = (degreeOfSuccess) => new foundry.data.fields.SchemaField({
@@ -640,31 +968,6 @@ const degreeOfSuccessFields = (degreeOfSuccess) => new foundry.data.fields.Schem
   description: new foundry.data.fields.HTMLField(),
   inUse: new foundry.data.fields.BooleanField({ required: true, initial: false }),
 });
-
-class Preparations extends foundry.abstract.DataModel {
-  static defineSchema() {
-    const fields = foundry.data.fields;
-    return {
-      premise: new fields.HTMLField(),
-      activites: new TypedObjectField(new fields.SchemaField({
-        id: new fields.StringField({ required: true }),
-        name: new fields.StringField(),
-        tags: new fields.ArrayField(new fields.StringField()),
-        cost: new fields.HTMLField(),
-        requirements: new fields.HTMLField(),
-        description: new fields.HTMLField(),
-        consequences: new TypedObjectField(new fields.SchemaField({
-          degreeOfSuccess: new fields.StringField({ required: true, initial: 'success' }),
-          description: new fields.HTMLField(),
-        })),
-        edgePoints: new fields.SchemaField({
-          current: new fields.NumberField({ required: true, initial: 0 }),
-          max: new fields.NumberField({ required: true, initial: 2 }),
-        })
-      }))
-    }
-  }
-}
 
 class Researches extends foundry.abstract.DataModel {
   static defineSchema() {
@@ -984,6 +1287,7 @@ const configSettings = () => {
     scope: "world",
     config: false,
     type: ResearchSettings,
+    default: {},
   });
 
   game.settings.register(MODULE_ID, settingIDs.chase.settings, {
@@ -992,6 +1296,7 @@ const configSettings = () => {
     scope: "world",
     config: false,
     type: ChaseSettings,
+    default: {},
   });
 
   game.settings.register(MODULE_ID, settingIDs.infiltration.settings, {
@@ -1000,6 +1305,8 @@ const configSettings = () => {
     scope: "world",
     config: false,
     type: InfiltrationSettings,
+    default: {},
+    // defaults: InfiltrationSettings.getDefault(),
   });
 };
 
@@ -1259,7 +1566,18 @@ const getDefaultSelected = (event) => ({
   event: event ?? null,
   chaseObstacle: 1,
   research: {},
-  infiltration: { currentObjective: 1 } ,
+  infiltration: { 
+    currentObjective: 1,
+    preparations: {
+      openActivity: 1,
+    } 
+  } ,
+});
+
+const getDefaultLayout = (event) => ({
+  infiltration: {
+    preparations: 0,
+  }
 });
 
 class SystemView extends HandlebarsApplicationMixin(
@@ -1269,6 +1587,7 @@ class SystemView extends HandlebarsApplicationMixin(
       super({});
 
       this.selected = getDefaultSelected(event);
+      this.layout = getDefaultLayout();
       this.eventSearchValue = "";
 
       if(tab) {
@@ -1365,7 +1684,6 @@ class SystemView extends HandlebarsApplicationMixin(
         infiltrationToggleHideAwarenessBreakpoint: this.infiltrationToggleHideAwarenessBreakpoint,
         infiltrationRemoveAwarenessBreakpoint: this.infiltrationRemoveAwarenessBreakpoint,
         infiltrationToggleAwarenessBreakpointInUse: this.infiltrationToggleAwarenessBreakpointInUse,
-
         addInfiltrationOpportunity: this.addInfiltrationOpportunity,
         addInfiltrationComplication: this.addInfiltrationComplication,
         infiltrationToggleOpportunityHidden: this.infiltrationToggleOpportunityHidden,
@@ -1381,6 +1699,18 @@ class SystemView extends HandlebarsApplicationMixin(
         infiltrationComplicationResultToggle: this.infiltrationComplicationResultToggle,
         infiltrationComplicationToggleResultsOutcome: this.infiltrationComplicationToggleResultsOutcome,
         infiltrationComplicationToggleAdjustment: this.infiltrationComplicationToggleAdjustment,
+        infiltrationPreparationsActivityAdd: this.infiltrationPreparationsActivityAdd,
+        infiltrationPreparationsActivityRemove: this.infiltrationPreparationsActivityRemove,
+        infiltrationPreparationsActivitiesReset: this.infiltrationPreparationsActivitiesReset,
+        setInfiltrationPreparationLayout: this.setInfiltrationPreparationLayout,
+        infiltrationPreparationsToggleIsUsed: this.infiltrationPreparationsToggleIsUsed,
+        infiltrationPreparationsToggleOpenActivity: this.infiltrationPreparationsToggleOpenActivity,
+        infiltrationAddActivitySkill: this.infiltrationAddActivitySkill,
+        infiltrationRemoveActivitySkill: this.infiltrationRemoveActivitySkill,
+        infiltrationActivityToggleAdjustment: this.infiltrationActivityToggleAdjustment,
+        infiltrationActivityResultToggle: this.infiltrationActivityResultToggle,
+        infiltrationActivityResultSelect: this.infiltrationActivityResultSelect,
+        infiltrationActivityToggleResultsOutcome: this.infiltrationActivityToggleResultsOutcome,
       },
       form: { handler: this.updateData, submitOnChange: true },
       window: {
@@ -1420,8 +1750,10 @@ class SystemView extends HandlebarsApplicationMixin(
     tabGroups = {
       main: 'systemView',
       influenceResearchChecks: 'description',
+      infiltration: 'infiltration',
       infiltrationObstacleSkills: 'description',
       infiltrationComplication: 'description',
+      infiltrationActivity: 'description',
     };
 
     getTabs() {
@@ -1515,6 +1847,36 @@ class SystemView extends HandlebarsApplicationMixin(
       return tabs;
     }
 
+    getInfiltrationTabs() {
+      const tabs = {
+        infiltration: {
+          active: true,
+          cssClass: '',
+          group: 'infiltration',
+          id: 'infiltration',
+          icon: null,
+          label: game.i18n.localize('PF2ESubsystems.Infiltration.InfiltrationTab.Infiltration'),
+        },
+        preparation: {
+          active: false,
+          cssClass: '',
+          group: 'infiltration',
+          id: 'preparation',
+          icon: null,
+          label: game.i18n.localize('PF2ESubsystems.Infiltration.InfiltrationTab.Preparations'),
+        },
+      };
+  
+      for (const v of Object.values(tabs)) {
+        v.active = this.tabGroups[v.group]
+          ? this.tabGroups[v.group] === v.id
+          : v.active;
+        v.cssClass = v.active ? `${v.cssClass} active` : "";
+      }
+  
+      return tabs;
+    }
+
     getInfiltrationComplicationTabs() {
       const tabs = {
         description: {
@@ -1582,6 +1944,45 @@ class SystemView extends HandlebarsApplicationMixin(
   
       return tabs;
     }
+
+    getInfiltrationActivityTabs() {
+      const tabs = {
+        description: {
+          active: true,
+          cssClass: '',
+          group: 'infiltrationActivity',
+          id: 'description',
+          icon: null,
+          label: game.i18n.localize('PF2ESubsystems.Infiltration.InfiltrationActivityTab.Description'),
+        },
+        skillChecks: {
+          active: false,
+          cssClass: '',
+          group: 'infiltrationActivity',
+          id: 'skillChecks',
+          icon: null,
+          label: game.i18n.localize('PF2ESubsystems.Infiltration.InfiltrationActivityTab.SkillChecks'),
+        },
+        results: {
+          active: false,
+          cssClass: '',
+          group: 'infiltrationActivity',
+          id: 'results',
+          icon: null,
+          label: game.i18n.localize('PF2ESubsystems.Infiltration.InfiltrationActivityTab.Results'),
+        }
+      };
+  
+      for (const v of Object.values(tabs)) {
+        v.active = this.tabGroups[v.group]
+          ? this.tabGroups[v.group] === v.id
+          : v.active;
+        v.cssClass = v.active ? `${v.cssClass} active` : "";
+      }
+  
+      return tabs;
+    }
+    
 
     changeTab(tab, group, options) {
       super.changeTab(tab, group, options);
@@ -1715,7 +2116,8 @@ class SystemView extends HandlebarsApplicationMixin(
                     name: game.i18n.localize('PF2ESubsystems.Infiltration.NewObjective'),
                     position: 1,
                   }
-                }
+                },
+                preparations: { activities: defaultInfiltrationPreparations },
               };
             },
             attachListeners: this.filePickerListener.bind(this),
@@ -2499,6 +2901,93 @@ class SystemView extends HandlebarsApplicationMixin(
       const currentAdjustment = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].complications[button.dataset.complication].skillChecks[button.dataset.skillCheck].selectedAdjustment;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.skillChecks.${button.dataset.skillCheck}.selectedAdjustment`]: currentAdjustment === button.dataset.adjustment ? null : button.dataset.adjustment });
     }
+
+    static async infiltrationPreparationsActivityAdd(_, button) {
+      const activityId = foundry.utils.randomID();
+      const skillCheckId = foundry.utils.randomID();
+      const skillId = foundry.utils.randomID();
+
+      const name = game.i18n.localize('PF2ESubsystems.Infiltration.Preparations.NewPreparationActivity');
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${activityId}`]: {
+        id: activityId,
+        name: name,
+        edgeLabel: name,
+        skillChecks: {
+          [skillCheckId]: {
+            id: skillCheckId,
+            skills: {
+              [skillId]: {
+                id: skillId,
+            },
+            }
+          }
+        }
+      }});
+    }
+
+    static async infiltrationPreparationsActivityRemove(_, button) {
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.-=${button.dataset.activity}`]: null });
+    }
+
+    static async infiltrationPreparationsActivitiesReset(_, button) {
+      const infiltrations = game.settings.get(MODULE_ID, this.tabGroups.main).toObject();
+      infiltrations.events[button.dataset.event].preparations.activities = defaultInfiltrationPreparations;
+      await game.settings.set(MODULE_ID, this.tabGroups.main, infiltrations);
+      this.render({ parts: [this.tabGroups.main] });
+    }
+
+    static async setInfiltrationPreparationLayout(_, button) {
+      this.layout.infiltration.preparations = Number.parseInt(button.dataset.option);
+      this.render({ parts: [this.tabGroups.main] });
+    }
+
+    static async infiltrationPreparationsToggleIsUsed(_, button) {
+      const currentUses = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].preparations.usesPreparation;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.usesPreparation`]: !currentUses });
+    }
+
+    static async infiltrationPreparationsToggleOpenActivity(_, button) {
+      this.selected.infiltration.preparations.openActivity = this.selected.infiltration.preparations.openActivity === button.dataset.activity ? null : button.dataset.activity;
+      this.render({ parts: [this.tabGroups.main] });
+    }
+
+    static async infiltrationAddActivitySkill(_, button) {
+      const skillId = foundry.utils.randomID();
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.skillChecks.${button.dataset.skillCheck}.skills.${skillId}`]: {
+          id: skillId,
+      }});
+    }
+
+    static async infiltrationRemoveActivitySkill(_, button) {
+      const skillCheck = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].preparations.activities[button.dataset.activity].skillChecks[button.dataset.skillCheck];
+      if(Object.keys(skillCheck.skills) === 1){
+        await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.skillChecks.-=${button.dataset.skillCheck}`]: null });
+      }
+      else {
+        await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.skillChecks.${button.dataset.skillCheck}.skills.-=${button.dataset.skill}`]: null });
+      }
+    }
+
+    static async infiltrationActivityToggleAdjustment(_, button) {
+      const currentAdjustment = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].preparations.activities[button.dataset.activity].skillChecks[button.dataset.skillCheck].selectedAdjustment;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.skillChecks.${button.dataset.skillCheck}.selectedAdjustment`]: currentAdjustment === button.dataset.adjustment ? null : button.dataset.adjustment });
+    }
+
+    static async infiltrationActivityResultToggle(event, button) {
+      event.stopPropagation();
+      const currentInUse = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].preparations.activities[button.dataset.activity].results[button.dataset.result].inUse;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.results.${button.dataset.result}.inUse`]: !currentInUse });
+    }
+
+    static async infiltrationActivityResultSelect(_, button) {
+      this.selected.infiltration.preparations.resultSelect = this.selected.infiltration.preparations.resultSelect === button.dataset.result ? null : button.dataset.result;
+      this.render({ parts: [this.tabGroups.main] });
+    }
+
+    static async infiltrationActivityToggleResultsOutcome(_, button) {
+      const currentResultsOutcome = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].preparations.activities[button.dataset.activity].resultsOutcome;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.resultsOutcome`]: currentResultsOutcome === button.dataset.result ? null : button.dataset.result });
+    }
     //#endregion 
 
     async updateResearchLore(event) {
@@ -2578,6 +3067,28 @@ class SystemView extends HandlebarsApplicationMixin(
       }});
     }
 
+    async updateInfiltrationActivityLeveldDC(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.skillChecks.${button.dataset.skillCheck}`]: {
+        difficulty: {
+          leveledDC: button.checked,
+          DC: button.checked ? null : 10,
+        }
+      }});
+    }
+
+    async updateInfiltrationActivityLore(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.skillChecks.${button.dataset.skillCheck}.skills.${button.dataset.skill}`]: {
+        lore: button.checked,
+        skill: button.checked ? 'something-lore' : 'acrobatics',
+      }});
+    }
+
     async updateComplicationLore(event) {
       event.stopPropagation();
       const button = event.currentTarget;
@@ -2609,6 +3120,25 @@ class SystemView extends HandlebarsApplicationMixin(
         resolve();
       });
     }
+
+    async infiltrationPreparationsUpdateActivityTags(event) {
+      const button = event.detail.tagify.DOM.originalInput;
+      const value = event.detail?.value
+      ? JSON.parse(event.detail.value)
+      : [];
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.tags`]: value.map(x => x.value) });
+    }
+
+    async infiltrationPreparationsRemoveActivityTags(event) {
+      const button = $(event[0].node).parent().parent().find('input.infiltration-preparations-activity-tags')[0];
+      const settingId = this.tabGroups.main;
+      return new Promise(async function (resolve) {
+        const tags = game.settings.get(MODULE_ID, settingId).events[button.dataset.event].preparations.activities[button.dataset.activity].tags;
+        const newValue = tags.filter(x => x !== event[0].data.value);
+        await updateDataModel(settingId, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.tags`]: newValue });
+        resolve();
+      });
+    }
  
     async infiltrationComplicationUpdateDCAdjustment(event) {
       const button = event.detail.tagify.DOM.originalInput;
@@ -2625,6 +3155,28 @@ class SystemView extends HandlebarsApplicationMixin(
         const skillCheck = game.settings.get(MODULE_ID, settingId).events[button.dataset.event].complications[button.dataset.complication].skillChecks[button.dataset.skillCheck];
         const newValue = skillCheck.dcAdjustments.filter(x => x !== event[0].data.value);
         await updateDataModel(settingId, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.skillChecks.${button.dataset.skillCheck}`]: {
+          dcAdjustments: newValue,
+          selectedAdjustment: skillCheck.selectedAdjustment === event[0].data.value ? null : skillCheck.selectedAdjustment,
+        }});
+        resolve();
+      });
+    }
+
+    async infiltrationActivityUpdateDCAdjustment(event) {
+      const button = event.detail.tagify.DOM.originalInput;
+      const value = event.detail?.value
+      ? JSON.parse(event.detail.value)
+      : [];
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.skillChecks.${button.dataset.skillCheck}.dcAdjustments`]: value.map(x => x.value) });
+    }
+
+    async infiltrationActivityRemoveDCAdjustment(event) {
+      const button = $(event[0].node).parent().parent().find('input.infiltration-activities-dc-adjustment')[0];
+      const settingId = this.tabGroups.main;
+      return new Promise(async function (resolve) {
+        const skillCheck = game.settings.get(MODULE_ID, settingId).events[button.dataset.event].preparations.activities[button.dataset.activity].skillChecks[button.dataset.skillCheck];
+        const newValue = skillCheck.dcAdjustments.filter(x => x !== event[0].data.value);
+        await updateDataModel(settingId, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.skillChecks.${button.dataset.skillCheck}`]: {
           dcAdjustments: newValue,
           selectedAdjustment: skillCheck.selectedAdjustment === event[0].data.value ? null : skillCheck.selectedAdjustment,
         }});
@@ -2652,12 +3204,16 @@ class SystemView extends HandlebarsApplicationMixin(
           $(htmlElement).find('.infiltration-obstacle-lore').on('change', this.updateObstacleLore.bind(this));
           $(htmlElement).find('.infiltration-complication-leveled-DC').on('change', this.updateComplicationLeveldDC.bind(this));
           $(htmlElement).find('.infiltration-complication-lore').on('change', this.updateComplicationLore.bind(this));
-          
+          $(htmlElement).find('.infiltration-activity-leveled-DC').on('change', this.updateInfiltrationActivityLeveldDC.bind(this));
+          $(htmlElement).find('.infiltration-activity-lore').on('change', this.updateInfiltrationActivityLore.bind(this));
+
           const adjustmentOptions = Object.values(dcAdjustments);
-  
+          const tagOptions = Object.keys(CONFIG.PF2E.actionTraits).map(x => ({ value: x, name: game.i18n.localize(CONFIG.PF2E.actionTraits[x]) }));
 
           setupTagify(htmlElement, '.complication-dc-adjustment', adjustmentOptions, this.infiltrationComplicationUpdateDCAdjustment.bind(this), this.infiltrationComplicationRemoveDCAdjustment.bind(this));
           setupTagify(htmlElement, '.obstacle-dc-adjustment', adjustmentOptions, this.infiltrationObstacleUpdateDCAdjustment.bind(this), this.infiltrationObstacleRemoveDCAdjustment.bind(this));
+          setupTagify(htmlElement, '.infiltration-preparations-activity-tags', tagOptions, this.infiltrationPreparationsUpdateActivityTags.bind(this), this.infiltrationPreparationsRemoveActivityTags.bind(this));
+          setupTagify(htmlElement, '.infiltration-activity-dc-adjustment', adjustmentOptions, this.infiltrationActivityUpdateDCAdjustment.bind(this), this.infiltrationActivityRemoveDCAdjustment.bind(this));
 
           break;
       }
@@ -2792,8 +3348,11 @@ class SystemView extends HandlebarsApplicationMixin(
           
           context.settings = game.settings.get(MODULE_ID, settingIDs.infiltration.settings);
           context.tab = context.systems.infiltration;
+          context.infiltrationTabs = this.getInfiltrationTabs();
           context.obstacleTabs  = this.getInfiltrationObstacleTabs();
           context.complicationTabs = this.getInfiltrationComplicationTabs();
+          context.activityTabs = this.getInfiltrationActivityTabs();
+          context.layout = this.layout.infiltration;
 
           const disableRollButton = (disable, html) => {
             if(!disable) return html;
@@ -2804,6 +3363,10 @@ class SystemView extends HandlebarsApplicationMixin(
           if(context.selectedEvent) {
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
             context.selectedEvent.extendedComplications = context.selectedEvent.complicationsData;
+            context.selectedEvent.extendedPreparations = {
+              ...context.selectedEvent.preparations,
+              activities: context.selectedEvent.preparationsActivitesData
+            };
             context.currentObjectiveNr = (this.selected.infiltration.currentObjective ?? 1);
             const awarenessDCIncrease = context.selectedEvent.awarenessDCIncrease;
 
@@ -2946,6 +3509,44 @@ class SystemView extends HandlebarsApplicationMixin(
               }
 
               complication.selectedResult = Object.values(complication.results).find(x => x.degreeOfSuccess === this.selected.infiltration.complicationResultSelect);
+            }
+
+            for(var key of Object.keys(context.selectedEvent.extendedPreparations.activities)) {
+              var activity = context.selectedEvent.extendedPreparations.activities[key];
+              activity.open = this.selected.infiltration.preparations.openActivity === activity.id;
+              console.log(activity.open ? 'Open': 'Closed');
+              activity.enrichedDescription = await TextEditor.enrichHTML(activity.description);
+              activity.displayTags = activity.tags.map(tag => game.i18n.localize(CONFIG.PF2E.actionTraits[tag]));
+
+              for(var key of Object.keys(activity.skillChecks)){
+                var skillCheck = activity.skillChecks[key];
+                skillCheck.dcAdjustmentValues = skillCheck.dcAdjustments.map(x => ({
+                  name: game.i18n.localize(dcAdjustments[x].name),
+                  value: x,
+                }));
+
+                let dc = skillCheck.difficulty.leveledDC ? getSelfDC() : skillCheck.difficulty.DC;
+                dc = skillCheck.selectedAdjustment ? dc+getDCAdjustmentNumber(skillCheck.selectedAdjustment) : dc;
+                const disableElement = skillCheck.dcAdjustments.length > 0 && !skillCheck.selectedAdjustment;
+                for(var key of Object.keys(skillCheck.skills)){
+                  const skill = skillCheck.skills[key];
+                  if(skill.action) {
+                    skill.element = disableRollButton(disableElement, await TextEditor.enrichHTML(`[[/act ${skill.action} ${skill.variant ? `variant=${skill.variant} ` : ''}stat=${skill.skill} dc=${dc}]]`));  
+                  }
+                  else {
+                    skill.element = disableRollButton(disableElement, await TextEditor.enrichHTML(`@Check[type:${skill.skill}|dc:${dc}|simple:${skill.simple}]`));
+                  }
+                }
+              }
+
+              for(var key of Object.keys(activity.results)) {
+                var result = activity.results[key];
+                result.name = game.i18n.localize(degreesOfSuccess[result.degreeOfSuccess].name);
+                result.selected = this.selected.infiltration.complicationResultSelect === result.degreeOfSuccess;
+                result.enrichedDescription = await TextEditor.enrichHTML(result.description);
+              }
+
+              activity.selectedResult = Object.values(activity.results).find(x => x.degreeOfSuccess === this.selected.infiltration.preparations.resultSelect);
             }
           }
 
