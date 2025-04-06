@@ -1,0 +1,23 @@
+{
+    "title": "Infiltration Subsystem",
+    "description": "How to use infiltration",
+    "canBeResumed": false,
+    "display": true,
+    "steps": [
+        {
+            "id": "create-infiltration",
+            "selector": ".infiltration-view .system-title-inner-container",
+            "title": "Create Infiltration Event",
+            "content": "Click to add an infiltration event.\n(You can use the <strong>←</strong> and → arrow keys to navigate the Tour!)"
+        }
+    ],
+    "events": {
+        "tour-event": {
+            "id": "tour-event",
+            "name": "The Hag's Secret",
+            "version": "",
+            "background": "icons/magic/symbols/runes-carved-stone-green.webp",
+            "premise": "Finally. You've come upon the swamp hag's abode within Heretic Swamp. The inside and surrounding area may just provide some insight into the curse that's befallen the village.."
+        }
+    }
+}

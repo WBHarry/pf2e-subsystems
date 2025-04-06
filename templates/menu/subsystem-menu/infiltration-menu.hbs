@@ -1,0 +1,39 @@
+<div class="tab {{this.tabs.infiltration.cssClass}}" data-group="main" data-tab="infiltration">
+    <div class="menu-outer-container">
+        {{> "modules/pf2e-subsystems/templates/menu/subsystem-menu/partials/system-tabs.hbs" tabs=this.tabs }}
+        <div class="menu-main-container primary-container">
+            <div class="menu-group">
+                <div class="menu-form">
+                    <div>{{localize "PF2ESubsystems.Menus.Subsystems.Infiltration.AutoApplyAwareness"}}</div>
+                    <input type="checkbox" name="{{concat "infiltration.autoApplyAwareness"}}" {{checked this.settings.autoApplyAwareness}} />
+                </div>
+                <div class="menu-form">
+                    <div>{{localize "PF2ESubsystems.Menus.Subsystems.Infiltration.AutoRevealAwareness"}}</div>
+                    <input type="checkbox" name="{{concat "infiltration.autoRevealAwareness"}}" {{checked this.settings.autoRevealAwareness}} />
+                </div>
+            </div>
+            <fieldset class="subsystem-menu-fieldset">
+                <legend>
+                    {{localize "PF2ESubsystems.Menus.Subsystems.Infiltration.DefaultAwarenessBreakpoints"}}
+                    <i class="fa-solid fa-plus clickable-icon" data-action="addInfiltrationDefaultAwarenessBreakpoint"></i>
+                    <i class="fa-solid fa-rotate-left clickable-icon" data-action="resetInfiltrationDefaultAwarenessBreakpoints"></i>
+                </legend>
+                {{#each this.settings.defaultAwarenessBreakpoints}}
+                    <div class="menu-group">
+                        <div class="menu-form menu-card clickable-icon {{#if (eq this.id ../selected.awarenessBreakpoint.id)}}accent{{/if}} tertiary-container" data-action="selectInfiltrationDefaultAwarenessBreakpoint" data-breakpoint="{{this.id}}">
+                            <input type="text" data-dtype="number" name="{{concat "infiltration.defaultAwarenessBreakpoints." this.id ".breakpoint"}}" value="{{this.breakpoint}}" />
+                            <input type="text" data-dtype="number" name="{{concat "infiltration.defaultAwarenessBreakpoints." this.id ".dcIncrease"}}" value="{{this.dcIncrease}}" />
+                            <i class="fa-solid fa-trash clickable-icon" data-action="removeInfiltrationDefaultAwarenessBreakpoint" data-breakpoint="{{this.id}}"></i>
+                        </div>
+                    </div>  
+                {{/each}}
+                {{#if this.selected.awarenessBreakpoint}}
+                    <prose-mirror class="data-input tertiary-container" name="{{concat "infiltration.defaultAwarenessBreakpoints." this.selected.awarenessBreakpoint.id ".description"}}" value="{{this.selected.awarenessBreakpoint.description}}">
+                      {{ localize this.selected.awarenessBreakpoint.enrichedDescription }} 
+                    </prose-mirror>
+                {{/if}}
+            </fieldset>
+        </div>
+        {{> "modules/pf2e-subsystems/templates/menu/subsystem-menu/partials/system-footer.hbs" }}
+    </div>
+</div>

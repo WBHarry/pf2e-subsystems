@@ -89,3 +89,28 @@ export const degreesOfSuccess = {
         name: 'PF2E.Check.Result.Degree.Check.criticalFailure'
     }
 }
+
+export const defaultInfiltrationAwarenessBreakpoints = {
+    '1': {
+        id: '1',
+        breakpoint: 5,
+        dcIncrease: 1,
+        description: 'PF2ESubsystems.Infiltration.Awareness.DefaultBreakpoint5',
+    },
+    '2': {
+        id: '2',
+        breakpoint: 10,
+        description: 'PF2ESubsystems.Infiltration.Awareness.DefaultBreakpoint10',
+    },
+    '3': {
+        id: '3',
+        breakpoint: 15,
+        dcIncrease: 2,
+        description: 'PF2ESubsystems.Infiltration.Awareness.DefaultBreakpoint15',
+    },
+    '4': {
+        id: '4',
+        breakpoint: 20,
+        description: 'PF2ESubsystems.Infiltration.Awareness.DefaultBreakpoint20',
+    }
+}

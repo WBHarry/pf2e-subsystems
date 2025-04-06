@@ -22,6 +22,56 @@
 }
 
 .pf2e-subsystems {
+  /* Editor */
+  .editor {
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 6px;
+
+    menu {
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+        border-radius: 0;
+
+        button {
+            border-width: 1px;
+            border-style: solid;
+            border-radius: 6;
+            border-color: var(--pf2e-subsystem-theming-border);
+        }
+    }
+
+    &.primary-container {
+        menu {
+            background-color: var(--pf2e-subsystem-theming-primary-accent);
+
+            button {
+                background-color: var(--pf2e-subsystem-theming-secondary);
+            }
+        }
+    }
+
+    &.secondary-container {
+        menu {
+            background-color: var(--pf2e-subsystem-theming-secondary-accent);
+
+            button {
+                background-color: var(--pf2e-subsystem-theming-tertiary);
+            }
+        }
+    }
+
+    &.tertiary-container {
+        menu {
+            background-color: var(--pf2e-subsystem-theming-tertiary-accent);
+
+            button {
+                background-color: var(--pf2e-subsystem-theming-primary);
+            }
+        }
+    }
+}
+
   /* Texts */
   .text-helper, input.text-helper {
     font-size: @textHelper;

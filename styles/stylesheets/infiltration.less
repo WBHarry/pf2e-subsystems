@@ -3,6 +3,14 @@
         // height: 100%;
         .event-outer-container {
             .event-container { 
+
+                .infiltration-complications-container {
+
+                    .infiltration-complications-inner-container {
+                        display: flex;
+                        flex-direction: column;
+                    }
+                }
                 
                 .infiltration-obstacle-image-container {
                     display: flex;
@@ -38,6 +46,11 @@
                     }
                 }
 
+                .objective-obstacle-add-button {
+                    width: fit-content;
+                    margin-bottom: -@gapSmall;
+                }
+
                 .infiltration-points-individual-container {
                     display: flex;
                     align-items: center;
@@ -70,7 +83,103 @@
                     }
 
                     .awareness-points-container {
-   
+                        display: flex;
+                        flex-direction: column;
+
+                        &.edit-mode {
+                            flex: 1;
+                        }
+                        
+                        .awareness-points-inner-container {
+                            display: flex;
+                            align-items: center;
+                            position: relative;
+                        }
+
+                        .awareness-point-breakpoints-container {
+                            display: flex;
+                            flex-direction: column;
+                            gap: @gapSmall;
+                            margin: @marginNormal;
+                            flex: 1;
+
+                            .awareness-point-breakpoint-container {
+                                display: flex;
+                                flex-direction: column;
+                                align-items: center;
+                                padding: 0 @paddingNormal;
+                                position: relative;
+                                border-width: 1px;
+                                border-style: solid;
+                                border-radius: 6px;
+
+                                &.open {
+                                    flex: 1;
+
+                                    .awareness-point-breakpoint-main-container {
+                                        textarea {
+                                            flex: 1;
+                                        }
+                                    }
+                                }
+
+                                .awareness-point-breakpoint-inner-container{
+                                    display: flex;
+                                    align-items: center;
+                                    gap: @gapSmall;
+                                    padding: @paddingNormal @paddingHuge;
+                                }
+
+                                .awareness-point-breakpoint-main-container {
+                                    overflow: hidden;
+                                    height: 0;
+                                    display: flex;
+                                    flex-direction: column;
+                                    gap: @gapNormal;
+            
+                                    textarea {
+                                        padding: 0 @paddingNormal;
+                                    }
+        
+                                    > p {
+                                        margin: 0;
+                                    }
+        
+                                    &.expanded {
+                                        flex: 1;
+                                    }
+                                }
+
+                                .awareness-point-breakpoint-enable {
+                                    position: absolute;
+                                    left: 28px;
+                                    font-size: 24px;
+                                    opacity: 0.4;
+
+                                    &.active {
+                                        opacity: 1;
+                                    }
+                                }
+
+                                .awareness-point-breakpoint-hider {
+                                    position: absolute;
+                                    left: 4px;
+                                    font-size: 16px;
+                                }
+
+                                .awareness-point-breakpoint-delete {
+                                    position: absolute;
+                                    left: 3px;
+                                    font-size: 16px;
+                                }
+
+                                .awareness-point-breakpoint-open {
+                                    position: absolute;
+                                    right: 2px;
+                                    font-size: 24px;
+                                }
+                            }
+                        }
                     }
                 }
 

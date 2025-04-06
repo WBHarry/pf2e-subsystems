@@ -54,6 +54,11 @@
                 },
                 "Research": {
                     "HideResearchCheckMaxRP": "Hide the Max RP of Research Checks to players"
+                },
+                "Infiltration": {
+                    "DefaultAwarenessBreakpoints": "Default Awareness Breakpoints",
+                    "AutoApplyAwareness": "Auto apply awareness DC modifiers",
+                    "AutoRevealAwareness": "Auto reveal awareness breakpoints"
                 }
             }
         },
@@ -162,9 +167,11 @@
             "NavigateBack": "Return To Infiltrations",
             "EditInfiltration": "Edit Infiltration",
             "CreateInfiltration": "Create New Infiltration",
+            "AddObjective": "Add Objective",
             "InfiltrationPoints": "Infiltration Points",
+            "NewObjective": "New Objective",
             "Individual": "Individual",
-            "AwarenessPoints": "Awareness Points",
+            "AwarenessPoints": "Awareness",
             "EdgePoints": "Edge Points",
             "Opportunities": "Opportunities",
             "Complications": "Complications",
@@ -184,6 +191,14 @@
                 "Description": "Description",
                 "SkillChecks": "Checks",
                 "Results": "Results"
+            },
+            "Awareness": {
+                "DefaultBreakpoint5": "Suspicions are raised. Increase the DCs for obstacles by 1. The first time the PCs reach this tier, a complication occurs.",
+                "DefaultBreakpoint10": "The first time the PCs reach this tier, a complication occurs.",
+                "DefaultBreakpoint15": "Increase the DCs for obstacles by a total of 2, and the first time the PCs reach this tier, a complication occurs.",
+                "DefaultBreakpoint20": "The infiltration fails.",
+                "NewAwarenessBreakpoint": "New Breakpoint",
+                "ActivateAwarenessBreakpoint": "Activate awareness breakpoint"
             }
         },
         "KeyBindings": {

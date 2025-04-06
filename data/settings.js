@@ -1,3 +1,5 @@
+import { defaultInfiltrationAwarenessBreakpoints } from "./constants";
+import { TypedObjectField } from "./modelHelpers";
 
 export class ResearchSettings extends foundry.abstract.DataModel {
   static defineSchema() {
@@ -25,6 +27,14 @@ export class InfiltrationSettings extends foundry.abstract.DataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
     return {
+      autoApplyAwareness: new fields.BooleanField({ required: true, initial: true }),
+      autoRevealAwareness: new fields.BooleanField({ required: true, initial: true }),
+      defaultAwarenessBreakpoints: new TypedObjectField(new fields.SchemaField({
+        id: new fields.StringField({ required: true }),
+        breakpoint: new fields.NumberField({ required: true }),
+        dcIncrease: new fields.NumberField(),
+        description: new fields.HTMLField(),
+      }), { initial: defaultInfiltrationAwarenessBreakpoints }),
     }
   }
 }

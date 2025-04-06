@@ -32,6 +32,28 @@
             border-style: outset;
             padding: @paddingNormal;
             margin-bottom: @marginLarge;
+
+            .subsystem-menu-fieldset {
+                display: flex;
+                flex-direction: column;
+                gap: @gapSmall;
+                border-radius: 6px;
+
+                legend {
+                    margin: 0 auto;
+                }
+
+                .menu-card {
+                    width: 100%;
+                }
+            }
+
+            .menu-card {
+                border-width: 1px;
+                border-style: solid;
+                border-radius: 6px;
+                padding: @paddingSmall;
+            }
         }
     }
 }

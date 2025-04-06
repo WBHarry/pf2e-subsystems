@@ -1,4 +1,4 @@
-import { degreesOfSuccess } from "./constants";
+import { degreesOfSuccess, MODULE_ID, settingIDs } from "./constants";
 import { TypedObjectField } from "./modelHelpers";
 
 export class Infiltrations extends foundry.abstract.DataModel {
@@ -21,42 +21,58 @@ export class Infiltration extends foundry.abstract.DataModel {
         premise: new fields.HTMLField({ required: true, initial: "" }),
         hidden: new fields.BooleanField({ initial: true }),
         started: new fields.BooleanField({ required: true, initial: false }),
-        awarenessPoints: new fields.NumberField({ required: true, initial: 0 }),
-        obstacles: new TypedObjectField(new fields.SchemaField({
+        awarenessPoints: new fields.SchemaField({
+          current: new fields.NumberField({ required: true, initial: 0 }),
+          breakpoints: new TypedObjectField(new fields.SchemaField({
+            id: new fields.StringField({ required: true }),
+            hidden: new fields.BooleanField({ required: true, initial: true }),
+            inUse: new fields.BooleanField({ required: true, inttial: false }),
+            dcIncrease: new fields.NumberField(),
+            breakpoint: new fields.NumberField({ required: true, initial: 0 }),
+            description: new fields.HTMLField(),
+          })),
+        }),
+        objectives: new TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
           hidden: new fields.BooleanField({ required: true, initial: false }),
           name: new fields.StringField({ required: true }),
-          img: new fields.StringField({}),
           position: new fields.NumberField({ required: true }),
-          individual: new fields.BooleanField({ required: true, initial: false }),
-          infiltrationPoints: new fields.SchemaField({
-            current: new fields.NumberField({ required: true, initial: 0 }),
-            max: new fields.NumberField({ required: true, initial: 2 }),
-          }),
-          infiltrationPointData: new TypedObjectField(new fields.NumberField({ required: true, initial: 0 })),
-          skillChecks: new TypedObjectField(new fields.SchemaField({
+          obstacles: new TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
-            hidden: new fields.BooleanField({ required: true, initial: true }),
-            description: new fields.HTMLField(),
-            dcAdjustments: new fields.ArrayField(new fields.StringField()),
-            selectedAdjustment: new fields.StringField(),
-            difficulty: new fields.SchemaField({
-              leveledDC: new fields.BooleanField({ required: true, initial: true }),
-              DC: new fields.NumberField(),
+            hidden: new fields.BooleanField({ required: true, initial: false }),
+            name: new fields.StringField({ required: true }),
+            img: new fields.StringField({}),
+            position: new fields.NumberField({ required: true }),
+            individual: new fields.BooleanField({ required: true, initial: false }),
+            infiltrationPoints: new fields.SchemaField({
+              current: new fields.NumberField({ required: true, initial: 0 }),
+              max: new fields.NumberField({ required: true, initial: 2 }),
             }),
-            skills: new TypedObjectField(new fields.SchemaField({
+            infiltrationPointData: new TypedObjectField(new fields.NumberField({ required: true, initial: 0 })),
+            skillChecks: new TypedObjectField(new fields.SchemaField({
               id: new fields.StringField({ required: true }),
-              skill: new fields.StringField(),
-              action: new fields.StringField(),
-              variant: new fields.StringField(),
-              lore: new fields.BooleanField({ required: true, initial: false }),
+              hidden: new fields.BooleanField({ required: true, initial: true }),
+              description: new fields.HTMLField(),
+              dcAdjustments: new fields.ArrayField(new fields.StringField()),
+              selectedAdjustment: new fields.StringField(),
+              difficulty: new fields.SchemaField({
+                leveledDC: new fields.BooleanField({ required: true, initial: true }),
+                DC: new fields.NumberField(),
+              }),
+              skills: new TypedObjectField(new fields.SchemaField({
+                id: new fields.StringField({ required: true }),
+                skill: new fields.StringField(),
+                action: new fields.StringField(),
+                variant: new fields.StringField(),
+                lore: new fields.BooleanField({ required: true, initial: false }),
+              })),
             })),
+            description: new fields.HTMLField(),
           })),
-          description: new fields.HTMLField(),
         })),
         complications: new TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
-          hidden: new fields.BooleanField({ required: true, initial: false }),
+          hidden: new fields.BooleanField({ required: true, initial: true }),
           name: new fields.StringField({ required: true }),
           infiltrationPoints: new fields.SchemaField({
             current: new fields.NumberField(),
@@ -92,7 +108,7 @@ export class Infiltration extends foundry.abstract.DataModel {
         })),
         opportunities: new TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
-          hidden: new fields.BooleanField({ required: true, initial: false }),
+          hidden: new fields.BooleanField({ required: true, initial: true }),
           name: new fields.StringField({ required: true }),
           requirements: new fields.StringField(),
           description: new fields.HTMLField(),
@@ -101,27 +117,38 @@ export class Infiltration extends foundry.abstract.DataModel {
       }
     }
 
-    get infiltrationPoints() {
-      const partyMembers = game.actors.find(x => x.type === 'party').members;
-
-      return Object.values(this.obstacles).reduce((acc, obstacle) => {
-        if(obstacle.individual){
-          acc += partyMembers.reduce((acc, member) => {
-            const data = obstacle.infiltrationPointData[member.id];
-            if(data < acc){
-              acc = data;
-            }
-
-            return acc;
-          }, Math.max(...Object.values(obstacle.infiltrationPointData)));
-        }
-        else {
-          acc += obstacle.infiltrationPoints.current ?? 0;
+    get awarenessDCIncrease() {
+      const autoApplyIncrease = game.settings.get(MODULE_ID, settingIDs.infiltration.settings).autoApplyAwareness;
+      return Object.values(this.awarenessPoints.breakpoints).reduce((acc, curr) => {
+        if((autoApplyIncrease && this.awarenessPoints.current >= curr.breakpoint) || curr.inUse){
+          acc = Math.max((curr.dcIncrease ?? 0), acc);
         }
 
         return acc;
       }, 0);
     }
+
+    // get infiltrationPoints() {
+    //   const partyMembers = game.actors.find(x => x.type === 'party').members;
+
+    //   return Object.values(this.obstacles).reduce((acc, obstacle) => {
+    //     if(obstacle.individual){
+    //       acc += partyMembers.reduce((acc, member) => {
+    //         const data = obstacle.infiltrationPointData[member.id];
+    //         if(data < acc){
+    //           acc = data;
+    //         }
+
+    //         return acc;
+    //       }, Math.max(...Object.values(obstacle.infiltrationPointData)));
+    //     }
+    //     else {
+    //       acc += obstacle.infiltrationPoints.current ?? 0;
+    //     }
+
+    //     return acc;
+    //   }, 0);
+    // }
 
     get complicationsData() {
       return Object.values(this.complications).reduce((acc, complication) => {
