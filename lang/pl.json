@@ -183,11 +183,28 @@
             "MaxInfiltrationPoints": "Wpływ (opcjonalnie)",
             "ComplicationsDescription": "Opisz tę komplikację tutaj",
             "ComplicationResultDescription": "Opisz wynik tutaj",
+            "Preparations": {
+                "NewPreparationActivity": "Nowa aktywność",
+                "MaxAttempts": "Maksymalna liczba prób",
+                "EdgeLabel": "Etykieta punktów brzegowych",
+                "IsUsed": "Przygotowania aktywne",
+                "NotUsed": "Przygotowania nieaktywne"
+            },
+            "InfiltrationTab": {
+                "Infiltration": "Infiltracja",
+                "Preparations": "Przygotowania"
+            },
             "InfiltrationObstacleSkillsTab": {
                 "Description": "Opis",
-                "SkillChecks": "Testy"
+                "SkillChecks": "Testy",
+                "Results": "Wyniki"
             },
             "InfiltrationComplicationTab": {
+                "Description": "Opis",
+                "SkillChecks": "Testy",
+                "Results": "Wyniki"
+            },
+            "InfiltrationActivityTab": {
                 "Description": "Opis",
                 "SkillChecks": "Testy",
                 "Results": "Wyniki"
