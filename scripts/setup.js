@@ -54,7 +54,6 @@ const configSettings = () => {
     config: false,
     type: InfiltrationSettings,
     default: {},
-    // defaults: InfiltrationSettings.getDefault(),
   });
 }
 

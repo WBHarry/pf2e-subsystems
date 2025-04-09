@@ -19,6 +19,7 @@ export const settingIDs = {
 export const tourIDs = {
     chase: "pf2e-subsystems-chase",
     research: "pf2e-subsystems-research",
+    infiltration: "pf2e-subsystems-infiltration",
 }
 
 export const timeUnits = {
@@ -125,18 +126,22 @@ export const defaultInfiltrationPreparations = {
         description: 'You offer a bribe to your contact to help the heist in some way.',
         results: {
             success: {
-                degreesOfSuccess: 'success',
+                degreeOfSuccess: 'success',
                 description: 'The contact accepts the bribe and you gain 1 EP.',
                 inUse: true,
             },
             failure: {
                 degreeOfSuccess: 'failure',
+                fakeDegreeOfSuccess: 'success',
                 description: 'You believe you successfully Bribed your Contact and gained 1 EP, but in fact the contact informs the opposition of the attempted bribery, adding 1 AP to the infiltration. The GM can reveal that this Edge Point grants no benefit at any point during the infiltration, as befits the story.',
+                awarenessPoints: 1,
                 inUse: true,
             },
             criticalFailure: {
                 degreeOfSuccess: 'criticalFailure',
+                fakeDegreeOfSuccess: 'success',
                 description: 'As failure, but adding 2 AP to the infiltration.',
+                awarenessPoints: 2,
                 inUse: true,
             }
         },
@@ -166,17 +171,19 @@ export const defaultInfiltrationPreparations = {
         description: 'You prepare forgeries that might serve as convincing props. Attempt a hard or very hard Society check.',
         results: {
             success: {
-                degreesOfSuccess: 'success',
+                degreeOfSuccess: 'success',
                 description: 'You create convincing forgeries and gain 1 EP you can use only when presenting some form of paperwork.',
                 inUse: true,
             },
             failure: {
                 degreeOfSuccess: 'failure',
+                fakeDegreeOfSuccess: 'success',
                 description: 'You create unconvincing documents. You gain 1 EP that (unknown to you) grants no benefit when used.',
                 inUse: true,
             },
             criticalFailure: {
                 degreeOfSuccess: 'criticalFailure',
+                fakeDegreeOfSuccess: 'success',
                 description: 'As a failure, but a PC who tries to use the Edge Point gets a critical failure, even if they use the Edge Point after rolling a failure.',
                 inUse: true,
             }
@@ -203,7 +210,7 @@ export const defaultInfiltrationPreparations = {
         description: 'You try to make contact with an individual who can aid you in the infiltration. Attempt a normal, hard, or very hard DC Diplomacy or Society check, or a check using a Lore skill appropriate to your prospective contact.',
         results: {
             success: {
-                degreesOfSuccess: 'success',
+                degreeOfSuccess: 'success',
                 description: 'You make contact and gain 1 EP.',
                 inUse: true,
             },
@@ -249,7 +256,7 @@ export const defaultInfiltrationPreparations = {
                 inUse: true,
             },
             success: {
-                degreesOfSuccess: 'success',
+                degreeOfSuccess: 'success',
                 description: 'You gain inside information about the place or group you’re attempting to infiltrate that aids your planning.',
                 inUse: true,
             },
@@ -261,6 +268,7 @@ export const defaultInfiltrationPreparations = {
             criticalFailure: {
                 degreeOfSuccess: 'criticalFailure',
                 description: 'You hear a few mistaken rumors and take a –2 circumstance penalty to your next check for a preparation activity. Word spreads around that you’re asking after that group or individual, increasing your Awareness Points by 1.',
+                awarenessPoints: 1,
                 inUse: true,   
             }
         },
@@ -286,7 +294,7 @@ export const defaultInfiltrationPreparations = {
         description: 'You spend time observing the place or group you wish to infiltrate. Attempt a normal, hard, or very hard DC Perception, Society or Stealth check.',
         results: {
             success: {
-                degreesOfSuccess: 'success',
+                degreeOfSuccess: 'success',
                 description: 'You make observations that provide 1 EP.',
                 inUse: true,
             },
@@ -297,6 +305,7 @@ export const defaultInfiltrationPreparations = {
             },
             criticalFailure: {
                 degreeOfSuccess: 'criticalFailure',
+                fakeDegreeOfSuccess: 'success',
                 description: 'You misjudge some aspect of what you observed, gaining 1 EP that results in a critical failure instead of a success when used, even if a PC uses the Edge Point after rolling a failure.',
                 inUse: true,
             }
@@ -323,7 +332,7 @@ export const defaultInfiltrationPreparations = {
         description: 'You seek to procure or create disguises. Attempt a normal, hard, or very hard Crafting, Deception, Performance, or Society check.',
         results: {
             success: {
-                degreesOfSuccess: 'success',
+                degreeOfSuccess: 'success',
                 description: 'You procure or creates disguises, gaining 1 EP that can be used only to maintain a cover identity.',
                 inUse: true,
             },

@@ -183,12 +183,16 @@
             "MaxInfiltrationPoints": "Influence (Optional)",
             "ComplicationsDescription": "Describe this complication here",
             "ComplicationResultDescription": "Describe the result here",
+            "ConfirmRemoveEdgeTitle": "Remove Edge Point",
+            "ConfirmRemoveEdgeText": "This result is linked to the Edge Point \"{edge}\". Do you want to remove it?",
             "Preparations": {
                 "NewPreparationActivity": "New Activity",
                 "MaxAttempts": "Max Attempts",
                 "EdgeLabel": "Edge Label",
                 "IsUsed": "Preparations Active",
-                "NotUsed": "Preparations Inactivated"
+                "NotUsed": "Preparations Inactivated",
+                "AwarenessPoints": "Awareness Points",
+                "FakeDegreeOfSuccess": "Fake Degree Shown To Players"
             },
             "InfiltrationTab": {
                 "Infiltration": "Infiltration",

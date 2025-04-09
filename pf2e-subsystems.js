@@ -7,6 +7,7 @@ import RegisterHandlebarsHelpers from "./scripts/handlebarHelpers.js";
 import { ChaseTour } from "./tours/chase/ChaseTour.js";
 import { ResearchTour } from "./tours/research/ResearchTour.js";
 import SystemView from "./module/systemView.js";
+import { InfiltrationTour } from "./tours/infiltration/InfiltrationTour.js";
 
 Hooks.once("init", () => {
     registerGameSettings();
@@ -58,6 +59,7 @@ async function registerTours() {
   try {
     game.tours.register(MODULE_ID, tourIDs.chase, await ChaseTour.fromJSON(`/modules/${MODULE_ID}/tours/chase/chase-tour.json`));
     game.tours.register(MODULE_ID, tourIDs.research, await ResearchTour.fromJSON(`/modules/${MODULE_ID}/tours/research/research-tour.json`));
+    game.tours.register(MODULE_ID, tourIDs.infiltration, await InfiltrationTour.fromJSON(`/modules/${MODULE_ID}/tours/infiltration/infiltration-tour.json`));
   } catch (error) {
     console.error("MyTour | Error registering tours: ",error);
   }

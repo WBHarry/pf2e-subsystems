@@ -21,8 +21,8 @@
                 {{#each this.settings.defaultAwarenessBreakpoints}}
                     <div class="menu-group">
                         <div class="menu-form menu-card clickable-icon {{#if (eq this.id ../selected.awarenessBreakpoint.id)}}accent{{/if}} tertiary-container" data-action="selectInfiltrationDefaultAwarenessBreakpoint" data-breakpoint="{{this.id}}">
-                            <input type="text" data-dtype="number" name="{{concat "infiltration.defaultAwarenessBreakpoints." this.id ".breakpoint"}}" value="{{this.breakpoint}}" />
-                            <input type="text" data-dtype="number" name="{{concat "infiltration.defaultAwarenessBreakpoints." this.id ".dcIncrease"}}" value="{{this.dcIncrease}}" />
+                            <input type="text" data-dtype="Number" name="{{concat "infiltration.defaultAwarenessBreakpoints." this.id ".breakpoint"}}" value="{{this.breakpoint}}" />
+                            <input type="text" data-dtype="Number" name="{{concat "infiltration.defaultAwarenessBreakpoints." this.id ".dcIncrease"}}" value="{{this.dcIncrease}}" />
                             <i class="fa-solid fa-trash clickable-icon" data-action="removeInfiltrationDefaultAwarenessBreakpoint" data-breakpoint="{{this.id}}"></i>
                         </div>
                     </div>  

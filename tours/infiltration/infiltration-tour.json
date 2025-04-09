@@ -9,15 +9,636 @@
             "selector": ".infiltration-view .system-title-inner-container",
             "title": "Create Infiltration Event",
             "content": "Click to add an infiltration event.\n(You can use the <strong>←</strong> and → arrow keys to navigate the Tour!)"
+        },
+        {
+            "id": "edit-infiltration",
+            "selector": ".infiltration-view .event-container",
+            "title": "Edit Infiltration Event",
+            "content": "Hover an existing infiltration event to access Reveal/Hide, Edit and Remove functionality.\nClick to enter the infiltration event."
+        },
+        {
+            "id": "infiltration-overview-1",
+            "selector": ".awareness-points-container",
+            "title": "Awareness Points",
+            "content": "During an infiltration, failures can amass Awareness Points that make the event more difficult. You can change the default awareness point breakpoints in the module settings and/or edit them on a particular infiltration event."
+        },
+        {
+            "id": "infiltration-overview-11",
+            "selector": ".awareness-points-container",
+            "title": "Awareness Points",
+            "content": "As a GM you can check the consequences of an awareness breakpoint at any time. By default breakpoints are revealed to players when the Awareness Points get high enough, and any increases to Obstacle DC is auto applied. Both of these behaviors can be changed in the module settings."
+        },
+        {
+            "id": "infiltration-overview-2",
+            "selector": ".edge-points-container",
+            "title": "Edge Points",
+            "content": "Players earn Edge Points during a possible preparation phase. They can then use them during the Infiltration event to increase their chances."
+        },
+        {
+            "id": "infiltration-overview-21",
+            "selector": ".infiltration-edge-container[data-edge=\"1\"]",
+            "title": "A Normal Edge",
+            "content": "An edge can be expanded to read the context it should be used in. Clicking the checkmark will mark the edge as used."
+        },
+        {
+            "id": "infiltration-overview-22",
+            "selector": ".infiltration-edge-container[data-edge=\"2\"]",
+            "title": "A Fake Edge",
+            "content": "Some preparation activities have the secret trait. When these fail, the players will see the description of the edge as if it had succeeded. The GM can reveal the actual failure description at any point by clicking the eye icon."
+        },
+        {
+            "id": "infiltration-overview-23",
+            "selector": ".infiltration-edge-container[data-edge=\"3\"]",
+            "title": "A Used Edge",
+            "content": "Edges that have been used are crossed over."
+        },
+        {
+            "id": "infiltration-overview-3",
+            "selector": ".description-outer-container",
+            "title": "Premise",
+            "content": "The narrative premise of the infiltration event"
+        },
+        {
+            "id": "infiltration-overview-4",
+            "selector": ".tabs.event-tabs",
+            "title": "Tabs",
+            "content": "An infiltration event can have an optional preparation phase. As a GM you can access and set up the preparation phase in the second tab. Players can see and access it if you set it as active with the button inside the tab."
+        },
+        {
+            "id": "infiltration-overview-5",
+            "selector": ".event-header-toolbar",
+            "title": "Toolbar",
+            "content": "<strong>Start Event</strong>: This will open up this infiltration window for all online players so you can run it.\n<strong>Edit Event</strong>: This toggles you into edit mode to setup your infiltration event.\n<strong>Macro</strong>: The third icon copies a macro you can use to open this event."
+        },
+        {
+            "id": "infiltration-overview-6",
+            "selector": ".event-radio-container",
+            "title": "Objectives",
+            "content": "To succeed at an infiltration the group must clear a number of objectives."
+        },
+        {
+            "id": "infiltration-overview-61",
+            "selector": ".event-radio-header",
+            "title": "Objectives",
+            "content": "You can navigate between objectives by clicking on the circular buttons, or by using the ← and → arrows keys.\nPlayers can only navigate between revealed objectives.\nGMs hide/reveal objectives by rightclicking the circular buttons."
+        },
+        {
+            "id": "infiltration-overview-61",
+            "selector": ".event-main-view-container",
+            "title": "Objective Obstacles",
+            "content": "Each objective has a number of obstacles for the players to engage with. They can be hidden/reveal by the GM if needed, and otherwise opened and engaged with by everyone."
+        },
+        {
+            "id": "infiltration-overview-7",
+            "selector": ".infiltration-opportunities-container",
+            "title": "Opportunities",
+            "content": "During an infiltration event, the players can come across certain opportunities to aid their efforts. All opportunities show a requirement that must be met before the opportunity should be revealed to the players via the button."
+        },
+        {
+            "id": "infiltration-overview-8",
+            "selector": ".infiltration-complication-container",
+            "title": "Complications",
+            "content": "Complications arise during an infiltration. All complications have a trigger for when they occur. GMs should reveal the complication to players at this time via the button."
+        },
+        {
+            "id": "infiltration-overview-9",
+            "selector": ".preparation-container",
+            "title": "Preparations",
+            "content": "In the second tab - the preparation tab - the GM can enable a preparation stage for the event. The GM can set up preparation activites for the players to interact with.\nDefault activities are initially added, but they can be removed or edited."
+        },
+        {
+            "id": "infiltration-overview-91",
+            "selector": ".preparation-toolbar-inner",
+            "title": "Preparations",
+            "content": "The toolbar. Add custom preparation activities or reset the activities to the defaults."
+        },
+        {
+            "id": "infiltration-overview-92",
+            "selector": ".preparation-cards-container",
+            "title": "Preparation Activities",
+            "content": "All the available preparation activities are here. Open them up to check their details, or remove them while in edit mode."
+        },
+        {
+            "id": "infiltration-overview-93",
+            "selector": ".preparation-card[data-activity=\"bribeContact\"] .infiltration-complication-skill-container",
+            "title": "Activity - Overcome",
+            "content": "The suggested skill checks for succeeding at a preparation activity are shown here. Often there are multiple options of DC Adjustment available to the GM.\nIf there are DC Adjustments, then one has to be chosen to enable the roll buttons."
+        },
+        {
+            "id": "infiltration-overview-94",
+            "selector": ".preparation-card[data-activity=\"bribeContact\"] .infiltration-results-container",
+            "title": "Activity - Results",
+            "content": "Results from the activity can be selected up to the maximum allowed attempts at the activity.\nEvery time you select a result, you automatically create an Edge in the left sidebar from it."
         }
     ],
     "events": {
         "tour-event": {
             "id": "tour-event",
-            "name": "The Hag's Secret",
+            "name": "The Forebearers' Crown",
             "version": "",
-            "background": "icons/magic/symbols/runes-carved-stone-green.webp",
-            "premise": "Finally. You've come upon the swamp hag's abode within Heretic Swamp. The inside and surrounding area may just provide some insight into the curse that's befallen the village.."
+            "background": "icons/environment/settlement/watchtower-moonlit-blue.webp",
+            "premise": "The only thing that can bring peace to the succession wars is the ancient crown of the royal forebearers. It supposedly rests still within the dark castle of the dark lands. There you must go.",
+            "awarenessPoints": {
+                "current": 0,
+                "breakpoints": {
+                    "5": {
+                        "id": "5",
+                        "breakpoint": 5,
+                        "description": "Suspicions are raised. Increase the DCs for obstacles by 1. The first time the PCs reach this tier, a complication occurs."
+                    },
+                    "10": {
+                        "id": "10",
+                        "breakpoint": 10 
+                    },
+                    "15": {
+                        "id": "15",
+                        "breakpoint": 15 
+                    },
+                    "20": {
+                        "id": "20",
+                        "breakpoint": 20
+                    }
+                }
+            },
+            "edgePoints": {
+                "1": {
+                    "id": "1",
+                    "name": "Guard Disguises",
+                    "faked": false,
+                    "used": false,
+                    "originActivity": "",
+                    "originResult": "",
+                    "awarenessPoints": 0,
+                    "description": "You procure or creates disguises, gaining 1 EP that can be used only to maintain a cover identity.",
+                    "hiddenDescription": null
+                },
+                "2": {
+                    "id": "2",
+                    "name": "Writ Of Right",
+                    "faked": true,
+                    "used": false,
+                    "originActivity": "",
+                    "originResult": "",
+                    "awarenessPoints": 1,
+                    "description": "You got your hands on an ancient writ of passage, gaining 1 EP that can be used to pass military individuals.",
+                    "hiddenDescription": "The ancient writ is more fragile than you thought. It falls apart when you try to use it and does nothing."
+                },
+                "3": {
+                    "id": "3",
+                    "name": "Holy Litany",
+                    "faked": false,
+                    "used": true,
+                    "originActivity": "",
+                    "originResult": "",
+                    "awarenessPoints": 0,
+                    "description": "The church provided an enhanced verse to the god of light, giving you 1 EP that can be used to counteract dark magic.",
+                    "hiddenDescription": null
+                }
+            },
+            "objectives": {
+                "1": {
+                    "id": "1",
+                    "name": "Reach The Dark Castle",
+                    "position": 1,
+                    "obstacles": {
+                        "1": {
+                            "id": "1",
+                            "name": "The Wight Watchers",
+                            "img": "icons/magic/death/undead-skeleton-worn-blue.webp",
+                            "position": 1,
+                            "infiltrationPoints": {
+                                "current": 0,
+                                "max": 2
+                            },
+                            "skillChecks": {
+                                "1": {
+                                    "id": "1",
+                                    "dcAdjustments": [],
+                                    "difficulty": {
+                                        "leveledDC": true
+                                    },
+                                    "skills": {
+                                        "1": {
+                                            "id": "1"
+                                        }
+                                    }
+                                }
+                            },
+                            "description": ""
+                        },
+                        "2": {
+                            "id": "2",
+                            "name": "Pit Of Sunken Hope",
+                            "img": "icons/magic/death/undead-skeleton-worn-blue.webp",
+                            "position": 2,
+                            "infiltrationPoints": {
+                                "current": 0,
+                                "max": 2
+                            },
+                            "skillChecks": {
+                                "1": {
+                                    "id": "1",
+                                    "dcAdjustments": [],
+                                    "difficulty": {
+                                        "leveledDC": true
+                                    },
+                                    "skills": {
+                                        "1": {
+                                            "id": "1"
+                                        }
+                                    }
+                                }
+                            },
+                            "description": ""
+                        },
+                        "3": {
+                            "id": "3",
+                            "name": "Illusory Fog Of Dilerium",
+                            "img": "icons/magic/death/undead-skeleton-worn-blue.webp",
+                            "position": 1,
+                            "infiltrationPoints": {
+                                "current": 0,
+                                "max": 2
+                            },
+                            "skillChecks": {
+                                "1": {
+                                    "id": "1",
+                                    "dcAdjustments": [],
+                                    "difficulty": {
+                                        "leveledDC": true
+                                    },
+                                    "skills": {
+                                        "1": {
+                                            "id": "1"
+                                        }
+                                    }
+                                }
+                            },
+                            "description": ""
+                        }
+                    }
+                },
+                "2": {
+                    "id": "2",
+                    "name": "",
+                    "position": 2,
+                    "obstacles": {
+                        "1": {
+                            "id": "1",
+                            "name": "",
+                            "img": "",
+                            "position": 1,
+                            "infiltrationPoints": {
+                                "current": 0,
+                                "max": 2
+                            },
+                            "skillChecks": {
+                                "1": {
+                                    "id": "1",
+                                    "description": ""
+                                }
+                            },
+                            "description": ""
+                        }
+                    }
+                },
+                "3": {
+                    "id": "3",
+                    "name": "",
+                    "hidden": true,
+                    "position": 3,
+                    "obstacles": {
+                        "1": {
+                            "id": "1",
+                            "name": "",
+                            "img": "",
+                            "position": 1,
+                            "infiltrationPoints": {
+                                "current": 0,
+                                "max": 2
+                            },
+                            "skillChecks": {
+                                "1": {
+                                    "id": "1",
+                                    "description": ""
+                                }
+                            },
+                            "description": ""
+                        }
+                    }
+                }
+            },
+            "complicationsData": {
+                "1": {
+                    "id": "1",
+                    "name": "Eyes Everwhere",
+                    "trigger": "The group reaches 5 Awareness Points for the first time",
+                    "description": "",
+                    "skillChecks": {},
+                    "results": {}
+                },
+                "2": {
+                    "id": "2",
+                    "name": "Bereft Of Hope",
+                    "trigger": "A player critically fails for the first time",
+                    "description": "",
+                    "skillChecks": {},
+                    "results": {}
+                }
+            },
+            "opportunities": {
+                "1": {
+                    "id": "1",
+                    "name": "Inspire Hope",
+                    "requirements": "A player critically succeeds for the first time",
+                    "description": ""
+                },
+                "2": {
+                    "id": "2",
+                    "name": "Sway The Guards",
+                    "requirements": "A player successfully uses diplomacy to pass the Wight Walkers",
+                    "description": ""
+                }
+            },
+            "preparations": {},
+            "preparationsActivitiesData": {
+                "bribeContact": {
+                    "id": "bribeContact",
+                    "name": "Bribe Contact",
+                    "tags": ["downtime", "secret"],
+                    "cost": "A bribe worth at least one-tenth of the Currency per Additional PC listed on Table 10–9: Party Treasure by Level. Doubling this amount grants a +2 circumstance bonus to the check.",
+                    "requirements": "You've successfully Gained a Contact.",
+                    "description": "You offer a bribe to your contact to help the heist in some way.",
+                    
+                    "results": {
+                        "success": {
+                            "degreeOfSuccess": "success",
+                            "description": "The contact accepts the bribe and you gain 1 EP.",
+                            "nrOutcomes": 1,
+                            "inUse": true
+                        },
+                        "failure": {
+                            "degreeOfSuccess": "failure",
+                            "fakeDegreeOfSuccess": "success",
+                            "description": "You believe you successfully Bribed your Contact and gained 1 EP, but in fact the contact informs the opposition of the attempted bribery, adding 1 AP to the infiltration. The GM can reveal that this Edge Point grants no benefit at any point during the infiltration, as befits the story.",
+                            "awarenessPoints": 1,
+                            "nrOutcomes": 0,
+                            "inUse": true
+                        },
+                        "criticalFailure": {
+                            "degreeOfSuccess": "criticalFailure",
+                            "fakeDegreeOfSuccess": "success",
+                            "description": "As failure, but adding 2 AP to the infiltration.",
+                            "awarenessPoints": 2,
+                            "nrOutcomes": 0,
+                            "inUse": true
+                        }
+                    },
+                    "skillChecks": {
+                        "1": {
+                            "id": "1",
+                            "dcAdjustments": ["hard", "veryHard"],
+                            "selectedAdjustment": "hard",
+                            "difficulty": {
+                                "leveledDC": true
+                            },
+                            "skills": {
+                                "1": {
+                                    "id": "1",
+                                    "skill": "deception"
+                                },
+                                "2": {
+                                    "id": "2",
+                                    "skill": "diplomacy"
+                                }
+                            }
+                        }
+                    },
+                    "edgeLabel": "Contact",
+                    "maxAttempts": 1
+                },
+                "forgeDocuments": {
+                    "id": "forgeDocuments",
+                    "name": "Forge Documents",
+                    "tags": ["downtime", "secret"],
+                    "description": "You prepare forgeries that might serve as convincing props. Attempt a hard or very hard Society check.",
+                    "results": {
+                        "success": {
+                            "degreeOfSuccess": "success",
+                            "description": "You create convincing forgeries and gain 1 EP you can use only when presenting some form of paperwork.",
+                            "inUse": true
+                        },
+                        "failure": {
+                            "degreeOfSuccess": "failure",
+                            "fakeDegreeOfSuccess": "success",
+                            "description": "You create unconvincing documents. You gain 1 EP that (unknown to you) grants no benefit when used.",
+                            "inUse": true
+                        },
+                        "criticalFailure": {
+                            "degreeOfSuccess": "criticalFailure",
+                            "fakeDegreeOfSuccess": "success",
+                            "description": "As a failure, but a PC who tries to use the Edge Point gets a critical failure, even if they use the Edge Point after rolling a failure.",
+                            "inUse": true
+                        }
+                    },
+                    "skillChecks": {
+                        "1": {
+                            "id": "1",
+                            "dcAdjustments": ["hard", "veryHard"],
+                            "difficulty": {
+                                "leveledDC": true
+                            },
+                            "skills": {
+                                "1": {
+                                    "id": "1",
+                                    "skill": "society"
+                                }
+                            }
+                        }
+                    },
+                    "edgeLabel": "Forged Documents",
+                    "maxAttempts": 1
+                },
+                "gainContact": {
+                    "id": "gainContact",
+                    "name": "Gain Contact",
+                    "tags": ["downtime"],
+                    "description": "You try to make contact with an individual who can aid you in the infiltration. Attempt a normal, hard, or very hard DC Diplomacy or Society check, or a check using a Lore skill appropriate to your prospective contact.",
+                    "results": {
+                        "success": {
+                            "degreeOfSuccess": "success",
+                            "description": "You make contact and gain 1 EP.",
+                            "inUse": true
+                        },
+                        "failure": {
+                            "degreeOfSuccess": "failure",
+                            "description": "You fail to make contact.",
+                            "inUse": true
+                        },
+                        "criticalFailure": {
+                            "degreeOfSuccess": "criticalFailure",
+                            "description": "You insult or spook the contact in some way. Future attempts take a –2 circumstance penalty. <strong>Special</strong> Multiple critical failures might cause the contact to work against the PCs in some way, likely increasing the party’s Awareness Points.",
+                            "inUse": true
+                        }
+                    },
+                    "skillChecks": {
+                        "1": {
+                            "id": "1",
+                            "dcAdjustments": ["standard", "hard", "veryHard"],
+                            "difficulty": {
+                                "leveledDC": true
+                            },
+                            "skills": {
+                                "1": {
+                                    "id": "1",
+                                    "skill": "diplomacy"
+                                },
+                                "2": {
+                                    "id": "2",
+                                    "skill": "society"
+                                }
+                            }
+                        }
+                    },
+                    "edgeLabel": "Contact",
+                    "maxAttempts": 1
+                },
+                "gossip": {
+                    "id": "gossip",
+                    "name": "Gossip",
+                    "tags": ["downtime", "secret"],
+                    "description": "You seek out rumors about the infiltration’s target. Attempt a normal, hard, or very hard Diplomacy check.",
+                    "results": {
+                        "criticalSuccess": {
+                            "degreeOfSuccess": "criticalSuccess",
+                            "description": "You gain inside information about the location or group you’re trying to infiltrate. This grants you a +2 circumstance bonus to future checks you attempt for preparation activities for this infiltration. If you share this information, those you share it with also gain this bonus.",
+                            "inUse": true
+                        },
+                        "success": {
+                            "degreeOfSuccess": "success",
+                            "description": "You gain inside information about the place or group you’re attempting to infiltrate that aids your planning.",
+                            "inUse": true
+                        },
+                        "failure": {
+                            "degreeOfSuccess": "failure",
+                            "description": "You learn nothing.",
+                            "inUse": true
+                        },
+                        "criticalFailure": {
+                            "degreeOfSuccess": "criticalFailure",
+                            "description": "You hear a few mistaken rumors and take a –2 circumstance penalty to your next check for a preparation activity. Word spreads around that you’re asking after that group or individual, increasing your Awareness Points by 1.",
+                            "awarenessPoints": 1,
+                            "inUse": true
+                        }
+                    },
+                    "skillChecks": {
+                        "1": {
+                            "id": "1",
+                            "dcAdjustments": ["standard", "hard", "veryHard"],
+                            "difficulty": {
+                                "leveledDC": true
+                            },
+                            "skills": {
+                                "1": {
+                                    "id": "1",
+                                    "skill": "diplomacy"
+                                }
+                            }
+                        }
+                    },
+                    "edgeLabel": "Gossip",
+                    "maxAttempts": 1
+                },
+                "scoutLocation": {
+                    "id": "scoutLocation",
+                    "name": "Scout Location",
+                    "tags": ["downtime", "secret"],
+                    "description": "You spend time observing the place or group you wish to infiltrate. Attempt a normal, hard, or very hard DC Perception, Society or Stealth check.",
+                    "results": {
+                        "success": {
+                            "degreeOfSuccess": "success",
+                            "description": "You make observations that provide 1 EP.",
+                            "inUse": true
+                        },
+                        "failure": {
+                            "degreeOfSuccess": "failure",
+                            "description": "You learn nothing particularly noteworthy.",
+                            "inUse": true
+                        },
+                        "criticalFailure": {
+                            "degreeOfSuccess": "criticalFailure",
+                            "fakeDegreeOfSuccess": "success",
+                            "description": "You misjudge some aspect of what you observed, gaining 1 EP that results in a critical failure instead of a success when used, even if a PC uses the Edge Point after rolling a failure.",
+                            "inUse": true
+                        }
+                    },
+                    "skillChecks": {
+                        "1": {
+                            "id": "1",
+                            "dcAdjustments": ["standard", "hard", "veryHard"],
+                            "difficulty": {
+                                "leveledDC": true
+                            },
+                            "skills": {
+                                "1": {
+                                    "id": "1",
+                                    "skill": "diplomacy"
+                                }
+                            }
+                        }
+                    },
+                    "edgeLabel": "Scouting Info",
+                    "maxAttempts": 1
+                },
+                "secureDisguises": {
+                    "id": "secureDisguises",
+                    "name": "Secure Disguises",
+                    "tags": ["downtime"],
+                    "description": "You seek to procure or create disguises. Attempt a normal, hard, or very hard Crafting, Deception, Performance, or Society check.",
+                    "results": {
+                        "success": {
+                            "degreeOfSuccess": "success",
+                            "description": "You procure or creates disguises, gaining 1 EP that can be used only to maintain a cover identity.",
+                            "inUse": true
+                        },
+                        "failure": {
+                            "degreeOfSuccess": "failure",
+                            "description": "Your efforts result in an unusable disguise.",
+                            "inUse": true
+                        }
+                    },
+                    "skillChecks": {
+                        "1": {
+                            "id": "1",
+                            "dcAdjustments": ["hard", "veryHard"],
+                            "difficulty": {
+                                "leveledDC": true
+                            },
+                            "skills": {
+                                "1": {
+                                    "id": "1",
+                                    "skill": "crafting"
+                                },
+                                "2": {
+                                    "id": "2",
+                                    "skill": "deception"
+                                },
+                                "3": {
+                                    "id": "3",
+                                    "skill": "performance"
+                                },
+                                "4": {
+                                    "id": "4",
+                                    "skill": "society"
+                                }
+                            }
+                        }
+                    },
+                    "edgeLabel": "Disguise",
+                    "maxAttempts": 1
+                }
+            }
         }
     }
 }
+

@@ -1441,6 +1441,51 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-events-container .research-events-inner-container .research-event-container .research-event-text {
   font-style: italic;
 }
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-edges-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-edges-container .infiltration-edge-container {
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 6px;
+  padding: 4px;
+  position: relative;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-edges-container .infiltration-edge-container .infiltration-edge-title {
+  position: relative;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-edges-container .infiltration-edge-container .infiltration-edge-title.spent::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: black;
+  transform: rotate(-3deg);
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-edges-container .infiltration-edge-container .edge-section-used {
+  font-size: 12px;
+  position: absolute;
+  left: 0;
+  opacity: 0.4;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-edges-container .infiltration-edge-container .edge-section-used.active {
+  opacity: 1;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-edges-container .infiltration-edge-container .event-section-delete-button {
+  font-size: 12px;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-edges-container .infiltration-edge-container .event-section-hider {
+  font-size: 12px;
+  left: 16px;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-edges-container .infiltration-edge-container .event-section-opener {
+  font-size: 24px;
+}
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complications-container .infiltration-complications-inner-container {
   display: flex;
   flex-direction: column;
@@ -1510,6 +1555,8 @@ form.pf2e-subsystems.application > header .header-control {
   display: flex;
   align-items: center;
   position: relative;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .event-sidebar .awareness-points-container .awareness-point-breakpoints-container {
   display: flex;
@@ -1609,6 +1656,7 @@ form.pf2e-subsystems.application > header .header-control {
   border-style: solid;
   border-radius: 6px;
   padding: 4px;
+  margin-bottom: 4px;
   white-space: nowrap;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .event-section-body .infiltration-result-buttons {
@@ -1634,9 +1682,7 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .event-section-body .infiltration-results-container {
   display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  gap: 4px;
+  flex-direction: column;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .event-section-body .infiltration-results-container .infiltration-result-container {
   text-align: center;
@@ -1686,6 +1732,17 @@ form.pf2e-subsystems.application > header .header-control {
   gap: 4px;
   overflow: auto;
 }
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .preparation-cards-container .preparation-activity-header {
+  padding: 0 150px;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .preparation-cards-container .preparation-activity-header .preparation-section-attempts-counter {
+  position: absolute;
+  right: 50px;
+  opacity: 0.8;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .preparation-cards-container .preparation-activity-body p {
+  margin: 4px 0;
+}
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .preparation-cards-container .preparation-card {
   display: flex;
   flex-direction: column;
@@ -1722,6 +1779,12 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .preparation-cards-container .preparation-card .infiltration-preparations-activity-tags {
   flex: 1;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .preparation-cards-container .preparation-card .preparation-activity-description {
+  align-self: center;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .preparation-cards-container .preparation-card .preparation-activity-results-description {
+  line-height: 18px;
 }
 .pf2e-subsystems.pf2e-subsystems-menu .menu-outer-container {
   display: flex;

@@ -32,6 +32,17 @@ export class Infiltration extends foundry.abstract.DataModel {
             description: new fields.HTMLField(),
           })),
         }),
+        edgePoints: new TypedObjectField(new fields.SchemaField({
+          id: new fields.StringField({ required: true }),
+          name: new fields.StringField({ required: true }),
+          faked: new fields.BooleanField({ required: true, initial: false }),
+          used: new fields.BooleanField({ required: true, initial: false }),
+          originActivity: new fields.StringField({ required: true }),
+          originResult: new fields.StringField({ required: true }),
+          awarenessPoints: new fields.NumberField({ required: true, initial: 0 }),
+          description: new fields.HTMLField(),
+          hiddenDescription: new fields.HTMLField(),
+        })),
         objectives: new TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
           hidden: new fields.BooleanField({ required: true, initial: false }),
@@ -179,7 +190,7 @@ export class Infiltration extends foundry.abstract.DataModel {
       }, {});
     }
 
-    get preparationsActivitesData() {
+    get preparationsActivitiesData() {
       return Object.values(this.preparations.activities).reduce((acc, activity) => {
         acc[activity.id] = {
           ...activity,
@@ -263,19 +274,11 @@ export class Preparations extends foundry.abstract.DataModel {
           })),
         })),
         results: new fields.SchemaField({
-          criticalSuccess: degreeOfSuccessFields(degreesOfSuccess.criticalSuccess.value),
-          success: degreeOfSuccessFields(degreesOfSuccess.success.value),
-          failure: degreeOfSuccessFields(degreesOfSuccess.failure.value),
-          criticalFailure: degreeOfSuccessFields(degreesOfSuccess.criticalFailure.value),
+          criticalSuccess: resultsField(degreesOfSuccess.criticalSuccess.value),
+          success: resultsField(degreesOfSuccess.success.value),
+          failure: resultsField(degreesOfSuccess.failure.value),
+          criticalFailure: resultsField(degreesOfSuccess.criticalFailure.value),
         }),
-        resultsOutcome: new fields.StringField(),
-        // consequences: new TypedObjectField(new fields.SchemaField({
-        //   degreeOfSuccess: new fields.StringField({ required: true, initial: 'success' }),
-        //   description: new fields.HTMLField(),
-        //   edgePoints: new fields.NumberField({ required: true, initial: 0 }),
-        //   awarenessPoints: new fields.NumberField({ required: true, initial: 0 }),
-        //   instances: new fields.NumberField({ required: true, initial: 0 }),
-        // })),
         edgeLabel: new fields.StringField(),
         maxAttempts: new fields.NumberField({ required: true, initial: 1 }),
       }))
@@ -286,5 +289,15 @@ export class Preparations extends foundry.abstract.DataModel {
 const degreeOfSuccessFields = (degreeOfSuccess) => new foundry.data.fields.SchemaField({
   degreeOfSuccess: new foundry.data.fields.StringField({ required: true, initial: degreeOfSuccess}),
   description: new foundry.data.fields.HTMLField(),
+  nrOutcomes: new foundry.data.fields.NumberField({ required: true, initial: 0 }),
+  inUse: new foundry.data.fields.BooleanField({ required: true, initial: false }),
+});
+
+const resultsField = (degreeOfSuccess) => new foundry.data.fields.SchemaField({
+  degreeOfSuccess: new foundry.data.fields.StringField({ required: true, initial: degreeOfSuccess}),
+  fakeDegreeOfSuccess: new foundry.data.fields.StringField(),
+  description: new foundry.data.fields.HTMLField(),
+  nrOutcomes: new foundry.data.fields.NumberField({ required: true, initial: 0 }),
+  awarenessPoints: new foundry.data.fields.NumberField(),
   inUse: new foundry.data.fields.BooleanField({ required: true, initial: false }),
 });

@@ -4,6 +4,60 @@
         .event-outer-container {
             .event-container { 
 
+                .infiltration-edges-container {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 4px;
+                    padding: @paddingNormal;
+
+                    .infiltration-edge-container {
+                        border-width: 1px;
+                        border-style: solid;
+                        border-radius: 6px;
+                        padding: @paddingNormal;
+                        position: relative;
+
+                        .infiltration-edge-title {
+                            position: relative;
+
+                            &.spent::after {
+                                content: "";
+                                position: absolute;
+                                top: 50%;
+                                left: 0;
+                                width: 100%;
+                                height: 3px;
+                                background: black;
+                                transform: rotate(-3deg);
+                            }
+                        }
+
+                        .edge-section-used {
+                            font-size: 12px;
+                            position: absolute;
+                            left: 0;
+                            opacity: 0.4;
+                            
+                            &.active {
+                                opacity: 1;
+                            }
+                        }
+
+                        .event-section-delete-button {
+                            font-size: 12px;
+                        }
+
+                        .event-section-hider {
+                            font-size: 12px;
+                            left: 16px;
+                        }
+
+                        .event-section-opener {
+                            font-size: 24px;
+                        }
+                    }
+                }
+
                 .infiltration-complications-container {
 
                     .infiltration-complications-inner-container {
@@ -94,6 +148,8 @@
                             display: flex;
                             align-items: center;
                             position: relative;
+                            border-bottom-width: 1px;
+                            border-bottom-style: solid;
                         }
 
                         .awareness-point-breakpoints-container {
@@ -215,6 +271,7 @@
                         border-style: solid;
                         border-radius: 6px;
                         padding: @paddingNormal;
+                        margin-bottom: @marginNormal;
                         white-space: nowrap;
                     }
                 }
@@ -247,9 +304,7 @@
 
                     .infiltration-results-container {
                         display: flex;
-                        align-items: center;
-                        justify-content: space-evenly;
-                        gap: @gapSmall;
+                        flex-direction: column;
 
                         .infiltration-result-container {
                             text-align: center;
@@ -308,6 +363,22 @@
                         gap: @gapSmall;
                         overflow: auto;
 
+                        .preparation-activity-header {
+                            padding: 0 150px;
+
+                            .preparation-section-attempts-counter {
+                                position: absolute;
+                                right: 50px;
+                                opacity: 0.8;
+                            }
+                        }
+
+                        .preparation-activity-body {
+                            p {
+                                margin: 4px 0;
+                            }
+                        }
+
                         .preparation-card {
                             display: flex;
                             flex-direction: column;
@@ -349,6 +420,14 @@
 
                             .infiltration-preparations-activity-tags {
                                 flex: 1;
+                            }
+
+                            .preparation-activity-description {
+                                align-self: center;
+                            }
+
+                            .preparation-activity-results-description {
+                                line-height: 18px;
                             }
                         }
                     }

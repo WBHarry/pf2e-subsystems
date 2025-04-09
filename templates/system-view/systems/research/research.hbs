@@ -35,7 +35,7 @@
                             </div>
                             <div class="event-field-col-form text-normal">
                                 <div>{{localize "PF2ESubsystems.View.MaxTime"}}</div>
-                                <input class="tertiary-container" type="text" data-dtype="number" name="{{concat "events." this.event.id ".timeLimit.max"}}" value="{{this.event.timeLimit.max}}" />
+                                <input class="tertiary-container" type="text" data-dtype="Number" name="{{concat "events." this.event.id ".timeLimit.max"}}" value="{{this.event.timeLimit.max}}" />
                             </div>
                         </div>
                     {{else}}
@@ -132,7 +132,7 @@
                                                     </div>
                                                     <div class="event-field-form">
                                                         <div>{{localize "PF2ESubsystems.Research.MaxResearchPoints"}}</div>
-                                                        <input class="tertiary-container" type="text" data-dtype="number" name="{{concat "events." ../event.id ".researchChecks." this.id ".maximumResearchPoints"}}" value="{{this.maximumResearchPoints}}" />
+                                                        <input class="tertiary-container" type="text" data-dtype="Number" name="{{concat "events." ../event.id ".researchChecks." this.id ".maximumResearchPoints"}}" value="{{this.maximumResearchPoints}}" />
                                                     </div>
                                                 </div>
                                                 <prose-mirror class="data-input tertiary-container" name="{{concat "events." ../event.id ".researchChecks." this.id ".description"}}" value="{{this.description}}">
@@ -179,7 +179,7 @@
                                                                     </div>
                                                                     <div class="research-check-skill-check-value-container dc">
                                                                         <div>{{localize "PF2ESubsystems.Basic.DC"}}</div>
-                                                                        <input type="text" data-dtype="number" name="{{concat "events." ../../../event.id ".researchChecks." ../../id ".skillChecks." ../id ".skills." this.id ".dc"}}" value="{{this.dc}}" />
+                                                                        <input type="text" data-dtype="Number" name="{{concat "events." ../../../event.id ".researchChecks." ../../id ".skillChecks." ../id ".skills." this.id ".dc"}}" value="{{this.dc}}" />
                                                                     </div>
                                                                     <div class="research-check-skill-check-value-container">
                                                                         {{localize "PF2ESubsystems.Research.Basic"}}
@@ -250,7 +250,7 @@
                                             <div class="event-field-form">
                                                 <i class="fa-solid fa-trash clickable-icon research-breakpoint-delete-button" data-action="removeResearchBreakpoint" data-event="{{../event.id}}" data-breakpoint="{{this.id}}"></i>
                                                 <div>{{localize "PF2ESubsystems.Research.ResearchBreakpoint"}}</div>
-                                                <input type="text" data-dtype="number" name="{{concat "events." ../event.id ".researchBreakpoints." this.id ".breakpoint"}}" value="{{this.breakpoint}}" class="tertiary-container primary-text-container" />
+                                                <input type="text" data-dtype="Number" name="{{concat "events." ../event.id ".researchBreakpoints." this.id ".breakpoint"}}" value="{{this.breakpoint}}" class="tertiary-container primary-text-container" />
                                                 <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon research-breakpoint-opener" data-action="toggleResearchOpenResearchBreakpoint" data-breakpoint="{{this.id}}"></i> 
                                             </div>
                                         </div>

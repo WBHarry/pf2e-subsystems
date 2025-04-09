@@ -153,7 +153,11 @@ export default class SystemView extends HandlebarsApplicationMixin(
         infiltrationActivityToggleAdjustment: this.infiltrationActivityToggleAdjustment,
         infiltrationActivityResultToggle: this.infiltrationActivityResultToggle,
         infiltrationActivityResultSelect: this.infiltrationActivityResultSelect,
-        infiltrationActivityToggleResultsOutcome: this.infiltrationActivityToggleResultsOutcome,
+        infiltrationActivityIncreaseResultsOutcome: this.infiltrationActivityIncreaseResultsOutcome,
+        infiltrationToggleOpenEdge: this.infiltrationToggleOpenEdge,
+        infiltrationToggleEdgeFaked: this.infiltrationToggleEdgeFaked,
+        infiltrationToggleEdgeUsed: this.infiltrationToggleEdgeUsed,
+        infiltrationEdgeRemove: this.infiltrationEdgeRemove,
       },
       form: { handler: this.updateData, submitOnChange: true },
       window: {
@@ -1418,8 +1422,13 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
     static async infiltrationActivityResultToggle(event, button) {
       event.stopPropagation();
-      const currentInUse = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].preparations.activities[button.dataset.activity].results[button.dataset.result].inUse;
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.results.${button.dataset.result}.inUse`]: !currentInUse });
+      const activity = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].preparations.activities[button.dataset.activity].results[button.dataset.result];
+
+      if(activity.inUse && activity.degreeOfSuccess === this.selected.infiltration.preparations.resultSelect) {
+        this.selected.infiltration.preparations.resultSelect = null;
+      }
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.results.${button.dataset.result}.inUse`]: !activity.inUse });
     }
 
     static async infiltrationActivityResultSelect(_, button) {
@@ -1427,9 +1436,98 @@ export default class SystemView extends HandlebarsApplicationMixin(
       this.render({ parts: [this.tabGroups.main] });
     }
 
-    static async infiltrationActivityToggleResultsOutcome(_, button) {
-      const currentResultsOutcome = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].preparations.activities[button.dataset.activity].resultsOutcome;
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.resultsOutcome`]: currentResultsOutcome === button.dataset.result ? null : button.dataset.result });
+    static async infiltrationActivityIncreaseResultsOutcome(_, button) {
+      const activity = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].preparations.activities[button.dataset.activity];
+      const totalAttempts = Object.values(activity.results).reduce((acc, curr) => {
+        acc += curr.nrOutcomes;
+        return acc;
+      }, 0)
+
+      if(totalAttempts === activity.maxAttempts) return;
+
+      const edgeId = foundry.utils.randomID();
+      const result = activity.results[button.dataset.result];
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}`]: {
+        [`preparations.activities.${button.dataset.activity}.results.${button.dataset.result}.nrOutcomes`]: result.nrOutcomes + 1,
+        edgePoints: {
+          [edgeId]: {
+            id: edgeId,
+            faked: Boolean(result.fakeDegreeOfSuccess),
+            name: activity.edgeLabel,
+            originActivity: button.dataset.activity,
+            originResult: `${button.dataset.result}_${result.nrOutcomes + 1}`,
+            awarenessPoints: result.awarenessPoints,
+            description: result.fakeDegreeOfSuccess ? activity.results[result.fakeDegreeOfSuccess].description : result.description,
+            hiddenDescription: result.fakeDegreeOfSuccess ? result.description : undefined,
+          }
+        }
+      }});
+    }
+
+    async infiltrationActivityDecreaseResultsOutcome(baseEvent) {
+      const button = baseEvent.currentTarget;
+      const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event];
+      const currentOutcomes = event.preparations.activities[button.dataset.activity].results[button.dataset.result].nrOutcomes
+
+      if(currentOutcomes === 0) return;
+
+      const edgeToRemove = Object.values(event.edgePoints).find(x => x.originActivity === button.dataset.activity && x.originResult === `${button.dataset.result}_${currentOutcomes}`);
+
+      // new foundry.applications.api.DialogV2({
+      //   buttons: [
+      //     {
+      //       action: "ok",
+      //       label: "Remove Edge",
+      //       callback: async () => {
+      //         await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.edgePoints.-=${edgeToRemove.id}`]: null });
+      //         await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.results.${button.dataset.result}.nrOutcomes`]: currentOutcomes - 1 });
+      //       }
+      //     },
+      //     {
+      //       action: "keep",
+      //       label: "Keep Edge",
+      //       callback: async () => {
+      //         await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.results.${button.dataset.result}.nrOutcomes`]: currentOutcomes - 1 });
+      //       }
+      //     },
+      //     {
+      //       action: "cancel",
+      //       label: "Cancel",
+      //       icon: "fa-solid fa-x",
+      //       default: true,
+      //     },
+      //   ],
+      //   content: game.i18n.format("PF2ESubsystems.Infiltration.ConfirmRemoveEdgeText", { edge: edgeToRemove.name }),
+      //   rejectClose: false,
+      //   modal: false,
+      //   position: {},
+      //   window: {
+      //     title: game.i18n.localize(
+      //       "PF2ESubsystems.Infiltration.ConfirmRemoveEdgeTitle",
+      //     ),
+      //   },
+      // }).render(true);
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.results.${button.dataset.result}.nrOutcomes`]: currentOutcomes - 1 });
+    }
+
+    static async infiltrationToggleOpenEdge(_, button) {
+      this.selected.infiltration.openEdge = this.selected.infiltration.openEdge === button.dataset.edge ? null : button.dataset.edge;
+      this.render({ parts: [this.tabGroups.main] });
+    }
+
+    static async infiltrationToggleEdgeFaked(_, button) {
+      const currentFaked = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].edgePoints[button.dataset.edge].faked;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.edgePoints.${button.dataset.edge}.faked`]: !currentFaked });
+    }
+
+    static async infiltrationToggleEdgeUsed(_, button) {
+      const currentUsed = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].edgePoints[button.dataset.edge].used;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.edgePoints.${button.dataset.edge}.used`]: !currentUsed });
+    }
+
+    static async infiltrationEdgeRemove(_, button) {
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.edgePoints.-=${button.dataset.edge}`]: null });
     }
     //#endregion 
 
@@ -1649,6 +1747,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
           $(htmlElement).find('.infiltration-complication-lore').on('change', this.updateComplicationLore.bind(this));
           $(htmlElement).find('.infiltration-activity-leveled-DC').on('change', this.updateInfiltrationActivityLeveldDC.bind(this));
           $(htmlElement).find('.infiltration-activity-lore').on('change', this.updateInfiltrationActivityLore.bind(this));
+          $(htmlElement).find('.infiltration-activity-result-button').on('contextmenu', this.infiltrationActivityDecreaseResultsOutcome.bind(this));
 
           const adjustmentOptions = Object.values(dcAdjustments);
           const tagOptions = Object.keys(CONFIG.PF2E.actionTraits).map(x => ({ value: x, name: game.i18n.localize(CONFIG.PF2E.actionTraits[x]) }));
@@ -1808,7 +1907,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
             context.selectedEvent.extendedComplications = context.selectedEvent.complicationsData;
             context.selectedEvent.extendedPreparations = {
               ...context.selectedEvent.preparations,
-              activities: context.selectedEvent.preparationsActivitesData
+              activities: context.selectedEvent.preparationsActivitiesData
             };
             context.currentObjectiveNr = (this.selected.infiltration.currentObjective ?? 1);
             const awarenessDCIncrease = context.selectedEvent.awarenessDCIncrease;
@@ -1900,6 +1999,15 @@ export default class SystemView extends HandlebarsApplicationMixin(
               }
             }
 
+            for(var key of Object.keys(context.selectedEvent.edgePoints)){
+              const edgePoint = context.selectedEvent.edgePoints[key];
+              edgePoint.open = this.selected.infiltration.openEdge === edgePoint.id;
+
+              edgePoint.enrichedDescription = await TextEditor.enrichHTML(edgePoint.description);
+              edgePoint.enrichedHiddenDescription = edgePoint.hiddenDescription ? await TextEditor.enrichHTML(edgePoint.hiddenDescription) : null;
+              edgePoint.playerDescription = !edgePoint.faked && edgePoint.enrichedHiddenDescription ? edgePoint.enrichedHiddenDescription : edgePoint.enrichedDescription;
+            }
+
             for(var key of Object.keys(context.selectedEvent.awarenessPoints.breakpoints)){
               const breakpoint = context.selectedEvent.awarenessPoints.breakpoints[key];
               breakpoint.description = game.i18n.localize(breakpoint.description);
@@ -1986,7 +2094,14 @@ export default class SystemView extends HandlebarsApplicationMixin(
                 var result = activity.results[key];
                 result.name = game.i18n.localize(degreesOfSuccess[result.degreeOfSuccess].name);
                 result.selected = this.selected.infiltration.complicationResultSelect === result.degreeOfSuccess;
-                result.enrichedDescription = await TextEditor.enrichHTML(result.description);
+                result.fakeDegrees = Object.keys(degreesOfSuccess).reduce((acc, key) => {
+                  if(key !== result.degreeOfSuccess) acc[key] = degreesOfSuccess[key];
+                  return acc;
+                }, {});
+                
+                const titleElement = `<p><strong class="infiltration-result-container ${result.nrOutcomes === 0 ? 'inactive' : ''} clickable-icon tertiary-container primary-text-container infiltration-activity-result-button" data-action="infiltrationActivityIncreaseResultsOutcome" data-event="${context.selectedEvent.id}" data-activity="${activity.id}" data-result="${result.degreeOfSuccess}">${result.name} ${result.nrOutcomes}x</strong>`;
+                const descriptionStartsWithParagraph = result.description.match(/^<p>/);
+                result.enrichedDescription = await TextEditor.enrichHTML(descriptionStartsWithParagraph ? result.description.replace('<p>', `${titleElement} `) : `${titleElement} ${result.description}`);
               }
 
               activity.selectedResult = Object.values(activity.results).find(x => x.degreeOfSuccess === this.selected.infiltration.preparations.resultSelect);

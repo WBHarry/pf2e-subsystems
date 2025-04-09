@@ -338,6 +338,7 @@ const settingIDs = {
 const tourIDs = {
     chase: "pf2e-subsystems-chase",
     research: "pf2e-subsystems-research",
+    infiltration: "pf2e-subsystems-infiltration",
 };
 
 const timeUnits = {
@@ -444,18 +445,22 @@ const defaultInfiltrationPreparations = {
         description: 'You offer a bribe to your contact to help the heist in some way.',
         results: {
             success: {
-                degreesOfSuccess: 'success',
+                degreeOfSuccess: 'success',
                 description: 'The contact accepts the bribe and you gain 1 EP.',
                 inUse: true,
             },
             failure: {
                 degreeOfSuccess: 'failure',
+                fakeDegreeOfSuccess: 'success',
                 description: 'You believe you successfully Bribed your Contact and gained 1 EP, but in fact the contact informs the opposition of the attempted bribery, adding 1 AP to the infiltration. The GM can reveal that this Edge Point grants no benefit at any point during the infiltration, as befits the story.',
+                awarenessPoints: 1,
                 inUse: true,
             },
             criticalFailure: {
                 degreeOfSuccess: 'criticalFailure',
+                fakeDegreeOfSuccess: 'success',
                 description: 'As failure, but adding 2 AP to the infiltration.',
+                awarenessPoints: 2,
                 inUse: true,
             }
         },
@@ -485,17 +490,19 @@ const defaultInfiltrationPreparations = {
         description: 'You prepare forgeries that might serve as convincing props. Attempt a hard or very hard Society check.',
         results: {
             success: {
-                degreesOfSuccess: 'success',
+                degreeOfSuccess: 'success',
                 description: 'You create convincing forgeries and gain 1 EP you can use only when presenting some form of paperwork.',
                 inUse: true,
             },
             failure: {
                 degreeOfSuccess: 'failure',
+                fakeDegreeOfSuccess: 'success',
                 description: 'You create unconvincing documents. You gain 1 EP that (unknown to you) grants no benefit when used.',
                 inUse: true,
             },
             criticalFailure: {
                 degreeOfSuccess: 'criticalFailure',
+                fakeDegreeOfSuccess: 'success',
                 description: 'As a failure, but a PC who tries to use the Edge Point gets a critical failure, even if they use the Edge Point after rolling a failure.',
                 inUse: true,
             }
@@ -522,7 +529,7 @@ const defaultInfiltrationPreparations = {
         description: 'You try to make contact with an individual who can aid you in the infiltration. Attempt a normal, hard, or very hard DC Diplomacy or Society check, or a check using a Lore skill appropriate to your prospective contact.',
         results: {
             success: {
-                degreesOfSuccess: 'success',
+                degreeOfSuccess: 'success',
                 description: 'You make contact and gain 1 EP.',
                 inUse: true,
             },
@@ -568,7 +575,7 @@ const defaultInfiltrationPreparations = {
                 inUse: true,
             },
             success: {
-                degreesOfSuccess: 'success',
+                degreeOfSuccess: 'success',
                 description: 'You gain inside information about the place or group you’re attempting to infiltrate that aids your planning.',
                 inUse: true,
             },
@@ -580,6 +587,7 @@ const defaultInfiltrationPreparations = {
             criticalFailure: {
                 degreeOfSuccess: 'criticalFailure',
                 description: 'You hear a few mistaken rumors and take a –2 circumstance penalty to your next check for a preparation activity. Word spreads around that you’re asking after that group or individual, increasing your Awareness Points by 1.',
+                awarenessPoints: 1,
                 inUse: true,   
             }
         },
@@ -605,7 +613,7 @@ const defaultInfiltrationPreparations = {
         description: 'You spend time observing the place or group you wish to infiltrate. Attempt a normal, hard, or very hard DC Perception, Society or Stealth check.',
         results: {
             success: {
-                degreesOfSuccess: 'success',
+                degreeOfSuccess: 'success',
                 description: 'You make observations that provide 1 EP.',
                 inUse: true,
             },
@@ -616,6 +624,7 @@ const defaultInfiltrationPreparations = {
             },
             criticalFailure: {
                 degreeOfSuccess: 'criticalFailure',
+                fakeDegreeOfSuccess: 'success',
                 description: 'You misjudge some aspect of what you observed, gaining 1 EP that results in a critical failure instead of a success when used, even if a PC uses the Edge Point after rolling a failure.',
                 inUse: true,
             }
@@ -642,7 +651,7 @@ const defaultInfiltrationPreparations = {
         description: 'You seek to procure or create disguises. Attempt a normal, hard, or very hard Crafting, Deception, Performance, or Society check.',
         results: {
             success: {
-                degreesOfSuccess: 'success',
+                degreeOfSuccess: 'success',
                 description: 'You procure or creates disguises, gaining 1 EP that can be used only to maintain a cover identity.',
                 inUse: true,
             },
@@ -712,6 +721,17 @@ class Infiltration extends foundry.abstract.DataModel {
             description: new fields.HTMLField(),
           })),
         }),
+        edgePoints: new TypedObjectField(new fields.SchemaField({
+          id: new fields.StringField({ required: true }),
+          name: new fields.StringField({ required: true }),
+          faked: new fields.BooleanField({ required: true, initial: false }),
+          used: new fields.BooleanField({ required: true, initial: false }),
+          originActivity: new fields.StringField({ required: true }),
+          originResult: new fields.StringField({ required: true }),
+          awarenessPoints: new fields.NumberField({ required: true, initial: 0 }),
+          description: new fields.HTMLField(),
+          hiddenDescription: new fields.HTMLField(),
+        })),
         objectives: new TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
           hidden: new fields.BooleanField({ required: true, initial: false }),
@@ -859,7 +879,7 @@ class Infiltration extends foundry.abstract.DataModel {
       }, {});
     }
 
-    get preparationsActivitesData() {
+    get preparationsActivitiesData() {
       return Object.values(this.preparations.activities).reduce((acc, activity) => {
         acc[activity.id] = {
           ...activity,
@@ -943,19 +963,11 @@ class Preparations extends foundry.abstract.DataModel {
           })),
         })),
         results: new fields.SchemaField({
-          criticalSuccess: degreeOfSuccessFields(degreesOfSuccess.criticalSuccess.value),
-          success: degreeOfSuccessFields(degreesOfSuccess.success.value),
-          failure: degreeOfSuccessFields(degreesOfSuccess.failure.value),
-          criticalFailure: degreeOfSuccessFields(degreesOfSuccess.criticalFailure.value),
+          criticalSuccess: resultsField(degreesOfSuccess.criticalSuccess.value),
+          success: resultsField(degreesOfSuccess.success.value),
+          failure: resultsField(degreesOfSuccess.failure.value),
+          criticalFailure: resultsField(degreesOfSuccess.criticalFailure.value),
         }),
-        resultsOutcome: new fields.StringField(),
-        // consequences: new TypedObjectField(new fields.SchemaField({
-        //   degreeOfSuccess: new fields.StringField({ required: true, initial: 'success' }),
-        //   description: new fields.HTMLField(),
-        //   edgePoints: new fields.NumberField({ required: true, initial: 0 }),
-        //   awarenessPoints: new fields.NumberField({ required: true, initial: 0 }),
-        //   instances: new fields.NumberField({ required: true, initial: 0 }),
-        // })),
         edgeLabel: new fields.StringField(),
         maxAttempts: new fields.NumberField({ required: true, initial: 1 }),
       }))
@@ -966,6 +978,16 @@ class Preparations extends foundry.abstract.DataModel {
 const degreeOfSuccessFields = (degreeOfSuccess) => new foundry.data.fields.SchemaField({
   degreeOfSuccess: new foundry.data.fields.StringField({ required: true, initial: degreeOfSuccess}),
   description: new foundry.data.fields.HTMLField(),
+  nrOutcomes: new foundry.data.fields.NumberField({ required: true, initial: 0 }),
+  inUse: new foundry.data.fields.BooleanField({ required: true, initial: false }),
+});
+
+const resultsField = (degreeOfSuccess) => new foundry.data.fields.SchemaField({
+  degreeOfSuccess: new foundry.data.fields.StringField({ required: true, initial: degreeOfSuccess}),
+  fakeDegreeOfSuccess: new foundry.data.fields.StringField(),
+  description: new foundry.data.fields.HTMLField(),
+  nrOutcomes: new foundry.data.fields.NumberField({ required: true, initial: 0 }),
+  awarenessPoints: new foundry.data.fields.NumberField(),
   inUse: new foundry.data.fields.BooleanField({ required: true, initial: false }),
 });
 
@@ -1306,7 +1328,6 @@ const configSettings = () => {
     config: false,
     type: InfiltrationSettings,
     default: {},
-    // defaults: InfiltrationSettings.getDefault(),
   });
 };
 
@@ -1710,7 +1731,11 @@ class SystemView extends HandlebarsApplicationMixin(
         infiltrationActivityToggleAdjustment: this.infiltrationActivityToggleAdjustment,
         infiltrationActivityResultToggle: this.infiltrationActivityResultToggle,
         infiltrationActivityResultSelect: this.infiltrationActivityResultSelect,
-        infiltrationActivityToggleResultsOutcome: this.infiltrationActivityToggleResultsOutcome,
+        infiltrationActivityIncreaseResultsOutcome: this.infiltrationActivityIncreaseResultsOutcome,
+        infiltrationToggleOpenEdge: this.infiltrationToggleOpenEdge,
+        infiltrationToggleEdgeFaked: this.infiltrationToggleEdgeFaked,
+        infiltrationToggleEdgeUsed: this.infiltrationToggleEdgeUsed,
+        infiltrationEdgeRemove: this.infiltrationEdgeRemove,
       },
       form: { handler: this.updateData, submitOnChange: true },
       window: {
@@ -2975,8 +3000,13 @@ class SystemView extends HandlebarsApplicationMixin(
 
     static async infiltrationActivityResultToggle(event, button) {
       event.stopPropagation();
-      const currentInUse = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].preparations.activities[button.dataset.activity].results[button.dataset.result].inUse;
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.results.${button.dataset.result}.inUse`]: !currentInUse });
+      const activity = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].preparations.activities[button.dataset.activity].results[button.dataset.result];
+
+      if(activity.inUse && activity.degreeOfSuccess === this.selected.infiltration.preparations.resultSelect) {
+        this.selected.infiltration.preparations.resultSelect = null;
+      }
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.results.${button.dataset.result}.inUse`]: !activity.inUse });
     }
 
     static async infiltrationActivityResultSelect(_, button) {
@@ -2984,9 +3014,98 @@ class SystemView extends HandlebarsApplicationMixin(
       this.render({ parts: [this.tabGroups.main] });
     }
 
-    static async infiltrationActivityToggleResultsOutcome(_, button) {
-      const currentResultsOutcome = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].preparations.activities[button.dataset.activity].resultsOutcome;
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.resultsOutcome`]: currentResultsOutcome === button.dataset.result ? null : button.dataset.result });
+    static async infiltrationActivityIncreaseResultsOutcome(_, button) {
+      const activity = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].preparations.activities[button.dataset.activity];
+      const totalAttempts = Object.values(activity.results).reduce((acc, curr) => {
+        acc += curr.nrOutcomes;
+        return acc;
+      }, 0);
+
+      if(totalAttempts === activity.maxAttempts) return;
+
+      const edgeId = foundry.utils.randomID();
+      const result = activity.results[button.dataset.result];
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}`]: {
+        [`preparations.activities.${button.dataset.activity}.results.${button.dataset.result}.nrOutcomes`]: result.nrOutcomes + 1,
+        edgePoints: {
+          [edgeId]: {
+            id: edgeId,
+            faked: Boolean(result.fakeDegreeOfSuccess),
+            name: activity.edgeLabel,
+            originActivity: button.dataset.activity,
+            originResult: `${button.dataset.result}_${result.nrOutcomes + 1}`,
+            awarenessPoints: result.awarenessPoints,
+            description: result.fakeDegreeOfSuccess ? activity.results[result.fakeDegreeOfSuccess].description : result.description,
+            hiddenDescription: result.fakeDegreeOfSuccess ? result.description : undefined,
+          }
+        }
+      }});
+    }
+
+    async infiltrationActivityDecreaseResultsOutcome(baseEvent) {
+      const button = baseEvent.currentTarget;
+      const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event];
+      const currentOutcomes = event.preparations.activities[button.dataset.activity].results[button.dataset.result].nrOutcomes;
+
+      if(currentOutcomes === 0) return;
+
+      Object.values(event.edgePoints).find(x => x.originActivity === button.dataset.activity && x.originResult === `${button.dataset.result}_${currentOutcomes}`);
+
+      // new foundry.applications.api.DialogV2({
+      //   buttons: [
+      //     {
+      //       action: "ok",
+      //       label: "Remove Edge",
+      //       callback: async () => {
+      //         await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.edgePoints.-=${edgeToRemove.id}`]: null });
+      //         await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.results.${button.dataset.result}.nrOutcomes`]: currentOutcomes - 1 });
+      //       }
+      //     },
+      //     {
+      //       action: "keep",
+      //       label: "Keep Edge",
+      //       callback: async () => {
+      //         await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.results.${button.dataset.result}.nrOutcomes`]: currentOutcomes - 1 });
+      //       }
+      //     },
+      //     {
+      //       action: "cancel",
+      //       label: "Cancel",
+      //       icon: "fa-solid fa-x",
+      //       default: true,
+      //     },
+      //   ],
+      //   content: game.i18n.format("PF2ESubsystems.Infiltration.ConfirmRemoveEdgeText", { edge: edgeToRemove.name }),
+      //   rejectClose: false,
+      //   modal: false,
+      //   position: {},
+      //   window: {
+      //     title: game.i18n.localize(
+      //       "PF2ESubsystems.Infiltration.ConfirmRemoveEdgeTitle",
+      //     ),
+      //   },
+      // }).render(true);
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.results.${button.dataset.result}.nrOutcomes`]: currentOutcomes - 1 });
+    }
+
+    static async infiltrationToggleOpenEdge(_, button) {
+      this.selected.infiltration.openEdge = this.selected.infiltration.openEdge === button.dataset.edge ? null : button.dataset.edge;
+      this.render({ parts: [this.tabGroups.main] });
+    }
+
+    static async infiltrationToggleEdgeFaked(_, button) {
+      const currentFaked = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].edgePoints[button.dataset.edge].faked;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.edgePoints.${button.dataset.edge}.faked`]: !currentFaked });
+    }
+
+    static async infiltrationToggleEdgeUsed(_, button) {
+      const currentUsed = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].edgePoints[button.dataset.edge].used;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.edgePoints.${button.dataset.edge}.used`]: !currentUsed });
+    }
+
+    static async infiltrationEdgeRemove(_, button) {
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.edgePoints.-=${button.dataset.edge}`]: null });
     }
     //#endregion 
 
@@ -3206,6 +3325,7 @@ class SystemView extends HandlebarsApplicationMixin(
           $(htmlElement).find('.infiltration-complication-lore').on('change', this.updateComplicationLore.bind(this));
           $(htmlElement).find('.infiltration-activity-leveled-DC').on('change', this.updateInfiltrationActivityLeveldDC.bind(this));
           $(htmlElement).find('.infiltration-activity-lore').on('change', this.updateInfiltrationActivityLore.bind(this));
+          $(htmlElement).find('.infiltration-activity-result-button').on('contextmenu', this.infiltrationActivityDecreaseResultsOutcome.bind(this));
 
           const adjustmentOptions = Object.values(dcAdjustments);
           const tagOptions = Object.keys(CONFIG.PF2E.actionTraits).map(x => ({ value: x, name: game.i18n.localize(CONFIG.PF2E.actionTraits[x]) }));
@@ -3365,7 +3485,7 @@ class SystemView extends HandlebarsApplicationMixin(
             context.selectedEvent.extendedComplications = context.selectedEvent.complicationsData;
             context.selectedEvent.extendedPreparations = {
               ...context.selectedEvent.preparations,
-              activities: context.selectedEvent.preparationsActivitesData
+              activities: context.selectedEvent.preparationsActivitiesData
             };
             context.currentObjectiveNr = (this.selected.infiltration.currentObjective ?? 1);
             const awarenessDCIncrease = context.selectedEvent.awarenessDCIncrease;
@@ -3457,6 +3577,15 @@ class SystemView extends HandlebarsApplicationMixin(
               }
             }
 
+            for(var key of Object.keys(context.selectedEvent.edgePoints)){
+              const edgePoint = context.selectedEvent.edgePoints[key];
+              edgePoint.open = this.selected.infiltration.openEdge === edgePoint.id;
+
+              edgePoint.enrichedDescription = await TextEditor.enrichHTML(edgePoint.description);
+              edgePoint.enrichedHiddenDescription = edgePoint.hiddenDescription ? await TextEditor.enrichHTML(edgePoint.hiddenDescription) : null;
+              edgePoint.playerDescription = !edgePoint.faked && edgePoint.enrichedHiddenDescription ? edgePoint.enrichedHiddenDescription : edgePoint.enrichedDescription;
+            }
+
             for(var key of Object.keys(context.selectedEvent.awarenessPoints.breakpoints)){
               const breakpoint = context.selectedEvent.awarenessPoints.breakpoints[key];
               breakpoint.description = game.i18n.localize(breakpoint.description);
@@ -3543,7 +3672,14 @@ class SystemView extends HandlebarsApplicationMixin(
                 var result = activity.results[key];
                 result.name = game.i18n.localize(degreesOfSuccess[result.degreeOfSuccess].name);
                 result.selected = this.selected.infiltration.complicationResultSelect === result.degreeOfSuccess;
-                result.enrichedDescription = await TextEditor.enrichHTML(result.description);
+                result.fakeDegrees = Object.keys(degreesOfSuccess).reduce((acc, key) => {
+                  if(key !== result.degreeOfSuccess) acc[key] = degreesOfSuccess[key];
+                  return acc;
+                }, {});
+                
+                const titleElement = `<p><strong class="infiltration-result-container ${result.nrOutcomes === 0 ? 'inactive' : ''} clickable-icon tertiary-container primary-text-container infiltration-activity-result-button" data-action="infiltrationActivityIncreaseResultsOutcome" data-event="${context.selectedEvent.id}" data-activity="${activity.id}" data-result="${result.degreeOfSuccess}">${result.name} ${result.nrOutcomes}x</strong>`;
+                const descriptionStartsWithParagraph = result.description.match(/^<p>/);
+                result.enrichedDescription = await TextEditor.enrichHTML(descriptionStartsWithParagraph ? result.description.replace('<p>', `${titleElement} `) : `${titleElement} ${result.description}`);
               }
 
               activity.selectedResult = Object.values(activity.results).find(x => x.degreeOfSuccess === this.selected.infiltration.preparations.resultSelect);
@@ -3829,6 +3965,94 @@ class ResearchTour extends Tour {
     }
 }
 
+class InfiltrationTour extends Tour {
+    #systemView;
+
+    async _preStep() {
+      await super._preStep();
+      const currentStep = this.currentStep;
+      switch(currentStep.id){
+        case 'create-infiltration':
+          this.#systemView = await new SystemView('infiltration', null, true).render(true);
+          break;
+        case 'infiltration-overview-1':
+          this.#systemView.selected.event = 'tour-event';
+          this.#systemView.selected.infiltration.awarenessBreakpoint = null;
+          await this.#systemView.render({ parts: ['infiltration'], force: true });
+          break;
+        case 'infiltration-overview-11':
+          this.#systemView.selected.infiltration.awarenessBreakpoint = '5';
+          await this.#systemView.render({ parts: ['infiltration'], force: true });
+          break;
+        case 'infiltration-overview-2':
+          this.#systemView.selected.infiltration.awarenessBreakpoint = null;
+          this.#systemView.selected.infiltration.openEdge = null;
+          await this.#systemView.render({ parts: ['infiltration'], force: true });
+          break;
+        case 'infiltration-overview-21':
+            this.#systemView.selected.infiltration.openEdge = '1';
+            await this.#systemView.render({ parts: ['infiltration'], force: true });
+            break;
+        case 'infiltration-overview-22':
+            this.#systemView.selected.infiltration.openEdge = '2';
+            await this.#systemView.render({ parts: ['infiltration'], force: true });
+            break;
+        case 'infiltration-overview-23':
+            this.#systemView.selected.infiltration.openEdge = '3';
+            await this.#systemView.render({ parts: ['infiltration'], force: true });
+            break;
+        case 'infiltration-overview-3':
+            this.#systemView.selected.infiltration.openEdge = null;
+            await this.#systemView.render({ parts: ['infiltration'], force: true });
+            break;
+          // case 'infiltration-overview-61':
+          //   this.#systemView.selected.openInfiltrationObstacle = null;
+          //   await this.#systemView.render({ parts: ['infiltration'], force: true });
+          //   break;
+        // case 'infiltration-overview-62':
+        //   this.#systemView.selected.openInfiltrationObstacle = '1';
+        //   await this.#systemView.render({ parts: ['infiltration'], force: true });
+        //   break;
+        case 'infiltration-overview-7':
+          this.#systemView.selected.openInfiltrationObstacle = null;
+          await this.#systemView.render({ parts: ['infiltration'], force: true });
+          break;
+        case 'infiltration-overview-8':
+          this.#systemView.tabGroups.infiltration = 'infiltration';
+          await this.#systemView.render({ parts: ['infiltration'], force: true });
+          break;
+        case 'infiltration-overview-9':
+          this.#systemView.tabGroups.infiltration = 'preparation';
+          await this.#systemView.render({ parts: ['infiltration'], force: true });
+          break;
+        case 'infiltration-overview-92':
+          this.#systemView.selected.infiltration.preparations.openActivity = null;
+          await this.#systemView.render({ parts: ['infiltration'], force: true });
+          break;
+        case 'infiltration-overview-93':
+          this.#systemView.selected.infiltration.preparations.openActivity = 'bribeContact';
+          await this.#systemView.render({ parts: ['infiltration'], force: true });
+          break;
+      }
+    }
+
+    async progress(stepIndex) {
+      super.progress(stepIndex);
+    }
+
+    exit(){
+      this.#systemView.close();
+      this.#systemView = null;
+      super.exit();
+    }
+    
+    async complete(){
+      this.#systemView.close();
+      this.#systemView = null;
+      super.complete();
+    }
+}
+
 Hooks.once("init", () => {
     registerGameSettings();
     registerKeyBindings();
@@ -3879,6 +4103,7 @@ async function registerTours() {
   try {
     game.tours.register(MODULE_ID, tourIDs.chase, await ChaseTour.fromJSON(`/modules/${MODULE_ID}/tours/chase/chase-tour.json`));
     game.tours.register(MODULE_ID, tourIDs.research, await ResearchTour.fromJSON(`/modules/${MODULE_ID}/tours/research/research-tour.json`));
+    game.tours.register(MODULE_ID, tourIDs.infiltration, await InfiltrationTour.fromJSON(`/modules/${MODULE_ID}/tours/infiltration/infiltration-tour.json`));
   } catch (error) {
     console.error("MyTour | Error registering tours: ",error);
   }

@@ -60,11 +60,11 @@
                                         <div class="event-field-group">
                                             <div class="event-field-form-col text-normal primary-text-container">
                                                 <div>{{localize "Breakpoint"}}</div>
-                                                <input type="text" data-dtype="number" name="{{concat "events." ../event.id ".awarenessPoints.breakpoints." this.id ".breakpoint"}}" value="{{this.breakpoint}}" class="tertiary-container" />
+                                                <input type="text" data-dtype="Number" name="{{concat "events." ../event.id ".awarenessPoints.breakpoints." this.id ".breakpoint"}}" value="{{this.breakpoint}}" class="tertiary-container" />
                                             </div>
                                             <div class="event-field-form-col text-normal primary-text-container">
                                                 <div>{{localize "DC Increase"}}</div>
-                                                <input type="text" data-dtype="number" name="{{concat "events." ../event.id ".awarenessPoints.breakpoints." this.id ".dcIncrease"}}" value="{{this.dcIncrease}}" class="tertiary-container" />
+                                                <input type="text" data-dtype="Number" name="{{concat "events." ../event.id ".awarenessPoints.breakpoints." this.id ".dcIncrease"}}" value="{{this.dcIncrease}}" class="tertiary-container" />
                                             </div>
                                         </div>
                                         <textarea class="data-input tertiary-container" name="{{concat "events." ../event.id ".awarenessPoints.breakpoints." this.id ".description"}}" value="{{this.description}}">
@@ -81,6 +81,55 @@
             </div>
             <div class="edge-points-container event-section primary-container accent">
                 <div class="event-section-title title-container primary-container">{{localize "PF2ESubsystems.Infiltration.EdgePoints"}}</div>
+                <div class="infiltration-edges-container">
+                    {{#each this.event.edgePoints}}
+                        <div class="event-section-inner-container infiltration-edge-container secondary-container" data-edge="{{this.id}}">
+                            {{#if ../editMode}}
+                                <div class="event-section-header-container">
+                                    <i class="fa-solid fa-trash event-section-delete-button" data-action="infiltrationEdgeRemove" data-event="{{../event.id}}" data-edge="{{this.id}}"></i>
+                                    <div class="text-normal bold infiltration-edge-title {{#if this.used}}spent{{/if}}">{{this.name}}</div>
+                                    <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon event-section-opener" data-action="infiltrationToggleOpenEdge" data-event="{{../event.id}}" data-edge="{{this.id}}"></i> 
+                                </div>
+                                <div class="event-section-body {{#if this.open}}expanded{{/if}}">
+                                    <div class="event-field-group">
+                                        <div class="event-field-form text-normal primary-text-container">
+                                            <div>{{localize "PF2ESubsystems.Basic.Name"}}</div>
+                                            <input type="text" name="{{concat "events." ../event.id ".edgePoints." this.id ".name"}}" value="{{this.name}}" class="tertiary-container" />
+                                        </div>
+                                    </div>
+                                    <textarea class="tertiary-container" name="{{concat "events." ../event.id ".edgePoints." this.id ".description"}}" value="{{this.description}}">
+                                        {{{this.enrichedDescription}}}
+                                    </textarea>
+                                </div>
+                            {{else}}
+                                <div class="event-section-header-container">
+                                    {{#if (and ../isGM this.enrichedHiddenDescription)}}<i class="fa-solid {{#if this.faked}}fa-eye-slash{{else}}fa-eye{{/if}} clickable-icon event-section-hider" data-action="infiltrationToggleEdgeFaked" data-event="{{../event.id}}" data-edge="{{this.id}}"></i>{{/if}}
+                                    {{#if ../isGM}}<i class="fa-solid fa-check clickable-icon edge-section-used {{#if this.used}}active{{/if}}" data-action="infiltrationToggleEdgeUsed" data-event="{{../event.id}}" data-edge="{{this.id}}"></i>{{/if}}
+                                    <div class="text-normal bold infiltration-edge-title {{#if this.used}}spent{{/if}}">{{this.name}}</div>
+                                    <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon event-section-opener" data-action="infiltrationToggleOpenEdge" data-event="{{../event.id}}" data-edge="{{this.id}}"></i> 
+                                </div>
+
+                                <div class="event-section-body {{#if this.open}}expanded{{/if}}">
+                                    {{#if ../isGM}}
+                                        {{#if (not this.enrichedHiddenDescription)}}
+                                            <div class="text-helper-big">{{{this.enrichedDescription}}}</div>
+                                        {{else}}
+                                            {{#if (and this.faked this.enrichedHiddenDescription)}}
+                                                <div class="text-helper-big">{{{this.enrichedDescription}}}</div>
+                                                <div class="text-helper-big primary-text-container text-shadow-container" data-visibility="gm">{{{this.enrichedHiddenDescription}}}</div>
+                                            {{else}}
+                                                <div class="text-helper-big">{{{this.enrichedHiddenDescription}}}</div>
+                                            {{/if}}
+                                        {{/if}}
+                                        
+                                    {{else}}
+                                        <div class="text-helper-big">{{{this.playerDescription}}}</div>
+                                    {{/if}}
+                                </div>
+                            {{/if}}
+                        </div>
+                    {{/each}}
+                </div>
             </div>
             <div class="description-outer-container event-section primary-container accent">
                 <div class="event-section-title title-container primary-container">{{localize "PF2ESubsystems.Basic.Premise"}}</div>
@@ -333,7 +382,7 @@
                         </div>
                     </fieldset>
 
-                    <div class="event-section primary-container accent">
+                    <div class="infiltration-opportunities-container event-section primary-container accent">
                         <div class="event-section-title title-container primary-container">
                             <div class="title-container-inner">
                                 {{localize "PF2ESubsystems.Infiltration.Opportunities"}}
@@ -400,7 +449,7 @@
                         </div>
                     </div>
 
-                    <div class="event-section primary-container accent">
+                    <div class="infiltration-complication-container event-section primary-container accent">
                         <div class="event-section-title title-container primary-container">
                             <div class="title-container-inner">
                                 {{localize "PF2ESubsystems.Infiltration.Complications"}}
@@ -621,29 +670,31 @@
             <div class="event-tab tab {{this.infiltrationTabs.preparation.cssClass}}" data-group="{{this.infiltrationTabs.preparation.group}}" data-tab="{{this.infiltrationTabs.preparation.id}}">
                 <div class="event-tab-container">
                     <div class="preparation-container">
-                        <div class="preparation-toolbar secondary-container">
-                            <button data-action="infiltrationPreparationsToggleIsUsed" data-event="{{this.event.id}}" class="tertiary-container">
-                                {{#if this.event.preparations.usesPreparation}}
-                                    <i class="fa-solid fa-check"></i>
-                                    <div>{{localize "PF2ESubsystems.Infiltration.Preparations.IsUsed"}}</div>
-                                {{else}}
-                                    <i class="fa-solid fa-circle-xmark"></i>
-                                    <div>{{localize "PF2ESubsystems.Infiltration.Preparations.NotUsed"}}</div>
-                                {{/if}}
-                            </button>
-                            <div class="preparation-toolbar-inner">
-                                {{!-- <i class="fa-solid fa-table-cells-large clickable-icon {{#if (eq this.layout.preparations 0)}}selected{{/if}}" data-action="setInfiltrationPreparationLayout" data-option="0"></i>
-                                <i class="fa-solid fa-table-cells clickable-icon {{#if (eq this.layout.preparations 1)}}selected{{/if}}" data-action="setInfiltrationPreparationLayout" data-option="1"></i>
-                                <i class="fa-solid fa-maximize clickable-icon {{#if (eq this.layout.preparations 2)}}selected{{/if}}" data-action="setInfiltrationPreparationLayout" data-option="2"></i> --}}
+                        {{#if this.isGM}}
+                            <div class="preparation-toolbar secondary-container">
+                                <button data-action="infiltrationPreparationsToggleIsUsed" data-event="{{this.event.id}}" class="tertiary-container">
+                                    {{#if this.event.preparations.usesPreparation}}
+                                        <i class="fa-solid fa-check"></i>
+                                        <div>{{localize "PF2ESubsystems.Infiltration.Preparations.IsUsed"}}</div>
+                                    {{else}}
+                                        <i class="fa-solid fa-circle-xmark"></i>
+                                        <div>{{localize "PF2ESubsystems.Infiltration.Preparations.NotUsed"}}</div>
+                                    {{/if}}
+                                </button>
+                                <div class="preparation-toolbar-inner">
+                                    {{!-- <i class="fa-solid fa-table-cells-large clickable-icon {{#if (eq this.layout.preparations 0)}}selected{{/if}}" data-action="setInfiltrationPreparationLayout" data-option="0"></i>
+                                    <i class="fa-solid fa-table-cells clickable-icon {{#if (eq this.layout.preparations 1)}}selected{{/if}}" data-action="setInfiltrationPreparationLayout" data-option="1"></i>
+                                    <i class="fa-solid fa-maximize clickable-icon {{#if (eq this.layout.preparations 2)}}selected{{/if}}" data-action="setInfiltrationPreparationLayout" data-option="2"></i> --}}
 
-                                <i class="fa-solid fa-plus clickable-icon" data-action="infiltrationPreparationsActivityAdd" data-event="{{this.event.id}}"></i>
-                                <i class="fa-solid fa-rotate-left clickable-icon" data-action="infiltrationPreparationsActivitiesReset" data-event="{{this.event.id}}"></i>
+                                    <i class="fa-solid fa-plus clickable-icon" data-action="infiltrationPreparationsActivityAdd" data-event="{{this.event.id}}"></i>
+                                    <i class="fa-solid fa-rotate-left clickable-icon" data-action="infiltrationPreparationsActivitiesReset" data-event="{{this.event.id}}"></i>
+                                </div>
                             </div>
-                        </div>
+                        {{/if}}
                         <div class="preparation-cards-container">
                             {{#each this.event.extendedPreparations.activities}}
-                                <div class="event-section-inner-container preparation-card primary-container">
-                                    <div class="event-section-header-container">
+                                <div class="event-section-inner-container preparation-card primary-container" data-activity="{{this.id}}">
+                                    <div class="event-section-header-container preparation-activity-header">
                                         {{#if ../editMode}}
                                             {{#if this.open}}
                                                 <nav class="tabs event-inner-tabs">
@@ -676,10 +727,11 @@
                                             <div class="title-small-container">
                                                 {{this.name}}
                                             </div>
+                                            {{#if (gt this.maxAttempts 0)}}<div class="text-helper-big preparation-section-attempts-counter">{{localize "Max Attempts:"}}&nbsp;{{this.maxAttempts}}</div>{{/if}}
                                             <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon event-section-opener" data-action="infiltrationPreparationsToggleOpenActivity" data-activity="{{this.id}}"></i> 
                                         {{/if}}
                                     </div>
-                                    <div class="event-section-body {{#if this.open}}expanded{{/if}}">
+                                    <div class="event-section-body {{#if this.open}}expanded{{/if}} preparation-activity-body">
                                         {{#if ../editMode}}
                                             <div class="event-tab tab {{../activityTabs.description.cssClass}}" data-group="{{../activityTabs.description.group}}" data-tab="{{../activityTabs.description.id}}">
                                                 <div class="event-tab-container">
@@ -687,22 +739,22 @@
                                                     <div class="event-field-group">
                                                         <div class="event-field-form text-normal primary-text-container">
                                                             <div>{{localize "PF2ESubsystems.Basic.Name"}}</div>
-                                                            <input type="text" name="{{concat "Events." ../event.id ".preparations.activities." this.id ".name"}}" value="{{this.name}}" class="secondary-container" />
+                                                            <input type="text" name="{{concat "events." ../event.id ".preparations.activities." this.id ".name"}}" value="{{this.name}}" class="secondary-container" />
                                                         </div>
                                                     </div>
                                                     <div class="event-field-group">
                                                         <div class="event-field-form text-normal primary-text-container">
                                                             <div>{{localize "PF2ESubsystems.Infiltration.Preparations.EdgeLabel"}}</div>
-                                                            <input type="text" name="{{concat "Events." ../event.id ".preparations.activities." this.id ".edgeLabel"}}" value="{{this.edgeLabel}}" class="secondary-container" />
+                                                            <input type="text" name="{{concat "events." ../event.id ".preparations.activities." this.id ".edgeLabel"}}" value="{{this.edgeLabel}}" class="secondary-container" />
                                                         </div>
                                                     </div>
                                                     <div class="event-field-group">
                                                         <div class="event-field-form text-normal primary-text-container">
                                                             <div>{{localize "PF2ESubsystems.Infiltration.Preparations.MaxAttempts"}}</div>
-                                                            <input type="text" data-dtype="number" name="{{concat "Events." ../event.id ".preparations.activities." this.id ".maxAttempts"}}" value="{{this.maxAttempts}}" class="secondary-container" />
+                                                            <input type="text" data-dtype="Number" name="{{concat "events." ../event.id ".preparations.activities." this.id ".maxAttempts"}}" value="{{this.maxAttempts}}" class="secondary-container" />
                                                         </div>
                                                     </div>
-                                                    <prose-mirror class="data-input tertiary-container" name="{{concat "events." ../event.id ".preparations.activites." this.id ".description"}}" value="{{this.description}}">
+                                                    <prose-mirror class="data-input tertiary-container" name="{{concat "events." ../event.id ".preparations.activities." this.id ".description"}}" value="{{this.description}}">
                                                         {{{this.enrichedDescription}}}
                                                     </prose-mirror>
                                                 </div>
@@ -791,6 +843,20 @@
                                                         {{/each}}
                                                     </div>
                                                     {{#if this.selectedResult}}
+                                                        <div class="event-field-group">
+                                                            <div class="event-field-form text-normal primary-text-container">
+                                                                <div>{{localize "PF2ESubsystems.Infiltration.Preparations.AwarenessPoints"}}</div>
+                                                                <input type="text" data-dtype="Number" name="{{concat "events." ../event.id ".preparations.activities." this.id ".results." this.selectedResult.degreeOfSuccess ".awarenessPoints"}}" value="{{this.selectedResult.awarenessPoints}}" class="tertiary-container" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="event-field-group">
+                                                            <div class="event-field-form text-normal primary-text-container">
+                                                                <div>{{localize "PF2ESubsystems.Infiltration.Preparations.FakeDegreeOfSuccess"}}</div>
+                                                                <select name="{{concat "events." ../event.id ".preparations.activities." this.id ".results." this.selectedResult.degreeOfSuccess ".fakeDegreeOfSuccess"}}" class="tertiary-container primary-text-container">
+                                                                    {{selectOptions this.selectedResult.fakeDegrees selected=this.selectedResult.fakeDegreeOfSuccess valueAttr="value" labelAttr="name" localize=true blank=""}}
+                                                                </select>
+                                                            </div>
+                                                        </div>
                                                         <prose-mirror class="data-input tertiary-container" name="{{concat "events." ../event.id ".preparations.activities." this.id ".results." this.selectedResult.degreeOfSuccess ".description"}}" value="{{this.selectedResult.description}}" placeholder="{{localize "PF2ESubsystems.Infiltration.ComplicationResultDescription"}}">
                                                             {{{this.selectedResult.enrichedDescription}}}
                                                         </prose-mirror>
@@ -798,7 +864,7 @@
                                                 </div>
                                             </div>
                                         {{else}}
-                                            <div>{{{this.enrichedDescription}}}</div>
+                                            <div class="preparation-activity-description">{{{this.enrichedDescription}}}</div>
 
                                             {{#each this.skillChecks}}
                                                 <div class="infiltration-complication-skill-container">
@@ -821,54 +887,13 @@
                                             <div class="infiltration-results-container">
                                                 {{#each this.results}}
                                                     {{#if this.inUse}}
-                                                        <div 
-                                                            class="infiltration-result-container {{#if ../resultsOutcome}}{{#if (not (eq ../resultsOutcome this.degreeOfSuccess))}}inactive{{/if}}{{else}}inactive{{/if}} clickable-icon tertiary-container primary-text-container"
-                                                            data-action="infiltrationActivityToggleResultsOutcome"
-                                                            data-event="{{../../event.id}}" data-activity="{{../id}}" data-result="{{this.degreeOfSuccess}}"
-                                                        >
-                                                            <div class="text-normal bold">{{this.name}}</div>
-                                                            {{{this.enrichedDescription}}}
-                                                        </div>
+                                                        <div class="preparation-activity-results-description">{{{this.enrichedDescription}}}</div>
                                                     {{/if}}
                                                 {{/each}}
                                             </div>
                                         {{/if}}
                                     </div>
                                 </div>
-
-                                {{!-- <div class="preparation-card {{#if (eq ../layout.preparations 1)}}medium{{/if}}{{#if (eq ../layout.preparations 2)}}small{{/if}} primary-container">
-                                    {{#if ../editMode}}
-                                        <input class="infiltration-preparations-activity-tags tertiary-container" value="{{this.tags}}" data-event="{{../event.id}}" data-activity="{{this.id}}" />
-                                        <div class="event-field-group">
-                                            <div class="event-field-form text-normal primary-text-container">
-                                                <div>{{localize "PF2ESubsystems.Basic.Name"}}</div>
-                                                <input type="text" name="{{concat "Events." ../event.id ".preparations.activities." this.id ".name"}}" value="{{this.name}}" class="secondary-container" />
-                                            </div>
-                                        </div>
-                                        <div class="event-field-group">
-                                            <div class="event-field-form text-normal primary-text-container">
-                                                <div>{{localize "PF2ESubsystems.Infiltration.Preparations.EdgeLabel"}}</div>
-                                                <input type="text" name="{{concat "Events." ../event.id ".preparations.activities." this.id ".edgeLabel"}}" value="{{this.edgeLabel}}" class="secondary-container" />
-                                            </div>
-                                        </div>
-                                        <div class="event-field-group">
-                                            <div class="event-field-form text-normal primary-text-container">
-                                                <div>{{localize "PF2ESubsystems.Infiltration.Preparations.MaxAttempts"}}</div>
-                                                <input type="text" data-dtype="number" name="{{concat "Events." ../event.id ".preparations.activities." this.id ".maxAttempts"}}" value="{{this.maxAttempts}}" class="secondary-container" />
-                                            </div>
-                                        </div>
-                                        <i class="fa-solid fa-trash clickable-icon" data-action="infiltrationPreparationsActivityRemove" data-event="{{../event.id}}" data-activity="{{this.id}}"></i>
-                                    {{else}}
-                                        <div class="preparation-card-tags">
-                                            {{#each this.displayTags}}
-                                                <div class="preparation-card-tag secondary-container">{{this}}</div>
-                                            {{/each}}
-                                        </div>
-                                        <div class="preparation-card-title title-small-container">{{this.name}}</div>
-
-                                        <div>{{{this.enrichedDescription}}}</div>
-                                    {{/if}}
-                                </div>  --}}
                             {{/each}}
                         </div>
                     </div>
