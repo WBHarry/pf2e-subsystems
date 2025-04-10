@@ -712,6 +712,7 @@ class Infiltration extends foundry.abstract.DataModel {
         started: new fields.BooleanField({ required: true, initial: false }),
         awarenessPoints: new fields.SchemaField({
           current: new fields.NumberField({ required: true, initial: 0 }),
+          hidden: new fields.NumberField({ required: true, initial: 0}),
           breakpoints: new TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
             hidden: new fields.BooleanField({ required: true, initial: true }),
@@ -817,10 +818,15 @@ class Infiltration extends foundry.abstract.DataModel {
       }
     }
 
+    get visibleAwareness() {
+      return game.user.isGM ? this.awarenessPoints.current + this.awarenessPoints.hidden : this.awarenessPoints.current; 
+    }
+
     get awarenessDCIncrease() {
+      const totalAwareness = this.awarenessPoints.current + this.awarenessPoints.hidden;
       const autoApplyIncrease = game.settings.get(MODULE_ID, settingIDs.infiltration.settings).autoApplyAwareness;
       return Object.values(this.awarenessPoints.breakpoints).reduce((acc, curr) => {
-        if((autoApplyIncrease && this.awarenessPoints.current >= curr.breakpoint) || curr.inUse){
+        if((autoApplyIncrease && totalAwareness >= curr.breakpoint) || curr.inUse){
           acc = Math.max((curr.dcIncrease ?? 0), acc);
         }
 
@@ -978,7 +984,7 @@ class Preparations extends foundry.abstract.DataModel {
 const degreeOfSuccessFields = (degreeOfSuccess) => new foundry.data.fields.SchemaField({
   degreeOfSuccess: new foundry.data.fields.StringField({ required: true, initial: degreeOfSuccess}),
   description: new foundry.data.fields.HTMLField(),
-  nrOutcomes: new foundry.data.fields.NumberField({ required: true, initial: 0 }),
+  awarenessPoints: new foundry.data.fields.NumberField(),
   inUse: new foundry.data.fields.BooleanField({ required: true, initial: false }),
 });
 
@@ -1088,6 +1094,7 @@ class InfiltrationSettings extends foundry.abstract.DataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
     return {
+      hideAwareness: new fields.BooleanField({ required: true, initial: false }),
       autoApplyAwareness: new fields.BooleanField({ required: true, initial: true }),
       autoRevealAwareness: new fields.BooleanField({ required: true, initial: true }),
       defaultAwarenessBreakpoints: new TypedObjectField(new fields.SchemaField({
@@ -1113,6 +1120,12 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$1(
         awarenessBreakpoint: null,
       }
     };
+
+    this.settings = {
+      chase: context.settings = game.settings.get(MODULE_ID, settingIDs.chase.settings).toObject(),
+      research: context.settings = game.settings.get(MODULE_ID, settingIDs.research.settings).toObject(),
+      infiltration: game.settings.get(MODULE_ID, settingIDs.infiltration.settings).toObject(),
+    };
   }
 
   get title() {
@@ -1129,8 +1142,9 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$1(
       selectInfiltrationDefaultAwarenessBreakpoint: this.selectInfiltrationDefaultAwarenessBreakpoint,
       removeInfiltrationDefaultAwarenessBreakpoint: this.removeInfiltrationDefaultAwarenessBreakpoint,
       resetInfiltrationDefaultAwarenessBreakpoints: this.resetInfiltrationDefaultAwarenessBreakpoints,
+      save: this.save,
     },
-    form: { handler: this.updateData },
+    form: { handler: this.updateData, submitOnChange: true },
   };
 
   static PARTS = {
@@ -1207,13 +1221,13 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$1(
   async _preparePartContext(partId, context) {
     switch(partId){
         case 'chase':
-          context.settings = game.settings.get(MODULE_ID, settingIDs.chase.settings);
+          context.settings = this.settings.chase;
           break;
         case 'research':
-          context.settings = game.settings.get(MODULE_ID, settingIDs.research.settings);
+          context.settings = this.settings.research;
           break;
         case 'infiltration':
-          context.settings = game.settings.get(MODULE_ID, settingIDs.infiltration.settings);
+          context.settings = this.settings.infiltration;
 
           const defaultAwarenessBreakpoints = Object.values(context.settings.defaultAwarenessBreakpoints);
           const selectedAwarenessBreakpointId = this.selected.infiltration.awarenessBreakpoint ?? (defaultAwarenessBreakpoints.length > 0 ? defaultAwarenessBreakpoints[0].id : null);
@@ -1236,12 +1250,15 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$1(
   static async updateData(event, element, formData) {
     const { chase, research, infiltration } = foundry.utils.expandObject(formData.object);
 
-    await game.settings.set(MODULE_ID, settingIDs.chase.settings, chase);
-    await game.settings.set(MODULE_ID, settingIDs.research.settings, research);
-    await game.settings.set(MODULE_ID, settingIDs.infiltration.settings, foundry.utils.mergeObject(
-      game.settings.get(MODULE_ID, settingIDs.infiltration.settings),
-      infiltration
-    ));
+    this.settings.chase = chase;
+    this.settings.research = research;
+    this.settings.infiltration = infiltration;
+  }
+
+  static async save() {
+    await game.settings.set(MODULE_ID, settingIDs.chase.settings, this.settings.chase);
+    await game.settings.set(MODULE_ID, settingIDs.research.settings, this.settings.research);
+    await game.settings.set(MODULE_ID, settingIDs.infiltration.settings, this.settings.infiltration);
 
     this.close();
   }
@@ -1249,17 +1266,12 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$1(
   static async addInfiltrationDefaultAwarenessBreakpoint() {
     const newId = foundry.utils.randomID();
 
-    const currentSetting = game.settings.get(MODULE_ID, settingIDs.infiltration.settings);
-    currentSetting.updateSource({
-      defaultAwarenessBreakpoints: {
-        [newId]: {
-          id: newId,
-          breakpoint: 5,
-          description: game.i18n.localize('PF2ESubsystems.Menus.Subsystems.Infiltration.NewAwarenessBreakpoint'),
-        } 
-      }
-    });
-    await game.settings.set(MODULE_ID, settingIDs.infiltration.settings, currentSetting);
+    this.settings.infiltration.defaultAwarenessBreakpoints[newId] = {
+      id: newId,
+      breakpoint: 5,
+      description: game.i18n.localize('PF2ESubsystems.Menus.Subsystems.Infiltration.NewAwarenessBreakpoint'),
+    };
+     
     this.render();
   }
 
@@ -1269,17 +1281,23 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$1(
   }
 
   static async removeInfiltrationDefaultAwarenessBreakpoint(_, button) {
-    await game.settings.set(MODULE_ID, settingIDs.infiltration.settings, { [`defaultAwarenessBreakpoints.-=${button.dataset.breakpoint}`]: null });
+    this.settings.infiltration.defaultAwarenessBreakpoints = Object.keys(this.settings.infiltration.defaultAwarenessBreakpoints).reduce((acc, curr) => {
+      if(curr !== button.dataset.breakpoint) {
+        acc[curr] = this.settings.infiltration.defaultAwarenessBreakpoints[curr];
+      }
+
+      return acc;
+    }, {});
     this.render();
   }
 
   static async resetInfiltrationDefaultAwarenessBreakpoints() {
-    await game.settings.set(MODULE_ID, settingIDs.infiltration.settings, { defaultAwarenessBreakpoints: defaultInfiltrationAwarenessBreakpoints });
+    this.settings.infiltration.defaultAwarenessBreakpoints = defaultInfiltrationAwarenessBreakpoints;
     this.render();
   }
 }
 
-const currentVersion = '0.5.2';
+const currentVersion = '0.6.0';
 
 const registerKeyBindings = () => {
   game.keybindings.register(MODULE_ID, "open-system-view", {
@@ -1714,12 +1732,14 @@ class SystemView extends HandlebarsApplicationMixin(
         removeInfiltrationOpportunity: this.removeInfiltrationOpportunity,
         removeInfiltrationComplication: this.removeInfiltrationComplication,
         infiltrationUpdateAwarenessPoints: this.infiltrationUpdateAwarenessPoints,
+        infiltrationUpdateHiddenAwarenessPoints: this.infiltrationUpdateHiddenAwarenessPoints,
         infiltrationAddComplicationSkill: this.infiltrationAddComplicationSkill,
         infiltrationRemoveComplicationSkill: this.infiltrationRemoveComplicationSkill,
         infiltrationComplicationResultSelect: this.infiltrationComplicationResultSelect,
         infiltrationComplicationResultToggle: this.infiltrationComplicationResultToggle,
         infiltrationComplicationToggleResultsOutcome: this.infiltrationComplicationToggleResultsOutcome,
         infiltrationComplicationToggleAdjustment: this.infiltrationComplicationToggleAdjustment,
+        complicationInfiltrationPointsUpdate: this.complicationInfiltrationPointsUpdate,
         infiltrationPreparationsActivityAdd: this.infiltrationPreparationsActivityAdd,
         infiltrationPreparationsActivityRemove: this.infiltrationPreparationsActivityRemove,
         infiltrationPreparationsActivitiesReset: this.infiltrationPreparationsActivitiesReset,
@@ -2498,6 +2518,8 @@ class SystemView extends HandlebarsApplicationMixin(
     }
 
     async toggleObstacleLock(e, baseButton) {
+      if(!game.user.isGM) return;
+
       const button = baseButton ?? e.currentTarget;
       const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event];
       const currentObstacle = Object.values(event.obstacles).find(x => x.position === Number.parseInt(button.dataset.position));
@@ -2790,6 +2812,8 @@ class SystemView extends HandlebarsApplicationMixin(
     }
 
     async toggleObjectiveHidden(e, baseButton) {
+      if (!game.user.isGM) return;
+
       const button = baseButton ?? e.currentTarget;
       const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event];
       const currentObjective = Object.values(event.objectives).find(x => x.position === Number.parseInt(button.dataset.position));
@@ -2889,6 +2913,11 @@ class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.awarenessPoints.current`]: button.dataset.increase ? currentPoints + 1 : currentPoints - 1 });
     }
 
+    static async infiltrationUpdateHiddenAwarenessPoints(_, button) {
+      const currentHiddenPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].awarenessPoints.hidden;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.awarenessPoints.hidden`]: button.dataset.increase ? currentHiddenPoints + 1 : currentHiddenPoints - 1 });
+    }
+
     static async infiltrationAddComplicationSkill(_, button) {
       const skillId = foundry.utils.randomID();
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.skillChecks.${button.dataset.skillCheck}.skills.${skillId}`]: {
@@ -2925,6 +2954,11 @@ class SystemView extends HandlebarsApplicationMixin(
     static async infiltrationComplicationToggleAdjustment(_, button) {
       const currentAdjustment = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].complications[button.dataset.complication].skillChecks[button.dataset.skillCheck].selectedAdjustment;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.skillChecks.${button.dataset.skillCheck}.selectedAdjustment`]: currentAdjustment === button.dataset.adjustment ? null : button.dataset.adjustment });
+    }
+
+    static async complicationInfiltrationPointsUpdate(_, button) {
+      const currentPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].complications[button.dataset.complication].infiltrationPoints.current;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.infiltrationPoints.current`]: button.dataset.increase ? currentPoints + 1 : currentPoints - 1 });
     }
 
     static async infiltrationPreparationsActivityAdd(_, button) {
@@ -3363,6 +3397,8 @@ class SystemView extends HandlebarsApplicationMixin(
     }
 
     async close(options={}) {
+      Hooks.off(socketEvent.UpdateSystemView, this.onUpdateView);
+      
       if ( this.#onKeyDown ) {
         document.removeEventListener("keydown", this.#onKeyDown);
         this.#onKeyDown = undefined;
@@ -3561,7 +3597,7 @@ class SystemView extends HandlebarsApplicationMixin(
                   value: x,
                 }));
   
-                let dc = skillCheck.difficulty.leveledDC ? getSelfDC() : skillCheck.difficulty.DC;
+                  let dc = skillCheck.difficulty.leveledDC ? getSelfDC() : skillCheck.difficulty.DC;
                 dc = skillCheck.selectedAdjustment ? dc+getDCAdjustmentNumber(skillCheck.selectedAdjustment) : dc;
                 dc += awarenessDCIncrease;
                 const disableElement = skillCheck.dcAdjustments.length > 0 && !skillCheck.selectedAdjustment;
@@ -3591,10 +3627,10 @@ class SystemView extends HandlebarsApplicationMixin(
               breakpoint.description = game.i18n.localize(breakpoint.description);
               breakpoint.enrichedDescription = await TextEditor.enrichHTML(breakpoint.description);
               breakpoint.open = this.selected.infiltration.awarenessBreakpoint === breakpoint.id;
-              breakpoint.active = context.settings.autoApplyAwareness ? context.selectedEvent.awarenessPoints.current >= breakpoint.breakpoint : breakpoint.inUse;
+              breakpoint.active = context.settings.autoApplyAwareness ? (context.selectedEvent.visibleAwareness) >= breakpoint.breakpoint : breakpoint.inUse;
               breakpoint.showActivate = (game.user.isGM && !context.settings.autoApplyAwareness) || breakpoint.inUse;
               breakpoint.playerHidden = context.settings.autoRevealAwareness ? context.selectedEvent.awarenessPoints.current < breakpoint.breakpoint : breakpoint.hidden;
-              breakpoint.hideable = game.user.isGM && !context.settings.autoRevealAwareness && context.editMode;
+              breakpoint.hideable = game.user.isGM && !context.settings.autoRevealAwareness && !context.editMode;
             }
 
             for(var key of Object.keys(context.selectedEvent.opportunities)){
@@ -3634,7 +3670,10 @@ class SystemView extends HandlebarsApplicationMixin(
                 var result = complication.results[key];
                 result.name = game.i18n.localize(degreesOfSuccess[result.degreeOfSuccess].name);
                 result.selected = this.selected.infiltration.complicationResultSelect === result.degreeOfSuccess;
-                result.enrichedDescription = await TextEditor.enrichHTML(result.description);
+
+                const titleElement = `<p><strong class="infiltration-result-container ${complication.resultsOutcome !== result.degreeOfSuccess ? 'inactive' : ''} ${context.isGM ? 'clickable-icon' : ''} tertiary-container primary-text-container infiltration-activity-result-button" ${context.isGM ? 'data-action="infiltrationComplicationToggleResultsOutcome"' : ''} data-event="${context.selectedEvent.id}" data-complication="${complication.id}" data-result="${result.degreeOfSuccess}">${result.name}</strong>`;
+                const descriptionStartsWithParagraph = result.description.match(/^<p>/);
+                result.enrichedDescription = await TextEditor.enrichHTML(descriptionStartsWithParagraph ? result.description.replace('<p>', `${titleElement} `) : `${titleElement} ${result.description}`);
               }
 
               complication.selectedResult = Object.values(complication.results).find(x => x.degreeOfSuccess === this.selected.infiltration.complicationResultSelect);
@@ -3643,7 +3682,6 @@ class SystemView extends HandlebarsApplicationMixin(
             for(var key of Object.keys(context.selectedEvent.extendedPreparations.activities)) {
               var activity = context.selectedEvent.extendedPreparations.activities[key];
               activity.open = this.selected.infiltration.preparations.openActivity === activity.id;
-              console.log(activity.open ? 'Open': 'Closed');
               activity.enrichedDescription = await TextEditor.enrichHTML(activity.description);
               activity.displayTags = activity.tags.map(tag => game.i18n.localize(CONFIG.PF2E.actionTraits[tag]));
 
@@ -3677,7 +3715,7 @@ class SystemView extends HandlebarsApplicationMixin(
                   return acc;
                 }, {});
                 
-                const titleElement = `<p><strong class="infiltration-result-container ${result.nrOutcomes === 0 ? 'inactive' : ''} clickable-icon tertiary-container primary-text-container infiltration-activity-result-button" data-action="infiltrationActivityIncreaseResultsOutcome" data-event="${context.selectedEvent.id}" data-activity="${activity.id}" data-result="${result.degreeOfSuccess}">${result.name} ${result.nrOutcomes}x</strong>`;
+                const titleElement = `<p><strong class="infiltration-result-container ${result.nrOutcomes === 0 ? 'inactive' : ''} ${context.isGM ? 'clickable-icon' : ''} tertiary-container primary-text-container infiltration-activity-result-button" ${context.isGM ? 'data-action="infiltrationActivityIncreaseResultsOutcome"' : ''} data-event="${context.selectedEvent.id}" data-activity="${activity.id}" data-result="${result.degreeOfSuccess}">${result.name} ${result.nrOutcomes}x</strong>`;
                 const descriptionStartsWithParagraph = result.description.match(/^<p>/);
                 result.enrichedDescription = await TextEditor.enrichHTML(descriptionStartsWithParagraph ? result.description.replace('<p>', `${titleElement} `) : `${titleElement} ${result.description}`);
               }
@@ -3915,7 +3953,22 @@ class ChaseTour extends Tour {
     }
 
     async progress(stepIndex) {
-      super.progress(stepIndex);
+      let index = stepIndex;
+      if(!game.user.isGM) {
+        switch(stepIndex){
+          case 5:
+            index = 7;
+            break;
+          case 6:
+            index = this.stepIndex === 7 ? 4 : 7;
+            break;
+          case 9:
+            index = this.stepIndex === 10 ? 8 : 10;
+            break;
+        }
+      }
+
+      super.progress(index);
     }
 
     exit(){
@@ -3949,7 +4002,19 @@ class ResearchTour extends Tour {
     }
 
     async progress(stepIndex) {
-      super.progress(stepIndex);
+      let index = stepIndex;
+      if(!game.user.isGM) {
+        switch(stepIndex){
+          case 5:
+            index = this.stepIndex === 6 ? 4 : 6;
+            break;
+          case 8:
+            index = this.stepIndex === 9 ? 7 : 9;
+            break;
+        }
+      }
+
+      super.progress(index);
     }
 
     exit(){
@@ -4037,7 +4102,19 @@ class InfiltrationTour extends Tour {
     }
 
     async progress(stepIndex) {
-      super.progress(stepIndex);
+      let index = stepIndex;
+      if(!game.user.isGM){
+        switch(stepIndex) {
+          case 10:
+            index = this.stepIndex === 11 ? 9 : 11;
+            break;
+          case 17:
+            index = this.stepIndex === 18 ? 16 : 18;
+            break;
+        }
+      }
+
+      super.progress(index);
     }
 
     exit(){

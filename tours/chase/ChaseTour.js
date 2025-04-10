@@ -18,7 +18,22 @@ export class ChaseTour extends Tour {
     }
 
     async progress(stepIndex) {
-      super.progress(stepIndex);
+      let index = stepIndex;
+      if(!game.user.isGM) {
+        switch(stepIndex){
+          case 5:
+            index = 7;
+            break;
+          case 6:
+            index = this.stepIndex === 7 ? 4 : 7;
+            break;
+          case 9:
+            index = this.stepIndex === 10 ? 8 : 10;
+            break;
+        }
+      }
+
+      super.progress(index);
     }
 
     exit(){

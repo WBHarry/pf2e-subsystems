@@ -4,6 +4,12 @@
         <div class="menu-main-container primary-container">
             <div class="menu-group">
                 <div class="menu-form">
+                    <div>{{localize "PF2ESubsystems.Menus.Subsystems.Infiltration.HideAwareness"}}</div>
+                    <input type="checkbox" name="{{concat "infiltration.hideAwareness"}}" {{checked this.settings.hideAwareness}} />
+                </div>
+            </div>
+            <div class="menu-group">
+                <div class="menu-form">
                     <div>{{localize "PF2ESubsystems.Menus.Subsystems.Infiltration.AutoApplyAwareness"}}</div>
                     <input type="checkbox" name="{{concat "infiltration.autoApplyAwareness"}}" {{checked this.settings.autoApplyAwareness}} />
                 </div>

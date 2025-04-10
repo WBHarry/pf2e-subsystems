@@ -510,15 +510,59 @@ form.pf2e-subsystems.application > header .header-control {
   align-items: center;
   justify-content: center;
 }
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section-number-container.diagonal-spaced {
+  right: -8px;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section-number-container .event-section-secondary-number {
+  position: absolute;
+  top: -8px;
+  right: -16px;
+  font-size: 12px;
+}
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-section-number-container .event-section-number-upper {
   position: absolute;
   top: -8px;
   font-size: 16px;
 }
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section-number-container .event-section-number-upper-diagonal {
+  position: absolute;
+  top: -1px;
+  right: -10px;
+  font-size: 16px;
+  rotate: 60deg;
+}
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-section-number-container .event-section-number-lower {
   position: absolute;
   bottom: -8px;
   font-size: 16px;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section-number-container .event-section-number-lower-diagonal {
+  position: absolute;
+  bottom: -1px;
+  left: -10px;
+  font-size: 16px;
+  rotate: -300deg;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-number-container-rows {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-number-container-rows .event-number-container-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-number-container-rows .event-number-container-row i {
+  font-size: 16px;
+  position: relative;
+  top: 1px;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-number-container-rows .event-number-container-row .event-number-row-icon {
+  position: absolute;
+  top: -7px;
+  font-size: 12px;
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-section-header-container {
   position: relative;
@@ -1490,6 +1534,10 @@ form.pf2e-subsystems.application > header .header-control {
   display: flex;
   flex-direction: column;
 }
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complications-container .infiltration-points-container {
+  gap: 2px;
+  margin-top: 5px;
+}
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-obstacle-image-container {
   display: flex;
   align-items: center;
@@ -1557,6 +1605,14 @@ form.pf2e-subsystems.application > header .header-control {
   position: relative;
   border-bottom-width: 1px;
   border-bottom-style: solid;
+  padding: 0 8px;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .event-sidebar .awareness-points-container .awareness-points-inner-container.spaced {
+  justify-content: space-between;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .event-sidebar .awareness-points-container .awareness-points-inner-container .awareness-points-left-container {
+  display: flex;
+  align-items: center;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .event-sidebar .awareness-points-container .awareness-point-breakpoints-container {
   display: flex;

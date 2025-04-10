@@ -18,7 +18,19 @@ export class ResearchTour extends Tour {
     }
 
     async progress(stepIndex) {
-      super.progress(stepIndex);
+      let index = stepIndex;
+      if(!game.user.isGM) {
+        switch(stepIndex){
+          case 5:
+            index = this.stepIndex === 6 ? 4 : 6;
+            break;
+          case 8:
+            index = this.stepIndex === 9 ? 7 : 9;
+            break;
+        }
+      }
+
+      super.progress(index);
     }
 
     exit(){

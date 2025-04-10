@@ -252,7 +252,7 @@
                 "event-1": {
                     "id": "event-1",
                     "name": "The Hag Returns",
-                    "hidden": true,
+                    "hidden": false,
                     "timing": "Day 4",
                     "description": "Uh-oh."
                 }

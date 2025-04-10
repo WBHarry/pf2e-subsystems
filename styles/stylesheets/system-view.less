@@ -416,16 +416,68 @@
                     align-items: center;
                     justify-content: center;
 
+                    &.diagonal-spaced {
+                        right: -8px;
+                    }
+
+                    .event-section-secondary-number {
+                        position: absolute;
+                        top: -8px;
+                        right: -16px;
+                        font-size: 12px;
+                    }
+
                     .event-section-number-upper {
                         position: absolute;
                         top: -8px;
                         font-size: 16px;
                     }
 
+                    .event-section-number-upper-diagonal {
+                        position: absolute;
+                        top: -1px;
+                        right: -10px;
+                        font-size: 16px;
+                        rotate: 60deg;
+                    }
+
                     .event-section-number-lower {
                         position: absolute;
                         bottom: -8px;
                         font-size: 16px;
+                    }
+
+                    .event-section-number-lower-diagonal {
+                        position: absolute;
+                        bottom: -1px;
+                        left: -10px;
+                        font-size: 16px;
+                        rotate: -300deg;
+                    }
+                }
+                
+                .event-number-container-rows {
+                    display: flex;
+                    align-items: center;
+                    gap: @gapNormal;
+                
+                    .event-number-container-row {
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+
+                        i {
+                            font-size: 16px;
+                            position: relative;
+                            top: 1px;
+                        }
+
+                        .event-number-row-icon {
+                            position: absolute;
+                            top: -7px;
+                            font-size: 12px;
+                        }
                     }
                 }
 

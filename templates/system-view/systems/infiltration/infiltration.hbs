@@ -26,59 +26,64 @@
     </div>
     <div class="event-container">
         <div class="event-sidebar">
-            <div class="awareness-points-container {{#if this.editMode}}edit-mode{{/if}} event-section primary-container accent">
-                <div class="awareness-points-inner-container event-section-title title-small-container primary-container">
-                    {{localize "PF2ESubsystems.Infiltration.AwarenessPoints"}}&nbsp;
-                    <div class="event-section-number-container">
-                        {{#if (not this.editMode)}}
-                            {{#if this.isGM}}<i class="fa-solid fa-caret-up clickable-icon event-section-number-upper" data-action="infiltrationUpdateAwarenessPoints" data-event="{{this.event.id}}" data-increase="true"></i>{{/if}}
-                            {{this.event.awarenessPoints.current}}
-                            {{#if this.isGM}}<i class="fa-solid fa-caret-down clickable-icon {{#if (eq this.event.awarenessPoints.current 0)}}disabled{{/if}} event-section-number-lower" {{#if (gt this.event.awarenessPoints.current 0)}}data-action="infiltrationUpdateAwarenessPoints"{{/if}} data-event="{{this.event.id}}"></i>{{/if}}
-                        {{else}}
-                            <i class="fa-solid fa-plus" data-action="addInfiltrationAwarenessBreakpoint" data-event="{{this.event.id}}" title="{{localize "Add additional awareness breakpoint"}}"></i>
-                        {{/if}}
+            {{#if (or this.isGM (not this.settings.hideAwareness))}}
+                <div class="awareness-points-container {{#if this.editMode}}edit-mode{{/if}} event-section primary-container accent">
+                    <div class="awareness-points-inner-container event-section-title title-small-container primary-container">
+                        {{localize "PF2ESubsystems.Infiltration.AwarenessPoints"}}&nbsp;
+                        <div class="event-section-number-container diagonal-spaced">
+                            {{#if (not this.editMode)}}
+                                {{#if this.isGM}}<i class="fa-solid fa-caret-up clickable-icon event-section-number-upper" data-action="infiltrationUpdateAwarenessPoints" data-event="{{this.event.id}}" data-increase="true"></i>{{/if}}
+                                {{#if this.isGM}}<i class="fa-solid fa-caret-up clickable-icon event-section-number-upper-diagonal" data-action="infiltrationUpdateHiddenAwarenessPoints" data-event="{{this.event.id}}" data-increase="true"></i>{{/if}}
+                                {{#if this.isGM}}<div class="event-section-secondary-number" title="{{localize "PF2ESubsystems.Infiltration.HiddenAwarenessNumber"}}">{{this.event.awarenessPoints.hidden}}</div>{{/if}}
+                                {{this.event.visibleAwareness}}
+                                {{#if this.isGM}}<i class="fa-solid fa-caret-down clickable-icon {{#if (eq this.event.awarenessPoints.current 0)}}disabled{{/if}} event-section-number-lower" {{#if (gt this.event.awarenessPoints.current 0)}}data-action="infiltrationUpdateAwarenessPoints"{{/if}} data-event="{{this.event.id}}"></i>{{/if}}
+                                {{#if this.isGM}}<i class="fa-solid fa-caret-down clickable-icon {{#if (eq this.event.awarenessPoints.hidden 0)}}disabled{{/if}} event-section-number-lower-diagonal" {{#if (gt this.event.awarenessPoints.hidden 0)}}data-action="infiltrationUpdateHiddenAwarenessPoints"{{/if}} data-event="{{this.event.id}}"></i>{{/if}}
+                            {{else}}
+                                <i class="fa-solid fa-plus" data-action="addInfiltrationAwarenessBreakpoint" data-event="{{this.event.id}}" title="{{localize "Add additional awareness breakpoint"}}"></i>
+                            {{/if}}
+                        </div>
+                    </div>
+                    <div class="awareness-point-breakpoints-container">
+                        {{#each this.event.awarenessPoints.breakpoints}}
+                            {{#if (or ../isGM (not this.playerHidden))}}
+                                <div class="awareness-point-breakpoint-container {{#if this.open}}open{{/if}} secondary-container {{#if this.active}}accent{{/if}}">
+                                    <div class="awareness-point-breakpoint-inner-container title-small-container">
+                                        {{this.breakpoint}}
+                                        <div>{{localize "PF2ESubsystems.Basic.Points"}}</div>
+                                        {{#if ../editMode}}
+                                            <i class="fa-solid fa-trash clickable-icon awareness-point-breakpoint-delete" data-action="infiltrationRemoveAwarenessBreakpoint" data-event="{{../this.event.id}}" data-breakpoint="{{this.id}}"></i>
+                                        {{else}}
+                                            {{#if this.hideable}}<i class="fa-solid {{#if this.hidden}}fa-eye-slash{{else}}fa-eye{{/if}} clickable-icon awareness-point-breakpoint-hider" data-action="infiltrationToggleHideAwarenessBreakpoint" data-event="{{../this.event.id}}" data-breakpoint="{{this.id}}"></i>{{/if}}
+                                            {{#if this.showActivate}}<i class="fa-solid fa-check clickable-icon awareness-point-breakpoint-enable {{#if this.inUse}}active{{/if}}" data-action="infiltrationToggleAwarenessBreakpointInUse" data-event="{{../this.event.id}}" data-breakpoint="{{this.id}}" title="{{localize "PF2ESubsystems.Infiltration.Awareness.ActivateAwarenessBreakpoint"}}"></i>{{/if}}
+                                        {{/if}}
+                                        
+                                        <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon awareness-point-breakpoint-open" data-action="infiltrationToggleOpenAwarenessBreakpoint" data-breakpoint="{{this.id}}"></i> 
+                                    </div>
+                                    <div class="awareness-point-breakpoint-main-container {{#if this.open}}expanded{{/if}}">
+                                        {{#if ../editMode}}
+                                            <div class="event-field-group">
+                                                <div class="event-field-form-col text-normal primary-text-container">
+                                                    <div>{{localize "PF2ESubsystems.Basic.Breakpoint"}}</div>
+                                                    <input type="text" data-dtype="Number" name="{{concat "events." ../event.id ".awarenessPoints.breakpoints." this.id ".breakpoint"}}" value="{{this.breakpoint}}" class="tertiary-container" />
+                                                </div>
+                                                <div class="event-field-form-col text-normal primary-text-container">
+                                                    <div>{{localize "PF2ESubsystems.Basic.DCIncrease"}}</div>
+                                                    <input type="text" data-dtype="Number" name="{{concat "events." ../event.id ".awarenessPoints.breakpoints." this.id ".dcIncrease"}}" value="{{this.dcIncrease}}" class="tertiary-container" />
+                                                </div>
+                                            </div>
+                                            <textarea class="data-input tertiary-container" name="{{concat "events." ../event.id ".awarenessPoints.breakpoints." this.id ".description"}}" value="{{this.description}}">
+                                                {{{this.enrichedDescription}}}
+                                            </textarea>
+                                        {{else}}
+                                            <div class="text-normal italic">{{{this.enrichedDescription}}}</div>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                            {{/if}}
+                        {{/each}}
                     </div>
                 </div>
-                <div class="awareness-point-breakpoints-container">
-                    {{#each this.event.awarenessPoints.breakpoints}}
-                        {{#if (or ../isGM (not this.playerHidden))}}
-                            <div class="awareness-point-breakpoint-container {{#if this.open}}open{{/if}} secondary-container {{#if this.active}}accent{{/if}}">
-                                <div class="awareness-point-breakpoint-inner-container title-small-container">
-                                    {{this.breakpoint}}
-                                    <div>{{localize "Points"}}</div>
-                                    {{#if ../editMode}}
-                                        <i class="fa-solid fa-trash clickable-icon awareness-point-breakpoint-delete" data-action="infiltrationRemoveAwarenessBreakpoint" data-event="{{../this.event.id}}" data-breakpoint="{{this.id}}"></i>
-                                    {{else}}
-                                        {{#if this.hideable}}<i class="fa-solid {{#if this.hidden}}fa-eye-slash{{else}}fa-eye{{/if}} clickable-icon awareness-point-breakpoint-hider" data-action="infiltrationToggleHideAwarenessBreakpoint" data-event="{{../this.event.id}}" data-breakpoint="{{this.id}}"></i>{{/if}}
-                                        {{#if this.showActivate}}<i class="fa-solid fa-check clickable-icon awareness-point-breakpoint-enable {{#if this.inUse}}active{{/if}}" data-action="infiltrationToggleAwarenessBreakpointInUse" data-event="{{../this.event.id}}" data-breakpoint="{{this.id}}" title="{{localize "PF2ESubsystems.Infiltration.Awareness.ActivateAwarenessBreakpoint"}}"></i>{{/if}}
-                                    {{/if}}
-                                    
-                                    <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon awareness-point-breakpoint-open" data-action="infiltrationToggleOpenAwarenessBreakpoint" data-breakpoint="{{this.id}}"></i> 
-                                </div>
-                                <div class="awareness-point-breakpoint-main-container {{#if this.open}}expanded{{/if}}">
-                                    {{#if ../editMode}}
-                                        <div class="event-field-group">
-                                            <div class="event-field-form-col text-normal primary-text-container">
-                                                <div>{{localize "Breakpoint"}}</div>
-                                                <input type="text" data-dtype="Number" name="{{concat "events." ../event.id ".awarenessPoints.breakpoints." this.id ".breakpoint"}}" value="{{this.breakpoint}}" class="tertiary-container" />
-                                            </div>
-                                            <div class="event-field-form-col text-normal primary-text-container">
-                                                <div>{{localize "DC Increase"}}</div>
-                                                <input type="text" data-dtype="Number" name="{{concat "events." ../event.id ".awarenessPoints.breakpoints." this.id ".dcIncrease"}}" value="{{this.dcIncrease}}" class="tertiary-container" />
-                                            </div>
-                                        </div>
-                                        <textarea class="data-input tertiary-container" name="{{concat "events." ../event.id ".awarenessPoints.breakpoints." this.id ".description"}}" value="{{this.description}}">
-                                            {{{this.enrichedDescription}}}
-                                        </textarea>
-                                    {{else}}
-                                        <div class="text-normal italic">{{{this.enrichedDescription}}}</div>
-                                    {{/if}}
-                                </div>
-                            </div>
-                        {{/if}}
-                    {{/each}}
-                </div>
-            </div>
+            {{/if}}
             <div class="edge-points-container event-section primary-container accent">
                 <div class="event-section-title title-container primary-container">{{localize "PF2ESubsystems.Infiltration.EdgePoints"}}</div>
                 <div class="infiltration-edges-container">
@@ -179,7 +184,7 @@
                             </div>
                         </div>
                         <div class="event-main-view-container">
-                            {{#if this.editMode}}<button class="tertiary-container objective-obstacle-add-button" data-action="addInfiltrationObstacle" data-event="{{this.event.id}}" data-objective="{{this.currentObjective.id}}"><i class="fa-solid fa-plus"></i>{{localize "Add New Obstacle"}}</button>{{/if}}                 
+                            {{#if this.editMode}}<button class="tertiary-container objective-obstacle-add-button" data-action="addInfiltrationObstacle" data-event="{{this.event.id}}" data-objective="{{this.currentObjective.id}}"><i class="fa-solid fa-plus"></i>{{localize "PF2ESubsystems.Infiltration.AddNewObstacle"}}</button>{{/if}}                 
                             <div class="event-section-container">
                                 {{#each this.currentObjective.obstacles}}
                                     {{#if (or ../isGM (not this.hidden))}}
@@ -251,29 +256,29 @@
                                                                 {{#each this.skillChecks}}
                                                                     <div class="event-field-group">
                                                                         <div class="event-field-form text-normal primary-text-container">
-                                                                            <div>{{localize "DC Adjustments"}}</div>
+                                                                            <div>{{localize "PF2ESubsystems.Basic.DCAdjustments"}}</div>
                                                                             <input class="obstacle-dc-adjustment tertiary-container" value="{{this.dcAdjustments}}" data-event="{{../../event.id}}" data-objective="{{../../currentObjective.id}}" data-obstacle="{{../id}}" data-skill-check="{{this.id}}" />
                                                                         </div>
                                                                     </div>
                                                                     <div class="event-field-group">
                                                                         <div class="event-field-form small text-normal primary-text-container">
-                                                                            <div>{{localize "Use Leveled DC"}}</div>
+                                                                            <div>{{localize "PF2ESubsystems.Basic.UseLeveledDC"}}</div>
                                                                             <input type="checkbox" class="obstacle-complication-leveled-DC" data-event="{{../../event.id}}" data-objective="{{../../currentObjective.id}}" data-obstacle="{{../id}}" data-skill-check="{{this.id}}" {{checked this.difficulty.leveledDC}} />
                                                                         </div>
                                                                         <div class="event-field-form text-normal primary-text-container">
-                                                                            <div>{{localize "DC"}}</div>
-                                                                            <input type="text" name="{{concat "events." ../../event.id ".objectives." ../../currentObjective.id ".obstacles." ../id ".skillChecks." this.id ".difficulty.DC"}}" value="{{this.difficulty.DC}}" class="tertiary-container" {{#if this.difficulty.leveledDC}}disabled placeholder="{{localize "Leveled DC is used"}}"{{/if}} />
+                                                                            <div>{{localize "PF2ESubsystems.Basic.DC"}}</div>
+                                                                            <input type="text" name="{{concat "events." ../../event.id ".objectives." ../../currentObjective.id ".obstacles." ../id ".skillChecks." this.id ".difficulty.DC"}}" value="{{this.difficulty.DC}}" class="tertiary-container" {{#if this.difficulty.leveledDC}}disabled placeholder="{{localize "PF2ESubsystems.Basic.LeveledDCIsUsed"}}"{{/if}} />
                                                                         </div>
                                                                     </div>
                                                                     <div class="event-skill-grid tertiary-container">
                                                                         <div class="event-skill-grid-col">
-                                                                            <div class="event-skill-grid-cell header">{{localize "Lore"}}</div>
+                                                                            <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Lore"}}</div>
                                                                             {{#each this.columns.lore}}
                                                                                 <input type="checkbox" class="infiltration-obstacle-lore event-skill-grid-cell" data-event="{{this.event}}" data-objective="{{this.objective}}" data-obstacle="{{this.obstacle}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}" {{checked this.lore}} />
                                                                             {{/each}}
                                                                         </div>
                                                                         <div class="event-skill-grid-col">
-                                                                            <div class="event-skill-grid-cell header">{{localize "Skill"}}</div>
+                                                                            <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Skill"}}</div>
                                                                             {{#each this.columns.skill}}
                                                                                 {{#if this.lore}}
                                                                                     <input type="text" name="{{concat "events." this.event ".objectives." this.objective ".obstacles." this.obstacle ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" value="{{this.skill}}" class="primary-text-container event-skill-grid-cell" />
@@ -285,7 +290,7 @@
                                                                             {{/each}}
                                                                         </div>
                                                                         <div class="event-skill-grid-col">
-                                                                            <div class="event-skill-grid-cell header">{{localize "Action"}}</div>
+                                                                            <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Action"}}</div>
                                                                             {{#each this.columns.action}}
                                                                                 <select name="{{concat "events." this.event ".objectives." this.objective ".obstacles." this.obstacle ".skillChecks." this.skillCheck ".skills." this.id ".action" }}" class="primary-text-container event-skill-grid-cell">
                                                                                     {{selectOptions ../../../actionOptions selected=this.action valueAttr="value" labelAttr="name" localize=true blank="" }}
@@ -293,7 +298,7 @@
                                                                             {{/each}}
                                                                         </div>
                                                                         <div class="event-skill-grid-col">
-                                                                            <div class="event-skill-grid-cell header">{{localize "Variant"}}</div>
+                                                                            <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
                                                                             {{#each this.columns.variant}}
                                                                                 <select name="{{concat "events." this.event ".objectives." this.objective ".obstacles." this.obstacle ".skillChecks." this.skillCheck ".skills." this.id ".variant" }}" class="primary-text-container event-skill-grid-cell">
                                                                                     {{selectOptions this.variantOptions selected=this.variant valueAttr="value" labelAttr="name" localize=true blank="" }}
@@ -357,7 +362,7 @@
 
                                                     {{#each this.skillChecks}}
                                                         <div class="infiltration-complication-skill-container">
-                                                            <div class="title-small-container">{{localize "Overcome"}}</div>
+                                                            <div class="title-small-container">{{localize "PF2ESubsystems.Basic.Overcome"}}</div>
                                                             <div class="infiltration-complication-skill-buttons">
                                                                 {{#each this.dcAdjustmentValues}}
                                                                     <div 
@@ -426,20 +431,13 @@
                                                 </div>
                                                 {{#if ../isGM}}<i class="fa-solid {{#if this.hidden}}fa-eye-slash{{else}}fa-eye{{/if}} clickable-icon event-section-hider" data-action="infiltrationToggleOpportunityHidden" data-event="{{../event.id}}" data-opportunity="{{this.id}}"></i>{{/if}}
                                                 <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon event-section-opener" data-action="infiltrationToggleOpenOpportunity" data-opportunity="{{this.id}}"></i> 
-                                                {{#if ../isGM}}
-                                                    <div class="subtext col text-helper-big">
-                                                        <div class="subtext-title">{{localize "PF2ESubsystems.Infiltration.Requirements"}}:</div>
-                                                        {{{this.requirements}}}
-                                                    </div>
-                                                {{/if}}
+
+                                                <div class="subtext col text-helper-big">
+                                                    <div class="subtext-title">{{localize "PF2ESubsystems.Infiltration.Requirements"}}:</div>
+                                                    {{{this.requirements}}}
+                                                </div>
                                             </div>
                                             <div class="event-section-body {{#if this.open}}expanded{{/if}}">
-                                                {{#if (not ../isGM)}}
-                                                    <div class="flexcol">
-                                                        <div class="text-normal bold centered">{{localize "PF2ESubsystems.Infiltration.Requirements"}}</div>
-                                                        {{{this.requirements}}}
-                                                    </div>
-                                                {{/if}}
                                                 <div class="text-normal italic">{{{this.enrichedDescription}}}</div>
                                             </div>
                                         {{/if}}
@@ -514,29 +512,29 @@
                                                         {{#each this.skillChecks}}
                                                             <div class="event-field-group">
                                                                 <div class="event-field-form text-normal primary-text-container">
-                                                                    <div>{{localize "DC Adjustments"}}</div>
+                                                                    <div>{{localize "PF2ESubsystems.Basic.DCAdjustments"}}</div>
                                                                     <input class="complication-dc-adjustment tertiary-container" value="{{this.dcAdjustments}}" data-event="{{../../event.id}}" data-complication="{{../id}}" data-skill-check="{{this.id}}" />
                                                                 </div>
                                                             </div>
                                                             <div class="event-field-group">
                                                                 <div class="event-field-form small text-normal primary-text-container">
-                                                                    <div>{{localize "Use Leveled DC"}}</div>
+                                                                    <div>{{localize "PF2ESubsystems.Basic.UseLeveledDC"}}</div>
                                                                     <input type="checkbox" class="infiltration-complication-leveled-DC" data-event="{{../../event.id}}" data-complication="{{../id}}" data-skill-check="{{this.id}}" {{checked this.difficulty.leveledDC}} />
                                                                 </div>
                                                                 <div class="event-field-form text-normal primary-text-container">
-                                                                    <div>{{localize "DC"}}</div>
-                                                                    <input type="text" name="{{concat "events." ../../event.id ".complications." ../id ".skillChecks." this.id ".difficulty.DC"}}" value="{{this.difficulty.DC}}" class="tertiary-container" {{#if this.difficulty.leveledDC}}disabled placeholder="{{localize "Leveled DC is used"}}"{{/if}} />
+                                                                    <div>{{localize "PF2ESubsystems.Basic.DC"}}</div>
+                                                                    <input type="text" name="{{concat "events." ../../event.id ".complications." ../id ".skillChecks." this.id ".difficulty.DC"}}" value="{{this.difficulty.DC}}" class="tertiary-container" {{#if this.difficulty.leveledDC}}disabled placeholder="{{localize "PF2ESubsystems.Basic.LeveledDCIsUsed"}}"{{/if}} />
                                                                 </div>
                                                             </div>
                                                             <div class="event-skill-grid tertiary-container">
                                                                 <div class="event-skill-grid-col">
-                                                                    <div class="event-skill-grid-cell header">{{localize "Lore"}}</div>
+                                                                    <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Lore"}}</div>
                                                                     {{#each this.columns.lore}}
                                                                         <input type="checkbox" class="infiltration-complication-lore event-skill-grid-cell" data-event="{{this.event}}" data-complication="{{this.complication}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}" {{checked this.lore}} />
                                                                     {{/each}}
                                                                 </div>
                                                                 <div class="event-skill-grid-col">
-                                                                    <div class="event-skill-grid-cell header">{{localize "Skill"}}</div>
+                                                                    <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Skill"}}</div>
                                                                     {{#each this.columns.skill}}
                                                                         {{#if this.lore}}
                                                                             <input type="text" name="{{concat "events." this.event ".complications." this.complication ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" value="{{this.skill}}" class="primary-text-container event-skill-grid-cell" />
@@ -548,7 +546,7 @@
                                                                     {{/each}}
                                                                 </div>
                                                                 <div class="event-skill-grid-col">
-                                                                    <div class="event-skill-grid-cell header">{{localize "Action"}}</div>
+                                                                    <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Action"}}</div>
                                                                     {{#each this.columns.action}}
                                                                         <select name="{{concat "events." this.event ".complications." this.complication ".skillChecks." this.skillCheck ".skills." this.id ".action" }}" class="primary-text-container event-skill-grid-cell">
                                                                             {{selectOptions ../../../actionOptions selected=this.action valueAttr="value" labelAttr="name" localize=true blank="" }}
@@ -556,7 +554,7 @@
                                                                     {{/each}}
                                                                 </div>
                                                                 <div class="event-skill-grid-col">
-                                                                    <div class="event-skill-grid-cell header">{{localize "Variant"}}</div>
+                                                                    <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
                                                                     {{#each this.columns.variant}}
                                                                         <select name="{{concat "events." this.event ".complications." this.complication ".skillChecks." this.skillCheck ".skills." this.id ".variant" }}" class="primary-text-container event-skill-grid-cell">
                                                                             {{selectOptions this.variantOptions selected=this.variant valueAttr="value" labelAttr="name" localize=true blank="" }}
@@ -608,32 +606,34 @@
                                                 {{#if ../isGM}}<i class="fa-solid {{#if this.hidden}}fa-eye-slash{{else}}fa-eye{{/if}} clickable-icon event-section-hider" data-action="infiltrationToggleComplicationHidden" data-event="{{../event.id}}" data-complication="{{this.id}}"></i>{{/if}}
                                                 <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon event-section-opener" data-action="infiltrationToggleOpenComplication" data-complication="{{this.id}}"></i> 
 
-                                                {{#if ../isGM}}
-                                                    <div class="subtext text-helper-big">
-                                                        <div class="subtext-title">{{localize "Trigger"}}:</div>
-                                                        &nbsp;
-                                                        <div>{{this.trigger}}</div>
-                                                    </div> 
-                                                {{/if}}
+                                                <div class="subtext text-helper-big">
+                                                    <div class="subtext-title">{{localize "PF2ESubsystems.Basic.Trigger"}}:</div>
+                                                    &nbsp;
+                                                    <div>{{this.trigger}}</div>
+                                                </div> 
                                             </div>
                                             <div class="event-section-body {{#if this.open}}expanded{{/if}}">
-                                                {{#if (not ../isGM)}}
-                                                    <div class="event-field-group">
-                                                        <div class="event-field-form text-normal primary-text-container">
-                                                            <div class="text-normal bold">{{localize "Trigger"}}</div>
-                                                            {{this.trigger}}
+                                                {{{this.enrichedDescription}}}
+                                                {{#if (gt this.infiltrationPoints.max 0)}}
+                                                    <div class="infiltration-points-container title-small-container">
+                                                        <div>{{localize "PF2ESubsystems.Infiltration.InfiltrationPoints"}}</div>
+                                                        <div class="event-section-number-container">
+                                                            {{#if ../isGM}}<i class="fa-solid fa-caret-up event-section-number-upper clickable-icon {{#if (eq this.infiltrationPoints.current this.infiltrationPoints.max)}}disabled{{/if}}" {{#if (lt this.infiltrationPoints.current this.infiltrationPoints.max)}}data-action="complicationInfiltrationPointsUpdate"{{/if}} data-event="{{../event.id}}" data-complication="{{this.id}}" data-increase="true"></i>{{/if}}
+                                                            {{this.infiltrationPoints.current}}
+                                                            {{#if ../isGM}}<i class="fa-solid fa-caret-down clickable-icon {{#if (eq this.infiltrationPoints.current 0)}}disabled{{/if}} event-section-number-lower" {{#if (gt this.infiltrationPoints.current 0)}}data-action="complicationInfiltrationPointsUpdate"{{/if}} data-event="{{../event.id}}" data-complication="{{this.id}}"></i>{{/if}}
                                                         </div>
+                                                        /
+                                                        <div>{{this.infiltrationPoints.max}}</div>
                                                     </div>
                                                 {{/if}}
-                                                {{{this.enrichedDescription}}}
                                                 {{#each this.skillChecks}}
                                                     <div class="infiltration-complication-skill-container">
-                                                        <div class="title-small-container">{{localize "Overcome"}}</div>
+                                                        <div class="title-small-container">{{localize "PF2ESubsystems.Basic.Overcome"}}</div>
                                                         <div class="infiltration-complication-skill-buttons">
                                                             {{#each this.dcAdjustmentValues}}
                                                                 <div 
-                                                                    class="infiltration-complication-skill-adjustment primary-text-container tertiary-container clickable-icon {{#if (not (eq this.value ../selectedAdjustment))}}inactive{{/if}}" 
-                                                                    data-action="infiltrationComplicationToggleAdjustment" data-event="{{../../../event.id}}" data-complication="{{../../id}}" data-skill-check="{{../id}}" data-adjustment="{{this.value}}">{{this.name}}
+                                                                    class="infiltration-complication-skill-adjustment primary-text-container tertiary-container {{#if ../isGM}}clickable-icon{{/if}} {{#if (not (eq this.value ../selectedAdjustment))}}inactive{{/if}}" 
+                                                                    {{#if ../isGM}}data-action="infiltrationComplicationToggleAdjustment"{{/if}} data-event="{{../../../event.id}}" data-complication="{{../../id}}" data-skill-check="{{../id}}" data-adjustment="{{this.value}}">{{this.name}}
                                                                 </div>
                                                             {{/each}}
                                                         </div>
@@ -645,18 +645,13 @@
                                                     </div>
                                                 {{/each}}
                                                 <div class="infiltration-results-container">
-                                                    {{#each this.results}}
-                                                        {{#if this.inUse}}
-                                                            <div 
-                                                                class="infiltration-result-container {{#if ../resultsOutcome}}{{#if (not (eq ../resultsOutcome this.degreeOfSuccess))}}inactive{{/if}}{{else}}inactive{{/if}} clickable-icon tertiary-container primary-text-container"
-                                                                data-action="infiltrationComplicationToggleResultsOutcome"
-                                                                data-event="{{../../event.id}}" data-complication="{{../id}}" data-result="{{this.degreeOfSuccess}}"
-                                                            >
-                                                                <div class="text-normal bold">{{this.name}}</div>
-                                                                {{{this.enrichedDescription}}}
-                                                            </div>
-                                                        {{/if}}
-                                                    {{/each}}
+                                                    <div class="infiltration-results-container">
+                                                        {{#each this.results}}
+                                                            {{#if this.inUse}}
+                                                                <div class="preparation-activity-results-description">{{{this.enrichedDescription}}}</div>
+                                                            {{/if}}
+                                                        {{/each}}
+                                                    </div>
                                                 </div>
                                             </div>
                                         {{/if}}
@@ -764,29 +759,29 @@
                                                     {{#each this.skillChecks}}
                                                         <div class="event-field-group">
                                                             <div class="event-field-form text-normal primary-text-container">
-                                                                <div>{{localize "DC Adjustments"}}</div>
+                                                                <div>{{localize "PF2ESubsystems.Basic.DCAdjustments"}}</div>
                                                                 <input class="infiltration-activity-dc-adjustment tertiary-container" value="{{this.dcAdjustments}}" data-event="{{../../event.id}}" data-activity="{{../id}}" data-skill-check="{{this.id}}" />
                                                             </div>
                                                         </div>
                                                         <div class="event-field-group">
                                                             <div class="event-field-form small text-normal primary-text-container">
-                                                                <div>{{localize "Use Leveled DC"}}</div>
+                                                                <div>{{localize "PF2ESubsystems.Basic.UseLeveledDC"}}</div>
                                                                 <input type="checkbox" class="infiltration-activity-leveled-DC" data-event="{{../../event.id}}" data-activity="{{../id}}" data-skill-check="{{this.id}}" {{checked this.difficulty.leveledDC}} />
                                                             </div>
                                                             <div class="event-field-form text-normal primary-text-container">
-                                                                <div>{{localize "DC"}}</div>
-                                                                <input type="text" name="{{concat "events." ../../event.id ".preparations.activities." ../id ".skillChecks." this.id ".difficulty.DC"}}" value="{{this.difficulty.DC}}" class="tertiary-container" {{#if this.difficulty.leveledDC}}disabled placeholder="{{localize "Leveled DC is used"}}"{{/if}} />
+                                                                <div>{{localize "PF2ESubsystems.Basic.DC"}}</div>
+                                                                <input type="text" name="{{concat "events." ../../event.id ".preparations.activities." ../id ".skillChecks." this.id ".difficulty.DC"}}" value="{{this.difficulty.DC}}" class="tertiary-container" {{#if this.difficulty.leveledDC}}disabled placeholder="{{localize "PF2ESubsystems.Basic.LeveledDCIsUsed"}}"{{/if}} />
                                                             </div>
                                                         </div>
                                                         <div class="event-skill-grid tertiary-container">
                                                             <div class="event-skill-grid-col">
-                                                                <div class="event-skill-grid-cell header">{{localize "Lore"}}</div>
+                                                                <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Lore"}}</div>
                                                                 {{#each this.columns.lore}}
                                                                     <input type="checkbox" class="infiltration-activity-lore event-skill-grid-cell" data-event="{{this.event}}" data-activty="{{this.activity}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}" {{checked this.lore}} />
                                                                 {{/each}}
                                                             </div>
                                                             <div class="event-skill-grid-col">
-                                                                <div class="event-skill-grid-cell header">{{localize "Skill"}}</div>
+                                                                <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Skill"}}</div>
                                                                 {{#each this.columns.skill}}
                                                                     {{#if this.lore}}
                                                                         <input type="text" name="{{concat "events." this.event ".preparations.activities." this.activity ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" value="{{this.skill}}" class="primary-text-container event-skill-grid-cell" />
@@ -798,7 +793,7 @@
                                                                 {{/each}}
                                                             </div>
                                                             <div class="event-skill-grid-col">
-                                                                <div class="event-skill-grid-cell header">{{localize "Action"}}</div>
+                                                                <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Action"}}</div>
                                                                 {{#each this.columns.action}}
                                                                     <select name="{{concat "events." this.event ".preparations.activities." this.activity ".skillChecks." this.skillCheck ".skills." this.id ".action" }}" class="primary-text-container event-skill-grid-cell">
                                                                         {{selectOptions ../../../actionOptions selected=this.action valueAttr="value" labelAttr="name" localize=true blank="" }}
@@ -806,7 +801,7 @@
                                                                 {{/each}}
                                                             </div>
                                                             <div class="event-skill-grid-col">
-                                                                <div class="event-skill-grid-cell header">{{localize "Variant"}}</div>
+                                                                <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
                                                                 {{#each this.columns.variant}}
                                                                     <select name="{{concat "events." this.event ".preparations.activities." this.activity ".skillChecks." this.skillCheck ".skills." this.id ".variant" }}" class="primary-text-container event-skill-grid-cell">
                                                                         {{selectOptions this.variantOptions selected=this.variant valueAttr="value" labelAttr="name" localize=true blank="" }}
@@ -843,12 +838,12 @@
                                                         {{/each}}
                                                     </div>
                                                     {{#if this.selectedResult}}
-                                                        <div class="event-field-group">
+                                                        {{!-- <div class="event-field-group">
                                                             <div class="event-field-form text-normal primary-text-container">
                                                                 <div>{{localize "PF2ESubsystems.Infiltration.Preparations.AwarenessPoints"}}</div>
                                                                 <input type="text" data-dtype="Number" name="{{concat "events." ../event.id ".preparations.activities." this.id ".results." this.selectedResult.degreeOfSuccess ".awarenessPoints"}}" value="{{this.selectedResult.awarenessPoints}}" class="tertiary-container" />
                                                             </div>
-                                                        </div>
+                                                        </div> --}}
                                                         <div class="event-field-group">
                                                             <div class="event-field-form text-normal primary-text-container">
                                                                 <div>{{localize "PF2ESubsystems.Infiltration.Preparations.FakeDegreeOfSuccess"}}</div>
@@ -868,12 +863,12 @@
 
                                             {{#each this.skillChecks}}
                                                 <div class="infiltration-complication-skill-container">
-                                                    <div class="title-small-container">{{localize "Overcome"}}</div>
+                                                    <div class="title-small-container">{{localize "PF2ESubsystems.Basic.Overcome"}}</div>
                                                     <div class="infiltration-complication-skill-buttons">
                                                         {{#each this.dcAdjustmentValues}}
                                                             <div 
-                                                                class="infiltration-complication-skill-adjustment primary-text-container tertiary-container clickable-icon {{#if (not (eq this.value ../selectedAdjustment))}}inactive{{/if}}" 
-                                                                data-action="infiltrationActivityToggleAdjustment" data-event="{{../../../event.id}}" data-activity="{{../../id}}" data-skill-check="{{../id}}" data-adjustment="{{this.value}}">{{this.name}}
+                                                                class="infiltration-complication-skill-adjustment primary-text-container tertiary-container {{#if ../isGM}}clickable-icon{{/if}} {{#if (not (eq this.value ../selectedAdjustment))}}inactive{{/if}}" 
+                                                                {{#if ../isGM}}data-action="infiltrationActivityToggleAdjustment"{{/if}} data-event="{{../../../event.id}}" data-activity="{{../../id}}" data-skill-check="{{../id}}" data-adjustment="{{this.value}}">{{this.name}}
                                                             </div>
                                                         {{/each}}
                                                     </div>

@@ -136,12 +136,14 @@ export default class SystemView extends HandlebarsApplicationMixin(
         removeInfiltrationOpportunity: this.removeInfiltrationOpportunity,
         removeInfiltrationComplication: this.removeInfiltrationComplication,
         infiltrationUpdateAwarenessPoints: this.infiltrationUpdateAwarenessPoints,
+        infiltrationUpdateHiddenAwarenessPoints: this.infiltrationUpdateHiddenAwarenessPoints,
         infiltrationAddComplicationSkill: this.infiltrationAddComplicationSkill,
         infiltrationRemoveComplicationSkill: this.infiltrationRemoveComplicationSkill,
         infiltrationComplicationResultSelect: this.infiltrationComplicationResultSelect,
         infiltrationComplicationResultToggle: this.infiltrationComplicationResultToggle,
         infiltrationComplicationToggleResultsOutcome: this.infiltrationComplicationToggleResultsOutcome,
         infiltrationComplicationToggleAdjustment: this.infiltrationComplicationToggleAdjustment,
+        complicationInfiltrationPointsUpdate: this.complicationInfiltrationPointsUpdate,
         infiltrationPreparationsActivityAdd: this.infiltrationPreparationsActivityAdd,
         infiltrationPreparationsActivityRemove: this.infiltrationPreparationsActivityRemove,
         infiltrationPreparationsActivitiesReset: this.infiltrationPreparationsActivitiesReset,
@@ -920,6 +922,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
     }
 
     async toggleObstacleLock(e, baseButton) {
+      if(!game.user.isGM) return;
+
       const button = baseButton ?? e.currentTarget;
       const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event];
       const currentObstacle = Object.values(event.obstacles).find(x => x.position === Number.parseInt(button.dataset.position));
@@ -1212,6 +1216,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
     }
 
     async toggleObjectiveHidden(e, baseButton) {
+      if (!game.user.isGM) return;
+
       const button = baseButton ?? e.currentTarget;
       const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event];
       const currentObjective = Object.values(event.objectives).find(x => x.position === Number.parseInt(button.dataset.position));
@@ -1311,6 +1317,11 @@ export default class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.awarenessPoints.current`]: button.dataset.increase ? currentPoints + 1 : currentPoints - 1 });
     }
 
+    static async infiltrationUpdateHiddenAwarenessPoints(_, button) {
+      const currentHiddenPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].awarenessPoints.hidden;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.awarenessPoints.hidden`]: button.dataset.increase ? currentHiddenPoints + 1 : currentHiddenPoints - 1 });
+    }
+
     static async infiltrationAddComplicationSkill(_, button) {
       const skillId = foundry.utils.randomID();
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.skillChecks.${button.dataset.skillCheck}.skills.${skillId}`]: {
@@ -1347,6 +1358,11 @@ export default class SystemView extends HandlebarsApplicationMixin(
     static async infiltrationComplicationToggleAdjustment(_, button) {
       const currentAdjustment = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].complications[button.dataset.complication].skillChecks[button.dataset.skillCheck].selectedAdjustment;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.skillChecks.${button.dataset.skillCheck}.selectedAdjustment`]: currentAdjustment === button.dataset.adjustment ? null : button.dataset.adjustment });
+    }
+
+    static async complicationInfiltrationPointsUpdate(_, button) {
+      const currentPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].complications[button.dataset.complication].infiltrationPoints.current;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.infiltrationPoints.current`]: button.dataset.increase ? currentPoints + 1 : currentPoints - 1 });
     }
 
     static async infiltrationPreparationsActivityAdd(_, button) {
@@ -1785,6 +1801,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
     }
 
     async close(options={}) {
+      Hooks.off(socketEvent.UpdateSystemView, this.onUpdateView);
+      
       if ( this.#onKeyDown ) {
         document.removeEventListener("keydown", this.#onKeyDown);
         this.#onKeyDown = undefined;
@@ -1983,7 +2001,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
                   value: x,
                 }));
   
-                let dc = skillCheck.difficulty.leveledDC ? getSelfDC() : skillCheck.difficulty.DC;
+                  let dc = skillCheck.difficulty.leveledDC ? getSelfDC() : skillCheck.difficulty.DC;
                 dc = skillCheck.selectedAdjustment ? dc+getDCAdjustmentNumber(skillCheck.selectedAdjustment) : dc;
                 dc += awarenessDCIncrease;
                 const disableElement = skillCheck.dcAdjustments.length > 0 && !skillCheck.selectedAdjustment;
@@ -2013,10 +2031,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
               breakpoint.description = game.i18n.localize(breakpoint.description);
               breakpoint.enrichedDescription = await TextEditor.enrichHTML(breakpoint.description);
               breakpoint.open = this.selected.infiltration.awarenessBreakpoint === breakpoint.id;
-              breakpoint.active = context.settings.autoApplyAwareness ? context.selectedEvent.awarenessPoints.current >= breakpoint.breakpoint : breakpoint.inUse;
+              breakpoint.active = context.settings.autoApplyAwareness ? (context.selectedEvent.visibleAwareness) >= breakpoint.breakpoint : breakpoint.inUse;
               breakpoint.showActivate = (game.user.isGM && !context.settings.autoApplyAwareness) || breakpoint.inUse;
               breakpoint.playerHidden = context.settings.autoRevealAwareness ? context.selectedEvent.awarenessPoints.current < breakpoint.breakpoint : breakpoint.hidden;
-              breakpoint.hideable = game.user.isGM && !context.settings.autoRevealAwareness && context.editMode;
+              breakpoint.hideable = game.user.isGM && !context.settings.autoRevealAwareness && !context.editMode;
             }
 
             for(var key of Object.keys(context.selectedEvent.opportunities)){
@@ -2056,7 +2074,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
                 var result = complication.results[key];
                 result.name = game.i18n.localize(degreesOfSuccess[result.degreeOfSuccess].name);
                 result.selected = this.selected.infiltration.complicationResultSelect === result.degreeOfSuccess;
-                result.enrichedDescription = await TextEditor.enrichHTML(result.description);
+
+                const titleElement = `<p><strong class="infiltration-result-container ${complication.resultsOutcome !== result.degreeOfSuccess ? 'inactive' : ''} ${context.isGM ? 'clickable-icon' : ''} tertiary-container primary-text-container infiltration-activity-result-button" ${context.isGM ? 'data-action="infiltrationComplicationToggleResultsOutcome"' : ''} data-event="${context.selectedEvent.id}" data-complication="${complication.id}" data-result="${result.degreeOfSuccess}">${result.name}</strong>`;
+                const descriptionStartsWithParagraph = result.description.match(/^<p>/);
+                result.enrichedDescription = await TextEditor.enrichHTML(descriptionStartsWithParagraph ? result.description.replace('<p>', `${titleElement} `) : `${titleElement} ${result.description}`);
               }
 
               complication.selectedResult = Object.values(complication.results).find(x => x.degreeOfSuccess === this.selected.infiltration.complicationResultSelect);
@@ -2065,7 +2086,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
             for(var key of Object.keys(context.selectedEvent.extendedPreparations.activities)) {
               var activity = context.selectedEvent.extendedPreparations.activities[key];
               activity.open = this.selected.infiltration.preparations.openActivity === activity.id;
-              console.log(activity.open ? 'Open': 'Closed');
               activity.enrichedDescription = await TextEditor.enrichHTML(activity.description);
               activity.displayTags = activity.tags.map(tag => game.i18n.localize(CONFIG.PF2E.actionTraits[tag]));
 
@@ -2099,7 +2119,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
                   return acc;
                 }, {});
                 
-                const titleElement = `<p><strong class="infiltration-result-container ${result.nrOutcomes === 0 ? 'inactive' : ''} clickable-icon tertiary-container primary-text-container infiltration-activity-result-button" data-action="infiltrationActivityIncreaseResultsOutcome" data-event="${context.selectedEvent.id}" data-activity="${activity.id}" data-result="${result.degreeOfSuccess}">${result.name} ${result.nrOutcomes}x</strong>`;
+                const titleElement = `<p><strong class="infiltration-result-container ${result.nrOutcomes === 0 ? 'inactive' : ''} ${context.isGM ? 'clickable-icon' : ''} tertiary-container primary-text-container infiltration-activity-result-button" ${context.isGM ? 'data-action="infiltrationActivityIncreaseResultsOutcome"' : ''} data-event="${context.selectedEvent.id}" data-activity="${activity.id}" data-result="${result.degreeOfSuccess}">${result.name} ${result.nrOutcomes}x</strong>`;
                 const descriptionStartsWithParagraph = result.description.match(/^<p>/);
                 result.enrichedDescription = await TextEditor.enrichHTML(descriptionStartsWithParagraph ? result.description.replace('<p>', `${titleElement} `) : `${titleElement} ${result.description}`);
               }

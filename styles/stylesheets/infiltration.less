@@ -64,6 +64,11 @@
                         display: flex;
                         flex-direction: column;
                     }
+
+                    .infiltration-points-container {
+                        gap: 2px;
+                        margin-top: 5px;
+                    }
                 }
                 
                 .infiltration-obstacle-image-container {
@@ -150,6 +155,16 @@
                             position: relative;
                             border-bottom-width: 1px;
                             border-bottom-style: solid;
+                            padding: 0 @paddingLarge;
+
+                            &.spaced {
+                                justify-content: space-between;
+                            }
+
+                            .awareness-points-left-container {
+                                display: flex;
+                                align-items: center;
+                            }
                         }
 
                         .awareness-point-breakpoints-container {

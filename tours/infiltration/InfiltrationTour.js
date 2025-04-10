@@ -72,7 +72,19 @@ export class InfiltrationTour extends Tour {
     }
 
     async progress(stepIndex) {
-      super.progress(stepIndex);
+      let index = stepIndex;
+      if(!game.user.isGM){
+        switch(stepIndex) {
+          case 10:
+            index = this.stepIndex === 11 ? 9 : 11;
+            break;
+          case 17:
+            index = this.stepIndex === 18 ? 16 : 18;
+            break;
+        }
+      }
+
+      super.progress(index);
     }
 
     exit(){

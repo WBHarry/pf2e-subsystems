@@ -23,6 +23,7 @@ export class Infiltration extends foundry.abstract.DataModel {
         started: new fields.BooleanField({ required: true, initial: false }),
         awarenessPoints: new fields.SchemaField({
           current: new fields.NumberField({ required: true, initial: 0 }),
+          hidden: new fields.NumberField({ required: true, initial: 0}),
           breakpoints: new TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
             hidden: new fields.BooleanField({ required: true, initial: true }),
@@ -128,10 +129,15 @@ export class Infiltration extends foundry.abstract.DataModel {
       }
     }
 
+    get visibleAwareness() {
+      return game.user.isGM ? this.awarenessPoints.current + this.awarenessPoints.hidden : this.awarenessPoints.current; 
+    }
+
     get awarenessDCIncrease() {
+      const totalAwareness = this.awarenessPoints.current + this.awarenessPoints.hidden;
       const autoApplyIncrease = game.settings.get(MODULE_ID, settingIDs.infiltration.settings).autoApplyAwareness;
       return Object.values(this.awarenessPoints.breakpoints).reduce((acc, curr) => {
-        if((autoApplyIncrease && this.awarenessPoints.current >= curr.breakpoint) || curr.inUse){
+        if((autoApplyIncrease && totalAwareness >= curr.breakpoint) || curr.inUse){
           acc = Math.max((curr.dcIncrease ?? 0), acc);
         }
 
@@ -289,7 +295,7 @@ export class Preparations extends foundry.abstract.DataModel {
 const degreeOfSuccessFields = (degreeOfSuccess) => new foundry.data.fields.SchemaField({
   degreeOfSuccess: new foundry.data.fields.StringField({ required: true, initial: degreeOfSuccess}),
   description: new foundry.data.fields.HTMLField(),
-  nrOutcomes: new foundry.data.fields.NumberField({ required: true, initial: 0 }),
+  awarenessPoints: new foundry.data.fields.NumberField(),
   inUse: new foundry.data.fields.BooleanField({ required: true, initial: false }),
 });
 

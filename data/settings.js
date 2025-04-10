@@ -27,6 +27,7 @@ export class InfiltrationSettings extends foundry.abstract.DataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
     return {
+      hideAwareness: new fields.BooleanField({ required: true, initial: false }),
       autoApplyAwareness: new fields.BooleanField({ required: true, initial: true }),
       autoRevealAwareness: new fields.BooleanField({ required: true, initial: true }),
       defaultAwarenessBreakpoints: new TypedObjectField(new fields.SchemaField({

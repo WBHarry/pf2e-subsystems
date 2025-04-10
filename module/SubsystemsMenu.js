@@ -13,6 +13,12 @@ export default class SubsystemsMenu extends HandlebarsApplicationMixin(
         awarenessBreakpoint: null,
       }
     }
+
+    this.settings = {
+      chase: context.settings = game.settings.get(MODULE_ID, settingIDs.chase.settings).toObject(),
+      research: context.settings = game.settings.get(MODULE_ID, settingIDs.research.settings).toObject(),
+      infiltration: game.settings.get(MODULE_ID, settingIDs.infiltration.settings).toObject(),
+    };
   }
 
   get title() {
@@ -29,8 +35,9 @@ export default class SubsystemsMenu extends HandlebarsApplicationMixin(
       selectInfiltrationDefaultAwarenessBreakpoint: this.selectInfiltrationDefaultAwarenessBreakpoint,
       removeInfiltrationDefaultAwarenessBreakpoint: this.removeInfiltrationDefaultAwarenessBreakpoint,
       resetInfiltrationDefaultAwarenessBreakpoints: this.resetInfiltrationDefaultAwarenessBreakpoints,
+      save: this.save,
     },
-    form: { handler: this.updateData },
+    form: { handler: this.updateData, submitOnChange: true },
   };
 
   static PARTS = {
@@ -107,13 +114,13 @@ export default class SubsystemsMenu extends HandlebarsApplicationMixin(
   async _preparePartContext(partId, context) {
     switch(partId){
         case 'chase':
-          context.settings = game.settings.get(MODULE_ID, settingIDs.chase.settings);
+          context.settings = this.settings.chase;
           break;
         case 'research':
-          context.settings = game.settings.get(MODULE_ID, settingIDs.research.settings);
+          context.settings = this.settings.research;
           break;
         case 'infiltration':
-          context.settings = game.settings.get(MODULE_ID, settingIDs.infiltration.settings);
+          context.settings = this.settings.infiltration;
 
           const defaultAwarenessBreakpoints = Object.values(context.settings.defaultAwarenessBreakpoints);
           const selectedAwarenessBreakpointId = this.selected.infiltration.awarenessBreakpoint ?? (defaultAwarenessBreakpoints.length > 0 ? defaultAwarenessBreakpoints[0].id : null);
@@ -136,12 +143,15 @@ export default class SubsystemsMenu extends HandlebarsApplicationMixin(
   static async updateData(event, element, formData) {
     const { chase, research, infiltration } = foundry.utils.expandObject(formData.object);
 
-    await game.settings.set(MODULE_ID, settingIDs.chase.settings, chase);
-    await game.settings.set(MODULE_ID, settingIDs.research.settings, research);
-    await game.settings.set(MODULE_ID, settingIDs.infiltration.settings, foundry.utils.mergeObject(
-      game.settings.get(MODULE_ID, settingIDs.infiltration.settings),
-      infiltration
-    ));
+    this.settings.chase = chase;
+    this.settings.research = research;
+    this.settings.infiltration = infiltration;
+  }
+
+  static async save() {
+    await game.settings.set(MODULE_ID, settingIDs.chase.settings, this.settings.chase);
+    await game.settings.set(MODULE_ID, settingIDs.research.settings, this.settings.research);
+    await game.settings.set(MODULE_ID, settingIDs.infiltration.settings, this.settings.infiltration);
 
     this.close();
   }
@@ -149,17 +159,12 @@ export default class SubsystemsMenu extends HandlebarsApplicationMixin(
   static async addInfiltrationDefaultAwarenessBreakpoint() {
     const newId = foundry.utils.randomID();
 
-    const currentSetting = game.settings.get(MODULE_ID, settingIDs.infiltration.settings);
-    currentSetting.updateSource({
-      defaultAwarenessBreakpoints: {
-        [newId]: {
-          id: newId,
-          breakpoint: 5,
-          description: game.i18n.localize('PF2ESubsystems.Menus.Subsystems.Infiltration.NewAwarenessBreakpoint'),
-        } 
-      }
-    });
-    await game.settings.set(MODULE_ID, settingIDs.infiltration.settings, currentSetting);
+    this.settings.infiltration.defaultAwarenessBreakpoints[newId] = {
+      id: newId,
+      breakpoint: 5,
+      description: game.i18n.localize('PF2ESubsystems.Menus.Subsystems.Infiltration.NewAwarenessBreakpoint'),
+    };
+     
     this.render();
   }
 
@@ -169,12 +174,18 @@ export default class SubsystemsMenu extends HandlebarsApplicationMixin(
   }
 
   static async removeInfiltrationDefaultAwarenessBreakpoint(_, button) {
-    await game.settings.set(MODULE_ID, settingIDs.infiltration.settings, { [`defaultAwarenessBreakpoints.-=${button.dataset.breakpoint}`]: null });
+    this.settings.infiltration.defaultAwarenessBreakpoints = Object.keys(this.settings.infiltration.defaultAwarenessBreakpoints).reduce((acc, curr) => {
+      if(curr !== button.dataset.breakpoint) {
+        acc[curr] = this.settings.infiltration.defaultAwarenessBreakpoints[curr];
+      }
+
+      return acc;
+    }, {});
     this.render();
   }
 
   static async resetInfiltrationDefaultAwarenessBreakpoints() {
-    await game.settings.set(MODULE_ID, settingIDs.infiltration.settings, { defaultAwarenessBreakpoints: defaultInfiltrationAwarenessBreakpoints });
+    this.settings.infiltration.defaultAwarenessBreakpoints = defaultInfiltrationAwarenessBreakpoints;
     this.render();
   }
 }
