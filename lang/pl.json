@@ -183,12 +183,16 @@
             "MaxInfiltrationPoints": "Wpływ (opcjonalnie)",
             "ComplicationsDescription": "Opisz tę komplikację tutaj",
             "ComplicationResultDescription": "Opisz wynik tutaj",
+            "ConfirmRemoveEdgeTitle": "Usuń punkty brzegowe",
+            "ConfirmRemoveEdgeText": "Ten wynik jest powiązany z punktem brzegowym \"{edge}\". Czy chcesz go usunąć?",
             "Preparations": {
                 "NewPreparationActivity": "Nowa aktywność",
                 "MaxAttempts": "Maksymalna liczba prób",
                 "EdgeLabel": "Etykieta punktów brzegowych",
                 "IsUsed": "Przygotowania aktywne",
-                "NotUsed": "Przygotowania nieaktywne"
+                "NotUsed": "Przygotowania nieaktywne",
+                "AwarenessPoints": "Punkty Czujności",
+                "FakeDegreeOfSuccess": "Fałszywy stopień pokazywany graczom"
             },
             "InfiltrationTab": {
                 "Infiltration": "Infiltracja",
