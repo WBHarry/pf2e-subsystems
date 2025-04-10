@@ -26,6 +26,8 @@ export function translateSubsystem(tab) {
             return game.i18n.localize("PF2ESubsystems.Events.Chase.Single");
         case 'research':
             return game.i18n.localize("PF2ESubsystems.Events.Research.Single");
+        case 'infiltration':
+            return game.i18n.localize("PF2ESubsystems.Events.Infiltration.Single");
     }
 }
 
