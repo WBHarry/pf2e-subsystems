@@ -2032,6 +2032,12 @@ class SystemView extends HandlebarsApplicationMixin(
     
 
     changeTab(tab, group, options) {
+      switch(group){
+        case 'main':
+          this.selected = getDefaultSelected();
+          break;
+      }
+
       super.changeTab(tab, group, options);
     }
 
@@ -2580,6 +2586,7 @@ class SystemView extends HandlebarsApplicationMixin(
 
     static toggleResearchOpenResearchBreakpoint(_, button) {
       this.selected.research.openResearchBreakpoint = this.selected.research.openResearchBreakpoint === button.dataset.breakpoint ? null : button.dataset.breakpoint;
+      this.tabGroups.influenceResearchChecks = 'description';
       this.render({ parts: [this.tabGroups.main] }); 
     }
 
@@ -2810,6 +2817,7 @@ class SystemView extends HandlebarsApplicationMixin(
 
     static async infiltrationToggleOpenObstacle(_, button) {
       this.selected.openInfiltrationObstacle = this.selected.openInfiltrationObstacle === button.dataset.obstacle ? null : button.dataset.obstacle;
+      this.tabGroups.infiltrationObstacleSkills = 'description';
       this.render({ parts: [this.tabGroups.main] }); 
     }
 
@@ -2899,6 +2907,8 @@ class SystemView extends HandlebarsApplicationMixin(
 
     static async infiltrationToggleOpenComplication(_, button) {
       this.selected.openInfiltrationComplication = this.selected.openInfiltrationComplication === button.dataset.complication ? null : button.dataset.complication;
+      this.tabGroups.infiltrationComplication = 'description';
+      this.selected.infiltration.complicationResultSelect = null;
       this.render({ parts: [this.tabGroups.main] }); 
     }
 
@@ -3009,6 +3019,8 @@ class SystemView extends HandlebarsApplicationMixin(
 
     static async infiltrationPreparationsToggleOpenActivity(_, button) {
       this.selected.infiltration.preparations.openActivity = this.selected.infiltration.preparations.openActivity === button.dataset.activity ? null : button.dataset.activity;
+      this.tabGroups.infiltrationActivity = 'description';
+      this.selected.infiltration.preparations.resultSelect = null;
       this.render({ parts: [this.tabGroups.main] });
     }
 

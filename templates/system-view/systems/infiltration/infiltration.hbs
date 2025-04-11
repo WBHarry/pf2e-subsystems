@@ -367,7 +367,9 @@
                                                                 {{#each this.dcAdjustmentValues}}
                                                                     <div 
                                                                         class="infiltration-complication-skill-adjustment primary-text-container tertiary-container clickable-icon {{#if (not (eq this.value ../selectedAdjustment))}}inactive{{/if}}" 
-                                                                        data-action="infiltrationObstacleToggleAdjustment" data-event="{{../../../event.id}}" data-objective="{{../../../currentObjective.id}}" data-obstacle="{{../../id}}" data-skill-check="{{../id}}" data-adjustment="{{this.value}}">{{this.name}}
+                                                                        data-action="infiltrationObstacleToggleAdjustment" data-event="{{../../../event.id}}" data-objective="{{../../../currentObjective.id}}" data-obstacle="{{../../id}}" data-skill-check="{{../id}}" data-adjustment="{{this.value}}"
+                                                                    >
+                                                                        {{this.name}}
                                                                     </div>
                                                                 {{/each}}
                                                             </div>
