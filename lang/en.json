@@ -138,7 +138,6 @@
             "AdvanceAllNPCs": "Move all NPCs to the next obstacle",
             "RetreatAllNPCs": "Move all NPCs to the previous obstacle",
             "AddOrDragInActor": "Add or drag in an actor.",
-            "StartChase": "Start Chase",
             "ChasePoints": "Chase Points",
             "Errors": {
                 "UnlockObstacle": "You have to unlock obstacles from start to end",
@@ -152,7 +151,6 @@
             "NavigateBack": "Return To Research",
             "EditResearch": "Edit Research",
             "CreateResearch": "Create New Research",
-            "StartResearch": "Start Research",
             "MaxResearchPoints": "Maximum RP",
             "Skill": "Skill",
             "Action": "Action",

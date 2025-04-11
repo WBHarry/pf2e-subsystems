@@ -1040,6 +1040,64 @@ class Research extends foundry.abstract.DataModel {
         })),
       }
     }
+
+    get researchChecksData() {
+      return Object.values(this.researchChecks).reduce((acc, research) => {
+        acc[research.id] = {
+          ...research,
+          skillChecks: Object.values(research.skillChecks).reduce((acc, skillCheck) => {
+            acc[skillCheck.id] = {
+              ...skillCheck,
+              columns: Object.values(skillCheck.skills).reduce((acc, skill) => {
+                acc.lore.push({ 
+                  event: this.id,
+                  researchCheck: research.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  lore: skill.lore,
+                });
+                acc.skill.push({ 
+                  event: this.id,
+                  researchCheck: research.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  skill: skill.skill,
+                  lore: skill.lore,
+                });
+                acc.action.push({ 
+                  event: this.id,
+                  researchCheck: research.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  action: skill.action,
+                });
+                acc.variant.push({ 
+                  event: this.id,
+                  researchCheck: research.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  variantOptions: skill.action ? [...game.pf2e.actions.get(skill.action).variants].map(x => ({ value: x.slug, name: x.name })) : [],
+                  variant: skill.variant,
+                });
+                acc.dc.push({ 
+                  event: this.id,
+                  researchCheck: research.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  dc: skill.dc,
+                });
+  
+                return acc;
+              }, { lore: [], skill: [], action: [], variant: [], dc: [] }),
+            };
+  
+            return acc;
+          }, {}),
+        };
+  
+        return acc;
+      }, {});
+    }
 }
 
 class ResearchChecks extends foundry.abstract.DataModel {
@@ -1061,6 +1119,7 @@ class ResearchChecks extends foundry.abstract.DataModel {
           action: new fields.StringField(),
           lore: new fields.BooleanField({ required: true, initial: false }),
           dc: new fields.NumberField({ required: true, initial: 10 }),
+          variant: new fields.StringField(),
           basic: new fields.BooleanField({ required: true, initial: false }),
         })),
       }))
@@ -1701,6 +1760,7 @@ class SystemView extends HandlebarsApplicationMixin(
         researchRemoveResearchCheckSkillCheck: this.researchRemoveResearchCheckSkillCheck,
         researchToggleResearchCheckSkillCheckHidden: this.researchToggleResearchCheckSkillCheckHidden,
         researchAddSkill: this.researchAddSkill,
+        researchRemoveSkillCheck: this.researchRemoveSkillCheck,
         researchRemoveSkill: this.researchRemoveSkill,
         addResearchEvent: this.addResearchEvent,
         removeResearchEvent: this.removeResearchEvent,
@@ -2586,14 +2646,22 @@ class SystemView extends HandlebarsApplicationMixin(
 
     static toggleResearchOpenResearchBreakpoint(_, button) {
       this.selected.research.openResearchBreakpoint = this.selected.research.openResearchBreakpoint === button.dataset.breakpoint ? null : button.dataset.breakpoint;
-      this.tabGroups.influenceResearchChecks = 'description';
       this.render({ parts: [this.tabGroups.main] }); 
     }
 
     static async addResearchCheck(_, button) {
       const researchCheckId = foundry.utils.randomID();
+      const skillCheckId = foundry.utils.randomID();
+      const skillId = foundry.utils.randomID();
+
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${researchCheckId}`]: {
         id: researchCheckId,
+        [`skillChecks.${skillCheckId}`]: {
+          id: skillCheckId,
+          [`skills.${skillId}`]: {
+            id: skillId,
+          }
+        },
       }});
     }
 
@@ -2608,6 +2676,7 @@ class SystemView extends HandlebarsApplicationMixin(
 
     static async researchToggleOpenResearchCheck(_, button) {
       this.selected.research.openResearchCheck = this.selected.research.openResearchCheck === button.dataset.check ? null : button.dataset.check;
+      this.tabGroups.influenceResearchChecks = 'description';
       this.render({ parts: [this.tabGroups.main] });
     }
 
@@ -2640,14 +2709,12 @@ class SystemView extends HandlebarsApplicationMixin(
       }});
     }
 
+    static async researchRemoveSkillCheck(_, button) {
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.-=${button.dataset.skillCheck}`]: null});
+    }
+
     static async researchRemoveSkill(_, button){
-      const currentNrSkills = Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchChecks[button.dataset.check].skillChecks[button.dataset.skillCheck].skills).length;
-      if(currentNrSkills === 1){
-        await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.-=${button.dataset.skillCheck}`]: null});
-      }
-      else {
-        await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.${button.dataset.skillCheck}.skills.-=${button.dataset.skill}`]: null});
-      }
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.${button.dataset.skillCheck}.skills.-=${button.dataset.skill}`]: null});
     }
 
     static async addResearchEvent(_, button){
@@ -3455,7 +3522,7 @@ class SystemView extends HandlebarsApplicationMixin(
             context.showTimeLimit = this.editMode || context.selectedEvent.timeLimit.max;
             context.selectedEvent.timeLimit.unitName = timeUnits[context.selectedEvent.timeLimit.unit]?.name;
 
-            for(var key of Object.keys(context.selectedEvent.researchChecks)){
+            for(var key of Object.keys(context.selectedEvent.researchChecksData)){
               const researchCheck = context.selectedEvent.researchChecks[key];
               researchCheck.open = researchCheck.id === this.selected.research?.openResearchCheck;
               researchCheck.enrichedDescription = await TextEditor.enrichHTML(researchCheck.description);

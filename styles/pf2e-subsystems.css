@@ -1289,16 +1289,16 @@ form.pf2e-subsystems.application > header .header-control {
   border-style: solid;
   padding: 0 8px 8px 8px;
 }
-.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-outer-container .research-check-skill-check-title {
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-outer-container .research-check .research-check-skill-check-title {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 4px 0;
 }
-.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-outer-container .research-check-skill-check-title .research-check-skill-check-title-inner {
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-outer-container .research-check .research-check-skill-check-title .research-check-skill-check-title-inner {
   position: relative;
 }
-.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-outer-container .research-check-skill-check-title .research-check-skill-check-title-inner i {
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-outer-container .research-check .research-check-skill-check-title .research-check-skill-check-title-inner i {
   position: absolute;
   right: -24px;
   font-size: 24px;
@@ -1306,24 +1306,24 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-outer-container .research-check-skill-checks-container {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  border-width: 2px;
-  border-style: inset;
-  padding: 2px;
+  gap: 8px;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-outer-container .research-check-skill-checks-container .research-check-skill-check-inner-container {
-  display: flex;
-  align-items: flex-start;
-  gap: 4px;
   border-width: 1px;
   border-style: solid;
-  padding: 0 4px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-outer-container .research-check-skill-checks-container .research-check-skill-check-inner-container.padded {
   padding-right: 20px;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-outer-container .research-check-skill-checks-container .research-check-skill-check-inner-container i {
   margin-top: 2px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-outer-container .research-check-skill-checks-container .research-check-skill-check-inner-container .research-check-table {
+  grid-template-columns: 1fr 4fr 4fr 3fr 1fr 1fr;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-outer-container .research-check-skill-checks-container .research-check-skill-check-inner-container .research-check-skill-check-value-container {
   display: flex;

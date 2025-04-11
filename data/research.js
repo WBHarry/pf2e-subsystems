@@ -43,6 +43,64 @@ export class Research extends foundry.abstract.DataModel {
         })),
       }
     }
+
+    get researchChecksData() {
+      return Object.values(this.researchChecks).reduce((acc, research) => {
+        acc[research.id] = {
+          ...research,
+          skillChecks: Object.values(research.skillChecks).reduce((acc, skillCheck) => {
+            acc[skillCheck.id] = {
+              ...skillCheck,
+              columns: Object.values(skillCheck.skills).reduce((acc, skill) => {
+                acc.lore.push({ 
+                  event: this.id,
+                  researchCheck: research.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  lore: skill.lore,
+                });
+                acc.skill.push({ 
+                  event: this.id,
+                  researchCheck: research.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  skill: skill.skill,
+                  lore: skill.lore,
+                });
+                acc.action.push({ 
+                  event: this.id,
+                  researchCheck: research.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  action: skill.action,
+                });
+                acc.variant.push({ 
+                  event: this.id,
+                  researchCheck: research.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  variantOptions: skill.action ? [...game.pf2e.actions.get(skill.action).variants].map(x => ({ value: x.slug, name: x.name })) : [],
+                  variant: skill.variant,
+                });
+                acc.dc.push({ 
+                  event: this.id,
+                  researchCheck: research.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  dc: skill.dc,
+                });
+  
+                return acc;
+              }, { lore: [], skill: [], action: [], variant: [], dc: [] }),
+            }
+  
+            return acc;
+          }, {}),
+        };
+  
+        return acc;
+      }, {});
+    }
 }
 
 class ResearchChecks extends foundry.abstract.DataModel {
@@ -64,6 +122,7 @@ class ResearchChecks extends foundry.abstract.DataModel {
           action: new fields.StringField(),
           lore: new fields.BooleanField({ required: true, initial: false }),
           dc: new fields.NumberField({ required: true, initial: 10 }),
+          variant: new fields.StringField(),
           basic: new fields.BooleanField({ required: true, initial: false }),
         })),
       }))

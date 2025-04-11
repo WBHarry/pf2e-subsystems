@@ -103,6 +103,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
         researchRemoveResearchCheckSkillCheck: this.researchRemoveResearchCheckSkillCheck,
         researchToggleResearchCheckSkillCheckHidden: this.researchToggleResearchCheckSkillCheckHidden,
         researchAddSkill: this.researchAddSkill,
+        researchRemoveSkillCheck: this.researchRemoveSkillCheck,
         researchRemoveSkill: this.researchRemoveSkill,
         addResearchEvent: this.addResearchEvent,
         removeResearchEvent: this.removeResearchEvent,
@@ -998,14 +999,22 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
     static toggleResearchOpenResearchBreakpoint(_, button) {
       this.selected.research.openResearchBreakpoint = this.selected.research.openResearchBreakpoint === button.dataset.breakpoint ? null : button.dataset.breakpoint;
-      this.tabGroups.influenceResearchChecks = 'description';
       this.render({ parts: [this.tabGroups.main] }); 
     }
 
     static async addResearchCheck(_, button) {
       const researchCheckId = foundry.utils.randomID();
+      const skillCheckId = foundry.utils.randomID();
+      const skillId = foundry.utils.randomID();
+
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${researchCheckId}`]: {
         id: researchCheckId,
+        [`skillChecks.${skillCheckId}`]: {
+          id: skillCheckId,
+          [`skills.${skillId}`]: {
+            id: skillId,
+          }
+        },
       }});
     }
 
@@ -1020,6 +1029,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
     static async researchToggleOpenResearchCheck(_, button) {
       this.selected.research.openResearchCheck = this.selected.research.openResearchCheck === button.dataset.check ? null : button.dataset.check;
+      this.tabGroups.influenceResearchChecks = 'description';
       this.render({ parts: [this.tabGroups.main] });
     }
 
@@ -1052,14 +1062,12 @@ export default class SystemView extends HandlebarsApplicationMixin(
       }})
     }
 
+    static async researchRemoveSkillCheck(_, button) {
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.-=${button.dataset.skillCheck}`]: null});
+    }
+
     static async researchRemoveSkill(_, button){
-      const currentNrSkills = Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchChecks[button.dataset.check].skillChecks[button.dataset.skillCheck].skills).length;
-      if(currentNrSkills === 1){
-        await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.-=${button.dataset.skillCheck}`]: null});
-      }
-      else {
-        await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.${button.dataset.skillCheck}.skills.-=${button.dataset.skill}`]: null});
-      }
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.${button.dataset.skillCheck}.skills.-=${button.dataset.skill}`]: null});
     }
 
     static async addResearchEvent(_, button){
@@ -1867,7 +1875,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
             context.showTimeLimit = this.editMode || context.selectedEvent.timeLimit.max;
             context.selectedEvent.timeLimit.unitName = timeUnits[context.selectedEvent.timeLimit.unit]?.name;
 
-            for(var key of Object.keys(context.selectedEvent.researchChecks)){
+            for(var key of Object.keys(context.selectedEvent.researchChecksData)){
               const researchCheck = context.selectedEvent.researchChecks[key];
               researchCheck.open = researchCheck.id === this.selected.research?.openResearchCheck;
               researchCheck.enrichedDescription = await TextEditor.enrichHTML(researchCheck.description);

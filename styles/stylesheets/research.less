@@ -235,11 +235,13 @@
                                     border-style: solid;
                                     padding: 0 @paddingLarge @paddingLarge @paddingLarge;
 
+                                    .research-check 
+
                                     .research-check-skill-check-title {
                                         display: flex;
                                         align-items: center;
                                         justify-content: center;
-                                        padding: 4px 0;
+                                        padding: @paddingNormal 0;
                                         
                                         .research-check-skill-check-title-inner {
                                             position: relative;
@@ -255,18 +257,15 @@
                                     .research-check-skill-checks-container {
                                         display: flex;
                                         flex-direction: column;
-                                        gap: 2px;
-                                        border-width: 2px;
-                                        border-style: inset;
-                                        padding: 2px;
+                                        gap: @gapNormal;
 
                                         .research-check-skill-check-inner-container {
-                                            display: flex;
-                                            align-items: flex-start;
-                                            gap: @gapSmall;
                                             border-width: 1px;
                                             border-style: solid;
-                                            padding: 0 @paddingNormal;
+                                            padding: @paddingNormal;
+                                            display: flex;
+                                            flex-direction: column;
+                                            gap: @gapSmall;
 
                                             &.padded {
                                                 padding-right: 20px;
@@ -274,6 +273,10 @@
 
                                             i {
                                                 margin-top: @marginSmall;
+                                            }
+
+                                            .research-check-table {
+                                                grid-template-columns: 1fr 4fr 4fr 3fr 1fr 1fr;
                                             }
     
                                             .research-check-skill-check-value-container {

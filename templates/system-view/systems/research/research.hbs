@@ -71,18 +71,7 @@
                 <div class="event-header-title-container">
                     <div class="event-header-title title-container secondary-container">{{this.event.name}}</div>
                 </div>
-                {{#if this.isGM}}
-                    <div class="event-header-toolbar secondary-container">
-                        <button class="tertiary-container" data-action="startEvent" data-event="{{this.event.id}}">{{localize "PF2ESubsystems.Research.StartResearch"}}</button>
-                        <button class="tertiary-container event-header-toolbar-edit-container" data-action="editEventToggle">
-                            <span class="event-header-toolbar-edit-container-label {{#if this.editMode}}highlighted{{/if}}">{{localize "PF2ESubsystems.Research.EditResearch"}}</span>
-                            <div class="edit-mode-box-container {{#if this.editMode}}secondary-container{{/if}}">
-                                {{#if this.editMode}}<i class="fa-solid fa-screwdriver-wrench"></i>{{/if}}
-                            </div>
-                        </button>
-                        <i class="fa-solid fa-passport primary-hover-container" data-action="copyStartEventLink" data-event="{{this.event.id}}" title="{{localize "PF2ESubsystems.View.CopyStartEventLink"}}"></i>
-                    </div>
-                {{/if}}
+                {{> "modules/pf2e-subsystems/templates/partials/event-toolbar.hbs"}}
             </div>
 
             <div class="research-checks-container primary-container accent">
@@ -96,7 +85,7 @@
                     {{#if (and (not this.isGM) (eq this.revealedResearchChecks 0))}}
                         <div class="event-section-placeholder">{{localize "PF2ESubsystems.Research.ResearchChecksUnknown"}}</div>
                     {{else}}
-                        {{#each this.event.researchChecks}}
+                        {{#each this.event.researchChecksData}}
                             {{#if (or ../isGM (not this.hidden))}}
                                 <div class="research-check-container secondary-container">
                                     {{#if ../editMode}}
@@ -148,7 +137,78 @@
                                                             <i class="fa-solid fa-plus clickable-icon" data-action="researchAddResearchCheckSkillCheck" data-event="{{../event.id}}" data-check="{{this.id}}"></i>
                                                         </div>
                                                     </div>
-                                                    {{#each this.skillChecks}}
+
+                                                    <div class="research-check-skill-checks-container">
+                                                        {{#each this.skillChecks}}
+                                                            <div class="research-check-skill-check-inner-container">
+                                                                <div class="event-field-group research-check-skill-check-header">
+                                                                    <div class="event-field-form text-normal primary-text-container">
+                                                                        <label>{{localize "PF2ESubsystems.Basic.Description"}}</label>
+                                                                        <input type="text" name="{{concat "events." ../../event.id ".researchChecks." ../id ".skillChecks." this.id ".description"}}" value="{{this.description}}" class="tertiary-container accent primary-text-container" />
+                                                                    </div>
+                                                                    <div class="event-field-form small">
+                                                                        <i class="fa-solid fa-trash clickable-icon" data-action="researchRemoveSkillCheck" data-event="{{../../event.id}}" data-check="{{../id}}" data-skill-check="{{this.id}}"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="event-skill-grid research-check-table tertiary-container">
+                                                                    <div class="event-skill-grid-col">
+                                                                        <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Lore"}}</div>
+                                                                        {{#each this.columns.lore}}
+                                                                            <input type="checkbox" class="research-lore-input event-skill-grid-cell" data-event="{{this.event}}" data-check="{{this.researchCheck}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}" {{checked this.lore}} />
+                                                                        {{/each}}
+                                                                    </div>
+                                                                    <div class="event-skill-grid-col">
+                                                                        <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Skill"}}</div>
+                                                                        {{#each this.columns.skill}}
+                                                                            {{#if this.lore}}
+                                                                                <input type="text" name="{{concat "events." this.event ".researchChecks." this.researchCheck ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" value="{{this.skill}}" class="primary-text-container event-skill-grid-cell" />
+                                                                            {{else}}
+                                                                                <select name="{{concat "events." this.event ".researchChecks." this.researchCheck ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" class="primary-text-container event-skill-grid-cell">
+                                                                                    {{selectOptions ../../../skillOptions selected=this.skill valueAttr="value" labelAttr="name" localize=true}}
+                                                                                </select>
+                                                                            {{/if}}
+                                                                        {{/each}}
+                                                                    </div>
+                                                                    <div class="event-skill-grid-col">
+                                                                        <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Action"}}</div>
+                                                                        {{#each this.columns.action}}
+                                                                            <select name="{{concat "events." this.event ".researchChecks." this.researchCheck ".skillChecks." this.skillCheck ".skills." this.id ".action" }}" class="primary-text-container event-skill-grid-cell">
+                                                                                {{selectOptions ../../../actionOptions selected=this.action valueAttr="value" labelAttr="name" localize=true blank="" }}
+                                                                            </select>
+                                                                        {{/each}}
+                                                                    </div>
+                                                                    <div class="event-skill-grid-col">
+                                                                        <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
+                                                                        {{#each this.columns.variant}}
+                                                                            <select name="{{concat "events." this.event ".researchChecks." this.researchCheck ".skillChecks." this.skillCheck ".skills." this.id ".variant" }}" class="primary-text-container event-skill-grid-cell">
+                                                                                {{selectOptions this.variantOptions selected=this.variant valueAttr="value" labelAttr="name" localize=true blank="" }}
+                                                                            </select>
+                                                                        {{/each}}
+                                                                    </div>
+                                                                    <div class="event-skill-grid-col">
+                                                                        <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.DC"}}</div>
+                                                                        {{#each this.columns.dc}}
+                                                                            <input type="text" data-dtype="Number" class="event-skill-grid-cell" name="{{concat "events." this.event ".researchChecks." this.researchCheck ".skillChecks." this.skillCheck ".skills." this.id ".dc" }}" value="{{this.dc}}" />
+                                                                        {{/each}}
+                                                                    </div>
+                                                                    <div class="event-skill-grid-col">
+                                                                        <div class="event-skill-grid-cell header">
+                                                                            <i class="fa-solid fa-plus clickable-icon" data-action="researchAddSkill" data-event="{{../../event.id}}" data-check="{{../id}}" data-skill-check="{{this.id}}"></i>
+                                                                        </div>
+                                                                        {{#each this.columns.action}}
+                                                                            <div class="event-skill-grid-cell">
+                                                                                {{#if (gt @index 0)}}
+                                                                                    <i class="fa-solid fa-trash clickable-icon" data-action="researchRemoveSkill" data-event="{{this.event}}" data-check="{{this.researchCheck}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}"></i>
+                                                                                {{/if}}
+                                                                            </div>
+                                                                        {{/each}}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {{/each}}
+                                                    </div>
+
+                                                    {{!-- {{#each this.skillChecks}}
                                                         <div class="research-check-skill-checks-container">
                                                             <div class="research-check-skill-checks-full-field">
                                                                 <label>{{localize "PF2ESubsystems.Basic.Description"}}</label>
@@ -189,7 +249,7 @@
                                                                 </div>        
                                                             {{/each}}
                                                         </div>                        
-                                                    {{/each}}
+                                                    {{/each}} --}}
                                                 </div>
                                             </div>
                                         </div>
