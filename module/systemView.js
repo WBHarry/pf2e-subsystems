@@ -91,7 +91,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
         /* Research */
         researchUpdateTimeLimitCurrent: this.researchUpdateTimeLimitCurrent,
         addResearchBreakpoint: this.addResearchBreakpoint,
-        researchUpdateResearchPoints: this.researchUpdateResearchPoints,
         removeResearchBreakpoint: this.removeResearchBreakpoint,
         toggleResearchBreakpointHidden: this.toggleResearchBreakpointHidden,
         toggleResearchOpenResearchBreakpoint: this.toggleResearchOpenResearchBreakpoint,
@@ -109,6 +108,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
         removeResearchEvent: this.removeResearchEvent,
         toggleResearchEventHidden: this.toggleResearchEventHidden,
         researchToggleOpenResearchEvent: this.researchToggleOpenResearchEvent,
+        researhCheckPointsUpdate: this.researhCheckPointsUpdate,
         /* Infiltration */
         setCurrentInfiltrationObjective: this.setCurrentInfiltrationObjective,
         addInfiltrationObjective: this.addInfiltrationObjective,
@@ -1091,6 +1091,22 @@ export default class SystemView extends HandlebarsApplicationMixin(
       this.render({ parts: [this.tabGroups.main] });
     }
 
+    async researchCheckMaxPointsUpdate(event) {
+      const button = event.currentTarget;
+      const currentResearchPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchChecks[button.dataset.check].currentResearchPoints;
+      const newMax = Number.parseInt(button.value);
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}`]: {
+        maximumResearchPoints: newMax,
+        currentResearchPoints: currentResearchPoints > newMax ? newMax : currentResearchPoints,
+      }});
+    }
+
+    static async researhCheckPointsUpdate(_, button) {
+      const currentPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchChecks[button.dataset.check].currentResearchPoints;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.currentResearchPoints`]: button.dataset.increase ? currentPoints + 1 : currentPoints - 1 });
+    }
+
     //#region Infiltration
     static async setCurrentInfiltrationObjective(_, button) {
       this.selected.infiltration.currentObjective = Number.parseInt(button.dataset.position);
@@ -1783,6 +1799,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
         case 'research':
           $(htmlElement).find('.research-lore-input').on('change', this.updateResearchLore.bind(this));
           $(htmlElement).find('.research-skill-check-input').on('change', this.updateResearchSkillCheck.bind(this));
+          $(htmlElement).find('.research-check-maximum-input').on('change', this.researchCheckMaxPointsUpdate.bind(this))
           break;
         case 'infiltration':
           $(htmlElement).find('.radio-button').on('contextmenu', this.toggleObjectiveHidden.bind(this));

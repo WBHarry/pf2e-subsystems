@@ -47,6 +47,12 @@
             "content": "The suggested research checks the party can earn research points through."
         },
         {
+            "id": "research-overview-51",
+            "selector": ".research-checks-container .event-number-container-rows",
+            "title": "Research Overview",
+            "content": "The currently earned research points out of the allowed maximum. Research points set here are summarized in the left sidebar."
+        },
+        {
             "id": "research-overview-6",
             "selector": ".research-breakpoints-container",
             "title": "Research Overview",
@@ -80,13 +86,14 @@
                 "max": "5"
             },
             "started": false,
-            "researchPoints": 5,
+            "totalResearchPoints": 3,
             "researchChecks": {
                 "check-1": {
                     "id": "check-1",
                     "name": "Sprite Swarm",
                     "hidden": false,
                     "description": "Thousands of iridescent sprites flit about the entrance, eager to offer tidbits of information",
+                    "currentResearchPoints": 3,
                     "maximumResearchPoints": 5,
                     "skillChecks": {
                         "skill-check-1": {
@@ -134,6 +141,7 @@
                     "name": "Field of Tomeflowers",
                     "hidden": false,
                     "description": "By the crossing the babbling brook, 5-foot stems open up into colorful petaled tomes",
+                    "currentResearchPoints": 0,
                     "maximumResearchPoints": 10,
                     "skillChecks": {
                         "skill-check-1": {
@@ -181,6 +189,145 @@
                     "name": "Loremother Tree",
                     "hidden": false,
                     "description": "In the center of the forest, an ancient oak slumbers, willing to share its wisdom with any who can commune with it",
+                    "currentResearchPoints": 0,
+                    "maximumResearchPoints": 15,
+                    "skillChecks": {
+                        "skill-check-1": {
+                            "id": "skill-check-1",
+                            "hidden": false,
+                            "description": "Awaken the oak through music",
+                            "skills": {
+                                "skill-1": {
+                                    "id": "skill-1",
+                                    "skill": "performance",
+                                    "action": null,
+                                    "lore": false,
+                                    "dc": 21,
+                                    "basic": false
+                                }
+                            }
+                        },
+                        "skill-check-2": {
+                            "id": "skill-check-2",
+                            "hidden": false,
+                            "description": "Interpret primal magic dreams",
+                            "skills": {
+                                "skill-1": {
+                                    "id": "skill-1",
+                                    "skill": "nature",
+                                    "action": null,
+                                    "lore": false,
+                                    "dc": 23,
+                                    "basic": false
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "researchChecksData": {
+                "check-1": {
+                    "id": "check-1",
+                    "name": "Sprite Swarm",
+                    "hidden": false,
+                    "description": "Thousands of iridescent sprites flit about the entrance, eager to offer tidbits of information",
+                    "currentResearchPoints": 3,
+                    "maximumResearchPoints": 5,
+                    "skillChecks": {
+                        "skill-check-1": {
+                            "id": "skill-check-1",
+                            "hidden": false,
+                            "description": "Politely ask the sprites for information",
+                            "skills": {
+                                "skill-1": {
+                                    "id": "skill-1",
+                                    "skill": "diplomacy",
+                                    "action": null,
+                                    "lore": false,
+                                    "dc": 23,
+                                    "basic": false
+                                },
+                                "skill-2": {
+                                    "id": "skill-2",
+                                    "skill": "society",
+                                    "action": null,
+                                    "lore": false,
+                                    "dc": 23,
+                                    "basic": false
+                                }
+                            }
+                        },
+                        "skill-check-2": {
+                            "id": "skill-check-2",
+                            "hidden": false,
+                            "description": "Catch one in the hand",
+                            "skills": {
+                                "skill-1": {
+                                    "id": "skill-1",
+                                    "skill": "athletics",
+                                    "action": null,
+                                    "lore": false,
+                                    "dc": 28,
+                                    "basic": false
+                                }
+                            }
+                        }
+                    }
+                },
+                "check-2": {
+                    "id": "check-2",
+                    "name": "Field of Tomeflowers",
+                    "hidden": false,
+                    "description": "By the crossing the babbling brook, 5-foot stems open up into colorful petaled tomes",
+                    "currentResearchPoints": 0,
+                    "maximumResearchPoints": 10,
+                    "skillChecks": {
+                        "skill-check-1": {
+                            "id": "skill-check-1",
+                            "hidden": false,
+                            "description": "Read the tomes",
+                            "skills": {
+                                "skill-1": {
+                                    "id": "skill-1",
+                                    "skill": "academia-lore",
+                                    "action": null,
+                                    "lore": true,
+                                    "dc": 18,
+                                    "basic": false
+                                },
+                                "skill-2": {
+                                    "id": "skill-2",
+                                    "skill": "library-lore",
+                                    "action": null,
+                                    "lore": true,
+                                    "dc": 18,
+                                    "basic": false
+                                }
+                            }
+                        },
+                        "skill-check-2": {
+                            "id": "skill-check-2",
+                            "hidden": false,
+                            "description": "Understand strange marginalia",
+                            "skills": {
+                                "skill-1": {
+                                    "id": "skill-1",
+                                    "skill": "occultism",
+                                    "action": null,
+                                    "lore": false,
+                                    "dc": 23,
+                                    "basic": false
+                                }
+                            }
+                        }
+                    }
+                },
+                "check-3": {
+                    "id": "check-3",
+                    "name": "Loremother Tree",
+                    "hidden": false,
+                    "description": "In the center of the forest, an ancient oak slumbers, willing to share its wisdom with any who can commune with it",
+                    "currentResearchPoints": 0,
                     "maximumResearchPoints": 15,
                     "skillChecks": {
                         "skill-check-1": {

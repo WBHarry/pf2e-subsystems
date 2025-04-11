@@ -30,6 +30,8 @@
                             flex-direction: column;
                             height: 200px;
                             padding: @paddingNormal;
+                            word-wrap: break-word;
+                            overflow: auto;
 
                             textarea {
                                 flex: 1;
@@ -229,6 +231,8 @@
                 }
 
                 .event-main-container {
+                    overflow: initial;
+
                     .chase-event-container {
                         margin: 0;
                         flex: 1;
@@ -238,6 +242,7 @@
                         border-style: outset;
                         border-radius: @borderRadiusNormal;
                         padding: 0;
+                        overflow: hidden;
     
                         .chase-event-display {
                             position: relative;
@@ -253,7 +258,7 @@
                         }
     
                         .title-container {
-                            margin-top: -6px;
+                            padding-bottom: 7px;
     
                             .chase-event-header-inner {
                                 position: relative;
@@ -295,6 +300,7 @@
                             align-items: center;
                             padding: @paddingLarge;
                             gap: @gapNormal;
+                            overflow: hidden;
     
                             img {
                                 width: 60%;
@@ -332,7 +338,10 @@
                                 border-radius: @borderRadiusNormal;
                                 border-width: @borderNormal;
                                 border-style: outset;
-    
+                                word-wrap: break-word;
+                                overflow: auto;
+                                padding: 0 @paddingLarge;
+
                                 .editor-container {
                                     margin: 0 @marginLarge;
                                 }

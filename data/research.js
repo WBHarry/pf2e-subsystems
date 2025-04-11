@@ -44,6 +44,14 @@ export class Research extends foundry.abstract.DataModel {
       }
     }
 
+    get totalResearchPoints() {
+      return Object.values(this.researchChecks).reduce((acc, curr) => {
+        acc += (curr.currentResearchPoints ?? 0);
+
+        return acc;
+      }, 0);
+    }
+
     get researchChecksData() {
       return Object.values(this.researchChecks).reduce((acc, research) => {
         acc[research.id] = {
@@ -111,6 +119,7 @@ class ResearchChecks extends foundry.abstract.DataModel {
       name: new fields.StringField({ required: true, initial: "New Check" }),
       hidden: new fields.BooleanField({ required: true, initial: true }),
       description: new fields.HTMLField(),
+      currentResearchPoints: new fields.NumberField({ required: true, initial: 0 }),
       maximumResearchPoints: new fields.NumberField({ required: true, initial: 5 }),
       skillChecks: new TypedObjectField(new fields.SchemaField({
         id: new fields.StringField({ required: true }),

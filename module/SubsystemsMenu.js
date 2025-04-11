@@ -151,7 +151,7 @@ export default class SubsystemsMenu extends HandlebarsApplicationMixin(
   static async save() {
     await game.settings.set(MODULE_ID, settingIDs.chase.settings, this.settings.chase);
     await game.settings.set(MODULE_ID, settingIDs.research.settings, this.settings.research);
-    await game.settings.set(MODULE_ID, settingIDs.infiltration.settings, this.settings.infiltration);
+    await game.settings.set(MODULE_ID, settingIDs.infiltration.settings, mergeObject(game.settings.get(MODULE_ID, settingIDs.infiltration.settings).toObject(), this.settings.infiltration));
 
     this.close();
   }

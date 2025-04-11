@@ -58,6 +58,15 @@ const configSettings = () => {
 }
 
 const generalNonConfigSettings = () => {
+  game.settings.register(MODULE_ID, "version", {
+    name: "",
+    hint: "",
+    scope: "world",
+    config: false,
+    type: String,
+    default: "",
+  });
+
   game.settings.register(MODULE_ID, "chase", {
     name: "",
     hint: "",

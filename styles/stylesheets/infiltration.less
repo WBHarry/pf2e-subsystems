@@ -58,16 +58,29 @@
                     }
                 }
 
-                .infiltration-complications-container {
+                .infiltration-complication-container {
+                    overflow: hidden;
 
-                    .infiltration-complications-inner-container {
-                        display: flex;
-                        flex-direction: column;
+                    .infiltration-complications-container {
+                        overflow: auto;
+
+                        .infiltration-complications-inner-container {
+                            display: flex;
+                            flex-direction: column;
+                        }
+
+                        .infiltration-points-container {
+                            gap: 2px;
+                            margin-top: 5px;
+                        }
                     }
+                }
 
-                    .infiltration-points-container {
-                        gap: 2px;
-                        margin-top: 5px;
+                .infiltration-opportunity-container {
+                    overflow: hidden;
+
+                    .infiltration-opportunities-container {
+                        overflow: auto;
                     }
                 }
                 
@@ -128,12 +141,15 @@
                         flex: 1;
                         display: flex;
                         flex-direction: column;
+                        overflow: hidden;
 
                         .description-container {
                             padding: @paddingNormal;
                             flex: 1;
                             display: flex;
                             flex-direction: column;
+                            overflow: auto;
+                            word-wrap: break-word;
 
                             textarea {
                                 flex: 1;

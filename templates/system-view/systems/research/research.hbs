@@ -18,9 +18,7 @@
                 <div>{{localize "PF2ESubsystems.Research.ResearchPoints"}}:</div>
                 &nbsp;
                 <div class="research-points-number-container">
-                    {{#if this.isGM}}<i class="fa-solid fa-caret-up clickable-icon research-points-number-upper" data-action="researchUpdateResearchPoints" data-event="{{this.event.id}}" data-increase="true"></i>{{/if}}
-                    <div>{{this.event.researchPoints}}</div>
-                    {{#if this.isGM}}<i class="fa-solid fa-caret-down clickable-icon {{#if (eq this.event.researchPoints 0)}}disabled{{/if}} research-points-number-lower" {{#if (gt this.event.researchPoints 0)}}data-action="researchUpdateResearchPoints"{{/if}} data-event="{{this.event.id}}"></i>{{/if}}
+                    <div>{{this.event.totalResearchPoints}}</div>
                 </div>
             </div>
             {{#if this.showTimeLimit}}
@@ -61,7 +59,7 @@
                     {{#if this.editMode}}
                         <textarea class="secondary-container" name="{{concat "events." this.event.id ".premise"}}" value="{{this.event.premise}}">{{{this.event.enrichedPremise}}}</textarea>
                     {{else}}
-                        <span class="text-container">{{{this.event.enrichedPremise}}}</span>
+                        {{{this.event.enrichedPremise}}}
                     {{/if}}
                 </div>
             </div>
@@ -121,7 +119,7 @@
                                                     </div>
                                                     <div class="event-field-form">
                                                         <div>{{localize "PF2ESubsystems.Research.MaxResearchPoints"}}</div>
-                                                        <input class="tertiary-container" type="text" data-dtype="Number" name="{{concat "events." ../event.id ".researchChecks." this.id ".maximumResearchPoints"}}" value="{{this.maximumResearchPoints}}" />
+                                                        <input class="tertiary-container research-check-maximum-input" type="text" data-event="{{../event.id}}" data-check="{{this.id}}" value="{{this.maximumResearchPoints}}" />
                                                     </div>
                                                 </div>
                                                 <prose-mirror class="data-input tertiary-container" name="{{concat "events." ../event.id ".researchChecks." this.id ".description"}}" value="{{this.description}}">
@@ -207,49 +205,6 @@
                                                             </div>
                                                         {{/each}}
                                                     </div>
-
-                                                    {{!-- {{#each this.skillChecks}}
-                                                        <div class="research-check-skill-checks-container">
-                                                            <div class="research-check-skill-checks-full-field">
-                                                                <label>{{localize "PF2ESubsystems.Basic.Description"}}</label>
-                                                                <input type="text" name="{{concat "events." ../../event.id ".researchChecks." ../id ".skillChecks." this.id ".description"}}" value="{{this.description}}" class="tertiary-container accent primary-text-container" />
-                                                            </div>
-                                                            {{#each this.skills}}
-                                                                <div class="research-check-skill-check-inner-container {{#if (not this.isFirst)}}padded{{/if}} tertiary-container accent">
-                                                                    <i class="fa-solid fa-trash clickable-icon" data-action="researchRemoveSkill" data-event="{{../../../event.id}}" data-check="{{../../id}}" data-skill-check="{{../id}}" data-skill="{{this.id}}"></i>
-                                                                    <div class="research-check-skill-check-value-container">
-                                                                        <div>{{localize "PF2ESubsystems.Research.Lore"}}</div>
-                                                                        <input type="checkbox" class="research-lore-input" data-event="{{../../../event.id}}" data-check="{{../../id}}" data-skill-check="{{../id}}" data-skill="{{this.id}}" {{checked this.lore}} />
-                                                                    </div>
-                                                                    <div class="research-check-skill-check-value-container full">
-                                                                        <div>{{localize "PF2ESubsystems.Research.Skill"}}</div>
-                                                                        {{#if this.lore}}
-                                                                            <input type="text" class="research-skill-check-input" data-event="{{../../../event.id}}" data-check="{{../../id}}" data-skill-check="{{../id}}" data-skill="{{this.id}}" value="{{this.skill}}" />
-                                                                        {{else}}
-                                                                            <select name="{{concat "events." ../../../event.id ".researchChecks." ../../id ".skillChecks." ../id ".skills." this.id ".skill" }}" class="primary-text-container">
-                                                                                {{selectOptions ../../../skillOptions selected=this.skill valueAttr="value" labelAttr="name" localize=true}}
-                                                                            </select>
-                                                                        {{/if}}
-                                                                    </div>
-                                                                    <div class="research-check-skill-check-value-container full">
-                                                                        <div>{{localize "PF2ESubsystems.Research.Action"}}</div>
-                                                                            <select name="{{concat "events." ../../../event.id ".researchChecks." ../../id ".skillChecks." ../id ".skills." this.id ".action" }}" class="primary-text-container">
-                                                                                {{selectOptions ../../../actionOptions selected=this.action valueAttr="value" labelAttr="name" localize=true blank="" }}
-                                                                            </select>
-                                                                    </div>
-                                                                    <div class="research-check-skill-check-value-container dc">
-                                                                        <div>{{localize "PF2ESubsystems.Basic.DC"}}</div>
-                                                                        <input type="text" data-dtype="Number" name="{{concat "events." ../../../event.id ".researchChecks." ../../id ".skillChecks." ../id ".skills." this.id ".dc"}}" value="{{this.dc}}" />
-                                                                    </div>
-                                                                    <div class="research-check-skill-check-value-container">
-                                                                        {{localize "PF2ESubsystems.Research.Basic"}}
-                                                                        <input type="checkbox" name="{{concat "events." ../../../event.id ".researchChecks." ../../id ".skillChecks." ../id ".skillsd." this.id ".basic"}}" {{checked this.basic}} />
-                                                                    </div>
-                                                                    {{#if this.isFirst}}<i class="fa-solid fa-plus clickable-icon" data-action="researchAddSkill" data-event="{{../../../event.id}}" data-check="{{../../id}}" data-skill-check="{{../id}}" data-skill="{{this.id}}"></i>{{/if}}
-                                                                </div>        
-                                                            {{/each}}
-                                                        </div>                        
-                                                    {{/each}} --}}
                                                 </div>
                                             </div>
                                         </div>
@@ -258,13 +213,14 @@
                                             <div class="title-small-container">
                                                 {{this.name}}
                                             </div>
-                                            {{#if (or ../isGM (not ../settings.hiddenFields.researchCheckMaxRP))}}
-                                                <div class="research-check-subheader text-helper-big">
-                                                    <div>{{localize "PF2ESubsystems.Research.MaxResearchPoints"}}:</div>
-                                                    &nbsp;
-                                                    <div>{{this.maximumResearchPoints}}</div>
-                                                </div> 
-                                            {{/if}}  
+                                            <div class="event-number-container-rows">
+                                                {{localize "Research Points"}}
+                                                <div class="event-number-container-row">
+                                                    {{#if ../isGM}}<i class="fa-solid fa-caret-left clickable-icon {{#if (eq this.currentResearchPoints 0)}}disabled{{/if}} event-section-number-lower" {{#if (gt this.currentResearchPoints 0)}}data-action="researhCheckPointsUpdate"{{/if}} data-event="{{../event.id}}" data-check="{{this.id}}"></i>{{/if}}
+                                                    {{this.currentResearchPoints}}{{#if (or ../isGM (not ../settings.hiddenFields.researchCheckMaxRP))}}/{{this.maximumResearchPoints}}{{/if}}
+                                                    {{#if ../isGM}}<i class="fa-solid fa-caret-right event-section-number-upper clickable-icon {{#if (eq this.currentResearchPoints this.maximumResearchPoints)}}disabled{{/if}}" {{#if (lt this.currentResearchPoints this.maximumResearchPoints)}}data-action="researhCheckPointsUpdate"{{/if}} data-event="{{../event.id}}" data-check="{{this.id}}" data-increase="true"></i>{{/if}}
+                                                </div>
+                                            </div>
                                             {{#if ../isGM}}<i class="fa-solid {{#if this.hidden}}fa-eye-slash{{else}}fa-eye{{/if}} clickable-icon research-check-hider" data-action="toggleResearchCheckHidden" data-event="{{../event.id}}" data-check="{{this.id}}"></i>{{/if}}
                                             <i class="fa-solid {{#if (eq this.id ../selected.openResearchCheck)}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon research-check-opener" data-action="researchToggleOpenResearchCheck" data-check="{{this.id}}"></i> 
                                         </div>

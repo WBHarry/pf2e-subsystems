@@ -389,14 +389,14 @@
                         </div>
                     </fieldset>
 
-                    <div class="infiltration-opportunities-container event-section primary-container accent">
+                    <div class="infiltration-opportunity-container event-section primary-container accent">
                         <div class="event-section-title title-container primary-container">
                             <div class="title-container-inner">
                                 {{localize "PF2ESubsystems.Infiltration.Opportunities"}}
                                 {{#if this.editMode}}<i class="fa-solid fa-plus clickable-icon" data-action="addInfiltrationOpportunity" data-event="{{this.event.id}}"></i>{{/if}}
                             </div>
                         </div>
-                        <div class="event-section-container">
+                        <div class="event-section-container infiltration-opportunities-container">
                             {{#each this.event.opportunities}}
                                 {{#if (or ../isGM (not this.hidden))}}
                                     <div class="event-section-inner-container secondary-container">

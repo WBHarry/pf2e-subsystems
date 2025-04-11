@@ -1041,6 +1041,14 @@ class Research extends foundry.abstract.DataModel {
       }
     }
 
+    get totalResearchPoints() {
+      return Object.values(this.researchChecks).reduce((acc, curr) => {
+        acc += (curr.currentResearchPoints ?? 0);
+
+        return acc;
+      }, 0);
+    }
+
     get researchChecksData() {
       return Object.values(this.researchChecks).reduce((acc, research) => {
         acc[research.id] = {
@@ -1108,6 +1116,7 @@ class ResearchChecks extends foundry.abstract.DataModel {
       name: new fields.StringField({ required: true, initial: "New Check" }),
       hidden: new fields.BooleanField({ required: true, initial: true }),
       description: new fields.HTMLField(),
+      currentResearchPoints: new fields.NumberField({ required: true, initial: 0 }),
       maximumResearchPoints: new fields.NumberField({ required: true, initial: 5 }),
       skillChecks: new TypedObjectField(new fields.SchemaField({
         id: new fields.StringField({ required: true }),
@@ -1317,7 +1326,7 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$1(
   static async save() {
     await game.settings.set(MODULE_ID, settingIDs.chase.settings, this.settings.chase);
     await game.settings.set(MODULE_ID, settingIDs.research.settings, this.settings.research);
-    await game.settings.set(MODULE_ID, settingIDs.infiltration.settings, this.settings.infiltration);
+    await game.settings.set(MODULE_ID, settingIDs.infiltration.settings, mergeObject(game.settings.get(MODULE_ID, settingIDs.infiltration.settings).toObject(), this.settings.infiltration));
 
     this.close();
   }
@@ -1409,6 +1418,15 @@ const configSettings = () => {
 };
 
 const generalNonConfigSettings = () => {
+  game.settings.register(MODULE_ID, "version", {
+    name: "",
+    hint: "",
+    scope: "world",
+    config: false,
+    type: String,
+    default: "",
+  });
+
   game.settings.register(MODULE_ID, "chase", {
     name: "",
     hint: "",
@@ -1748,7 +1766,6 @@ class SystemView extends HandlebarsApplicationMixin(
         /* Research */
         researchUpdateTimeLimitCurrent: this.researchUpdateTimeLimitCurrent,
         addResearchBreakpoint: this.addResearchBreakpoint,
-        researchUpdateResearchPoints: this.researchUpdateResearchPoints,
         removeResearchBreakpoint: this.removeResearchBreakpoint,
         toggleResearchBreakpointHidden: this.toggleResearchBreakpointHidden,
         toggleResearchOpenResearchBreakpoint: this.toggleResearchOpenResearchBreakpoint,
@@ -1766,6 +1783,7 @@ class SystemView extends HandlebarsApplicationMixin(
         removeResearchEvent: this.removeResearchEvent,
         toggleResearchEventHidden: this.toggleResearchEventHidden,
         researchToggleOpenResearchEvent: this.researchToggleOpenResearchEvent,
+        researhCheckPointsUpdate: this.researhCheckPointsUpdate,
         /* Infiltration */
         setCurrentInfiltrationObjective: this.setCurrentInfiltrationObjective,
         addInfiltrationObjective: this.addInfiltrationObjective,
@@ -2738,6 +2756,22 @@ class SystemView extends HandlebarsApplicationMixin(
       this.render({ parts: [this.tabGroups.main] });
     }
 
+    async researchCheckMaxPointsUpdate(event) {
+      const button = event.currentTarget;
+      const currentResearchPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchChecks[button.dataset.check].currentResearchPoints;
+      const newMax = Number.parseInt(button.value);
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}`]: {
+        maximumResearchPoints: newMax,
+        currentResearchPoints: currentResearchPoints > newMax ? newMax : currentResearchPoints,
+      }});
+    }
+
+    static async researhCheckPointsUpdate(_, button) {
+      const currentPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchChecks[button.dataset.check].currentResearchPoints;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.currentResearchPoints`]: button.dataset.increase ? currentPoints + 1 : currentPoints - 1 });
+    }
+
     //#region Infiltration
     static async setCurrentInfiltrationObjective(_, button) {
       this.selected.infiltration.currentObjective = Number.parseInt(button.dataset.position);
@@ -3430,6 +3464,7 @@ class SystemView extends HandlebarsApplicationMixin(
         case 'research':
           $(htmlElement).find('.research-lore-input').on('change', this.updateResearchLore.bind(this));
           $(htmlElement).find('.research-skill-check-input').on('change', this.updateResearchSkillCheck.bind(this));
+          $(htmlElement).find('.research-check-maximum-input').on('change', this.researchCheckMaxPointsUpdate.bind(this));
           break;
         case 'infiltration':
           $(htmlElement).find('.radio-button').on('contextmenu', this.toggleObjectiveHidden.bind(this));
@@ -3991,7 +4026,13 @@ var macros = /*#__PURE__*/Object.freeze({
 });
 
 const handleMigration = async () => {
-    
+    if (!game.user.isGM) return;
+
+    var version = game.settings.get(MODULE_ID, "version");
+    if (!version) {
+        version = currentVersion;
+        await game.settings.set(MODULE_ID, "version", version);
+    }
 };
 
 class RegisterHandlebarsHelpers {

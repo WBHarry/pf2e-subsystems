@@ -644,6 +644,7 @@ form.pf2e-subsystems.application > header .header-control {
   border-style: outset;
   border-radius: 4px;
   padding: 0;
+  overflow: hidden;
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-radio-container .event-radio-header {
   position: relative;
@@ -737,7 +738,7 @@ form.pf2e-subsystems.application > header .header-control {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  overflow: auto;
+  overflow: hidden;
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-container .title-container,
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-container .title-small-container {
@@ -803,6 +804,7 @@ form.pf2e-subsystems.application > header .header-control {
   height: 100%;
   flex: 1;
   gap: 4px;
+  overflow: auto;
 }
 .pf2e-subsystems .chase-view {
   height: 100%;
@@ -827,6 +829,8 @@ form.pf2e-subsystems.application > header .header-control {
   flex-direction: column;
   height: 200px;
   padding: 4px;
+  word-wrap: break-word;
+  overflow: auto;
 }
 .pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .description-outer-container .description-container textarea {
   flex: 1;
@@ -989,6 +993,9 @@ form.pf2e-subsystems.application > header .header-control {
   opacity: 1;
   filter: drop-shadow(0 0 3px var(--pf2e-subsystem-theming-main-hover));
 }
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container {
+  overflow: initial;
+}
 .pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container {
   margin: 0;
   flex: 1;
@@ -998,6 +1005,7 @@ form.pf2e-subsystems.application > header .header-control {
   border-style: outset;
   border-radius: 4px;
   padding: 0;
+  overflow: hidden;
 }
 .pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .chase-event-display {
   position: relative;
@@ -1011,7 +1019,7 @@ form.pf2e-subsystems.application > header .header-control {
   font-size: 10px;
 }
 .pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .title-container {
-  margin-top: -6px;
+  padding-bottom: 7px;
 }
 .pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .title-container .chase-event-header-inner {
   position: relative;
@@ -1047,6 +1055,7 @@ form.pf2e-subsystems.application > header .header-control {
   align-items: center;
   padding: 8px;
   gap: 8px;
+  overflow: hidden;
 }
 .pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .chase-event-inner-container img {
   width: 60%;
@@ -1080,6 +1089,9 @@ form.pf2e-subsystems.application > header .header-control {
   border-radius: 4px;
   border-width: 2px;
   border-style: outset;
+  word-wrap: break-word;
+  overflow: auto;
+  padding: 0 8px;
 }
 .pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .chase-event-inner-container .chase-event-data-container .editor-container {
   margin: 0 8px;
@@ -1155,12 +1167,15 @@ form.pf2e-subsystems.application > header .header-control {
   border-width: 2px;
   border-style: outset;
   border-radius: 4px;
+  overflow: hidden;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-sidebar .research-premise .research-premise-content {
   flex: 1;
   padding: 4px;
   display: flex;
   flex-direction: column;
+  word-wrap: break-word;
+  overflow: auto;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-sidebar .research-premise .research-premise-content textarea {
   flex: 1;
@@ -1196,12 +1211,14 @@ form.pf2e-subsystems.application > header .header-control {
   border-width: 2px;
   border-style: outset;
   border-radius: 4px;
+  overflow: hidden;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container {
   flex: 1;
   padding: 4px;
   display: flex;
   flex-direction: column;
+  overflow: auto;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container {
   display: flex;
@@ -1355,6 +1372,7 @@ form.pf2e-subsystems.application > header .header-control {
   border-width: 2px;
   border-style: outset;
   border-radius: 4px;
+  overflow: hidden;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-breakpoints-container .research-breakpoints-inner-container {
   width: 100%;
@@ -1362,6 +1380,7 @@ form.pf2e-subsystems.application > header .header-control {
   padding: 4px;
   display: flex;
   flex-direction: column;
+  overflow: auto;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-breakpoints-container .research-breakpoints-inner-container .research-breakpoint-container {
   display: flex;
@@ -1432,6 +1451,7 @@ form.pf2e-subsystems.application > header .header-control {
   border-width: 2px;
   border-style: outset;
   border-radius: 4px;
+  overflow: hidden;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-events-container .research-event-hider {
   position: absolute;
@@ -1452,6 +1472,7 @@ form.pf2e-subsystems.application > header .header-control {
   display: flex;
   flex-direction: column;
   padding: 4px;
+  overflow: auto;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-events-container .research-events-inner-container .research-event-container {
   display: flex;
@@ -1530,13 +1551,25 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-edges-container .infiltration-edge-container .event-section-opener {
   font-size: 24px;
 }
-.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complications-container .infiltration-complications-inner-container {
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complication-container {
+  overflow: hidden;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complication-container .infiltration-complications-container {
+  overflow: auto;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complication-container .infiltration-complications-container .infiltration-complications-inner-container {
   display: flex;
   flex-direction: column;
 }
-.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complications-container .infiltration-points-container {
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complication-container .infiltration-complications-container .infiltration-points-container {
   gap: 2px;
   margin-top: 5px;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-opportunity-container {
+  overflow: hidden;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-opportunity-container .infiltration-opportunities-container {
+  overflow: auto;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-obstacle-image-container {
   display: flex;
@@ -1582,12 +1615,15 @@ form.pf2e-subsystems.application > header .header-control {
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .event-sidebar .description-outer-container .description-container {
   padding: 4px;
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow: auto;
+  word-wrap: break-word;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .event-sidebar .description-outer-container .description-container textarea {
   flex: 1;

@@ -21,7 +21,7 @@
                     {{#if this.editMode}}
                         <textarea class="secondary-container" name="{{concat "events." this.event.id ".premise"}}" value="{{this.event.premise}}">{{{this.event.enrichedPremise}}}</textarea>
                     {{else}}
-                        <span class="text-container">{{{this.event.enrichedPremise}}}</span>
+                        {{{this.event.enrichedPremise}}}
                     {{/if}}
                 </div>
             </div>
@@ -126,7 +126,7 @@
                 </div>
                 {{> "modules/pf2e-subsystems/templates/partials/event-toolbar.hbs"}}
             </div>
-            <fieldset class="chase-event-container primary-container accent">
+            <fieldset class="chase-event-container primary-container">
                 <legend class="chase-event-display">
                     {{#each this.event.obstacles as |obstacle id|}}
                         {{#if (or (not obstacle.locked) ../isGM)}}
@@ -135,7 +135,7 @@
                     {{/each}}
                     {{#if this.editMode}}<i class="fa-solid fa-plus chase-event-display-add clickable-icon" data-action="addObstacle" data-event="{{this.event.id}}" title="{{localize "PF2ESubsystems.Chase.AddObstacle"}}"></i>{{/if}}
                 </legend>
-                <div class="title-container primary-container">
+                <div class="title-container">
                     <div class="chase-event-header-inner">
                         <div class="chase-event-header-title primay-text-container">
                             {{#if this.editMode}}
@@ -152,7 +152,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="chase-event-inner-container">
+                <div class="chase-event-inner-container primary-container accent">
                     {{#if this.editMode}}
                         <img class="clickable-icon" src="{{this.currentObstacle.img}}" data-action="editImage" data-path="{{concat "events." this.event.id ".obstacles." this.currentObstacle.id ".img" }}" />
                     {{else}}
@@ -187,7 +187,7 @@
                                 {{{this.currentObstacle.enrichedOvercome}}}
                             </prose-mirror>
                         {{else}}
-                            <span class="text-container">{{{this.currentObstacle.enrichedOvercome}}}</span>
+                            {{{this.currentObstacle.enrichedOvercome}}}
                         {{/if}}
                     </div>
                 </div>
