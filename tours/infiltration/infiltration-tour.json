@@ -24,9 +24,15 @@
         },
         {
             "id": "infiltration-overview-11",
+            "selector": ".event-section-number-container.diagonal-spaced",
+            "title": "Awareness Points",
+            "content": "The up and down arrows alter the publicly known awareness points. The diagonals alter the hidden awareness points that players don't know about."
+        },
+        {
+            "id": "infiltration-overview-12",
             "selector": ".awareness-points-container",
             "title": "Awareness Points",
-            "content": "As a GM you can check the consequences of an awareness breakpoint at any time. By default breakpoints are revealed to players when the Awareness Points get high enough, and any increases to Obstacle DC is auto applied. Both of these behaviors can be changed in the module settings.\nThe up and down arrows alter the publicly known awareness points. The diagonals alter the hidden awareness points that players don't know about."
+            "content": "As a GM you can check the consequences of an awareness breakpoint at any time. By default breakpoints are revealed to players when the Awareness Points get high enough, and any increases to Obstacle DC is auto applied. Both of these behaviors can be changed in the module settings."
         },
         {
             "id": "infiltration-overview-2",
@@ -138,6 +144,7 @@
             "version": "",
             "background": "icons/environment/settlement/watchtower-moonlit-blue.webp",
             "premise": "The only thing that can bring peace to the succession wars is the ancient crown of the royal forebearers. It supposedly rests still within the dark castle of the dark lands. There you must go.",
+            "visibleAwareness": 0,
             "awarenessPoints": {
                 "current": 0,
                 "breakpoints": {

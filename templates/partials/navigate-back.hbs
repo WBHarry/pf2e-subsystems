@@ -1,4 +1,15 @@
-<div class="navigate-container clickable-icon" data-action="{{this.action}}" data-group="{{this.group}}" data-tab="{{this.tab}}">
-    <i class="fa-solid fa-arrow-left"></i>
-    <div>{{this.label}}</div>
+<div class="navigate-container" data-action="{{this.action}}" data-group="{{this.group}}" data-tab="{{this.tab}}">
+    <div class="navigate-title-container">
+        <div class="navigate-title-inner-container clickable-icon">
+            <i class="fa-solid fa-arrow-left"></i>
+            <div>{{this.label}}</div>
+        </div>
+        {{#if this.showTour}}<i class="event-information clickable-icon fa-solid fa-circle-info" data-action="startEventTour" title="{{localize "PF2ESubsystems.View.OpenEventTour"}}"></i>{{/if}}
+    </div>
+    {{#if this.clipboardFallback}}
+        <div class="event-clipboard-fallback secondary-container">
+            <input type="text" value="{{this.clipboardFallback}}" class="clipboard-fallback-input secondary-container" />
+            <button data-action="closeClipboardFallback" class="tertiary-container"><i class="fa-solid fa-x"></i></button>
+        </div>
+    {{/if}}
 </div>

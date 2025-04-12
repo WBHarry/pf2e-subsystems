@@ -16,6 +16,10 @@ export class InfiltrationTour extends Tour {
           await this.#systemView.render({ parts: ['infiltration'], force: true });
           break;
         case 'infiltration-overview-11':
+          this.#systemView.selected.infiltration.awarenessBreakpoint = null;
+          await this.#systemView.render({ parts: ['infiltration'], force: true });
+          break;
+        case 'infiltration-overview-12':
           this.#systemView.selected.infiltration.awarenessBreakpoint = '5';
           await this.#systemView.render({ parts: ['infiltration'], force: true });
           break;

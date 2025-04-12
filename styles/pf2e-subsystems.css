@@ -247,7 +247,8 @@ form.pf2e-subsystems.application > header .header-control {
   opacity: 0.4;
 }
 .pf2e-subsystems.systems-view .event-tab .event-tab-container {
-  height: 100%;
+  flex: 1;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -423,9 +424,7 @@ form.pf2e-subsystems.application > header .header-control {
   border-radius: 0 6px 6px 0;
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-information {
-  position: absolute;
-  font-size: 21px;
-  left: 174px;
+  font-size: 19px;
   color: var(--pf2e-subsystem-theming-primary-color);
   border-style: solid;
   border-radius: 50%;
@@ -490,6 +489,20 @@ form.pf2e-subsystems.application > header .header-control {
   gap: 16px;
   overflow: hidden;
   /* Rename to Expandable-Container or something */
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-simple-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px;
+  border-width: 2px;
+  border-style: outset;
+  border-radius: 6px;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-simple-container .event-simple-container-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-inner-tabs {
   width: 100%;
@@ -616,6 +629,18 @@ form.pf2e-subsystems.application > header .header-control {
   border-style: outset;
   border-radius: 4px;
 }
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section.split {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 33%;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section.split.focused {
+  flex: 80%;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section.split.unfocused {
+  flex: 10;
+}
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-section .event-section-title,
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-view-container .event-section-title {
   display: flex;
@@ -645,6 +670,13 @@ form.pf2e-subsystems.application > header .header-control {
   border-radius: 4px;
   padding: 0;
   overflow: hidden;
+  flex: 33%;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-radio-container.focused {
+  flex: 80%;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-radio-container.unfocused {
+  flex: 10;
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-radio-container .event-radio-header {
   position: relative;
@@ -1205,13 +1237,9 @@ form.pf2e-subsystems.application > header .header-control {
   height: auto;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
   border-width: 2px;
   border-style: outset;
   border-radius: 4px;
-  overflow: hidden;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container {
   flex: 1;
@@ -1367,12 +1395,9 @@ form.pf2e-subsystems.application > header .header-control {
   gap: 8px;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-breakpoints-container {
-  display: flex;
-  flex-direction: column;
   border-width: 2px;
   border-style: outset;
   border-radius: 4px;
-  overflow: hidden;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-breakpoints-container .research-breakpoints-inner-container {
   width: 100%;
@@ -1446,12 +1471,9 @@ form.pf2e-subsystems.application > header .header-control {
   font-size: 20px;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-events-container {
-  display: flex;
-  flex-direction: column;
   border-width: 2px;
   border-style: outset;
   border-radius: 4px;
-  overflow: hidden;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-events-container .research-event-hider {
   position: absolute;
@@ -1551,22 +1573,19 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-edges-container .infiltration-edge-container .event-section-opener {
   font-size: 24px;
 }
-.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complication-container {
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complication-container .infiltration-complications-container {
   overflow: hidden;
 }
-.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complication-container .infiltration-complications-container {
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complication-container .infiltration-complications-container .event-section-item-container {
   overflow: auto;
 }
-.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complication-container .infiltration-complications-container .infiltration-complications-inner-container {
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complication-container .infiltration-complications-container .event-section-item-container .infiltration-complications-inner-container {
   display: flex;
   flex-direction: column;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complication-container .infiltration-complications-container .infiltration-points-container {
   gap: 2px;
   margin-top: 5px;
-}
-.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-opportunity-container {
-  overflow: hidden;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-opportunity-container .infiltration-opportunities-container {
   overflow: auto;
@@ -1592,9 +1611,15 @@ form.pf2e-subsystems.application > header .header-control {
   align-items: center;
   flex: 1;
 }
-.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-obstacle-image-container .infiltration-obstacle-image {
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-obstacle-image-container .infiltration-obstacle-inner-container {
   width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-obstacle-image-container .infiltration-obstacle-inner-container .infiltration-obstacle-image {
   border: 0;
+  max-width: 128px;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .objective-obstacle-add-button {
   width: fit-content;
@@ -1878,6 +1903,28 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .preparation-cards-container .preparation-card .preparation-activity-results-description {
   line-height: 18px;
 }
+.pf2e-subsystems .influence-view .event-outer-container .event-container .event-sidebar img {
+  border-width: 2px;
+  border-style: outset;
+  border-radius: 6px;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .event-sidebar .description-outer-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .event-sidebar .description-outer-container .description-container {
+  padding: 4px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  word-wrap: break-word;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .event-sidebar .description-outer-container .description-container textarea {
+  flex: 1;
+}
 .pf2e-subsystems.pf2e-subsystems-menu .menu-outer-container {
   display: flex;
   flex-direction: column;
@@ -1941,6 +1988,12 @@ form.pf2e-subsystems.application > header .header-control {
   /* Texts */
   /* Tagify */
   /* Visibility */
+}
+.pf2e-subsystems .tab[data-tab].active {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
 }
 .pf2e-subsystems .editor {
   border-width: 1px;
@@ -2068,8 +2121,20 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems .navigate-container {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
   color: var(--pf2e-subsystem-theming-primary-color);
+}
+.pf2e-subsystems .navigate-container .navigate-title-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 200px;
+  height: 24px;
+}
+.pf2e-subsystems .navigate-container .navigate-title-container .navigate-title-inner-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .pf2e-subsystems .navigate-container i {
   font-size: 16px;

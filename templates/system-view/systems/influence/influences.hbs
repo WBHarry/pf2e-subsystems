@@ -1,0 +1,13 @@
+<div class="event-tab tab {{tab.cssClass}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+    {{#if (not this.selectedEvent)}}
+        {{> "modules/pf2e-subsystems/templates/partials/events.hbs" tab=this.tab name=(localize "PF2ESubsystems.Events.Influence.Single") plural=(localize "PF2ESubsystems.Events.Influence.Plural") events=this.events eventSearchValue=this.eventSearchValue }}
+    {{else}}
+        {{> "modules/pf2e-subsystems/templates/system-view/systems/influence/influence.hbs" 
+            editMode=this.editMode 
+            event=this.selectedEvent 
+            isGM=this.isGM  
+            settings=this.settings 
+            clipboardFallback=this.clipboardFallback 
+        }}
+    {{/if}}
+</div>

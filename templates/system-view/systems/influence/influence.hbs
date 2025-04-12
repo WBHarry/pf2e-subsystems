@@ -1,0 +1,57 @@
+<div class="event-outer-container">
+    <div class="flexrow">
+        {{> "modules/pf2e-subsystems/templates/partials/navigate-back.hbs" label=(localize "PF2ESubsystems.Influence.NavigateBack") action="navigateToSystem" }}
+        <i class="event-information clickable-icon fa-solid fa-circle-info" data-action="startEventTour" title="{{localize "PF2ESubsystems.View.OpenEventTour"}}"></i>
+        {{#if this.clipboardFallback}}
+            <div class="event-clipboard-fallback secondary-container">
+                <input type="text" value="{{this.clipboardFallback}}" class="clipboard-fallback-input secondary-container" />
+                <button data-action="closeClipboardFallback" class="tertiary-container"><i class="fa-solid fa-x"></i></button>
+            </div>
+        {{/if}}
+    </div>
+    <div class="event-container">
+        <div class="event-sidebar">
+            <img src="{{this.event.background}}" class="primary-container {{#if this.editMode}}clickable-icon{{/if}}" {{#if this.editMode}}data-action="editImage" data-path="{{concat "events." this.event.id ".background" }}"{{/if}} />
+            <div class="event-simple-container primary-container title-small-container">
+                <div class="event-simple-container-title">
+                    <i class="fa-solid fa-eye"></i>
+                    <div>{{localize "PF2ESubsystems.Influence.Perception"}}:</div>
+                </div>
+                {{#if this.editMode}}
+                    <input type="text" data-dtype="Number" name="{{concat "events." this.event.id ".perception"}}" value="{{this.event.perception}}" class="secondary-container" />
+                {{else}}
+                    <div>{{this.event.perception}}</div>
+                {{/if}}
+            </div>
+            <div class="event-simple-container primary-container title-small-container">
+                <div class="event-simple-container-title">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                    <div>{{localize "PF2ESubsystems.Influence.Perception"}}:</div>
+                </div>
+                {{#if this.editMode}}
+                    <input type="text" data-dtype="Number" name="{{concat "events." this.event.id ".will"}}" value="{{this.event.will}}" class="secondary-container" />     
+                {{else}}
+                    <div>{{this.event.will}}</div>
+                {{/if}}
+            </div>
+            <div class="description-outer-container event-section primary-container accent">
+                <div class="event-section-title title-container primary-container">{{localize "PF2ESubsystems.Basic.Premise"}}</div>
+                <div class="description-container">
+                    {{#if this.editMode}}
+                        <textarea class="secondary-container" name="{{concat "events." this.event.id ".premise"}}" value="{{this.event.premise}}">{{{this.event.premise}}}</textarea>
+                    {{else}}
+                        {{{this.event.enrichedPremise}}}
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+        <div class="event-main-container">
+            <div class="event-header-container">
+                <div class="event-header-title-container">
+                    <div class="event-header-title title-container secondary-container">{{this.event.name}}</div>
+                </div>
+                {{> "modules/pf2e-subsystems/templates/partials/event-toolbar.hbs"}}
+            </div>
+        </div>
+    </div>
+</div>

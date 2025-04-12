@@ -236,6 +236,13 @@
                 "ActivateAwarenessBreakpoint": "Activate awareness breakpoint"
             }
         },
+        "Influence": {
+            "NavigateBack": "Return To Influence",
+            "EditInfluence": "Edit Influence",
+            "CreateInfluence": "Create New Influence",
+            "Perception": "Perception",
+            "Will": "Will"
+        },
         "KeyBindings": {
             "OpenSystemView": {
                 "Name": "Open Subsystems View",

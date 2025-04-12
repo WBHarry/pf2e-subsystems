@@ -4,6 +4,7 @@
 @import "./stylesheets/chase.less";
 @import "./stylesheets/research.less";
 @import "./stylesheets//infiltration.less";
+@import "./stylesheets//influence.less";
 @import "./stylesheets//subsystem-menu.less";
 @import (inline) "../node_modules/@yaireo/tagify/dist/tagify.css";
 
@@ -22,6 +23,13 @@
 }
 
 .pf2e-subsystems {
+  .tab[data-tab].active {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+  }
+
   /* Editor */
   .editor {
     border-width: 1px;
@@ -196,8 +204,22 @@
   .navigate-container {
     display: flex;
     align-items: center;
-    gap: @gapNormal;
+    gap: @gapLarge;
     color: var(--pf2e-subsystem-theming-primary-color);
+
+    .navigate-title-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 200px;
+      height: 24px;
+
+      .navigate-title-inner-container {
+        display: flex;
+        align-items: center;
+        gap: @gapNormal;
+      }
+    }
 
     i {
       font-size: 16px;

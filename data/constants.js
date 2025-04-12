@@ -14,12 +14,16 @@ export const settingIDs = {
     infiltration: {
         settings: 'infiltration-settings',
     },
+    influence: {
+        settings: 'influence-settings',
+    }
 }
 
 export const tourIDs = {
     chase: "pf2e-subsystems-chase",
     research: "pf2e-subsystems-research",
     infiltration: "pf2e-subsystems-infiltration",
+    influence: "pf2e-subsystems-influence",
 }
 
 export const timeUnits = {

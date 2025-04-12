@@ -1,11 +1,12 @@
 import { Chases } from "../data/chase";
 import { MODULE_ID, settingIDs } from "../data/constants";
 import { Infiltrations } from "../data/infiltration";
+import { Influences } from "../data/influence";
 import { Researches } from "../data/research";
-import { ChaseSettings, InfiltrationSettings, ResearchSettings } from "../data/settings";
+import { ChaseSettings, InfiltrationSettings, InfluenceSettings, ResearchSettings } from "../data/settings";
 import SubsystemsMenu from "../module/SubsystemsMenu";
 
-export const currentVersion = '0.6.0';
+export const currentVersion = '0.6.1';
 
 export const registerKeyBindings = () => {
   game.keybindings.register(MODULE_ID, "open-system-view", {
@@ -55,6 +56,15 @@ const configSettings = () => {
     type: InfiltrationSettings,
     default: {},
   });
+
+  game.settings.register(MODULE_ID, settingIDs.influence.settings, {
+    name: "",
+    hint: "",
+    scope: "world",
+    config: false,
+    type: InfluenceSettings,
+    default: {},
+  });
 }
 
 const generalNonConfigSettings = () => {
@@ -89,6 +99,14 @@ const generalNonConfigSettings = () => {
     scope: "world",
     config: false,
     type: Infiltrations,
+    default: { events: {} },
+  });
+  game.settings.register(MODULE_ID, "influence", {
+    name: "",
+    hint: "",
+    scope: "world",
+    config: false,
+    type: Influences,
     default: { events: {} },
   });
 };

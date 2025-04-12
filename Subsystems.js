@@ -333,12 +333,16 @@ const settingIDs = {
     infiltration: {
         settings: 'infiltration-settings',
     },
+    influence: {
+        settings: 'influence-settings',
+    }
 };
 
 const tourIDs = {
     chase: "pf2e-subsystems-chase",
     research: "pf2e-subsystems-research",
     infiltration: "pf2e-subsystems-infiltration",
+    influence: "pf2e-subsystems-influence",
 };
 
 const timeUnits = {
@@ -997,6 +1001,76 @@ const resultsField = (degreeOfSuccess) => new foundry.data.fields.SchemaField({
   inUse: new foundry.data.fields.BooleanField({ required: true, initial: false }),
 });
 
+/* !!V13!! Use TypedObjectField */ 
+class Influences extends foundry.abstract.DataModel {
+  static defineSchema() {
+    const fields = foundry.data.fields;
+    return {
+      events: new TypedObjectField(new fields.EmbeddedDataField(Influence)),
+    }
+  }
+}
+
+class Influence extends foundry.abstract.DataModel {
+    static defineSchema() {
+      const fields = foundry.data.fields;
+      return {
+        id: new fields.StringField({ required: true }),
+        name: new fields.StringField({ required: true }),
+        version: new fields.StringField({ required: true }),
+        background: new fields.StringField({ required: true }),
+        premise: new fields.HTMLField({ required: true, initial: "" }),
+        hidden: new fields.BooleanField({ initial: true }),
+        perception: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+        will: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+        influencePoints: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+        discovery: new TypedObjectField(new fields.SchemaField({
+            id: new fields.StringField({ required: true }),
+            skill: new fields.StringField(),
+            action: new fields.StringField(),
+            variant: new fields.StringField(),
+            lore: new fields.BooleanField({ required: true, initial: false }),
+        })),
+        influenceSkills: new TypedObjectField(new fields.SchemaField({
+            id: new fields.StringField({ required: true }),
+            skill: new fields.StringField(),
+            action: new fields.StringField(),
+            variant: new fields.StringField(),
+            lore: new fields.BooleanField({ required: true, initial: false }),
+        })),
+        influence: new TypedObjectField(new fields.SchemaField({
+            id: new fields.StringField({ required: true }),
+            points: new fields.NumberField({ required: true, integer: true, initial: 0 }),
+            description: new fields.HTMLField({ required: true }),
+        })),
+        weaknesses: new TypedObjectField(new fields.SchemaField({
+            id: new fields.StringField({ required: true }),
+            description: new fields.HTMLField({ required: true }),
+            modifier: new fields.SchemaField({
+                used: new fields.BooleanField({ required: true, initial: false }),
+                value: new fields.NumberField({ required: true, integer: true, nullable: true, initial: null })
+            }),
+        })),
+        resistances: new TypedObjectField(new fields.SchemaField({
+            id: new fields.StringField({ required: true }),
+            description: new fields.HTMLField({ required: true }),
+            modifier: new fields.SchemaField({
+                used: new fields.BooleanField({ required: true, initial: false }),
+                value: new fields.NumberField({ required: true, integer: true, nullable: true, initial: null })
+            }),
+        })),
+        penalties: new TypedObjectField(new fields.SchemaField({
+            id: new fields.StringField({ required: true }),
+            description: new fields.HTMLField({ required: true }),
+            modifier: new fields.SchemaField({
+                used: new fields.BooleanField({ required: true, initial: false }),
+                value: new fields.NumberField({ required: true, integer: true, nullable: true, initial: null })
+            }),
+        })),
+      }
+    }
+}
+
 class Researches extends foundry.abstract.DataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
@@ -1171,6 +1245,15 @@ class InfiltrationSettings extends foundry.abstract.DataModel {
         dcIncrease: new fields.NumberField(),
         description: new fields.HTMLField(),
       }), { initial: defaultInfiltrationAwarenessBreakpoints }),
+    }
+  }
+}
+
+class InfluenceSettings extends foundry.abstract.DataModel {
+  static defineSchema() {
+    foundry.data.fields;
+    return {
+
     }
   }
 }
@@ -1365,7 +1448,7 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$1(
   }
 }
 
-const currentVersion = '0.6.0';
+const currentVersion = '0.6.1';
 
 const registerKeyBindings = () => {
   game.keybindings.register(MODULE_ID, "open-system-view", {
@@ -1415,6 +1498,15 @@ const configSettings = () => {
     type: InfiltrationSettings,
     default: {},
   });
+
+  game.settings.register(MODULE_ID, settingIDs.influence.settings, {
+    name: "",
+    hint: "",
+    scope: "world",
+    config: false,
+    type: InfluenceSettings,
+    default: {},
+  });
 };
 
 const generalNonConfigSettings = () => {
@@ -1449,6 +1541,14 @@ const generalNonConfigSettings = () => {
     scope: "world",
     config: false,
     type: Infiltrations,
+    default: { events: {} },
+  });
+  game.settings.register(MODULE_ID, "influence", {
+    name: "",
+    hint: "",
+    scope: "world",
+    config: false,
+    type: Influences,
     default: { events: {} },
   });
 };
@@ -1836,6 +1936,7 @@ class SystemView extends HandlebarsApplicationMixin(
         infiltrationToggleEdgeFaked: this.infiltrationToggleEdgeFaked,
         infiltrationToggleEdgeUsed: this.infiltrationToggleEdgeUsed,
         infiltrationEdgeRemove: this.infiltrationEdgeRemove,
+        /* Influence */
       },
       form: { handler: this.updateData, submitOnChange: true },
       window: {
@@ -1865,6 +1966,10 @@ class SystemView extends HandlebarsApplicationMixin(
         scrollable: [
           ".event-main-container",
         ],
+      },
+      influence: {
+        id: 'influence',
+        template: "modules/pf2e-subsystems/templates/system-view/systems/influence/influences.hbs",
       },
     };
 
@@ -1902,16 +2007,6 @@ class SystemView extends HandlebarsApplicationMixin(
           label: game.i18n.localize('PF2ESubsystems.Events.Chase.Plural'),
           image: 'icons/skills/movement/feet-winged-boots-brown.webp',
         },
-        // influence: {
-        //   active: false,
-        //   cssClass: 'influence-view',
-        //   group: 'main',
-        //   id: 'influence',
-        //   icon: null,
-        //   label: game.i18n.localize('PF2ESubsystems.Events.Influence.Plural'),
-        //   image: 'icons/skills/social/diplomacy-handshake-yellow.webp',
-        //   disabled: true,
-        // },
         research: {
           active: false,
           cssClass: 'research-view',
@@ -1929,6 +2024,15 @@ class SystemView extends HandlebarsApplicationMixin(
           icon: null,
           label: game.i18n.localize('PF2ESubsystems.Events.Infiltration.Plural'),
           image: 'icons/magic/unholy/silhouette-robe-evil-power.webp',
+        },
+        influence: {
+          active: false,
+          cssClass: 'influence-view',
+          group: 'main',
+          id: 'influence',
+          icon: null,
+          label: game.i18n.localize('PF2ESubsystems.Events.Influence.Plural'),
+          image: 'icons/skills/social/diplomacy-handshake-yellow.webp',
         },
       };
   
@@ -2249,6 +2353,29 @@ class SystemView extends HandlebarsApplicationMixin(
                   }
                 },
                 preparations: { activities: defaultInfiltrationPreparations },
+              };
+            },
+            attachListeners: this.filePickerListener.bind(this),
+          };
+        case 'influence':
+          return {  
+            content: await renderTemplate("modules/pf2e-subsystems/templates/system-view/systems/chase/chaseDataDialog.hbs", { name: existing?.name, background: existing?.background }),
+            title: game.i18n.localize(existing ? 'PF2ESubsystems.Influence.EditInfluence' : 'PF2ESubsystems.Influence.CreateInfluence'),
+            callback: (button) => {
+              const elements = button.form.elements;
+              if (existing){
+                return {
+                  ...existing,
+                  name: elements.name.value,
+                  background: elements.background.value,
+                }
+              }
+
+              return {
+                id: foundry.utils.randomID(),
+                name: elements.name.value ? elements.name.value : game.i18n.localize('PF2ESubsystems.View.NewEvent'),
+                version: currentVersion,
+                background: elements.background.value ? elements.background.value : 'icons/magic/perception/eye-ringed-green.webp',
               };
             },
             attachListeners: this.filePickerListener.bind(this),
@@ -2664,6 +2791,8 @@ class SystemView extends HandlebarsApplicationMixin(
 
     static toggleResearchOpenResearchBreakpoint(_, button) {
       this.selected.research.openResearchBreakpoint = this.selected.research.openResearchBreakpoint === button.dataset.breakpoint ? null : button.dataset.breakpoint;
+      this.selected.research.openResearchCheck = null;
+      this.selected.research.openResearchEvent = null;
       this.render({ parts: [this.tabGroups.main] }); 
     }
 
@@ -2694,6 +2823,8 @@ class SystemView extends HandlebarsApplicationMixin(
 
     static async researchToggleOpenResearchCheck(_, button) {
       this.selected.research.openResearchCheck = this.selected.research.openResearchCheck === button.dataset.check ? null : button.dataset.check;
+      this.selected.research.openResearchBreakpoint = null;
+      this.selected.research.openResearchEvent = null;
       this.tabGroups.influenceResearchChecks = 'description';
       this.render({ parts: [this.tabGroups.main] });
     }
@@ -2753,6 +2884,8 @@ class SystemView extends HandlebarsApplicationMixin(
 
     static async researchToggleOpenResearchEvent(_, button) {
       this.selected.research.openResearchEvent = this.selected.research.openResearchEvent === button.dataset.event ? null : button.dataset.event;
+      this.selected.research.openResearchBreakpoint = null;
+      this.selected.research.openResearchCheck = null;
       this.render({ parts: [this.tabGroups.main] });
     }
 
@@ -2896,8 +3029,8 @@ class SystemView extends HandlebarsApplicationMixin(
     }
 
     static async infiltrationObstacleIndividualPointsUpdate(_, button) {
-      const currentPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].obstacles[button.dataset.obstacle].infiltrationPointData[button.dataset.player] ?? 0;
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.obstacles.${button.dataset.obstacle}.infiltrationPointData.${button.dataset.player}`]: button.dataset.increase ? currentPoints + 1 : currentPoints - 1 });
+      const currentPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].objectives[button.dataset.objective].obstacles[button.dataset.obstacle].infiltrationPointData[button.dataset.player] ?? 0;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.objectives.${button.dataset.objective}.obstacles.${button.dataset.obstacle}.infiltrationPointData.${button.dataset.player}`]: button.dataset.increase ? currentPoints + 1 : currentPoints - 1 });
     }
 
     static async infiltrationAddObstacleSkill(_, button) {
@@ -2918,6 +3051,8 @@ class SystemView extends HandlebarsApplicationMixin(
 
     static async infiltrationToggleOpenObstacle(_, button) {
       this.selected.openInfiltrationObstacle = this.selected.openInfiltrationObstacle === button.dataset.obstacle ? null : button.dataset.obstacle;
+      this.selected.openInfiltrationComplication = null;
+      this.selected.openInfiltrationOpportunity = null;
       this.tabGroups.infiltrationObstacleSkills = 'description';
       this.render({ parts: [this.tabGroups.main] }); 
     }
@@ -2998,6 +3133,8 @@ class SystemView extends HandlebarsApplicationMixin(
 
     static async infiltrationToggleOpenOpportunity(_, button) {
       this.selected.openInfiltrationOpportunity = this.selected.openInfiltrationOpportunity === button.dataset.opportunity ? null : button.dataset.opportunity;
+      this.selected.openInfiltrationObstacle = null;
+      this.selected.openInfiltrationComplication = null;
       this.render({ parts: [this.tabGroups.main] }); 
     }
 
@@ -3008,6 +3145,8 @@ class SystemView extends HandlebarsApplicationMixin(
 
     static async infiltrationToggleOpenComplication(_, button) {
       this.selected.openInfiltrationComplication = this.selected.openInfiltrationComplication === button.dataset.complication ? null : button.dataset.complication;
+      this.selected.openInfiltrationOpportunity = null;
+      this.selected.openInfiltrationObstacle = null;
       this.tabGroups.infiltrationComplication = 'description';
       this.selected.infiltration.complicationResultSelect = null;
       this.render({ parts: [this.tabGroups.main] }); 
@@ -3550,6 +3689,11 @@ class SystemView extends HandlebarsApplicationMixin(
             
           context.settings = game.settings.get(MODULE_ID, settingIDs.research.settings);
           context.tab = context.systems.research;
+
+          context.researchCheckStyle = this.selected.research.openResearchCheck ? 'focused' : (this.selected.research.openResearchBreakpoint || this.selected.research.openResearchEvent) ? 'unfocused' : '';
+          context.researchBreakpointStyle = this.selected.research.openResearchBreakpoint ? 'focused' : (this.selected.research.openResearchCheck || this.selected.research.openResearchEvent) ? 'unfocused' : '';
+          context.researchEventStyle = this.selected.research.openResearchEvent ? 'focused' : (this.selected.research.openResearchCheck || this.selected.research.openResearchBreakpoint) ? 'unfocused' : '';
+
           context.skillCheckTabs = this.getResearchSkillCheckTabs();
           await this.setupEvents(viewEvents, context);
           if(context.selectedEvent) {
@@ -3625,6 +3769,10 @@ class SystemView extends HandlebarsApplicationMixin(
           context.complicationTabs = this.getInfiltrationComplicationTabs();
           context.activityTabs = this.getInfiltrationActivityTabs();
           context.layout = this.layout.infiltration;
+
+          context.infiltrationObstacleStyle = this.selected.openInfiltrationObstacle ? 'focused' : (this.selected.openInfiltrationOpportunity || this.selected.openInfiltrationComplication) ? 'unfocused' : '';
+          context.infiltrationOpportunityStyle = this.selected.openInfiltrationOpportunity ? 'focused' : (this.selected.openInfiltrationObstacle || this.selected.openInfiltrationComplication) ? 'unfocused' : '';
+          context.infiltrationComplicationStyle = this.selected.openInfiltrationComplication ? 'focused' : (this.selected.openInfiltrationObstacle || this.selected.openInfiltrationOpportunity) ? 'unfocused' : '';
 
           const disableRollButton = (disable, html) => {
             if(!disable) return html;
@@ -3852,6 +4000,18 @@ class SystemView extends HandlebarsApplicationMixin(
             context.actionOptions.push({ value: action.slug, name: game.i18n.localize(action.name) });
           }
 
+          break;
+      
+        case 'influence':
+          const { events: influenceEvents } = game.settings.get(MODULE_ID, 'influence');
+          
+          context.settings = game.settings.get(MODULE_ID, settingIDs.influence.settings);
+          context.tab = context.systems.influence;
+          await this.setupEvents(influenceEvents, context);
+
+          if(context.selectedEvent) {
+            context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
+          }
           break;
       }
 
@@ -4168,6 +4328,10 @@ class InfiltrationTour extends Tour {
           await this.#systemView.render({ parts: ['infiltration'], force: true });
           break;
         case 'infiltration-overview-11':
+          this.#systemView.selected.infiltration.awarenessBreakpoint = null;
+          await this.#systemView.render({ parts: ['infiltration'], force: true });
+          break;
+        case 'infiltration-overview-12':
           this.#systemView.selected.infiltration.awarenessBreakpoint = '5';
           await this.#systemView.render({ parts: ['infiltration'], force: true });
           break;
@@ -4252,6 +4416,50 @@ class InfiltrationTour extends Tour {
     }
 }
 
+class InfluenceTour extends Tour {
+    #systemView;
+
+    async _preStep() {
+      await super._preStep();
+      const currentStep = this.currentStep;
+      switch(currentStep.id){
+        case 'create-influence':
+          this.#systemView = await new SystemView('influence', null, true).render(true);
+          break;
+        case 'influence-overview-1':
+          this.#systemView.selected.event = 'tour-event';
+          await this.#systemView.render({ parts: ['influence'], force: true });
+          break;
+      
+      }
+    }
+
+    async progress(stepIndex) {
+      let index = stepIndex;
+      if(!game.user.isGM){
+        switch(stepIndex) {
+            case 2:
+                index = this.stepIndex === 3 ? 1 : 3;
+                break;
+        }
+      }
+
+      super.progress(index);
+    }
+
+    exit(){
+      this.#systemView.close();
+      this.#systemView = null;
+      super.exit();
+    }
+    
+    async complete(){
+      this.#systemView.close();
+      this.#systemView = null;
+      super.complete();
+    }
+}
+
 Hooks.once("init", () => {
     registerGameSettings();
     registerKeyBindings();
@@ -4270,6 +4478,7 @@ Hooks.once("init", () => {
       "modules/pf2e-subsystems/templates/menu/subsystem-menu/partials/system-tabs.hbs",
       "modules/pf2e-subsystems/templates/menu/subsystem-menu/partials/system-footer.hbs",
       "modules/pf2e-subsystems/templates/system-view/systems/infiltration/infiltration.hbs",
+      "modules/pf2e-subsystems/templates/system-view/systems/influence/influence.hbs",
     ]);
 });
 
@@ -4303,8 +4512,9 @@ async function registerTours() {
     game.tours.register(MODULE_ID, tourIDs.chase, await ChaseTour.fromJSON(`/modules/${MODULE_ID}/tours/chase/chase-tour.json`));
     game.tours.register(MODULE_ID, tourIDs.research, await ResearchTour.fromJSON(`/modules/${MODULE_ID}/tours/research/research-tour.json`));
     game.tours.register(MODULE_ID, tourIDs.infiltration, await InfiltrationTour.fromJSON(`/modules/${MODULE_ID}/tours/infiltration/infiltration-tour.json`));
+    game.tours.register(MODULE_ID, tourIDs.influence, await InfluenceTour.fromJSON(`/modules/${MODULE_ID}/tours/influence/influence-tour.json`));
   } catch (error) {
-    console.error("MyTour | Error registering tours: ",error);
+    console.error("PF2e Subsystems Tour Registration failed");
   }
 }
 

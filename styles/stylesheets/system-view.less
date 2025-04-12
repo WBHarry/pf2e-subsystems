@@ -100,7 +100,8 @@
             }
 
             .event-tab-container {
-                height: 100%;
+                flex: 1;
+                overflow: hidden;
                 display: flex;
                 flex-direction: column;
                 gap: @gapNormal;
@@ -319,9 +320,7 @@
             }
 
             .event-information {
-                position: absolute;
-                font-size: 21px;
-                left: 174px;
+                font-size: 19px;
                 color: var(--pf2e-subsystem-theming-primary-color);
                 border-style: solid;
                 border-radius: 50%;
@@ -394,6 +393,22 @@
                 display: flex;
                 gap: @gapLarge;
                 overflow: hidden;
+
+                .event-simple-container {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: @paddingNormal;
+                    border-width: 2px;
+                    border-style: outset;
+                    border-radius: 6px;
+
+                    .event-simple-container-title {
+                        display: flex;
+                        align-items: center;
+                        gap: @gapSmall;
+                    }
+                }
 
                 .event-inner-tabs {
                     width: 100%;
@@ -544,6 +559,21 @@
                     border-width: 2px;
                     border-style: outset;
                     border-radius: 4px;
+
+                    &.split {
+                        overflow: hidden;
+                        display: flex;
+                        flex-direction: column;
+                        flex: 33%; 
+
+                        &.focused {
+                            flex: 80%;
+                        }
+    
+                        &.unfocused {
+                            flex: 10;
+                        }
+                    }
                 }
 
                 .event-section, .event-main-view-container{
@@ -577,6 +607,15 @@
                     border-radius: @borderRadiusNormal;
                     padding: 0;
                     overflow: hidden;
+                    flex: 33%;
+                    
+                    &.focused {
+                        flex: 80%;
+                    }
+
+                    &.unfocused {
+                        flex: 10;
+                    }
 
                     .event-radio-header {
                         position: relative;

@@ -1,14 +1,5 @@
 <div class="event-outer-container">
-    <div class="flexrow">
-        {{> "modules/pf2e-subsystems/templates/partials/navigate-back.hbs" label=(localize "PF2ESubsystems.Research.NavigateBack") action="navigateToSystem" }}
-        <i class="event-information clickable-icon fa-solid fa-circle-info" data-action="startEventTour" title="{{localize "PF2ESubsystems.View.OpenEventTour"}}"></i>
-        {{#if this.clipboardFallback}}
-            <div class="event-clipboard-fallback secondary-container">
-                <input type="text" value="{{this.clipboardFallback}}" class="clipboard-fallback-input secondary-container" />
-                <button data-action="closeClipboardFallback" class="tertiary-container"><i class="fa-solid fa-x"></i></button>
-            </div>
-        {{/if}}
-    </div>
+    {{> "modules/pf2e-subsystems/templates/partials/navigate-back.hbs" label=(localize "PF2ESubsystems.Research.NavigateBack") action="navigateToSystem" showTour=this.event clipboardFallback=this.clipboardFallback }}
     <div class="event-container">
         <div class="event-sidebar">
             <div class="event-image">
@@ -72,7 +63,7 @@
                 {{> "modules/pf2e-subsystems/templates/partials/event-toolbar.hbs"}}
             </div>
 
-            <div class="research-checks-container primary-container accent">
+            <div class="research-checks-container {{this.researchCheckStyle}} event-section split primary-container accent">
                 <div class="title-container primary-container">
                     <div class="title-container-inner">
                         {{localize "PF2ESubsystems.Research.ResearchChecks"}}
@@ -247,7 +238,7 @@
                 </div>
             </div>
 
-            <div class="research-breakpoints-container primary-container accent">
+            <div class="research-breakpoints-container {{this.researchBreakpointStyle}} event-section split primary-container accent">
                 <div class="title-container primary-container">
                     <div class="title-container-inner">
                         {{localize "PF2ESubsystems.Research.ResearchBreakpoints"}}
@@ -299,7 +290,7 @@
             </div>
 
             {{#if this.researchEventsShown}}
-                <div class="research-events-container primary-container accent">
+                <div class="research-events-container {{this.researchEventStyle}} event-section split primary-container accent">
                     <div class="title-container primary-container">
                         <div class="title-container-inner">
                             {{localize "PF2ESubsystems.Research.ResearchEvents"}}

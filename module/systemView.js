@@ -161,6 +161,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
         infiltrationToggleEdgeFaked: this.infiltrationToggleEdgeFaked,
         infiltrationToggleEdgeUsed: this.infiltrationToggleEdgeUsed,
         infiltrationEdgeRemove: this.infiltrationEdgeRemove,
+        /* Influence */
       },
       form: { handler: this.updateData, submitOnChange: true },
       window: {
@@ -190,6 +191,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
         scrollable: [
           ".event-main-container",
         ],
+      },
+      influence: {
+        id: 'influence',
+        template: "modules/pf2e-subsystems/templates/system-view/systems/influence/influences.hbs",
       },
     };
 
@@ -227,16 +232,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
           label: game.i18n.localize('PF2ESubsystems.Events.Chase.Plural'),
           image: 'icons/skills/movement/feet-winged-boots-brown.webp',
         },
-        // influence: {
-        //   active: false,
-        //   cssClass: 'influence-view',
-        //   group: 'main',
-        //   id: 'influence',
-        //   icon: null,
-        //   label: game.i18n.localize('PF2ESubsystems.Events.Influence.Plural'),
-        //   image: 'icons/skills/social/diplomacy-handshake-yellow.webp',
-        //   disabled: true,
-        // },
         research: {
           active: false,
           cssClass: 'research-view',
@@ -254,6 +249,15 @@ export default class SystemView extends HandlebarsApplicationMixin(
           icon: null,
           label: game.i18n.localize('PF2ESubsystems.Events.Infiltration.Plural'),
           image: 'icons/magic/unholy/silhouette-robe-evil-power.webp',
+        },
+        influence: {
+          active: false,
+          cssClass: 'influence-view',
+          group: 'main',
+          id: 'influence',
+          icon: null,
+          label: game.i18n.localize('PF2ESubsystems.Events.Influence.Plural'),
+          image: 'icons/skills/social/diplomacy-handshake-yellow.webp',
         },
       };
   
@@ -584,6 +588,29 @@ export default class SystemView extends HandlebarsApplicationMixin(
                   }
                 },
                 preparations: { activities: defaultInfiltrationPreparations },
+              };
+            },
+            attachListeners: this.filePickerListener.bind(this),
+          };
+        case 'influence':
+          return {  
+            content: await renderTemplate("modules/pf2e-subsystems/templates/system-view/systems/chase/chaseDataDialog.hbs", { name: existing?.name, background: existing?.background }),
+            title: game.i18n.localize(existing ? 'PF2ESubsystems.Influence.EditInfluence' : 'PF2ESubsystems.Influence.CreateInfluence'),
+            callback: (button) => {
+              const elements = button.form.elements;
+              if (existing){
+                return {
+                  ...existing,
+                  name: elements.name.value,
+                  background: elements.background.value,
+                }
+              }
+
+              return {
+                id: foundry.utils.randomID(),
+                name: elements.name.value ? elements.name.value : game.i18n.localize('PF2ESubsystems.View.NewEvent'),
+                version: currentVersion,
+                background: elements.background.value ? elements.background.value : 'icons/magic/perception/eye-ringed-green.webp',
               };
             },
             attachListeners: this.filePickerListener.bind(this),
@@ -999,6 +1026,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
     static toggleResearchOpenResearchBreakpoint(_, button) {
       this.selected.research.openResearchBreakpoint = this.selected.research.openResearchBreakpoint === button.dataset.breakpoint ? null : button.dataset.breakpoint;
+      this.selected.research.openResearchCheck = null;
+      this.selected.research.openResearchEvent = null;
       this.render({ parts: [this.tabGroups.main] }); 
     }
 
@@ -1029,6 +1058,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
     static async researchToggleOpenResearchCheck(_, button) {
       this.selected.research.openResearchCheck = this.selected.research.openResearchCheck === button.dataset.check ? null : button.dataset.check;
+      this.selected.research.openResearchBreakpoint = null;
+      this.selected.research.openResearchEvent = null;
       this.tabGroups.influenceResearchChecks = 'description';
       this.render({ parts: [this.tabGroups.main] });
     }
@@ -1088,6 +1119,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
     static async researchToggleOpenResearchEvent(_, button) {
       this.selected.research.openResearchEvent = this.selected.research.openResearchEvent === button.dataset.event ? null : button.dataset.event;
+      this.selected.research.openResearchBreakpoint = null;
+      this.selected.research.openResearchCheck = null;
       this.render({ parts: [this.tabGroups.main] });
     }
 
@@ -1231,8 +1264,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
     }
 
     static async infiltrationObstacleIndividualPointsUpdate(_, button) {
-      const currentPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].obstacles[button.dataset.obstacle].infiltrationPointData[button.dataset.player] ?? 0;
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.obstacles.${button.dataset.obstacle}.infiltrationPointData.${button.dataset.player}`]: button.dataset.increase ? currentPoints + 1 : currentPoints - 1 });
+      const currentPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].objectives[button.dataset.objective].obstacles[button.dataset.obstacle].infiltrationPointData[button.dataset.player] ?? 0;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.objectives.${button.dataset.objective}.obstacles.${button.dataset.obstacle}.infiltrationPointData.${button.dataset.player}`]: button.dataset.increase ? currentPoints + 1 : currentPoints - 1 });
     }
 
     static async infiltrationAddObstacleSkill(_, button) {
@@ -1253,6 +1286,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
     static async infiltrationToggleOpenObstacle(_, button) {
       this.selected.openInfiltrationObstacle = this.selected.openInfiltrationObstacle === button.dataset.obstacle ? null : button.dataset.obstacle;
+      this.selected.openInfiltrationComplication = null;
+      this.selected.openInfiltrationOpportunity = null;
       this.tabGroups.infiltrationObstacleSkills = 'description';
       this.render({ parts: [this.tabGroups.main] }); 
     }
@@ -1333,6 +1368,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
     static async infiltrationToggleOpenOpportunity(_, button) {
       this.selected.openInfiltrationOpportunity = this.selected.openInfiltrationOpportunity === button.dataset.opportunity ? null : button.dataset.opportunity;
+      this.selected.openInfiltrationObstacle = null;
+      this.selected.openInfiltrationComplication = null;
       this.render({ parts: [this.tabGroups.main] }); 
     }
 
@@ -1343,6 +1380,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
     static async infiltrationToggleOpenComplication(_, button) {
       this.selected.openInfiltrationComplication = this.selected.openInfiltrationComplication === button.dataset.complication ? null : button.dataset.complication;
+      this.selected.openInfiltrationOpportunity = null;
+      this.selected.openInfiltrationObstacle = null;
       this.tabGroups.infiltrationComplication = 'description';
       this.selected.infiltration.complicationResultSelect = null;
       this.render({ parts: [this.tabGroups.main] }); 
@@ -1885,6 +1924,11 @@ export default class SystemView extends HandlebarsApplicationMixin(
             
           context.settings = game.settings.get(MODULE_ID, settingIDs.research.settings);
           context.tab = context.systems.research;
+
+          context.researchCheckStyle = this.selected.research.openResearchCheck ? 'focused' : (this.selected.research.openResearchBreakpoint || this.selected.research.openResearchEvent) ? 'unfocused' : '';
+          context.researchBreakpointStyle = this.selected.research.openResearchBreakpoint ? 'focused' : (this.selected.research.openResearchCheck || this.selected.research.openResearchEvent) ? 'unfocused' : '';
+          context.researchEventStyle = this.selected.research.openResearchEvent ? 'focused' : (this.selected.research.openResearchCheck || this.selected.research.openResearchBreakpoint) ? 'unfocused' : '';
+
           context.skillCheckTabs = this.getResearchSkillCheckTabs();
           await this.setupEvents(viewEvents, context);
           if(context.selectedEvent) {
@@ -1960,6 +2004,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
           context.complicationTabs = this.getInfiltrationComplicationTabs();
           context.activityTabs = this.getInfiltrationActivityTabs();
           context.layout = this.layout.infiltration;
+
+          context.infiltrationObstacleStyle = this.selected.openInfiltrationObstacle ? 'focused' : (this.selected.openInfiltrationOpportunity || this.selected.openInfiltrationComplication) ? 'unfocused' : '';
+          context.infiltrationOpportunityStyle = this.selected.openInfiltrationOpportunity ? 'focused' : (this.selected.openInfiltrationObstacle || this.selected.openInfiltrationComplication) ? 'unfocused' : '';
+          context.infiltrationComplicationStyle = this.selected.openInfiltrationComplication ? 'focused' : (this.selected.openInfiltrationObstacle || this.selected.openInfiltrationOpportunity) ? 'unfocused' : '';
 
           const disableRollButton = (disable, html) => {
             if(!disable) return html;
@@ -2187,6 +2235,18 @@ export default class SystemView extends HandlebarsApplicationMixin(
             context.actionOptions.push({ value: action.slug, name: game.i18n.localize(action.name) });
           }
 
+          break;
+      
+        case 'influence':
+          const { events: influenceEvents } = game.settings.get(MODULE_ID, 'influence');
+          
+          context.settings = game.settings.get(MODULE_ID, settingIDs.influence.settings);
+          context.tab = context.systems.influence;
+          await this.setupEvents(influenceEvents, context);
+
+          if(context.selectedEvent) {
+            context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
+          }
           break;
       }
 

@@ -1,14 +1,5 @@
 <div class="event-outer-container">
-    <div class="flexrow">
-        {{> "modules/pf2e-subsystems/templates/partials/navigate-back.hbs" label=(localize "PF2ESubsystems.Chase.NavigateBack") action="navigateToSystem" }}
-        <i class="event-information clickable-icon fa-solid fa-circle-info" data-action="startEventTour" title="{{localize "PF2ESubsystems.View.OpenEventTour"}}"></i>
-        {{#if this.clipboardFallback}}
-            <div class="event-clipboard-fallback secondary-container">
-                <input type="text" value="{{this.clipboardFallback}}" class="clipboard-fallback-input secondary-container" />
-                <button data-action="closeClipboardFallback" class="tertiary-container"><i class="fa-solid fa-x"></i></button>
-            </div>
-        {{/if}}
-    </div>
+    {{> "modules/pf2e-subsystems/templates/partials/navigate-back.hbs" label=(localize "PF2ESubsystems.Chase.NavigateBack") action="navigateToSystem" showTour=this.event clipboardFallback=this.clipboardFallback }}
     <div class="event-container">
         <div class="event-sidebar">
             <div class="description-outer-container primary-container accent">

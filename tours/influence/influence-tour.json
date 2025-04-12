@@ -1,0 +1,43 @@
+{
+    "title": "Influence Subsystem",
+    "description": "How to use influence",
+    "canBeResumed": false,
+    "display": true,
+    "steps": [
+        {
+            "id": "create-influence",
+            "selector": ".influence-view .system-title-inner-container",
+            "title": "Create Infiltration Event",
+            "content": "Click to add an influence event.\n(You can use the <strong>←</strong> and → arrow keys to navigate the Tour!)"
+        },
+        {
+            "id": "edit-influence",
+            "selector": ".influence-view .event-container",
+            "title": "Edit Infiltration Event",
+            "content": "Hover an existing influence event to access Reveal/Hide, Edit and Remove functionality.\nClick to enter the influence event."
+        },
+        {
+            "id": "influence-overview-1",
+            "selector": ".influence-view .event-sidebar",
+            "title": "Influence Statistics",
+            "content": "The influence challenge presents two statistics the party's attempts are typically compared against, perception and will.\nIt also details the premise of the influence event."
+        },
+        {
+            "id": "infiltration-overview-2",
+            "selector": ".event-header-toolbar",
+            "title": "Toolbar",
+            "content": "<strong>Start Event</strong>: This will open up this influence window for all online players so you can run it.\n<strong>Edit Event</strong>: This toggles you into edit mode to setup your influence event.\n<strong>Macro</strong>: The third icon copies a macro you can use to open this event."
+        }
+    ],
+    "events": {
+        "tour-event": {
+            "id": "tour-event",
+            "name": "Crazed Inventor",
+            "background": "icons/weapons/thrown/bomb-gas-grey-purple.webp",
+            "perception": 10,
+            "will": 7,
+            "enrichedPremise": "You've stumbled into the magnificent, yet crazily dangerous workshop of Jikki Tabla the inventor. He could quite possibly help you on your journey, but he seems passingly interested in you at best as he continues his work while moving around you as if you were furniture."
+        }
+    }
+}
+
