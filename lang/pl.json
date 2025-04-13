@@ -13,7 +13,19 @@
             "Description": "Opis",
             "DC": "ST",
             "Premise": "Założenie",
-            "SkillChecks": "Testy umiejętności"
+            "SkillChecks": "Testy umiejętności",
+            "Points": "Punkty",
+            "Breakpoint": "Punkt krytyczny",
+            "DCIncrease": "Zwiększenie ST",
+            "DCAdjustments": "Dostosowanie ST",
+            "UseLeveledDC": "Użycie wyrównanego do poziomu ST",
+            "LeveledDCIsUsed": "Używany jest ST wyrównane do poziomu",
+            "Lore": "Wiedza",
+            "Skill": "Umiejętność",
+            "Action": "Akcja",
+            "Variant": "Wariant",
+            "Overcome": "Przezwyciężenie",
+            "Trigger": "Wyzwalacz"
         },
         "TimeUnits": {
             "Year": {
@@ -57,6 +69,7 @@
                 },
                 "Infiltration": {
                     "DefaultAwarenessBreakpoints": "Domyślne punkty krytyczne Czujności",
+                    "HideAwareness": "Całkowite ukrycie Czujności przed graczami",
                     "AutoApplyAwareness": "Automatyczne stosowanie modyfikatorów ST Czujności",
                     "AutoRevealAwareness": "Automatyczne ujawnianie punktów krytycznych Czujności"
                 }
@@ -125,7 +138,6 @@
             "AdvanceAllNPCs": "Przenieś wszystkich bohaterów niezależnych do następnej przeszkody",
             "RetreatAllNPCs": "Przenieś wszystkich bohaterów niezależnych do poprzedniej przeszkody",
             "AddOrDragInActor": "Dodaj lub przeciągnij aktora.",
-            "StartChase": "Rozpocznij Pościg",
             "ChasePoints": "Punkty Pościgu",
             "Errors": {
                 "UnlockObstacle": "Musisz odblokować przeszkody od początku do końca",
@@ -139,7 +151,6 @@
             "NavigateBack": "Powrót do Badań",
             "EditResearch": "Edytuj Badanie",
             "CreateResearch": "Utwórz nowe Badanie",
-            "StartResearch": "Rozpocznij Badanie",
             "MaxResearchPoints": "Maksymalny PB",
             "Skill": "Umiejętność",
             "Action": "Akcja",
@@ -185,6 +196,9 @@
             "ComplicationResultDescription": "Opisz wynik tutaj",
             "ConfirmRemoveEdgeTitle": "Usuń punkty brzegowe",
             "ConfirmRemoveEdgeText": "Ten wynik jest powiązany z punktem brzegowym \"{edge}\". Czy chcesz go usunąć?",
+            "AddAwarenessBreakpoint": "Dodaj dodatkowy punkt krytyczny Czujności",
+            "AddNewObstacle": "Dodaj nową przeszkodę",
+            "HiddenAwarenessNumber": "Ukryj Czujność z punktów krytycznych lub innych źródeł",
             "Preparations": {
                 "NewPreparationActivity": "Nowa aktywność",
                 "MaxAttempts": "Maksymalna liczba prób",
@@ -221,6 +235,13 @@
                 "NewAwarenessBreakpoint": "Nowy punkt krytyczny",
                 "ActivateAwarenessBreakpoint": "Aktywacja punktu krytycznego Czujności"
             }
+        },
+        "Influence": {
+            "NavigateBack": "Powrót do Wpływania",
+            "EditInfluence": "Edytuj Wpływanie",
+            "CreateInfluence": "Stwórz nowe Wpływanie",
+            "Perception": "Percepcja",
+            "Will": "Wola"
         },
         "KeyBindings": {
             "OpenSystemView": {
