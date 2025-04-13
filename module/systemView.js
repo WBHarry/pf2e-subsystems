@@ -250,15 +250,15 @@ export default class SystemView extends HandlebarsApplicationMixin(
           label: game.i18n.localize('PF2ESubsystems.Events.Infiltration.Plural'),
           image: 'icons/magic/unholy/silhouette-robe-evil-power.webp',
         },
-        influence: {
-          active: false,
-          cssClass: 'influence-view',
-          group: 'main',
-          id: 'influence',
-          icon: null,
-          label: game.i18n.localize('PF2ESubsystems.Events.Influence.Plural'),
-          image: 'icons/skills/social/diplomacy-handshake-yellow.webp',
-        },
+        // influence: {
+        //   active: false,
+        //   cssClass: 'influence-view',
+        //   group: 'main',
+        //   id: 'influence',
+        //   icon: null,
+        //   label: game.i18n.localize('PF2ESubsystems.Events.Influence.Plural'),
+        //   image: 'icons/skills/social/diplomacy-handshake-yellow.webp',
+        // },
       };
   
       for (const v of Object.values(tabs)) {
@@ -720,42 +720,113 @@ export default class SystemView extends HandlebarsApplicationMixin(
       game.tours.get(`${MODULE_ID}.pf2e-subsystems-${this.tabGroups.main}`).start();
     }
 
-    onKeyDown(event){
+    async onKeyDown(event){
       /* Obstacle navigation */
-      if(!this.editMode && !this.isTour){
-        switch(this.tabGroups.main){
-          case 'chase':
-            if(this.selected.event){
-              switch(event.key) {
-                case 'ArrowLeft':
-                  this.selected.chaseObstacle = Math.max(this.selected.chaseObstacle-1, 1);
-                  this.render({ parts: [this.tabGroups.main] });
-                  break;
-                case 'ArrowRight':
-                  const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event];
-                  const maxObstacle = game.user.isGM ? Object.keys(event.obstacles).length : event.maxUnlockedObstacle;
-                  this.selected.chaseObstacle = Math.min(this.selected.chaseObstacle+1, maxObstacle);
-                  this.render({ parts: [this.tabGroups.main] });
-                  break;
+      if(!this.isTour){
+        if(!this.editMode){
+          switch(this.tabGroups.main){
+            case 'chase':
+              if(this.selected.event){
+                switch(event.key) {
+                  case 'ArrowLeft':
+                    this.selected.chaseObstacle = Math.max(this.selected.chaseObstacle-1, 1);
+                    this.render({ parts: [this.tabGroups.main] });
+                    break;
+                  case 'ArrowRight':
+                    const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event];
+                    const maxObstacle = game.user.isGM ? Object.keys(event.obstacles).length : event.maxUnlockedObstacle;
+                    this.selected.chaseObstacle = Math.min(this.selected.chaseObstacle+1, maxObstacle);
+                    this.render({ parts: [this.tabGroups.main] });
+                    break;
+                }
               }
-            }
-            break;
-          case 'infiltration':
-            if(this.selected.event){
-              switch(event.key) {
-                case 'ArrowLeft':
-                  this.selected.infiltration.currentObjective = Math.max(this.selected.infiltration.currentObjective-1, 1);
-                  this.render({ parts: [this.tabGroups.main] });
-                  break;
-                case 'ArrowRight':
-                  const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event];
-                  const maxObjective = game.user.isGM ? Object.keys(event.objectives).length : event.maxUnlockedObjective;
-                  this.selected.infiltration.currentObjective = Math.min(this.selected.infiltration.currentObjective+1, maxObjective);
-                  this.render({ parts: [this.tabGroups.main] });
-                  break;
+              break;
+            case 'research':
+                if(this.selected.event) {
+                  const selectedEvent = Object.values(game.settings.get(MODULE_ID, this.tabGroups.main).events).find(x => x.id === this.selected.event);
+                  const sectionOrder = [{ selectedKey: 'openResearchCheck', valueKey: 'researchChecks' }, { selectedKey: 'openResearchBreakpoint', valueKey: 'researchBreakpoints' }, { selectedKey: 'openResearchEvent', valueKey: 'researchEvents' }];
+                  switch(event.key) {
+                    case 'ArrowUp':
+                      const upSelected = this.selected.research.openResearchCheck ? { key: 'researchChecks', value: this.selected.research.openResearchCheck } : 
+                        this.selected.research.openResearchBreakpoint ? { key: 'researchBreakpoints', value: this.selected.research.openResearchBreakpoint } : 
+                        this.selected.research.openResearchEvent ? { key: 'researchEvents', value: this.selected.research.openResearchEvent } : null;
+
+                      const upSections = [{ key: 'researchChecks', selectKey: 'openResearchCheck', values: Object.values(selectedEvent.researchChecks)}, { key: 'researchBreakpoints', selectKey: 'openResearchBreakpoint', values: Object.values(selectedEvent.researchBreakpoints) }, { key: 'researchEvents', selectKey: 'openResearchEvent', values: Object.values(selectedEvent.researchEvents) }]
+                        .flatMap(category => category.values.filter(x => game.user.isGM || !x.hidden).map(x => ({ key: category.key, selectKey: category.selectKey, id: x.id })));
+                      if(upSelected === null) {
+                        this.selected.research[upSections[0].selectKey] = upSections[0].id;
+                      } else {
+                        const selectedIndex = upSections.findIndex(x => x.key === upSelected.key && x.id === upSelected.value);
+                        if(selectedIndex === 0) return;
+
+                        this.selected.research[upSections[selectedIndex].selectKey] = null;
+                        const nextSection = upSections[selectedIndex-1];
+                        this.selected.research[nextSection.selectKey] = nextSection.id;
+                      }
+
+                      this.render({ parts: [this.tabGroups.main] });
+
+                      break;
+                    case 'ArrowDown':
+                      const downSelected = this.selected.research.openResearchCheck ? { key: 'researchChecks', value: this.selected.research.openResearchCheck } : 
+                        this.selected.research.openResearchBreakpoint ? { key: 'researchBreakpoints', value: this.selected.research.openResearchBreakpoint } : 
+                        this.selected.research.openResearchEvent ? { key: 'researchEvents', value: this.selected.research.openResearchEvent } : null;
+
+                      const downSections = [{ key: 'researchChecks', selectKey: 'openResearchCheck', values: Object.values(selectedEvent.researchChecks)}, { key: 'researchBreakpoints', selectKey: 'openResearchBreakpoint', values: Object.values(selectedEvent.researchBreakpoints) }, { key: 'researchEvents', selectKey: 'openResearchEvent', values: Object.values(selectedEvent.researchEvents) }]
+                        .flatMap(category => category.values.filter(x => game.user.isGM || !x.hidden).map(x => ({ key: category.key, selectKey: category.selectKey, id: x.id })));
+                      if(downSelected === null) {
+                        this.selected.research[downSections[0].selectKey] = downSections[0].id;
+                      } else {
+                        const selectedIndex = downSections.findIndex(x => x.key === downSelected.key && x.id === downSelected.value);
+                        if(selectedIndex === downSections.length-1) return;
+
+                        this.selected.research[downSections[selectedIndex].selectKey] = null;
+                        const nextSection = downSections[selectedIndex+1];
+                        this.selected.research[nextSection.selectKey] = nextSection.id;
+                      }
+
+                      this.render({ parts: [this.tabGroups.main] });
+
+                      break;
+                    case 'Enter':
+                      for(var section of sectionOrder){
+                        this.selected.research[section.selectedKey] = null;
+                      }
+
+                      this.render({ parts: [this.tabGroups.main] });
+                      break;
+                    case 'ArrowRight':
+                      if(game.user.isGM && this.selected.research.openResearchCheck){
+                        const researchCheck = game.settings.get(MODULE_ID, this.tabGroups.main).events[selectedEvent.id].researchChecks[this.selected.research.openResearchCheck];
+                        await updateDataModel(this.tabGroups.main, { [`events.${selectedEvent.id}.researchChecks.${this.selected.research.openResearchCheck}.currentResearchPoints`]: Math.min(researchCheck.currentResearchPoints + 1, researchCheck.maximumResearchPoints) });
+                      }
+                      break;
+                    case 'ArrowLeft':
+                      if(game.user.isGM && this.selected.research.openResearchCheck){
+                        const researchCheck = game.settings.get(MODULE_ID, this.tabGroups.main).events[selectedEvent.id].researchChecks[this.selected.research.openResearchCheck];
+                        await updateDataModel(this.tabGroups.main, { [`events.${selectedEvent.id}.researchChecks.${this.selected.research.openResearchCheck}.currentResearchPoints`]: Math.max(researchCheck.currentResearchPoints - 1, 0) });
+                      }
+                      break;
+                  }
+                }
+                break;
+            case 'infiltration':
+              if(this.selected.event){
+                switch(event.key) {
+                  case 'ArrowLeft':
+                    this.selected.infiltration.currentObjective = Math.max(this.selected.infiltration.currentObjective-1, 1);
+                    this.render({ parts: [this.tabGroups.main] });
+                    break;
+                  case 'ArrowRight':
+                    const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event];
+                    const maxObjective = game.user.isGM ? Object.keys(event.objectives).length : event.maxUnlockedObjective;
+                    this.selected.infiltration.currentObjective = Math.min(this.selected.infiltration.currentObjective+1, maxObjective);
+                    this.render({ parts: [this.tabGroups.main] });
+                    break;
+                }
               }
-            }
-            break;
+              break;
+          }
         }
       }
     }

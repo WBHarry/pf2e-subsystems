@@ -36,6 +36,12 @@
         },
         {
             "id": "research-overview-4",
+            "selector": ".event-main-container",
+            "title": "Research Overview",
+            "content": "The three main sections of a research event are Research Checks, Research Breakpoints and Research Events. You can navigate between the available entries in each category using the ↑ and ↓ arrows. The Enter key will close an open section."
+        },
+        {
+            "id": "research-overview-41",
             "selector": ".event-header-toolbar",
             "title": "Research Overview",
             "content": "<strong>Start Research</strong>: This will open up this research window for all online players so you can run it.\n<strong>Edit Research</strong>: This toggles you into edit mode to setup your research event.\n<strong>Macro</strong>: The third icon copies a macro you can use to open this event."

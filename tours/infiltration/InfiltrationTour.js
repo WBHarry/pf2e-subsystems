@@ -79,11 +79,11 @@ export class InfiltrationTour extends Tour {
       let index = stepIndex;
       if(!game.user.isGM){
         switch(stepIndex) {
-          case 10:
-            index = this.stepIndex === 11 ? 9 : 11;
+          case 11:
+            index = this.stepIndex === 12 ? 10 : 12;
             break;
-          case 17:
-            index = this.stepIndex === 18 ? 16 : 18;
+          case 18:
+            index = this.stepIndex === 19 ? 17 : 19;
             break;
         }
       }
