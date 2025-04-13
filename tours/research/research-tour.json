@@ -50,7 +50,7 @@
             "id": "research-overview-5",
             "selector": ".research-checks-container",
             "title": "Research Overview",
-            "content": "The suggested research checks the party can earn research points through."
+            "content": "The suggested research checks the party can earn research points through. You can use the ← and → arrow keys to increase and decrease the earned points of an open research check."
         },
         {
             "id": "research-overview-51",
