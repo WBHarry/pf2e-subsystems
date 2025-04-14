@@ -54,6 +54,9 @@
                 }
             }
         },
+        "ValueDialog": {
+            "Title": "Okno dialogowe wartości"
+        },
         "Menus": {
             "Subsystems": {
                 "Name": "Podsystemy",
@@ -72,6 +75,9 @@
                     "HideAwareness": "Całkowite ukrycie Czujności przed graczami",
                     "AutoApplyAwareness": "Automatyczne stosowanie modyfikatorów ST Czujności",
                     "AutoRevealAwareness": "Automatyczne ujawnianie punktów krytycznych Czujności"
+                },
+                "Influence": {
+                    "AutoRevealInfluence": "Automatyczne ujawnianie Wpływania"
                 }
             }
         },
@@ -241,7 +247,17 @@
             "EditInfluence": "Edytuj Wpływanie",
             "CreateInfluence": "Stwórz nowe Wpływanie",
             "Perception": "Percepcja",
-            "Will": "Wola"
+            "Will": "Wola",
+            "Discovery": "Odkrycie",
+            "InfluenceSkills": "Umiejętności wywierania wpływu",
+            "Influence": "Wpływanie",
+            "Weaknesses": "Podatności",
+            "Resistances": "Odporności",
+            "Penalties": "Kary",
+            "InfluencePoints": "Punkty",
+            "Modifier": "Modyfikator",
+            "InfluenceSkillLabelTitle": "Etykieta {skill}",
+            "Rounds": "Rundy"
         },
         "KeyBindings": {
             "OpenSystemView": {
