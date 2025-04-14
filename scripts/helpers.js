@@ -28,6 +28,8 @@ export function translateSubsystem(tab) {
             return game.i18n.localize("PF2ESubsystems.Events.Research.Single");
         case 'infiltration':
             return game.i18n.localize("PF2ESubsystems.Events.Infiltration.Single");
+        case 'influence':
+            return game.i18n.localize("PF2ESubsystems.Events.Influence.Single");
     }
 }
 
@@ -134,4 +136,19 @@ export const setupTagify = (html, htmlClass, options, onChange, onRemove) => {
 
         traitsTagify.on("change", onChange);
     }
+}
+
+
+
+const disableRollButton = (disable, html) => {
+    if(!disable) return html;
+    return html.match(/style="/) ? html.replace(/style="/, 'style="opacity: 0.4; pointer-events: none; ') : html.replace(/<a/, '<a style="opacity: 0.4; pointer-events: none; "').replace(/<span/, '<span style="opacity: 0.4; pointer-events: none; "');
+} 
+
+export const getActButton = async(action, variant, skill, dc, disableElement) => {
+    return disableRollButton(disableElement, await TextEditor.enrichHTML(`[[/act ${action} ${variant ? `variant=${variant} ` : ''}stat=${skill} dc=${dc}]]`));
+}
+
+export const getCheckButton = async(skill, dc, simple, disableElement) => {
+    return disableRollButton(disableElement, await TextEditor.enrichHTML(`@Check[type:${skill}|dc:${dc}|simple:${simple}]`));
 }

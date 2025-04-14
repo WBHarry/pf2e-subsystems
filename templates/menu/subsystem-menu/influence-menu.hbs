@@ -1,0 +1,14 @@
+<div class="tab {{this.tabs.influence.cssClass}}" data-group="main" data-tab="influence">
+    <div class="menu-outer-container">
+        {{> "modules/pf2e-subsystems/templates/menu/subsystem-menu/partials/system-tabs.hbs" tabs=this.tabs }}
+        <div class="menu-main-container primary-container">
+            <div class="menu-group">
+                <div class="menu-form">
+                    <div>{{localize "PF2ESubsystems.Menus.Subsystems.Influence.AutoRevealInfluence"}}</div>
+                    <input type="checkbox" name="influence.autoRevealInfluence" {{checked this.settings.autoRevealInfluence}} />
+                </div>
+            </div>
+        </div>
+        {{> "modules/pf2e-subsystems/templates/menu/subsystem-menu/partials/system-footer.hbs" }}
+    </div>
+</div>

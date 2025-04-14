@@ -21,7 +21,7 @@
         <div class="event-sidebar">
             {{#if (or this.isGM (not this.settings.hideAwareness))}}
                 <div class="awareness-points-container {{#if this.editMode}}edit-mode{{/if}} event-section primary-container accent">
-                    <div class="awareness-points-inner-container event-section-title title-small-container primary-container">
+                    <div class="awareness-points-inner-container event-section-title controls title-small-container primary-container">
                         {{localize "PF2ESubsystems.Infiltration.AwarenessPoints"}}&nbsp;
                         <div class="event-section-number-container diagonal-spaced">
                             {{#if (not this.editMode)}}
@@ -159,7 +159,7 @@
                             {{/each}}
                             {{#if this.editMode}}<i class="fa-solid fa-plus chase-event-display-add clickable-icon" data-action="addInfiltrationObjective" data-event="{{this.event.id}}" title="{{localize "PF2ESubsystems.Chase.AddObjective"}}"></i>{{/if}}
                         </legend>
-                        <div class="title-container">
+                        <div class="title-container controls">
                             <div class="event-radio-title-outer">
                                 <div class="event-radio-title primary-text-container">
                                     {{#if this.editMode}}
@@ -814,7 +814,7 @@
                                                                 {{#each this.columns.action}}
                                                                     <div class="event-skill-grid-cell">
                                                                         {{#if (gt @index 0)}}
-                                                                            <i class="fa-solid fa-trash clickable-icon" data-action="infiltrationRemoveComplicationSkill" data-event="{{this.event}}" data-activity="{{this.activity}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}"></i>
+                                                                            <i class="fa-solid fa-trash clickable-icon" data-action="infiltrationRemoveActivitySkill" data-event="{{this.event}}" data-activity="{{this.activity}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}"></i>
                                                                         {{/if}}
                                                                     </div>
                                                                 {{/each}}

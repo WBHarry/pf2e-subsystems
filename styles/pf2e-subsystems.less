@@ -22,6 +22,28 @@
     }
 }
 
+.value-dialog-container {
+  display: flex;
+  gap: @gapSmall;
+
+  .value-dialog-input {
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 6px;
+    flex: 1;
+  }
+
+  .value-dialog-confirm {
+    font-size: 24px;
+    padding: @paddingNormal;
+    flex: 0;
+
+    i {
+      margin: 0;
+    }
+  }
+}
+
 .pf2e-subsystems {
   .tab[data-tab].active {
     display: flex;
@@ -167,8 +189,8 @@
           border-bottom-color: var(--pf2e-subsystem-theming-border);
         }
 
-        &:not(.header) {
-          
+        &.spaced {
+          gap: @gapSmall;
         }
       }
 

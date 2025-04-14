@@ -1,37 +1,46 @@
 <div class="event-outer-container">
-    <div class="flexrow">
-        {{> "modules/pf2e-subsystems/templates/partials/navigate-back.hbs" label=(localize "PF2ESubsystems.Influence.NavigateBack") action="navigateToSystem" }}
-        <i class="event-information clickable-icon fa-solid fa-circle-info" data-action="startEventTour" title="{{localize "PF2ESubsystems.View.OpenEventTour"}}"></i>
-        {{#if this.clipboardFallback}}
-            <div class="event-clipboard-fallback secondary-container">
-                <input type="text" value="{{this.clipboardFallback}}" class="clipboard-fallback-input secondary-container" />
-                <button data-action="closeClipboardFallback" class="tertiary-container"><i class="fa-solid fa-x"></i></button>
-            </div>
-        {{/if}}
-    </div>
+    {{> "modules/pf2e-subsystems/templates/partials/navigate-back.hbs" label=(localize "PF2ESubsystems.Influence.NavigateBack") showTour=this.event action="navigateToSystem" clipboardFallback=this.clipboardFallback }}
     <div class="event-container">
         <div class="event-sidebar">
             <img src="{{this.event.background}}" class="primary-container {{#if this.editMode}}clickable-icon{{/if}}" {{#if this.editMode}}data-action="editImage" data-path="{{concat "events." this.event.id ".background" }}"{{/if}} />
-            <div class="event-simple-container primary-container title-small-container">
-                <div class="event-simple-container-title">
-                    <i class="fa-solid fa-eye"></i>
-                    <div>{{localize "PF2ESubsystems.Influence.Perception"}}:</div>
+            {{#if (or this.editMode this.event.timeLimit.max)}}
+                <div class="event-simple-container controls primary-container title-small-container">
+                    <i class="fa-solid fa-clock"></i>
+                    <div>{{localize "PF2ESubsystems.Influence.Rounds"}}</div>
+                    {{#if this.editMode}}
+                        <input type="text" data-dtype="Number" name="{{concat "events." this.event.id ".timeLimit.max"}}" value="{{this.event.timeLimit.max}}" class="secondary-container" />     
+                    {{else}}
+                        {{#if this.isGM}}
+                            <div class="flexrow">
+                                <div class="event-section-number-container influence-header-icon">
+                                    <i class="fa-solid fa-caret-up event-section-number-upper clickable-icon {{#if (eq this.event.timeLimit.current this.event.timeLimit.max)}}disabled{{/if}}" {{#if (lt this.event.timeLimit.current this.event.timeLimit.max)}}data-action="influenceRoundsUpdate"{{/if}} data-event="{{this.event.id}}" data-increase="true"></i>
+                                    {{this.event.timeLimit.current}}
+                                    <i class="fa-solid fa-caret-down clickable-icon {{#if (eq this.event.timeLimit.current 0)}}disabled{{/if}} event-section-number-lower" {{#if (gt this.event.timeLimit.current 0)}}data-action="influenceRoundsUpdate"{{/if}} data-event="{{this.event.id}}"></i>
+                                </div>
+                                /{{this.event.timeLimit.max}}
+                            </div>
+                        {{else}}
+                            {{this.event.timeLimit.current}}/{{this.event.timeLimit.max}}
+                        {{/if}}
+                    {{/if}}
                 </div>
+            {{/if}}
+            <div class="event-simple-container primary-container title-small-container">
+                <i class="fa-solid fa-eye"></i>
+                <div>{{localize "PF2ESubsystems.Influence.Perception"}}</div>
                 {{#if this.editMode}}
                     <input type="text" data-dtype="Number" name="{{concat "events." this.event.id ".perception"}}" value="{{this.event.perception}}" class="secondary-container" />
                 {{else}}
-                    <div>{{this.event.perception}}</div>
+                    <div>{{this.perception}}</div>
                 {{/if}}
             </div>
             <div class="event-simple-container primary-container title-small-container">
-                <div class="event-simple-container-title">
-                    <i class="fa-solid fa-heart-pulse"></i>
-                    <div>{{localize "PF2ESubsystems.Influence.Perception"}}:</div>
-                </div>
+                <i class="fa-solid fa-heart-pulse"></i>
+                <div>{{localize "PF2ESubsystems.Influence.Will"}}</div>
                 {{#if this.editMode}}
                     <input type="text" data-dtype="Number" name="{{concat "events." this.event.id ".will"}}" value="{{this.event.will}}" class="secondary-container" />     
                 {{else}}
-                    <div>{{this.event.will}}</div>
+                    <div>{{this.will}}</div>
                 {{/if}}
             </div>
             <div class="description-outer-container event-section primary-container accent">
@@ -51,6 +60,385 @@
                     <div class="event-header-title title-container secondary-container">{{this.event.name}}</div>
                 </div>
                 {{> "modules/pf2e-subsystems/templates/partials/event-toolbar.hbs"}}
+            </div>
+            <div class="event-body-container">
+                <div class="discovery-container event-section primary-container accent">
+                    <div class="event-section-title title-small-container primary-container">
+                        {{localize "PF2ESubsystems.Influence.Discovery"}}
+                        {{#if this.editMode}}
+                            <i class="fa-solid {{#if this.selected.influence.openInfluenceSection}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon expand-icon" data-action="influenceDiscoveryToggleOpen"></i> 
+                        {{/if}}
+                    </div>
+                    <div class="event-section-container">
+                        {{#if this.editMode}}
+                            <div class="event-section-body {{#if this.selected.influence.openInfluenceSection}}expanded{{/if}}">
+                                {{#with this.event.extendedDiscoveries.columns}}
+                                    <div class="event-skill-grid tertiary-container">
+                                        <div class="event-skill-grid-col">
+                                            <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Lore"}}</div>
+                                            {{#each this.lore}}
+                                                <input type="checkbox" class="event-skill-grid-cell influence-discovery-lore-input" data-event="{{this.event}}" data-discovery="{{this.id}}" {{checked this.lore}} />
+                                            {{/each}}
+                                        </div>
+                                        <div class="event-skill-grid-col">
+                                            <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Skill"}}</div>
+                                            {{#each this.skill}}
+                                                {{#if this.lore}}
+                                                    <input type="text" value="{{this.skill}}" data-event="{{this.event}}" data-discovery="{{this.id}}" class="influence-discovery-skill-input primary-text-container event-skill-grid-cell" />
+                                                {{else}}
+                                                    <select name="{{concat "events." this.event ".discoveries." this.id ".skill" }}" class="primary-text-container event-skill-grid-cell">
+                                                        {{selectOptions ../../skillOptions selected=this.skill valueAttr="value" labelAttr="name" localize=true}}
+                                                    </select>
+                                                {{/if}}
+                                            {{/each}}
+                                        </div>
+                                        <div class="event-skill-grid-col">
+                                            <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Action"}}</div>
+                                            {{#each this.action}}
+                                                <select name="{{concat "events." this.event ".discoveries." this.id ".action" }}" class="primary-text-container event-skill-grid-cell">
+                                                    {{selectOptions ../../actionOptions selected=this.action valueAttr="value" labelAttr="name" localize=true blank="" }}
+                                                </select>
+                                            {{/each}}
+                                        </div> 
+                                        <div class="event-skill-grid-col">
+                                            <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
+                                            {{#each this.variant}}
+                                                <select name="{{concat "events." this.event ".discoveries." this.id ".variant" }}" class="primary-text-container event-skill-grid-cell">
+                                                    {{selectOptions this.variantOptions selected=this.variant valueAttr="value" labelAttr="name" localize=true blank="" }}
+                                                </select>
+                                            {{/each}}
+                                        </div>
+                                        <div class="event-skill-grid-col">
+                                            <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.DC"}}</div>
+                                            {{#each this.dc}}
+                                                <input type="text" data-dtype="Number" class="event-skill-grid-cell" name="{{concat "events." this.event ".discoveries." this.id ".dc" }}" value="{{this.dc}}" />
+                                            {{/each}}
+                                        </div>
+                                        <div class="event-skill-grid-col">
+                                            <div class="event-skill-grid-cell header">
+                                                <i class="fa-solid fa-plus clickable-icon" data-action="influenceDiscoveryAdd" data-event="{{../event.id}}"></i> 
+                                            </div>
+                                            {{#each this.action}}
+                                                <div class="event-skill-grid-cell">
+                                                    <i class="fa-solid fa-trash clickable-icon" data-action="influenceDiscoveryRemove" data-event="{{this.event}}" data-discovery="{{this.id}}"></i>
+                                                </div>
+                                            {{/each}}
+                                        </div>
+                                    </div>
+                                {{/with}}
+                            </div>
+                        {{else}}
+                            <div class="skills-container">
+                                {{#each this.event.extendedDiscoveries.data}}
+                                    <div class="skill-container {{#if (not this.hidden)}}revealed{{/if}} secondary-container" data-action="influenceDiscoveryToggleHidden" data-event="{{../event.id}}" data-discovery="{{this.id}}">
+                                        {{{this.element}}}
+                                    </div>
+                                {{/each}}
+                            </div>
+                        {{/if}}
+                    </div>
+                </div>
+                <div class="influence-skills-container event-section primary-container accent">
+                    <div class="event-section-title title-small-container primary-container">
+                        {{localize "PF2ESubsystems.Influence.InfluenceSkills"}}
+                        {{#if this.editMode}}
+                            <i class="fa-solid {{#if this.selected.influence.openInfluenceSkillSection}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon expand-icon" data-action="influenceInfluenceSkillToggleOpen"></i> 
+                        {{/if}}
+                    </div>
+                    <div class="event-section-container">
+                        {{#if this.editMode}}
+                            <div class="event-section-body {{#if this.selected.influence.openInfluenceSkillSection}}expanded{{/if}}">
+                                {{#with this.event.extendedInfluenceSkills.columns}}
+                                    <div class="event-skill-grid tertiary-container">
+                                        <div class="event-skill-grid-col">
+                                            <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Lore"}}</div>
+                                            {{#each this.lore}}
+                                                <input type="checkbox" class="event-skill-grid-cell influence-skill-lore-input" data-event="{{this.event}}" data-skill="{{this.id}}" {{checked this.lore}} />
+                                            {{/each}}
+                                        </div>
+                                        <div class="event-skill-grid-col">
+                                            <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Skill"}}</div>
+                                            {{#each this.skill}}
+                                                {{#if this.lore}}
+                                                    <input type="text" value="{{this.skill}}" data-event="{{this.event}}" data-skill="{{this.id}}" class="influence-influence-skill-skill-input primary-text-container event-skill-grid-cell" />
+                                                {{else}}
+                                                    <select name="{{concat "events." this.event ".influenceSkills." this.id ".skill" }}" class="primary-text-container event-skill-grid-cell">
+                                                        {{selectOptions ../../skillOptions selected=this.skill valueAttr="value" labelAttr="name" localize=true}}
+                                                    </select>
+                                                {{/if}}
+                                            {{/each}}
+                                        </div>
+                                        <div class="event-skill-grid-col">
+                                            <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Action"}}</div>
+                                            {{#each this.action}}
+                                                <select name="{{concat "events." this.event ".influenceSkills." this.id ".action" }}" class="primary-text-container event-skill-grid-cell">
+                                                    {{selectOptions ../../actionOptions selected=this.action valueAttr="value" labelAttr="name" localize=true blank="" }}
+                                                </select>
+                                            {{/each}}
+                                        </div> 
+                                        <div class="event-skill-grid-col">
+                                            <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
+                                            {{#each this.variant}}
+                                                <select name="{{concat "events." this.event ".influenceSkills." this.id ".variant" }}" class="primary-text-container event-skill-grid-cell">
+                                                    {{selectOptions this.variantOptions selected=this.variant valueAttr="value" labelAttr="name" localize=true blank="" }}
+                                                </select>
+                                            {{/each}}
+                                        </div>
+                                        <div class="event-skill-grid-col">
+                                            <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.DC"}}</div>
+                                            {{#each this.dc}}
+                                                <input type="text" data-dtype="Number" class="event-skill-grid-cell" name="{{concat "events." this.event ".influenceSkills." this.id ".dc" }}" value="{{this.dc}}" />
+                                            {{/each}}
+                                        </div>
+                                        <div class="event-skill-grid-col">
+                                            <div class="event-skill-grid-cell header">
+                                                <i class="fa-solid fa-plus clickable-icon" data-action="influenceSkillAdd" data-event="{{../event.id}}"></i>
+                                            </div>
+                                            {{#each this.action}}
+                                                <div class="event-skill-grid-cell spaced tools-column-cell">
+                                                    <i class="fa-solid fa-tag clickable-icon label-tag {{#if this.label}}active{{/if}}" data-action="influenceSkillLabelMenu" data-event="{{this.event}}" data-skill="{{this.id}}"></i>
+                                                    <i class="fa-solid fa-trash clickable-icon" data-action="influenceSkillRemove" data-event="{{this.event}}" data-skill="{{this.id}}"></i>
+                                                </div>
+                                            {{/each}}
+                                        </div>
+                                    </div>
+                                {{/with}}
+                            </div>
+                        {{else}}
+                            <div class="skills-container">
+                                {{#each this.event.extendedInfluenceSkills.data}}
+                                    <div class="skill-container {{#if (not this.hidden)}}revealed{{/if}} secondary-container" data-action="influenceInfluenceSkillToggleHidden" data-event="{{../event.id}}" data-skill="{{this.id}}">
+                                        {{{this.element}}}
+                                        {{#if this.label}}({{this.label}}){{/if}}
+                                    </div>
+                                {{/each}}
+                            </div>
+                        {{/if}}
+                    </div>
+                </div>
+                <div class="influence-container event-section primary-container accent">
+                    <div class="event-section-title controls title-small-container primary-container">
+                        <div class=" influence-header-container">
+                            {{localize "PF2ESubsystems.Influence.Influence"}}
+                            {{#if this.editMode}}
+                                <i class="fa-solid fa-plus clickable-icon influence-header-add-icon" data-action="influenceInfluenceAdd" data-event="{{this.event.id}}"></i>
+                            {{else}}
+                                <div class="event-section-number-container influence-header-icon">
+                                    {{#if this.isGM}}<i class="fa-solid fa-caret-up event-section-number-upper clickable-icon" data-action="influencePointsUpdate" data-event="{{this.event.id}}" data-increase="true"></i>{{/if}}
+                                    {{this.event.influencePoints}}
+                                    {{#if this.isGM}}<i class="fa-solid fa-caret-down clickable-icon {{#if (eq this.event.influencePoints 0)}}disabled{{/if}} event-section-number-lower" {{#if (gt this.event.influencePoints 0)}}data-action="influencePointsUpdate"{{/if}} data-event="{{this.event.id}}"></i>{{/if}}
+                                </div>
+                            {{/if}}
+                        </div>
+                    </div>
+                    <div class="event-section-container">  
+                        {{#if this.editMode}}
+                            {{#each this.event.influence}}
+                                <div class="event-section-inner-container secondary-container">
+                                    <div class="event-section-header-container">
+                                        <div class="title-small-container">
+                                            {{this.name}}
+                                        </div>
+                                        <i class="fa-solid fa-trash clickable-icon event-section-delete-button" data-action="influenceInfluenceAdd" data-event="{{../event.id}}" data-influence={{this.id}}></i>
+                                        <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon event-section-opener" data-action="influenceToggleOpenInfluence" data-influence="{{this.id}}"></i> 
+                                    </div>
+
+                                    <div class="event-section-body {{#if this.open}}expanded{{/if}}">
+                                        <div class="event-field-group">
+                                            <div class="event-field-form text-normal primary-text-container">
+                                                <div>{{localize "PF2ESubsystems.Basic.Name"}}</div>
+                                                <input type="text" name="{{concat "events." ../this.event.id  ".influence." this.id ".name"}}" value="{{this.name}}" class="tertiary-container" />
+                                            </div>
+                                            <div class="event-field-form small text-normal primary-text-container">
+                                                <div>{{localize "PF2ESubsystems.Influence.InfluencePoints"}}</div>
+                                                <input type="text" data-dtype="Number" name="{{concat "events." ../this.event.id  ".influence." this.id ".points"}}" value="{{this.points}}" class="tertiary-container" />
+                                            </div>
+                                        </div>
+                                        <prose-mirror class="data-input tertiary-container" name="{{concat "events." ../event.id ".influence." this.id ".description"}}" value="{{this.description}}">
+                                            {{{this.enrichedDescription}}}
+                                        </prose-mirror>
+                                    </div>
+                                </div> 
+                            {{/each}}
+                        {{else}}
+                            <div class="influence-cards">
+                                {{#each this.event.influence}}
+                                    {{#if shown}}
+                                        <div class="influence-card secondary-container {{#if (and ../isGM (not ../settings.autoRevealInfluence)) }}clickable-icon{{/if}} {{#if (and ../isGM this.hidden)}}unrevealed{{/if}}" 
+                                            {{#if (and ../isGM (not ../settings.autoRevealInfluence))}}data-action="influenceInfluenceToggleHidden"{{/if}} data-event="{{../event.id}}" data-influence="{{this.id}}"
+                                        >
+                                            {{{this.enrichedDescription}}}
+                                        </div>
+                                    {{/if}}
+                                {{/each}}
+                            </div>
+                        {{/if}}
+                    </div>
+                </div>
+                <div class="weaknesses-container event-section primary-container accent">
+                    <div class="event-section-title title-small-container primary-container">
+                        <div class=" influence-header-container">
+                            {{localize "PF2ESubsystems.Influence.Weaknesses"}}
+                            {{#if this.editMode}}<i class="fa-solid fa-plus clickable-icon influence-header-add-icon" data-action="influenceWeaknessAdd" data-event="{{this.event.id}}"></i>{{/if}}
+                        </div>
+                    </div>
+                    <div class="event-section-container">  
+                        {{#if this.editMode}}
+                            {{#each this.event.weaknesses}}
+                                <div class="event-section-inner-container secondary-container">
+                                    <div class="event-section-header-container">
+                                        <div class="title-small-container">
+                                            {{this.name}}
+                                        </div>
+                                        <i class="fa-solid fa-trash clickable-icon event-section-delete-button" data-action="influenceWeaknessRemove" data-event="{{../event.id}}" data-weakness={{this.id}}></i>
+                                        <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon event-section-opener" data-action="influenceToggleOpenWeakness" data-weakness="{{this.id}}"></i> 
+                                    </div>
+
+                                    <div class="event-section-body {{#if this.open}}expanded{{/if}}">
+                                        <div class="event-field-group">
+                                            <div class="event-field-form text-normal primary-text-container">
+                                                <div>{{localize "PF2ESubsystems.Basic.Name"}}</div>
+                                                <input type="text" name="{{concat "events." ../this.event.id  ".weaknesses." this.id ".name"}}" value="{{this.name}}" class="tertiary-container" />
+                                            </div>
+                                            <div class="event-field-form text-normal primary-text-container">
+                                                <div>{{localize "PF2ESubsystems.Influence.Modifier"}}</div>
+                                                <input type="text" data-dtype="Number" name="{{concat "events." ../this.event.id  ".weaknesses." this.id ".modifier.value"}}" value="{{this.modifier.value}}" class="tertiary-container" />
+                                            </div>
+                                        </div>
+                                        <prose-mirror class="data-input tertiary-container" name="{{concat "events." ../event.id ".weaknesses." this.id ".description"}}" value="{{this.description}}">
+                                            {{{this.enrichedDescription}}}
+                                        </prose-mirror>
+                                    </div>
+                                </div> 
+                            {{/each}}
+                        {{else}}
+                            <div class="weakness-cards">
+                                {{#each this.event.weaknesses}}
+                                    {{#if (or ../isGM (not this.hidden))}}
+                                        <div class="modifier-card secondary-container">
+                                            <div class="modifier-card-description {{#if ../isGM}}clickable-icon{{/if}} {{#if this.hidden}}unrevealed{{/if}}" {{#if ../isGM}}data-action="influenceWeaknessToggleHidden"{{/if}} data-event="{{../event.id}}" data-weakness="{{this.id}}">{{{this.enrichedDescription}}}</div>
+                                            {{#if ../isGM}}
+                                                <div class="modifier-card-action-container clickable-icon {{#if this.modifier.used}}used{{/if}}" data-action="influenceWeaknessToggleUsed" data-event="{{../event.id}}" data-weakness="{{this.id}}">
+                                                    <div class="modifier-card-action tertiary-container">-{{this.modifier.value}}</div>
+                                                    <i class="fa-solid fa-bolt-lightning modifier-card-action-icon"></i>
+                                                    {{#if (not this.modifier.used)}}<i class="fa-solid fa-slash modifier-card-action-icon-slash"></i>{{/if}}
+                                                </div>
+                                            {{/if}}
+                                        </div>
+                                    {{/if}}
+                                {{/each}}
+                            </div>
+                        {{/if}}
+                    </div>
+                </div>
+                <div class="resistances-container event-section primary-container accent">
+                    <div class="event-section-title title-small-container primary-container">
+                        {{localize "PF2ESubsystems.Influence.Resistances"}}
+                        {{#if this.editMode}}<i class="fa-solid fa-plus clickable-icon influence-header-add-icon" data-action="influenceResistanceAdd" data-event="{{this.event.id}}"></i>{{/if}}
+                    </div>
+                    <div class="event-section-container">
+                        {{#if this.editMode}}
+                            {{#each this.event.resistances}}
+                                <div class="event-section-inner-container secondary-container">
+                                    <div class="event-section-header-container">
+                                        <div class="title-small-container">
+                                            {{this.name}}
+                                        </div>
+                                        {{#if ../isGM}}<i class="fa-solid fa-trash clickable-icon event-section-delete-button" data-action="influenceResistanceRemove" data-event="{{../event.id}}" data-resistance="{{this.id}}"></i>{{/if}}
+                                        <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon event-section-opener" data-action="influenceToggleOpenResistance" data-resistance="{{this.id}}"></i> 
+                                    </div>
+
+                                    <div class="event-section-body {{#if this.open}}expanded{{/if}}">
+                                        <div class="event-field-group">
+                                            <div class="event-field-form text-normal primary-text-container">
+                                                <div>{{localize "PF2ESubsystems.Basic.Name"}}</div>
+                                                <input type="text" name="{{concat "events." ../this.event.id  ".resistances." this.id ".name"}}" value="{{this.name}}" class="tertiary-container" />
+                                            </div>
+                                            <div class="event-field-form text-normal primary-text-container">
+                                                <div>{{localize "PF2ESubsystems.Influence.Modifier"}}</div>
+                                                <input type="text" data-dtype="Number" name="{{concat "events." ../this.event.id  ".resistances." this.id ".modifier.value"}}" value="{{this.modifier.value}}" class="tertiary-container" />
+                                            </div>
+                                        </div>
+                                        <prose-mirror class="data-input tertiary-container" name="{{concat "events." ../event.id ".resistances." this.id ".description"}}" value="{{this.description}}">
+                                            {{{this.enrichedDescription}}}
+                                        </prose-mirror>
+                                    </div>
+                                </div> 
+                            {{/each}}
+                        {{else}}
+                            <div class="weakness-cards">
+                                {{#each this.event.resistances}}
+                                    {{#if (or ../isGM (not this.hidden))}}
+                                        <div class="modifier-card secondary-container">
+                                            <div class="modifier-card-description {{#if ../isGM}}clickable-icon{{/if}} {{#if this.hidden}}unrevealed{{/if}}" {{#if ../isGM}}data-action="influenceResistanceToggleHidden"{{/if}} data-event="{{../event.id}}" data-resistance="{{this.id}}">{{{this.enrichedDescription}}}</div>
+                                            {{#if ../isGM}}
+                                                <div class="modifier-card-action-container clickable-icon {{#if this.modifier.used}}used{{/if}}" data-action="influenceResistanceToggleUsed" data-event="{{../event.id}}" data-resistance="{{this.id}}">
+                                                    <div class="modifier-card-action tertiary-container">+{{this.modifier.value}}</div>
+                                                    <i class="fa-solid fa-bolt-lightning modifier-card-action-icon"></i>
+                                                    {{#if (not this.modifier.used)}}<i class="fa-solid fa-slash modifier-card-action-icon-slash"></i>{{/if}}
+                                                </div>
+                                            {{/if}}
+                                        </div>
+                                    {{/if}}
+                                {{/each}}
+                            </div>
+                        {{/if}}
+                    </div>
+                </div>
+                <div class="penalties-container event-section primary-container accent">
+                    <div class="event-section-title title-small-container primary-container">
+                        {{localize "PF2ESubsystems.Influence.Penalties"}}
+                        {{#if this.editMode}}<i class="fa-solid fa-plus clickable-icon influence-header-add-icon" data-action="influencePenaltyAdd" data-event="{{this.event.id}}"></i>{{/if}}
+                    </div>
+                    <div class="event-section-container">
+                        {{#if this.editMode}}
+                            {{#each this.event.penalties}}
+                                <div class="event-section-inner-container secondary-container">
+                                    <div class="event-section-header-container">
+                                        <div class="title-small-container">
+                                            {{this.name}}
+                                        </div>
+                                        {{#if ../isGM}}<i class="fa-solid fa-trash clickable-icon event-section-delete-button" data-action="influencePenaltyRemove" data-event="{{../event.id}}" data-penalty="{{this.id}}"></i>{{/if}}
+                                        <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon event-section-opener" data-action="influenceToggleOpenPenalty" data-penalty="{{this.id}}"></i> 
+                                    </div>
+
+                                    <div class="event-section-body {{#if this.open}}expanded{{/if}}">
+                                        <div class="event-field-group">
+                                            <div class="event-field-form text-normal primary-text-container">
+                                                <div>{{localize "PF2ESubsystems.Basic.Name"}}</div>
+                                                <input type="text" name="{{concat "events." ../this.event.id  ".penalties." this.id ".name"}}" value="{{this.name}}" class="tertiary-container" />
+                                            </div>
+                                            <div class="event-field-form text-normal primary-text-container">
+                                                <div>{{localize "PF2ESubsystems.Influence.Modifier"}}</div>
+                                                <input type="text" data-dtype="Number" name="{{concat "events." ../this.event.id  ".penalties." this.id ".modifier.value"}}" value="{{this.modifier.value}}" class="tertiary-container" />
+                                            </div>
+                                        </div>
+                                        <prose-mirror class="data-input tertiary-container" name="{{concat "events." ../event.id ".penalties." this.id ".description"}}" value="{{this.description}}">
+                                            {{{this.enrichedDescription}}}
+                                        </prose-mirror>
+                                    </div>
+                                </div> 
+                            {{/each}}
+                        {{else}}
+                            <div class="weakness-cards">
+                                {{#each this.event.penalties}}
+                                    {{#if (or ../isGM (not this.hidden))}}
+                                        <div class="modifier-card secondary-container">
+                                            <div class="modifier-card-description {{#if (not this.modifier.value)}}simple{{/if}} {{#if ../isGM}}clickable-icon{{/if}} {{#if this.hidden}}unrevealed{{/if}}" {{#if ../isGM}}data-action="influencePenaltyToggleHidden"{{/if}} data-event="{{../event.id}}" data-penalty="{{this.id}}">{{{this.enrichedDescription}}}</div>
+                                            {{#if (and ../isGM this.modifier.value)}}
+                                                <div class="modifier-card-action-container clickable-icon {{#if this.modifier.used}}used{{/if}}" data-action="influencePenaltyToggleUsed" data-event="{{../event.id}}" data-penalty="{{this.id}}">
+                                                    <div class="modifier-card-action tertiary-container">+{{this.modifier.value}}</div>
+                                                    <i class="fa-solid fa-bolt-lightning modifier-card-action-icon"></i>
+                                                    {{#if (not this.modifier.used)}}<i class="fa-solid fa-slash modifier-card-action-icon-slash"></i>{{/if}}
+                                                </div>
+                                            {{/if}}
+                                        </div>
+                                    {{/if}}
+                                {{/each}}
+                            </div>
+                        {{/if}}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

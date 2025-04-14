@@ -1,7 +1,8 @@
 import { dcAdjustments, defaultInfiltrationPreparations, degreesOfSuccess, MODULE_ID, settingIDs, SOCKET_ID, timeUnits } from "../data/constants";
-import { copyToClipboard, getDCAdjustmentNumber, getSelfDC, setupTagify, translateSubsystem, updateDataModel } from "../scripts/helpers";
+import { copyToClipboard, getActButton, getCheckButton, getDCAdjustmentNumber, getSelfDC, setupTagify, translateSubsystem, updateDataModel } from "../scripts/helpers";
 import { currentVersion } from "../scripts/setup";
 import { socketEvent } from "../scripts/socket";
+import ValueDialog from "./ValueDialog";
 
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
 
@@ -14,7 +15,8 @@ const getDefaultSelected = (event) => ({
     preparations: {
       openActivity: 1,
     } 
-  } ,
+  },
+  influence: {},
 });
 
 const getDefaultLayout = (event) => ({
@@ -162,6 +164,36 @@ export default class SystemView extends HandlebarsApplicationMixin(
         infiltrationToggleEdgeUsed: this.infiltrationToggleEdgeUsed,
         infiltrationEdgeRemove: this.infiltrationEdgeRemove,
         /* Influence */
+        influenceDiscoveryAdd: this.influenceDiscoveryAdd,
+        influenceDiscoveryRemove: this.influenceDiscoveryRemove,
+        influenceSkillAdd: this.influenceSkillAdd,
+        influenceSkillRemove: this.influenceSkillRemove,
+        influenceInfluenceAdd: this.influenceInfluenceAdd,
+        influenceInfluenceRemove: this.influenceInfluenceRemove,
+        influencePointsUpdate: this.influencePointsUpdate,
+        influenceInfluenceToggleHidden: this.influenceInfluenceToggleHidden,
+        influenceToggleOpenInfluence: this.influenceToggleOpenInfluence,
+        influenceToggleOpenWeakness: this.influenceToggleOpenWeakness,
+        influenceToggleOpenResistance: this.influenceToggleOpenResistance,
+        influenceToggleOpenPenalty: this.influenceToggleOpenPenalty, 
+        influenceWeaknessAdd: this.influenceWeaknessAdd,
+        influenceWeaknessRemove: this.influenceWeaknessRemove,
+        influenceResistanceAdd: this.influenceResistanceAdd,
+        influenceResistanceRemove: this.influenceResistanceRemove,
+        influencePenaltyAdd: this.influencePenaltyAdd,
+        influencePenaltyRemove: this.influencePenaltyRemove,
+        influenceDiscoveryToggleHidden: this.influenceDiscoveryToggleHidden,
+        influenceInfluenceSkillToggleHidden: this.influenceInfluenceSkillToggleHidden,
+        influenceWeaknessToggleHidden: this.influenceWeaknessToggleHidden,
+        influenceResistanceToggleHidden: this.influenceResistanceToggleHidden,
+        influencePenaltyToggleHidden: this.influencePenaltyToggleHidden, 
+        influenceWeaknessToggleUsed: this.influenceWeaknessToggleUsed,
+        influenceResistanceToggleUsed: this.influenceResistanceToggleUsed,
+        influencePenaltyToggleUsed: this.influencePenaltyToggleUsed,
+        influenceDiscoveryToggleOpen: this.influenceDiscoveryToggleOpen,
+        influenceInfluenceSkillToggleOpen: this.influenceInfluenceSkillToggleOpen,
+        influenceSkillLabelMenu: this.influenceSkillLabelMenu,
+        influenceRoundsUpdate: this.influenceRoundsUpdate,
       },
       form: { handler: this.updateData, submitOnChange: true },
       window: {
@@ -195,6 +227,9 @@ export default class SystemView extends HandlebarsApplicationMixin(
       influence: {
         id: 'influence',
         template: "modules/pf2e-subsystems/templates/system-view/systems/influence/influences.hbs",
+        scrollable: [
+          ".event-body-container",
+        ],
       },
     };
 
@@ -223,14 +258,14 @@ export default class SystemView extends HandlebarsApplicationMixin(
           image: '',
           unselectable: true,
         },
-        chase: {
+        influence: {
           active: false,
-          cssClass: 'chase-view',
+          cssClass: 'influence-view',
           group: 'main',
-          id: 'chase',
+          id: 'influence',
           icon: null,
-          label: game.i18n.localize('PF2ESubsystems.Events.Chase.Plural'),
-          image: 'icons/skills/movement/feet-winged-boots-brown.webp',
+          label: game.i18n.localize('PF2ESubsystems.Events.Influence.Plural'),
+          image: 'icons/skills/social/diplomacy-handshake-yellow.webp',
         },
         research: {
           active: false,
@@ -241,6 +276,15 @@ export default class SystemView extends HandlebarsApplicationMixin(
           label: game.i18n.localize('PF2ESubsystems.Events.Research.Plural'),
           image: 'icons/skills/trades/academics-merchant-scribe.webp',
         },
+        chase: {
+          active: false,
+          cssClass: 'chase-view',
+          group: 'main',
+          id: 'chase',
+          icon: null,
+          label: game.i18n.localize('PF2ESubsystems.Events.Chase.Plural'),
+          image: 'icons/skills/movement/feet-winged-boots-brown.webp',
+        },
         infiltration: {
           active: false,
           cssClass: 'infiltration-view',
@@ -250,15 +294,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
           label: game.i18n.localize('PF2ESubsystems.Events.Infiltration.Plural'),
           image: 'icons/magic/unholy/silhouette-robe-evil-power.webp',
         },
-        // influence: {
-        //   active: false,
-        //   cssClass: 'influence-view',
-        //   group: 'main',
-        //   id: 'influence',
-        //   icon: null,
-        //   label: game.i18n.localize('PF2ESubsystems.Events.Influence.Plural'),
-        //   image: 'icons/skills/social/diplomacy-handshake-yellow.webp',
-        // },
       };
   
       for (const v of Object.values(tabs)) {
@@ -661,6 +696,18 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
     static editEventToggle(){
       this.editMode = !this.editMode;
+
+      switch(this.tabGroups.main) {
+        case 'influence':
+          this.selected.influence.openInfluence = null;
+          this.selected.influence.openWeakness = null;
+          this.selected.influence.openResistance = null;
+          this.selected.influence.openPenalty = null;
+          this.selected.influence.openDiscoverySection = false;
+          this.selected.influence.openInfluenceSkillSection = false;
+          break;
+      }
+
       this.render({ parts: [this.tabGroups.main] });
     }
 
@@ -695,6 +742,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
     static navigateToSystem(){
       this.selected = getDefaultSelected();
+      this.editMode = false;
       this.render({ parts: [this.tabGroups.main] });
     }
 
@@ -822,6 +870,21 @@ export default class SystemView extends HandlebarsApplicationMixin(
                     const maxObjective = game.user.isGM ? Object.keys(event.objectives).length : event.maxUnlockedObjective;
                     this.selected.infiltration.currentObjective = Math.min(this.selected.infiltration.currentObjective+1, maxObjective);
                     this.render({ parts: [this.tabGroups.main] });
+                    break;
+                }
+              }
+              break;
+            case 'influence':
+              if(this.selected.event) {
+                const currentInfluencePoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event].influencePoints;
+                switch(event.key){
+                  case 'ArrowUp':
+                    if(!game.user.isGM) return;
+                    await updateDataModel(this.tabGroups.main, { [`events.${this.selected.event}.influencePoints`]: currentInfluencePoints + 1 });
+                    break;
+                  case 'ArrowDown':
+                    if(!game.user.isGM) return;
+                    await updateDataModel(this.tabGroups.main, { [`events.${this.selected.event}.influencePoints`]: Math.max(currentInfluencePoints - 1, 0) });
                     break;
                 }
               }
@@ -1703,6 +1766,224 @@ export default class SystemView extends HandlebarsApplicationMixin(
     }
     //#endregion 
 
+    //#region influence
+    static async influenceDiscoveryAdd(_, button) {
+      const discoveryId = foundry.utils.randomID();
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.discoveries.${discoveryId}`]: { id: discoveryId } });
+    }
+
+    static async influenceDiscoveryRemove(_, button) {
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.discoveries.-=${button.dataset.discovery}`]:  null });
+    }
+
+    static async influenceSkillAdd(_, button) {
+      const skillId = foundry.utils.randomID();
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influenceSkills.${skillId}`]: { id: skillId } });
+    }
+
+    static async influenceSkillRemove(_, button) {
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influenceSkills.-=${button.dataset.skill}`]:  null });
+    }
+
+    static async influenceInfluenceAdd(_, button) {
+      const influenceId = foundry.utils.randomID();
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influence.${influenceId}`]: { id: influenceId, name: 'New Influence' } });
+    }
+
+    static async influenceInfluenceRemove(_, button) {
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influence.-=${button.dataset.influence}`]:  null });
+    }
+
+    static async influencePointsUpdate(_, button) {
+      const currentPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].influencePoints;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influencePoints`]: button.dataset.increase ? currentPoints + 1 : currentPoints - 1 });
+    }
+
+    static async influenceInfluenceToggleHidden(_, button) {
+      const currentHidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].influence[button.dataset.influence].hidden;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influence.${button.dataset.influence}.hidden`]: !currentHidden });
+    }
+
+    static async influenceToggleOpenInfluence(_, button) {
+      this.selected.influence.openInfluence = this.selected.influence.openInfluence === button.dataset.influence ? null : button.dataset.influence;
+      this.selected.influence.openWeakness = null;
+      this.selected.influence.openResistance = null;
+      this.selected.influence.openPenalty = null;
+      this.render({ parts: [this.tabGroups.main] }); 
+    }
+
+    static async influenceToggleOpenWeakness(_, button) {
+      this.selected.influence.openWeakness = this.selected.influence.openWeakness === button.dataset.weakness ? null : button.dataset.weakness;
+      this.selected.influence.openInfluence = null;
+      this.selected.influence.openResistance = null;
+      this.selected.influence.openPenalty = null;
+      this.render({ parts: [this.tabGroups.main] }); 
+    }
+
+    static async influenceToggleOpenResistance(_, button) {
+      this.selected.influence.openResistance = this.selected.influence.openResistance === button.dataset.resistance ? null : button.dataset.resistance;
+      this.selected.influence.openInfluence = null;
+      this.selected.influence.openWeakness = null;
+      this.selected.influence.openPenalty = null;
+      this.render({ parts: [this.tabGroups.main] }); 
+    }
+
+    static async influenceToggleOpenPenalty(_, button) {
+      this.selected.influence.openPenalty = this.selected.influence.openPenalty === button.dataset.penalty ? null : button.dataset.penalty;
+      this.selected.influence.openInfluence = null;
+      this.selected.influence.openResistance = null;
+      this.selected.influence.openWeakness = null;
+      this.render({ parts: [this.tabGroups.main] }); 
+    }
+
+    static async influenceWeaknessAdd(_, button) {
+      const weaknessId = foundry.utils.randomID();
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.weaknesses.${weaknessId}`]: { id: weaknessId, name: 'New Weakness' } });
+    }
+
+    static async influenceWeaknessRemove(_, button) {
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.weaknesses.-=${button.dataset.weakness}`]: null });
+    }
+
+    static async influenceResistanceAdd(_, button) {
+      const resistanceId = foundry.utils.randomID();
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.resistances.${resistanceId}`]: { id: resistanceId, name: 'New Resistance' } });
+    }
+
+    static async influenceResistanceRemove(_, button) {
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.resistances.-=${button.dataset.resistance}`]: null });
+    }
+
+    static async influencePenaltyAdd(_, button) {
+      const penaltyId = foundry.utils.randomID();
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.penalties.${penaltyId}`]: { id: penaltyId, name: 'New Penalty' } });
+    }
+
+    static async influencePenaltyRemove(_, button) {
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.penalties.-=${button.dataset.penalty}`]: null });
+    }
+
+    static async influenceDiscoveryToggleHidden(_, button) {
+      const currentHidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].discoveries[button.dataset.discovery].hidden;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.discoveries.${button.dataset.discovery}.hidden`]: !currentHidden });
+    }
+
+    static async influenceInfluenceSkillToggleHidden(_, button) {
+      const currentHidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].influenceSkills[button.dataset.skill].hidden;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influenceSkills.${button.dataset.skill}.hidden`]: !currentHidden });
+    }
+
+    static async influenceWeaknessToggleHidden(_, button) {
+      const currentHidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].weaknesses[button.dataset.weakness].hidden;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.weaknesses.${button.dataset.weakness}.hidden`]: !currentHidden });
+    }
+
+    static async influenceResistanceToggleHidden(_, button) {
+      const currentHidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].resistances[button.dataset.resistance].hidden;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.resistances.${button.dataset.resistance}.hidden`]: !currentHidden });
+    }
+
+    static async influencePenaltyToggleHidden(_, button) {
+      const currentHidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].penalties[button.dataset.penalty].hidden;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.penalties.${button.dataset.penalty}.hidden`]: !currentHidden });
+    }
+
+    static async influenceWeaknessToggleUsed(_, button) {
+      const currentlyUsed = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].weaknesses[button.dataset.weakness].modifier.used;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.weaknesses.${button.dataset.weakness}.modifier.used`]: !currentlyUsed });
+    }
+
+    static async influenceResistanceToggleUsed(_, button) {
+      const currentlyUsed = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].resistances[button.dataset.resistance].modifier.used;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.resistances.${button.dataset.resistance}.modifier.used`]: !currentlyUsed });
+    }
+
+    static async influencePenaltyToggleUsed(_, button) {
+      const currentlyUsed = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].penalties[button.dataset.penalty].modifier.used;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.penalties.${button.dataset.penalty}.modifier.used`]: !currentlyUsed });
+    }
+
+    static async influenceDiscoveryToggleOpen() {
+      this.selected.influence.openInfluenceSection = !this.selected.influence.openInfluenceSection;
+      this.render({ parts: [this.tabGroups.main] });
+    }
+
+    static async influenceInfluenceSkillToggleOpen() {
+      this.selected.influence.openInfluenceSkillSection = !this.selected.influence.openInfluenceSkillSection;
+      this.render({ parts: [this.tabGroups.main] });
+    }
+
+    static async influenceSkillLabelMenu(_, button) {
+      const activeSkill = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].influenceSkills[button.dataset.skill];
+      new Promise((resolve, reject) => {
+        new ValueDialog(resolve, reject, activeSkill.label, game.i18n.format("PF2ESubsystems.Influence.InfluenceSkillLabelTitle", { skill: activeSkill.skill ? `${game.i18n.localize(CONFIG.PF2E.skills[activeSkill.skill].label)}` : game.i18n.localize("PF2ESubsystems.Basic.Skill") })).render(true);
+      }).then(async value => {
+        await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influenceSkills.${button.dataset.skill}.label`]: value });
+      });
+    }
+
+    static async influenceRoundsUpdate(_, button) {
+      const currentRound = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].timeLimit.current;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.timeLimit.current`]: button.dataset.increase ? currentRound + 1 : currentRound - 1 });
+    }
+
+    async updateInfluenceDiscoveryLore(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+      const newLore = button.checked;
+      
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.discoveries.${button.dataset.discovery}`]: {
+        lore: newLore,
+        skill: newLore ? 'something-lore' : 'acrobatics',
+      }});
+    }
+
+    async updateInfluenceDiscoverySkill(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+      const currentLore = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].discoveries[button.dataset.discovery].lore;
+      let newSkill = button.value;
+
+      if(currentLore){
+        const loreMatch = newSkill.match('-lore');
+        if(!loreMatch || loreMatch.length === 0) {
+          newSkill = 'something-lore';
+          ui.notifications.warn(game.i18n.localize('PF2ESubsystems.Research.Errors.LoreError'));
+        }
+      }
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.discoveries.${button.dataset.discovery}.skill`]: newSkill });
+    }
+
+    async updateInfluenceSkillLore(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+      const newLore = button.checked;
+      
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influenceSkills.${button.dataset.skill}`]: {
+        lore: newLore,
+        skill: newLore ? 'something-lore' : 'acrobatics',
+      }});
+    }
+
+    async updateInfluenceInfluenceSkillSkill(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+      const currentLore = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].influenceSkills[button.dataset.skill].lore;
+      let newSkill = button.value;
+
+      if(currentLore){
+        const loreMatch = newSkill.match('-lore');
+        if(!loreMatch || loreMatch.length === 0) {
+          newSkill = 'something-lore';
+          ui.notifications.warn(game.i18n.localize('PF2ESubsystems.Research.Errors.LoreError'));
+        }
+      }
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influenceSkills.${button.dataset.skill}.skill`]: newSkill });
+    }
+    //#endregion
+
     async updateResearchLore(event) {
       event.stopPropagation();
       const button = event.currentTarget;
@@ -1929,7 +2210,12 @@ export default class SystemView extends HandlebarsApplicationMixin(
           setupTagify(htmlElement, '.obstacle-dc-adjustment', adjustmentOptions, this.infiltrationObstacleUpdateDCAdjustment.bind(this), this.infiltrationObstacleRemoveDCAdjustment.bind(this));
           setupTagify(htmlElement, '.infiltration-preparations-activity-tags', tagOptions, this.infiltrationPreparationsUpdateActivityTags.bind(this), this.infiltrationPreparationsRemoveActivityTags.bind(this));
           setupTagify(htmlElement, '.infiltration-activity-dc-adjustment', adjustmentOptions, this.infiltrationActivityUpdateDCAdjustment.bind(this), this.infiltrationActivityRemoveDCAdjustment.bind(this));
-
+          break;
+        case 'influence':
+          $(htmlElement).find('.influence-discovery-lore-input').on('change', this.updateInfluenceDiscoveryLore.bind(this));
+          $(htmlElement).find('.influence-skill-lore-input').on('change', this.updateInfluenceSkillLore.bind(this));
+          $(htmlElement).find('.influence-discovery-skill-input').on('change', this.updateInfluenceDiscoverySkill.bind(this));
+          $(htmlElement).find('.influence-influence-skill-skill-input').on('change', this.updateInfluenceInfluenceSkillSkill.bind(this));
           break;
       }
     }
@@ -2079,11 +2365,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
           context.infiltrationObstacleStyle = this.selected.openInfiltrationObstacle ? 'focused' : (this.selected.openInfiltrationOpportunity || this.selected.openInfiltrationComplication) ? 'unfocused' : '';
           context.infiltrationOpportunityStyle = this.selected.openInfiltrationOpportunity ? 'focused' : (this.selected.openInfiltrationObstacle || this.selected.openInfiltrationComplication) ? 'unfocused' : '';
           context.infiltrationComplicationStyle = this.selected.openInfiltrationComplication ? 'focused' : (this.selected.openInfiltrationObstacle || this.selected.openInfiltrationOpportunity) ? 'unfocused' : '';
-
-          const disableRollButton = (disable, html) => {
-            if(!disable) return html;
-            return html.match(/style="/) ? html.replace(/style="/, 'style="opacity: 0.4; pointer-events: none; ') : html.replace(/<a/, '<a style="opacity: 0.4; pointer-events: none; "').replace(/<span/, '<span style="opacity: 0.4; pointer-events: none; "');
-          } 
           
           await this.setupEvents(infiltrationEvents, context);
           if(context.selectedEvent) {
@@ -2174,10 +2455,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
                 for(var key of Object.keys(skillCheck.skills)){
                   const skill = skillCheck.skills[key];
                   if(skill.action) {
-                    skill.element = disableRollButton(disableElement, await TextEditor.enrichHTML(`[[/act ${skill.action} ${skill.variant ? `variant=${skill.variant} ` : ''}stat=${skill.skill} dc=${dc}]]`));  
+                    skill.element = await getActButton(skill.action, skill.variant, skill.skill, dc);
                   }
                   else {
-                    skill.element = disableRollButton(disableElement, await TextEditor.enrichHTML(`@Check[type:${skill.skill}|dc:${dc}|simple:${skill.simple}]`));
+                    skill.element = await getCheckButton(skill.skill, dc, skill.simple, disableElement);
                   }
                 }
               }
@@ -2228,10 +2509,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
                 for(var key of Object.keys(skillCheck.skills)){
                   const skill = skillCheck.skills[key];
                   if(skill.action) {
-                    skill.element = disableRollButton(disableElement, await TextEditor.enrichHTML(`[[/act ${skill.action} ${skill.variant ? `variant=${skill.variant} ` : ''}stat=${skill.skill} dc=${dc}]]`));  
+                    skill.element = await getActButton(skill.action, skill.variant, skill.skill, dc, disableElement);
                   }
                   else {
-                    skill.element = disableRollButton(disableElement, await TextEditor.enrichHTML(`@Check[type:${skill.skill}|dc:${dc}|simple:${skill.simple}]`));
+                    skill.element = await getCheckButton(skill.skill, dc, skill.simple, disableElement);
                   }
                 }
               }
@@ -2268,10 +2549,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
                 for(var key of Object.keys(skillCheck.skills)){
                   const skill = skillCheck.skills[key];
                   if(skill.action) {
-                    skill.element = disableRollButton(disableElement, await TextEditor.enrichHTML(`[[/act ${skill.action} ${skill.variant ? `variant=${skill.variant} ` : ''}stat=${skill.skill} dc=${dc}]]`));  
+                    skill.element = await getActButton(skill.action, skill.variant, skill.skill, dc, disableElement);  
                   }
                   else {
-                    skill.element = disableRollButton(disableElement, await TextEditor.enrichHTML(`@Check[type:${skill.skill}|dc:${dc}|simple:${skill.simple}]`));
+                    skill.element = await getCheckButton(skill.skill, dc, skill.simple, disableElement);
                   }
                 }
               }
@@ -2317,7 +2598,80 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
           if(context.selectedEvent) {
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
+            context.selectedEvent.extendedDiscoveries = context.selectedEvent.discoveryData;
+            context.selectedEvent.extendedInfluenceSkills = context.selectedEvent.influenceSkillData;
+            context.dcModifier = context.selectedEvent.dcModifier;
+            context.perception = `${context.selectedEvent.perception >= 0 ? '+' : '-'}${context.selectedEvent.perception}`;
+            context.will = `${context.selectedEvent.will >= 0 ? '+' : '-'}${context.selectedEvent.will}`;
+
+            for(var key of Object.keys(context.selectedEvent.extendedDiscoveries.data)) {
+              const discovery = context.selectedEvent.extendedDiscoveries.data[key];
+              const dc = discovery.dc;
+              discovery.element = discovery.action ? await getActButton(discovery.action, discovery.variant, discovery.skill, dc, false) : await getCheckButton(discovery.skill, dc, false, false);
+              if (game.user.isGM) {
+                discovery.element = discovery.element.replace('><i', ' disabled><i');
+                discovery.element = discovery.element.replace(
+                  'title="Post prompt to chat"',
+                  "",
+                );
+              }
+            }
+
+            for(var key of Object.keys(context.selectedEvent.extendedInfluenceSkills.data)) {
+              const skill = context.selectedEvent.extendedInfluenceSkills.data[key];
+              const dc = skill.dc + context.dcModifier;
+              skill.element = skill.action ? await getActButton(skill.action, skill.variant, skill.skill, dc, false) : await getCheckButton(skill.skill, dc, false, false);
+              if (game.user.isGM) {
+                skill.element = skill.element.replace('><i', ' disabled><i');
+                skill.element = skill.element.replace(
+                  'title="Post prompt to chat"',
+                  "",
+                );
+              }
+            }
+
+            for(var key of Object.keys(context.selectedEvent.influence)) {
+              const influence = context.selectedEvent.influence[key];
+              const titleElement = `<strong>${influence.points}</strong>:`;
+              const descriptionStartsWithParagraph = influence.description.match(/^<p>/);
+              influence.enrichedDescription = await TextEditor.enrichHTML(descriptionStartsWithParagraph ? influence.description.replace('<p>', `<p>${titleElement} `) : `${titleElement} ${influence.description}`);
+              
+              influence.shown = (context.settings.autoRevealInfluence && context.selectedEvent.influencePoints >= influence.points) || game.user.isGM || !influence.hidden;
+              influence.hidden = context.settings.autoRevealInfluence ? context.selectedEvent.influencePoints < influence.points : influence.hidden;
+              influence.open = this.selected.influence.openInfluence === influence.id;
+            }
+
+            for(var key of Object.keys(context.selectedEvent.weaknesses)) {
+              const weakness = context.selectedEvent.weaknesses[key];
+              weakness.open =  this.selected.influence.openWeakness === weakness.id;
+              weakness.enrichedDescription = await TextEditor.enrichHTML(weakness.description);
+            }
+
+            for(var key of Object.keys(context.selectedEvent.resistances)) {
+              const resistance = context.selectedEvent.resistances[key];
+              resistance.open =  this.selected.influence.openResistance === resistance.id;
+              resistance.enrichedDescription = await TextEditor.enrichHTML(resistance.description);
+            }
+
+            for(var key of Object.keys(context.selectedEvent.penalties)) {
+              const penalty = context.selectedEvent.penalties[key];
+              penalty.open =  this.selected.influence.openPenalty === penalty.id;
+              penalty.enrichedDescription = await TextEditor.enrichHTML(penalty.description);
+            }
           }
+
+          context.skillOptions = [
+            ...Object.keys(CONFIG.PF2E.skills).map((skill) => ({
+              value: skill,
+              name: CONFIG.PF2E.skills[skill].label,
+            })),
+            { value: "perception", name: "PF2E.PerceptionLabel" },
+          ];
+          context.actionOptions = []; 
+          for(var action of game.pf2e.actions) {
+            context.actionOptions.push({ value: action.slug, name: game.i18n.localize(action.name) });
+          }
+
           break;
       }
 

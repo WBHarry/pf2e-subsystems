@@ -44,7 +44,7 @@ export class InfluenceSettings extends foundry.abstract.DataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
     return {
-
+      autoRevealInfluence: new fields.BooleanField({ required: true, initial: false }),
     }
   }
 }

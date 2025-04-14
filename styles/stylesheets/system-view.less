@@ -48,6 +48,7 @@
                 .systems-section {
                     display: flex;
                     align-items: center;
+                    justify-content: center;
                     flex-wrap: wrap;
                     gap: @gapNormal;
                     width: 100%;
@@ -57,10 +58,6 @@
                         align-items: center;
                         justify-content: center;
                         position: relative;
-                        width: calc(33% - 3px);
-                        border-width: @borderNormal;
-                        border-style: outset;
-                        border-color: white;
 
                         .system-section-label {
                             color: black;
@@ -78,6 +75,9 @@
                         img {
                             border: 0;
                             border-radius: 0;
+                            border-width: @borderNormal;
+                            border-style: outset;
+                            border-color: var(--pf2e-subsystem-theming-border);
                         }
 
                         // Temporary
@@ -403,6 +403,10 @@
                     border-style: outset;
                     border-radius: 6px;
 
+                    &.controls {
+                        height: 40px;
+                    }
+
                     .event-simple-container-title {
                         display: flex;
                         align-items: center;
@@ -581,7 +585,12 @@
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        height: 45px;
+                        border-bottom-width: 1px;
+                        border-bottom-style: solid;
+                        
+                        &.controls {
+                            height: 45px;
+                        }
                     }
 
                     .event-section-container {
@@ -701,9 +710,12 @@
                     justify-content: center;
                     gap: 4px;
                     text-align: center;
-                    height: 45px;
                     border-bottom-width: 1px;
                     border-bottom-style: solid;
+
+                    &.controls {
+                        height: 45px;
+                    }
                 }
 
                 .event-sidebar {

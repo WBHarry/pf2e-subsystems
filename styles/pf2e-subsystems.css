@@ -204,6 +204,7 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems.systems-view .systems-container .main-section .systems-section {
   display: flex;
   align-items: center;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 8px;
   width: 100%;
@@ -213,10 +214,6 @@ form.pf2e-subsystems.application > header .header-control {
   align-items: center;
   justify-content: center;
   position: relative;
-  width: calc(33% - 3px);
-  border-width: 2px;
-  border-style: outset;
-  border-color: white;
 }
 .pf2e-subsystems.systems-view .systems-container .main-section .systems-section .system-section .system-section-label {
   color: black;
@@ -233,6 +230,9 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems.systems-view .systems-container .main-section .systems-section .system-section img {
   border: 0;
   border-radius: 0;
+  border-width: 2px;
+  border-style: outset;
+  border-color: var(--pf2e-subsystem-theming-border);
 }
 .pf2e-subsystems.systems-view .systems-container .main-section .systems-section .system-section .locked-section {
   position: absolute;
@@ -499,6 +499,9 @@ form.pf2e-subsystems.application > header .header-control {
   border-style: outset;
   border-radius: 6px;
 }
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-simple-container.controls {
+  height: 40px;
+}
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-simple-container .event-simple-container-title {
   display: flex;
   align-items: center;
@@ -646,6 +649,11 @@ form.pf2e-subsystems.application > header .header-control {
   display: flex;
   align-items: center;
   justify-content: center;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section .event-section-title.controls,
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-view-container .event-section-title.controls {
   height: 45px;
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-section .event-section-container,
@@ -749,9 +757,11 @@ form.pf2e-subsystems.application > header .header-control {
   justify-content: center;
   gap: 4px;
   text-align: center;
-  height: 45px;
   border-bottom-width: 1px;
   border-bottom-style: solid;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .title-container.controls {
+  height: 45px;
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-sidebar {
   width: 200px;
@@ -1925,6 +1935,155 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems .influence-view .event-outer-container .event-container .event-sidebar .description-outer-container .description-container textarea {
   flex: 1;
 }
+.pf2e-subsystems .influence-view .event-outer-container .event-container .event-main-container .event-body-container {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  gap: 8px;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .event-section-title {
+  position: relative;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .event-section-title .header-add-icon {
+  position: absolute;
+  right: -20px;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .influence-cards {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .influence-cards .influence-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 6px;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .influence-cards .influence-card.unrevealed {
+  border-style: dashed;
+  opacity: 0.6;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .influence-cards .influence-card > p {
+  margin: 0;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .weakness-cards {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .modifier-card {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  border-radius: 6px;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .modifier-card .modifier-card-description {
+  padding: 2px 4px;
+  opacity: 1;
+  border-width: 2px 0 2px 2px;
+  border-style: solid;
+  border-radius: 6px 0 0 6px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .modifier-card .modifier-card-description.simple {
+  border-right-width: 2px;
+  border-radius: 6px;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .modifier-card .modifier-card-description.unrevealed {
+  opacity: 0.4;
+  border-style: dashed;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .modifier-card .modifier-card-action-container {
+  padding: 2px 4px 2px 4px;
+  border-width: 2px 2px 2px 2px;
+  border-style: solid;
+  border-radius: 0 6px 6px 0;
+  opacity: 0.4;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .modifier-card .modifier-card-action-container.used {
+  opacity: 1;
+  filter: drop-shadow(0 0 3px gold);
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .modifier-card .modifier-card-action-container .modifier-card-action-icon {
+  position: absolute;
+  top: -4px;
+  font-size: 12px;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .modifier-card .modifier-card-action-container .modifier-card-action-icon-slash {
+  position: absolute;
+  top: -4px;
+  font-size: 12px;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .modifier-card .modifier-card-action {
+  position: relative;
+  border-width: 1px;
+  border-style: solid;
+  padding: 2px;
+  height: 24px;
+  width: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .discovery-container .event-section-title,
+.pf2e-subsystems .influence-view .event-outer-container .event-container .influence-skills-container .event-section-title {
+  position: relative;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .discovery-container .event-section-title .expand-icon,
+.pf2e-subsystems .influence-view .event-outer-container .event-container .influence-skills-container .event-section-title .expand-icon {
+  position: absolute;
+  right: 4px;
+  font-size: 32px;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .influence-skills-container .tools-column-cell {
+  margin-right: 4px;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .influence-skills-container .tools-column-cell .label-tag {
+  opacity: 0.6;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .influence-skills-container .tools-column-cell .label-tag.active {
+  opacity: 1;
+  filter: drop-shadow(0 0 3px var(--pf2e-subsystem-theming-border));
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .influence-container .influence-header-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .influence-container .influence-header-container .influence-header-icon {
+  position: absolute;
+  right: -14px;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .skills-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .skills-container .skill-container {
+  padding: 2px;
+  border-width: 2px;
+  border-style: dashed;
+  border-radius: 6px;
+  opacity: 0.6;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .skills-container .skill-container.revealed {
+  border-style: solid;
+  opacity: 1;
+}
 .pf2e-subsystems.pf2e-subsystems-menu .menu-outer-container {
   display: flex;
   flex-direction: column;
@@ -1982,6 +2141,24 @@ form.pf2e-subsystems.application > header .header-control {
 .clickable-icon:hover,
 .clickable-icon.selected {
   filter: drop-shadow(0 0 3px gold);
+}
+.value-dialog-container {
+  display: flex;
+  gap: 4px;
+}
+.value-dialog-container .value-dialog-input {
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 6px;
+  flex: 1;
+}
+.value-dialog-container .value-dialog-confirm {
+  font-size: 24px;
+  padding: 4px;
+  flex: 0;
+}
+.value-dialog-container .value-dialog-confirm i {
+  margin: 0;
 }
 .pf2e-subsystems {
   /* Editor */
@@ -2108,6 +2285,9 @@ form.pf2e-subsystems.application > header .header-control {
   border-bottom-width: 1px;
   border-bottom-style: solid;
   border-bottom-color: var(--pf2e-subsystem-theming-border);
+}
+.pf2e-subsystems .event-skill-grid .event-skill-grid-col .event-skill-grid-cell.spaced {
+  gap: 4px;
 }
 .pf2e-subsystems .event-skill-grid .event-skill-grid-col input {
   margin: 0;

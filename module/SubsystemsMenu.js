@@ -18,6 +18,7 @@ export default class SubsystemsMenu extends HandlebarsApplicationMixin(
       chase: context.settings = game.settings.get(MODULE_ID, settingIDs.chase.settings).toObject(),
       research: context.settings = game.settings.get(MODULE_ID, settingIDs.research.settings).toObject(),
       infiltration: game.settings.get(MODULE_ID, settingIDs.infiltration.settings).toObject(),
+      influence: game.settings.get(MODULE_ID, settingIDs.influence.settings).toObject(),
     };
   }
 
@@ -52,6 +53,10 @@ export default class SubsystemsMenu extends HandlebarsApplicationMixin(
     infiltration: {
       id: "infiltration",
       template: "modules/pf2e-subsystems/templates/menu/subsystem-menu/infiltration-menu.hbs",
+    },
+    influence: {
+      id: "influence",
+      template: "modules/pf2e-subsystems/templates/menu/subsystem-menu/influence-menu.hbs",
     },
   };
 
@@ -90,6 +95,15 @@ export default class SubsystemsMenu extends HandlebarsApplicationMixin(
         id: 'infiltration',
         icon: null,
         label: game.i18n.localize('PF2ESubsystems.Events.Infiltration.Plural'),
+        image: 'icons/skills/trades/academics-merchant-scribe.webp',
+      },
+      influence: {
+        active: false,
+        cssClass: 'influence-view',
+        group: 'main',
+        id: 'influence',
+        icon: null,
+        label: game.i18n.localize('PF2ESubsystems.Events.Influence.Plural'),
         image: 'icons/skills/trades/academics-merchant-scribe.webp',
       },
     };
@@ -135,23 +149,28 @@ export default class SubsystemsMenu extends HandlebarsApplicationMixin(
           }
 
           break;
+        case 'influence':
+          context.settings = this.settings.influence;
+          break;
     }
 
     return context;
 }
 
   static async updateData(event, element, formData) {
-    const { chase, research, infiltration } = foundry.utils.expandObject(formData.object);
+    const { chase, research, infiltration, influence } = foundry.utils.expandObject(formData.object);
 
     this.settings.chase = chase;
     this.settings.research = research;
     this.settings.infiltration = infiltration;
+    this.settings.influence = influence;
   }
 
   static async save() {
     await game.settings.set(MODULE_ID, settingIDs.chase.settings, this.settings.chase);
     await game.settings.set(MODULE_ID, settingIDs.research.settings, this.settings.research);
     await game.settings.set(MODULE_ID, settingIDs.infiltration.settings, mergeObject(game.settings.get(MODULE_ID, settingIDs.infiltration.settings).toObject(), this.settings.infiltration));
+    await game.settings.set(MODULE_ID, settingIDs.influence.settings, this.settings.influence);
 
     this.close();
   }

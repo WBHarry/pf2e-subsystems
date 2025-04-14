@@ -54,6 +54,9 @@
                 }
             }
         },
+        "ValueDialog": {
+            "Title": "Value Dialog"
+        },
         "Menus": {
             "Subsystems": {
                 "Name": "Subsystems",
@@ -72,6 +75,9 @@
                     "HideAwareness": "Completly Hide Awareness From Players",
                     "AutoApplyAwareness": "Auto apply awareness DC modifiers",
                     "AutoRevealAwareness": "Auto reveal awareness breakpoints"
+                },
+                "Influence": {
+                    "AutoRevealInfluence": "Auto Reveal Influence"
                 }
             }
         },
@@ -241,7 +247,17 @@
             "EditInfluence": "Edit Influence",
             "CreateInfluence": "Create New Influence",
             "Perception": "Perception",
-            "Will": "Will"
+            "Will": "Will",
+            "Discovery": "Discovery",
+            "InfluenceSkills": "Influence Skills",
+            "Influence": "Influence",
+            "Weaknesses": "Weaknesses",
+            "Resistances": "Resistances",
+            "Penalties": "Penalties",
+            "InfluencePoints": "Points",
+            "Modifier": "Modifier",
+            "InfluenceSkillLabelTitle": "{skill} Label",
+            "Rounds": "Rounds"
         },
         "KeyBindings": {
             "OpenSystemView": {

@@ -8,6 +8,7 @@ import { ChaseTour } from "./tours/chase/ChaseTour.js";
 import { ResearchTour } from "./tours/research/ResearchTour.js";
 import SystemView from "./module/systemView.js";
 import { InfiltrationTour } from "./tours/infiltration/InfiltrationTour.js";
+import { InfluenceTour } from "./tours/influence/InfluenceTour.js";
 
 Hooks.once("init", () => {
     registerGameSettings();
@@ -61,7 +62,7 @@ async function registerTours() {
     game.tours.register(MODULE_ID, tourIDs.chase, await ChaseTour.fromJSON(`/modules/${MODULE_ID}/tours/chase/chase-tour.json`));
     game.tours.register(MODULE_ID, tourIDs.research, await ResearchTour.fromJSON(`/modules/${MODULE_ID}/tours/research/research-tour.json`));
     game.tours.register(MODULE_ID, tourIDs.infiltration, await InfiltrationTour.fromJSON(`/modules/${MODULE_ID}/tours/infiltration/infiltration-tour.json`));
-    // game.tours.register(MODULE_ID, tourIDs.influence, await InfluenceTour.fromJSON(`/modules/${MODULE_ID}/tours/influence/influence-tour.json`));
+    game.tours.register(MODULE_ID, tourIDs.influence, await InfluenceTour.fromJSON(`/modules/${MODULE_ID}/tours/influence/influence-tour.json`));
   } catch (error) {
     console.error("PF2e Subsystems Tour Registration failed");
   }

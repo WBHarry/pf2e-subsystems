@@ -29,6 +29,188 @@
                         }
                     }
                 }
+
+                .event-main-container {
+                    .event-body-container {
+                        display: flex;
+                        flex-direction: column;
+                        overflow: auto;
+                        gap: 8px;
+                    }
+                }
+
+                .event-section-title {
+                    position: relative;
+
+                    .header-add-icon {
+                        position: absolute;
+                        right: -20px;
+                    }
+                }
+
+                .influence-cards {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: @gapSmall;
+
+                    .influence-card {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: @paddingNormal;
+                        border-width: 2px;
+                        border-style: solid;
+                        border-radius: 6px;
+
+                        &.unrevealed {
+                            border-style: dashed;
+                            opacity: 0.6;
+                        }
+
+                        > p {
+                            margin: 0;
+                        }
+                    }
+                }
+
+                .weakness-cards {
+                    display: flex;
+                    align-items: flex-start;
+                    flex-wrap: wrap;
+                    gap: @gapSmall;
+                }
+
+                .modifier-card {
+                    display: flex;
+                    align-items: stretch;
+                    justify-content: center;
+                    border-radius: 6px;
+
+                    .modifier-card-description {
+                        padding: @paddingSmall @paddingNormal;
+                        opacity: 1;
+                        border-width: 2px 0 2px 2px;
+                        border-style: solid;
+                        border-radius: 6px 0 0 6px;
+                        min-height: 32px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+
+                        &.simple {
+                            border-right-width: 2px;
+                            border-radius: 6px;
+                        }
+
+                        &.unrevealed {
+                            opacity: 0.4;
+                            border-style: dashed;
+                        }    
+                    }
+
+                    .modifier-card-action-container {
+                        padding: @paddingSmall @paddingNormal @paddingSmall @paddingNormal;
+                        border-width: 2px 2px 2px 2px;
+                        border-style: solid;
+                        border-radius: 0 6px 6px 0;
+                        opacity: 0.4;
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+
+                        &.used {
+                            opacity: 1;
+                            filter: drop-shadow(0 0 3px gold);
+                        }
+
+                        .modifier-card-action-icon {
+                            position: absolute;
+                            top: -4px;
+                            font-size: 12px;
+                        }
+
+                        .modifier-card-action-icon-slash {
+                            position: absolute;
+                            top: -4px;
+                            font-size: 12px;
+                        }
+                    }
+
+                    .modifier-card-action {
+                        position: relative;
+                        border-width: 1px;
+                        border-style: solid;
+                        padding: 2px;
+                        height: 24px;
+                        width: 24px;
+                        border-radius: 6px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                }
+
+                .discovery-container, .influence-skills-container {
+                    .event-section-title {
+                        position: relative;
+
+                        .expand-icon {
+                            position: absolute;
+                            right: @marginNormal;
+                            font-size: 32px;
+                        }
+                    }
+                }
+
+                .influence-skills-container {
+                    .tools-column-cell {
+                        margin-right: @marginNormal;
+
+                        .label-tag {
+                            opacity: 0.6;
+
+                            &.active {
+                                opacity: 1;
+                                filter: drop-shadow(0 0 3px var(--pf2e-subsystem-theming-border));
+                            }
+                        }
+                    }
+                }
+
+                .influence-container {
+                    .influence-header-container {
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+
+                        .influence-header-icon {
+                            position: absolute;
+                            right: -14px;
+                        }
+                    }
+                }
+
+                .skills-container {
+                    display: flex;
+                    align-items: center;
+                    gap: @gapSmall;
+                    flex-wrap: wrap;
+
+                    .skill-container {
+                        padding: @paddingSmall;
+                        border-width: 2px;
+                        border-style: dashed;
+                        border-radius: 6px;
+                        opacity: 0.6;
+
+                        &.revealed {
+                            border-style: solid;
+                            opacity: 1;
+                        }
+                    }
+                }
             }
         }
     }
