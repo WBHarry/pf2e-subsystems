@@ -32,13 +32,13 @@
             "id": "infiltration-overview-3",
             "selector": ".discovery-container",
             "title": "Discovery",
-            "content": "The suggested skills used by players to learn about influence skills, weaknesses, resistances and penalties. The GM can click these to hide/reveal them to players."
+            "content": "The suggested skills used by players to learn about influence skills, weaknesses, resistances and penalties.\nThe GM can click these to hide/reveal them to players."
         },
         {
             "id": "infiltration-overview-4",
             "selector": ".influence-skills-container",
             "title": "Influence Skills",
-            "content": "The suggested influence skills used to gain influence points in the event. The GM can click these to hide/reveal them to players. The DC's are influenced by any weaknesses, resistances or penalties the GM has activated."
+            "content": "The suggested influence skills used to gain influence points in the event. The GM can click these to hide/reveal them to players.\nThe DC's are influenced by any weaknesses, resistances or penalties the GM has activated."
         },
         {
             "id": "infiltration-overview-5",
@@ -50,19 +50,19 @@
             "id": "infiltration-overview-6",
             "selector": ".weaknesses-container",
             "title": "Weaknesses",
-            "content": "Any potential weaknesses inherent to the event. The GM can click these to hide/reveal them to players. Clicking the right modifier section will lower the DC of all Influence Skill checks for players while it's active."
+            "content": "Any potential weaknesses inherent to the event. The GM can click these to hide/reveal them to players.\nClicking the right modifier section will lower the DC of all Influence Skill checks for players while it's active."
         },
         {
             "id": "infiltration-overview-7",
             "selector": ".resistances-container",
             "title": "Resistances",
-            "content": "Any potential resistances inherent to the event. The GM can click these to hide/reveal them to players. Clicking the right modifier section will raise the DC of all Influence Skill checks for players while it's active."
+            "content": "Any potential resistances inherent to the event. The GM can click these to hide/reveal them to players.\nClicking the right modifier section will raise the DC of all Influence Skill checks for players while it's active."
         },
         {
             "id": "infiltration-overview-8",
             "selector": ".penalties-container",
             "title": "Penalties",
-            "content": "Any potential penalties inherent to the event. The GM can click these to hide/reveal them to players. Clicking the optional right modifier section will raise the DC of all Influence Skill checks for players while it's active."
+            "content": "Any potential penalties inherent to the event. The GM can click these to hide/reveal them to players.\nClicking the optional right modifier section will raise the DC of all Influence Skill checks for players while it's active."
         }
     ],
     "events": {
@@ -74,6 +74,10 @@
             "will": 7,
             "premise": "You've stumbled into the magnificent, yet crazily dangerous workshop of Jikki Tabla the inventor. He could quite possibly help you on your journey, but he seems passingly interested in you at best as he continues his work while moving around you as if you were furniture.",
             "influencePoints": 4,
+            "timeLimit": {
+                "current": 1,
+                "max": 3
+            },
             "dcModifier": -2,
             "discoveryData": {
                 "data": {
@@ -178,16 +182,19 @@
                 },
                 "2": {
                     "id": "2",
+                    "hidden": true,
                     "points": 8,
                     "description": "<p>Tikki Tabla is open to making custom design items for you. It's interesting for him aswell!</p>"
                 },
                 "3": {
                     "id": "3",
+                    "hidden": true,
                     "points": 12,
                     "description": "<p>The Inventor gains an interest in your task and is willing to help you make a vehicle for the trip.</p>"
                 },
                 "4": {
                     "id": "4",
+                    "hidden": true,
                     "points": 14,
                     "description": "<p>The Doomsday Shredder(TM) is yours!</p>"
                 }
@@ -217,6 +224,7 @@
             "penalties": {
                 "1": {
                     "id": "1",
+                    "hidden": true,
                     "description": "You break it, you buy it. Any critical failures working with his things incurs a monetary cost. If not payed, he will start up the Doomsday Shredder(TM) against them in a chase!",
                     "modifier": {
                         "used": false,

@@ -1053,7 +1053,7 @@ class Influence extends foundry.abstract.DataModel {
         influence: new TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
             name: new fields.StringField({ required: true }),
-            hidden: new fields.BooleanField({ required: true, initial: false }),
+            hidden: new fields.BooleanField({ required: true, initial: true }),
             points: new fields.NumberField({ required: true, integer: true, initial: 0 }),
             description: new fields.HTMLField({ required: true }),
         })),
