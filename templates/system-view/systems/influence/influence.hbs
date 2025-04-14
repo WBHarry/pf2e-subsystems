@@ -8,10 +8,10 @@
                     <i class="fa-solid fa-clock"></i>
                     <div>{{localize "PF2ESubsystems.Influence.Rounds"}}</div>
                     {{#if this.editMode}}
-                        <input type="text" data-dtype="Number" name="{{concat "events." this.event.id ".timeLimit.max"}}" value="{{this.event.timeLimit.max}}" class="secondary-container" />     
+                        <input type="text" data-dtype="Number" name="{{concat "events." this.event.id ".timeLimit.max"}}" value="{{this.event.timeLimit.max}}" class="event-simple-input secondary-container" />     
                     {{else}}
                         {{#if this.isGM}}
-                            <div class="flexrow">
+                            <div class="event-simple-input flexrow">
                                 <div class="event-section-number-container influence-header-icon">
                                     <i class="fa-solid fa-caret-up event-section-number-upper clickable-icon {{#if (eq this.event.timeLimit.current this.event.timeLimit.max)}}disabled{{/if}}" {{#if (lt this.event.timeLimit.current this.event.timeLimit.max)}}data-action="influenceRoundsUpdate"{{/if}} data-event="{{this.event.id}}" data-increase="true"></i>
                                     {{this.event.timeLimit.current}}
@@ -20,29 +20,31 @@
                                 /{{this.event.timeLimit.max}}
                             </div>
                         {{else}}
-                            {{this.event.timeLimit.current}}/{{this.event.timeLimit.max}}
+                            <div class="event-simple-input">{{this.event.timeLimit.current}}/{{this.event.timeLimit.max}}</div>
                         {{/if}}
                     {{/if}}
                 </div>
             {{/if}}
-            <div class="event-simple-container primary-container title-small-container">
-                <i class="fa-solid fa-eye"></i>
-                <div>{{localize "PF2ESubsystems.Influence.Perception"}}</div>
-                {{#if this.editMode}}
-                    <input type="text" data-dtype="Number" name="{{concat "events." this.event.id ".perception"}}" value="{{this.event.perception}}" class="secondary-container" />
-                {{else}}
-                    <div>{{this.perception}}</div>
-                {{/if}}
-            </div>
-            <div class="event-simple-container primary-container title-small-container">
-                <i class="fa-solid fa-heart-pulse"></i>
-                <div>{{localize "PF2ESubsystems.Influence.Will"}}</div>
-                {{#if this.editMode}}
-                    <input type="text" data-dtype="Number" name="{{concat "events." this.event.id ".will"}}" value="{{this.event.will}}" class="secondary-container" />     
-                {{else}}
-                    <div>{{this.will}}</div>
-                {{/if}}
-            </div>
+            {{#if (or this.isGM this.settings.showPerceptionAndWill)}}
+                <div class="event-simple-container primary-container title-small-container">
+                    <i class="fa-solid fa-eye"></i>
+                    <div>{{localize "PF2ESubsystems.Influence.Perception"}}</div>
+                    {{#if this.editMode}}
+                        <input type="text" data-dtype="Number" name="{{concat "events." this.event.id ".perception"}}" value="{{this.event.perception}}" class="event-simple-input secondary-container" />
+                    {{else}}
+                        <div class="event-simple-input">{{this.perception}}</div>
+                    {{/if}}
+                </div>
+                <div class="event-simple-container primary-container title-small-container">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                    <div>{{localize "PF2ESubsystems.Influence.Will"}}</div>
+                    {{#if this.editMode}}
+                        <input type="text" data-dtype="Number" name="{{concat "events." this.event.id ".will"}}" value="{{this.event.will}}" class="event-simple-input secondary-container" />     
+                    {{else}}
+                        <div class="event-simple-input">{{this.will}}</div>
+                    {{/if}}
+                </div>
+            {{/if}}
             <div class="description-outer-container event-section primary-container accent">
                 <div class="event-section-title title-container primary-container">{{localize "PF2ESubsystems.Basic.Premise"}}</div>
                 <div class="description-container">
@@ -95,15 +97,15 @@
                                         <div class="event-skill-grid-col">
                                             <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Action"}}</div>
                                             {{#each this.action}}
-                                                <select name="{{concat "events." this.event ".discoveries." this.id ".action" }}" class="primary-text-container event-skill-grid-cell">
+                                                <select class="influence-discovery-action-input primary-text-container event-skill-grid-cell" data-event="{{this.event}}" data-discovery="{{this.id}}">
                                                     {{selectOptions ../../actionOptions selected=this.action valueAttr="value" labelAttr="name" localize=true blank="" }}
                                                 </select>
                                             {{/each}}
                                         </div> 
                                         <div class="event-skill-grid-col">
-                                            <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
+                                            <div class="event-skill-grid-cell informative header" title="{{localize "PF2ESubsystems.View.VariantExplanation"}}">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
                                             {{#each this.variant}}
-                                                <select name="{{concat "events." this.event ".discoveries." this.id ".variant" }}" class="primary-text-container event-skill-grid-cell">
+                                                <select name="{{concat "events." this.event ".discoveries." this.id ".variant" }}" class="primary-text-container event-skill-grid-cell" {{#if this.disabled}}disabled{{/if}}>
                                                     {{selectOptions this.variantOptions selected=this.variant valueAttr="value" labelAttr="name" localize=true blank="" }}
                                                 </select>
                                             {{/each}}
@@ -130,9 +132,11 @@
                         {{else}}
                             <div class="skills-container">
                                 {{#each this.event.extendedDiscoveries.data}}
-                                    <div class="skill-container {{#if (not this.hidden)}}revealed{{/if}} secondary-container" data-action="influenceDiscoveryToggleHidden" data-event="{{../event.id}}" data-discovery="{{this.id}}">
-                                        {{{this.element}}}
-                                    </div>
+                                    {{#if (or ../isGM (not this.hidden))}}
+                                        <div class="skill-container {{#if (not this.hidden)}}revealed{{/if}} secondary-container" {{#if ../isGM}}data-action="influenceDiscoveryToggleHidden"{{/if}} data-event="{{../event.id}}" data-discovery="{{this.id}}">
+                                            {{{this.element}}}
+                                        </div>
+                                    {{/if}}
                                 {{/each}}
                             </div>
                         {{/if}}
@@ -171,15 +175,15 @@
                                         <div class="event-skill-grid-col">
                                             <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Action"}}</div>
                                             {{#each this.action}}
-                                                <select name="{{concat "events." this.event ".influenceSkills." this.id ".action" }}" class="primary-text-container event-skill-grid-cell">
+                                                <select class="influence-influence-action-input primary-text-container event-skill-grid-cell" data-event="{{this.event}}" data-influence-skill="{{this.id}}">
                                                     {{selectOptions ../../actionOptions selected=this.action valueAttr="value" labelAttr="name" localize=true blank="" }}
                                                 </select>
                                             {{/each}}
                                         </div> 
                                         <div class="event-skill-grid-col">
-                                            <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
+                                            <div class="event-skill-grid-cell informative header" title="{{localize "PF2ESubsystems.View.VariantExplanation"}}">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
                                             {{#each this.variant}}
-                                                <select name="{{concat "events." this.event ".influenceSkills." this.id ".variant" }}" class="primary-text-container event-skill-grid-cell">
+                                                <select name="{{concat "events." this.event ".influenceSkills." this.id ".variant" }}" class="primary-text-container event-skill-grid-cell" {{#if this.disabled}}disabled{{/if}}>
                                                     {{selectOptions this.variantOptions selected=this.variant valueAttr="value" labelAttr="name" localize=true blank="" }}
                                                 </select>
                                             {{/each}}
@@ -196,7 +200,7 @@
                                             </div>
                                             {{#each this.action}}
                                                 <div class="event-skill-grid-cell spaced tools-column-cell">
-                                                    <i class="fa-solid fa-tag clickable-icon label-tag {{#if this.label}}active{{/if}}" data-action="influenceSkillLabelMenu" data-event="{{this.event}}" data-skill="{{this.id}}"></i>
+                                                    <i class="fa-solid fa-tag clickable-icon label-tag {{#if this.label}}active{{/if}}" data-action="influenceSkillLabelMenu" data-event="{{this.event}}" data-skill="{{this.id}}" title="{{localize "PF2ESubsystems.Influence.EditInfluenceSkillLabel"}}"></i>
                                                     <i class="fa-solid fa-trash clickable-icon" data-action="influenceSkillRemove" data-event="{{this.event}}" data-skill="{{this.id}}"></i>
                                                 </div>
                                             {{/each}}
@@ -207,10 +211,12 @@
                         {{else}}
                             <div class="skills-container">
                                 {{#each this.event.extendedInfluenceSkills.data}}
-                                    <div class="skill-container {{#if (not this.hidden)}}revealed{{/if}} secondary-container" data-action="influenceInfluenceSkillToggleHidden" data-event="{{../event.id}}" data-skill="{{this.id}}">
-                                        {{{this.element}}}
-                                        {{#if this.label}}({{this.label}}){{/if}}
-                                    </div>
+                                    {{#if (or ../isGM (not this.hidden))}}
+                                        <div class="skill-container {{#if (not this.hidden)}}revealed{{/if}} secondary-container" {{#if ../isGM}}data-action="influenceInfluenceSkillToggleHidden"{{/if}} data-event="{{../event.id}}" data-skill="{{this.id}}">
+                                            {{{this.element}}}
+                                            {{#if this.label}}({{this.label}}){{/if}}
+                                        </div>
+                                    {{/if}}
                                 {{/each}}
                             </div>
                         {{/if}}

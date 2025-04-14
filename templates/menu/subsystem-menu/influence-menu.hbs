@@ -7,6 +7,10 @@
                     <div>{{localize "PF2ESubsystems.Menus.Subsystems.Influence.AutoRevealInfluence"}}</div>
                     <input type="checkbox" name="influence.autoRevealInfluence" {{checked this.settings.autoRevealInfluence}} />
                 </div>
+                <div class="menu-form">
+                    <div>{{localize "PF2ESubsystems.Menus.Subsystems.Influence.ShowPerceptionAndWill"}}</div>
+                    <input type="checkbox" name="influence.showPerceptionAndWill" {{checked this.settings.showPerceptionAndWill}} />
+                </div>
             </div>
         </div>
         {{> "modules/pf2e-subsystems/templates/menu/subsystem-menu/partials/system-footer.hbs" }}

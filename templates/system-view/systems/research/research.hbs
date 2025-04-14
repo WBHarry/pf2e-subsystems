@@ -161,15 +161,15 @@
                                                                     <div class="event-skill-grid-col">
                                                                         <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Action"}}</div>
                                                                         {{#each this.columns.action}}
-                                                                            <select name="{{concat "events." this.event ".researchChecks." this.researchCheck ".skillChecks." this.skillCheck ".skills." this.id ".action" }}" class="primary-text-container event-skill-grid-cell">
+                                                                            <select class="research-check-action-input primary-text-container event-skill-grid-cell" data-event="{{this.event}}" data-research-check="{{this.researchCheck}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}">
                                                                                 {{selectOptions ../../../actionOptions selected=this.action valueAttr="value" labelAttr="name" localize=true blank="" }}
                                                                             </select>
                                                                         {{/each}}
                                                                     </div>
                                                                     <div class="event-skill-grid-col">
-                                                                        <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
+                                                                        <div class="event-skill-grid-cell informative header" title="{{localize "PF2ESubsystems.View.VariantExplanation"}}">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
                                                                         {{#each this.columns.variant}}
-                                                                            <select name="{{concat "events." this.event ".researchChecks." this.researchCheck ".skillChecks." this.skillCheck ".skills." this.id ".variant" }}" class="primary-text-container event-skill-grid-cell">
+                                                                            <select name="{{concat "events." this.event ".researchChecks." this.researchCheck ".skillChecks." this.skillCheck ".skills." this.id ".variant" }}" class="primary-text-container event-skill-grid-cell" {{#if this.disabled}}disabled{{/if}}>
                                                                                 {{selectOptions this.variantOptions selected=this.variant valueAttr="value" labelAttr="name" localize=true blank="" }}
                                                                             </select>
                                                                         {{/each}}

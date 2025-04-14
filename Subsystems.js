@@ -875,6 +875,7 @@ class Infiltration extends foundry.abstract.DataModel {
                   id: skill.id,
                   variantOptions: skill.action ? [...game.pf2e.actions.get(skill.action).variants].map(x => ({ value: x.slug, name: x.name })) : [],
                   variant: skill.variant,
+                  disabled: skill.action ? game.pf2e.actions.get(skill.action).variants.size === 0 : true,
                 });
 
                 return acc;
@@ -926,6 +927,7 @@ class Infiltration extends foundry.abstract.DataModel {
                   id: skill.id,
                   variantOptions: skill.action ? [...game.pf2e.actions.get(skill.action).variants].map(x => ({ value: x.slug, name: x.name })) : [],
                   variant: skill.variant,
+                  disabled: skill.action ? game.pf2e.actions.get(skill.action).variants.size === 0 : true,
                 });
   
                 return acc;
@@ -1130,6 +1132,7 @@ class Influence extends foundry.abstract.DataModel {
             id: discovery.id,
             variantOptions: discovery.action ? [...game.pf2e.actions.get(discovery.action).variants].map(x => ({ value: x.slug, name: x.name })) : [],
             variant: discovery.variant,
+            disabled: discovery.action ? game.pf2e.actions.get(discovery.action).variants.size === 0 : true,
           });
           acc.dc.push({
             event: this.id,
@@ -1168,6 +1171,7 @@ class Influence extends foundry.abstract.DataModel {
             id: skill.id,
             variantOptions: skill.action ? [...game.pf2e.actions.get(skill.action).variants].map(x => ({ value: x.slug, name: x.name })) : [],
             variant: skill.variant,
+            disabled: skill.action ? game.pf2e.actions.get(skill.action).variants.size === 0 : true,
           });
           acc.dc.push({
             event: this.id,
@@ -1270,6 +1274,7 @@ class Research extends foundry.abstract.DataModel {
                   id: skill.id,
                   variantOptions: skill.action ? [...game.pf2e.actions.get(skill.action).variants].map(x => ({ value: x.slug, name: x.name })) : [],
                   variant: skill.variant,
+                  disabled: skill.action ? game.pf2e.actions.get(skill.action).variants.size === 0 : true,
                 });
                 acc.dc.push({ 
                   event: this.id,
@@ -1364,6 +1369,7 @@ class InfluenceSettings extends foundry.abstract.DataModel {
     const fields = foundry.data.fields;
     return {
       autoRevealInfluence: new fields.BooleanField({ required: true, initial: false }),
+      showPerceptionAndWill: new fields.BooleanField({ required: true, initial: false }),
     }
   }
 }
@@ -2003,8 +2009,8 @@ const getDefaultLayout = (event) => ({
 class SystemView extends HandlebarsApplicationMixin(
     ApplicationV2,
   ) {
-    constructor(tab, event, isTour) {
-      super({});
+    constructor(tab, event, isTour, options={}) {
+      super(options);
 
       this.selected = getDefaultSelected(event);
       this.layout = getDefaultLayout();
@@ -2478,7 +2484,7 @@ class SystemView extends HandlebarsApplicationMixin(
       this.render({ parts: [this.tabGroups.main] });
     }
 
-    filePickerListener(dialog) {
+    static filePickerListener(dialog) {
       return $(dialog.element).find('[data-action="browseBackground"]').on('click', event => {
         event.preventDefault();
         const current = 'icons/svg/cowled.svg';
@@ -2489,14 +2495,12 @@ class SystemView extends HandlebarsApplicationMixin(
           callback: async path => {
             $(dialog.element).find('[name="background"]')[0].value = path;
           },
-          top: this.position.top + 40,
-          left: this.position.left + 10
         }).browse();
       });
     }
 
-    async getEventDialogData(existing) {
-      switch(this.tabGroups.main){
+    static async getEventDialogData(subsystem, existing) {
+      switch(subsystem){
         case 'chase':
           return {  
             content: await renderTemplate("modules/pf2e-subsystems/templates/system-view/systems/chase/chaseDataDialog.hbs", { name: existing?.name, background: existing?.background }),
@@ -2618,12 +2622,14 @@ class SystemView extends HandlebarsApplicationMixin(
       }
     }
 
-    async setEvent(existing){
-      const dialogData = await this.getEventDialogData(existing);
+    static async setEvent(subsystem, resolve, existing){
+      const dialogData = await this.getEventDialogData(subsystem, existing);
       const dialogCallback = async (_, button) => {
         const updateData = dialogData.callback(button);
-        await updateDataModel(this.tabGroups.main, { [`events.${updateData.id}`]: updateData });
-        this.render({ parts: [this.tabGroups.main] });
+        await updateDataModel(subsystem, { [`events.${updateData.id}`]: updateData });
+        if(resolve){
+          resolve(updateData.id);
+        }
       };
 
       const dialog = await new foundry.applications.api.DialogV2({
@@ -2651,12 +2657,12 @@ class SystemView extends HandlebarsApplicationMixin(
     }
 
     static async addEvent(){
-      await this.setEvent();
+      await this.constructor.setEvent(this.tabGroups.main, null);
     }
 
     static async editEvent(_, button){
       const existingEvent = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event];
-      await this.setEvent(existingEvent);
+      await this.constructor.setEvent(this.tabGroups.main, null, existingEvent);
     }
 
     static editEventToggle(){
@@ -3234,6 +3240,16 @@ class SystemView extends HandlebarsApplicationMixin(
       }});
     }
 
+    async researchCheckActionUpdate(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.researchCheck}.skillChecks.${button.dataset.skillCheck}.skills.${button.dataset.skill}`]: {
+        action: button.value,
+        variant: null,
+      }});
+    }
+
     static async researhCheckPointsUpdate(_, button) {
       const currentPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchChecks[button.dataset.check].currentResearchPoints;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.currentResearchPoints`]: button.dataset.increase ? currentPoints + 1 : currentPoints - 1 });
@@ -3711,6 +3727,36 @@ class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.results.${button.dataset.result}.nrOutcomes`]: currentOutcomes - 1 });
     }
 
+    async infiltrationObstacleActionUpdate(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.objectives.${button.dataset.objective}.obstacles.${button.dataset.obstacle}.skillChecks.${button.dataset.skillCheck}.skills.${button.dataset.skill}`]: {
+        action: button.value,
+        variant: null,
+      }});
+    }
+
+    async infiltrationComplicationActionUpdate(event){
+      event.stopPropagation();
+      const button = event.currentTarget;
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.skillChecks.${button.dataset.skillCheck}.skills.${button.dataset.skill}`]: {
+        action: button.value,
+        variant: null,
+      }});
+    }
+
+    async infiltrationPreparationActionUpdate(event){
+      event.stopPropagation();
+      const button = event.currentTarget;
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.skillChecks.${button.dataset.skillCheck}.skills.${button.dataset.skill}`]: {
+        action: button.value,
+        variant: null,
+      }});
+    }
+
     static async infiltrationToggleOpenEdge(_, button) {
       this.selected.infiltration.openEdge = this.selected.infiltration.openEdge === button.dataset.edge ? null : button.dataset.edge;
       this.render({ parts: [this.tabGroups.main] });
@@ -3947,6 +3993,26 @@ class SystemView extends HandlebarsApplicationMixin(
 
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influenceSkills.${button.dataset.skill}.skill`]: newSkill });
     }
+
+    async updateInfluenceDiscoveryAction(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.discoveries.${button.dataset.discovery}`]: {
+        action: button.value,
+        variant: null,
+      }});
+    }
+
+    async updateInfluenceInfluenceAction(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influenceSkills.${button.dataset.influenceSkill}`]: {
+        action: button.value,
+        variant: null,
+      }});
+    }
     //#endregion
 
     async updateResearchLore(event) {
@@ -4156,6 +4222,7 @@ class SystemView extends HandlebarsApplicationMixin(
           $(htmlElement).find('.research-lore-input').on('change', this.updateResearchLore.bind(this));
           $(htmlElement).find('.research-skill-check-input').on('change', this.updateResearchSkillCheck.bind(this));
           $(htmlElement).find('.research-check-maximum-input').on('change', this.researchCheckMaxPointsUpdate.bind(this));
+          $(htmlElement).find('.research-check-action-input').on('change', this.researchCheckActionUpdate.bind(this));
           break;
         case 'infiltration':
           $(htmlElement).find('.radio-button').on('contextmenu', this.toggleObjectiveHidden.bind(this));
@@ -4167,6 +4234,9 @@ class SystemView extends HandlebarsApplicationMixin(
           $(htmlElement).find('.infiltration-activity-leveled-DC').on('change', this.updateInfiltrationActivityLeveldDC.bind(this));
           $(htmlElement).find('.infiltration-activity-lore').on('change', this.updateInfiltrationActivityLore.bind(this));
           $(htmlElement).find('.infiltration-activity-result-button').on('contextmenu', this.infiltrationActivityDecreaseResultsOutcome.bind(this));
+          $(htmlElement).find('.infiltration-obstacle-action-input').on('change', this.infiltrationObstacleActionUpdate.bind(this));
+          $(htmlElement).find('.infiltration-complication-action-input').on('change', this.infiltrationComplicationActionUpdate.bind(this));
+          $(htmlElement).find('.infiltration-preparation-action-input').on('change', this.infiltrationPreparationActionUpdate.bind(this));
 
           const adjustmentOptions = Object.values(dcAdjustments);
           const tagOptions = Object.keys(CONFIG.PF2E.actionTraits).map(x => ({ value: x, name: game.i18n.localize(CONFIG.PF2E.actionTraits[x]) }));
@@ -4181,6 +4251,8 @@ class SystemView extends HandlebarsApplicationMixin(
           $(htmlElement).find('.influence-skill-lore-input').on('change', this.updateInfluenceSkillLore.bind(this));
           $(htmlElement).find('.influence-discovery-skill-input').on('change', this.updateInfluenceDiscoverySkill.bind(this));
           $(htmlElement).find('.influence-influence-skill-skill-input').on('change', this.updateInfluenceInfluenceSkillSkill.bind(this));
+          $(htmlElement).find('.influence-discovery-action-input').on('change', this.updateInfluenceDiscoveryAction.bind(this));
+          $(htmlElement).find('.influence-influence-action-input').on('change', this.updateInfluenceInfluenceAction.bind(this));
           break;
       }
     }
@@ -4271,10 +4343,10 @@ class SystemView extends HandlebarsApplicationMixin(
                 for(var skillKey of skills){
                   const skillCheck = checkSkill.skills[skillKey];
                   if(skillCheck.action) {
-                    skillCheck.element = await TextEditor.enrichHTML(`[[/act ${skillCheck.action} stat=${skillCheck.skill} dc=${skillCheck.dc}]]`);  
+                    skillCheck.element = await getActButton(skillCheck.action, skillCheck.variant, skillCheck.skill, skillCheck.dc, false);  
                   }
                   else {
-                    skillCheck.element = await TextEditor.enrichHTML(`@Check[type:${skillCheck.skill}|dc:${skillCheck.dc}|simple:${skillCheck.simple}]`);
+                    skillCheck.element = await getCheckButton(skillCheck.skill, skillCheck.dc, skillCheck.simple, false);
                   }
                   skillCheck.isFirst = skills[0] === skillCheck.id;
                 }
@@ -4392,6 +4464,7 @@ class SystemView extends HandlebarsApplicationMixin(
                       id: skill.id,
                       variantOptions: skill.action ? [...game.pf2e.actions.get(skill.action).variants].map(x => ({ value: x.slug, name: x.name })) : [],
                       variant: skill.variant,
+                      disabled: skill.action ? game.pf2e.actions.get(skill.action).variants.size === 0 : true,
                     });
     
                     return acc;
@@ -4558,6 +4631,7 @@ class SystemView extends HandlebarsApplicationMixin(
           const { events: influenceEvents } = game.settings.get(MODULE_ID, 'influence');
           
           context.settings = game.settings.get(MODULE_ID, settingIDs.influence.settings);
+          context.selected = this.selected;
           context.tab = context.systems.influence;
           await this.setupEvents(influenceEvents, context);
 
@@ -4579,6 +4653,10 @@ class SystemView extends HandlebarsApplicationMixin(
                   'title="Post prompt to chat"',
                   "",
                 );
+
+                if(discovery.element.match('<span')){
+                  discovery.element = discovery.element.replace('class="with-repost"', 'class="with-repost disabled"');
+                }
               }
             }
 
@@ -4592,6 +4670,10 @@ class SystemView extends HandlebarsApplicationMixin(
                   'title="Post prompt to chat"',
                   "",
                 );
+
+                if(skill.element.match('<span')){
+                  skill.element = skill.element.replace('class="with-repost"', 'class="with-repost disabled"');
+                }
               }
             }
 
@@ -4779,9 +4861,13 @@ class SystemView extends HandlebarsApplicationMixin(
     }
 }
 
-const openSubsystemView = async (tab, event) => {
-    new SystemView(tab, event).render(true);
-  };
+const openSubsystemView = async (tab, event, options) => {
+  new SystemView(tab, event, false, options).render(true);
+};
+
+const addEvent = async (subsystem, resolve) => {
+  await SystemView.setEvent(subsystem, resolve);
+};
 
 const startEvent = async (tab, event) => {
   if(!tab) {
@@ -4806,6 +4892,7 @@ const startEvent = async (tab, event) => {
 
 var macros = /*#__PURE__*/Object.freeze({
   __proto__: null,
+  addEvent: addEvent,
   openSubsystemView: openSubsystemView,
   startEvent: startEvent
 });

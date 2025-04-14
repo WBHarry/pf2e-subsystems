@@ -1,9 +1,13 @@
 import { MODULE_ID } from "../data/constants";
 import SystemView from "../module/systemView";
 
-export const openSubsystemView = async (tab, event) => {
-    new SystemView(tab, event).render(true);
-  };
+export const openSubsystemView = async (tab, event, options) => {
+  new SystemView(tab, event, false, options).render(true);
+};
+
+export const addEvent = async (subsystem, resolve) => {
+  await SystemView.setEvent(subsystem, resolve);
+}
 
 export const startEvent = async (tab, event) => {
   if(!tab) {

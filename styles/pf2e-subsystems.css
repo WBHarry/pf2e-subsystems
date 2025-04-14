@@ -507,6 +507,11 @@ form.pf2e-subsystems.application > header .header-control {
   align-items: center;
   gap: 4px;
 }
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-simple-container .event-simple-input {
+  width: 40px;
+  height: 27px;
+  text-align: center;
+}
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-inner-tabs {
   width: 100%;
   display: flex;
@@ -1948,6 +1953,9 @@ form.pf2e-subsystems.application > header .header-control {
   position: absolute;
   right: -20px;
 }
+.pf2e-subsystems .influence-view .event-outer-container .event-container .event-simple-input .event-section-number-container {
+  justify-content: flex-end;
+}
 .pf2e-subsystems .influence-view .event-outer-container .event-container .influence-cards {
   display: flex;
   flex-direction: column;
@@ -2285,6 +2293,9 @@ form.pf2e-subsystems.application > header .header-control {
   border-bottom-width: 1px;
   border-bottom-style: solid;
   border-bottom-color: var(--pf2e-subsystem-theming-border);
+}
+.pf2e-subsystems .event-skill-grid .event-skill-grid-col .event-skill-grid-cell.informative {
+  cursor: help;
 }
 .pf2e-subsystems .event-skill-grid .event-skill-grid-col .event-skill-grid-cell.spaced {
   gap: 4px;

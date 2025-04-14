@@ -129,6 +129,7 @@ export class Influence extends foundry.abstract.DataModel {
             id: discovery.id,
             variantOptions: discovery.action ? [...game.pf2e.actions.get(discovery.action).variants].map(x => ({ value: x.slug, name: x.name })) : [],
             variant: discovery.variant,
+            disabled: discovery.action ? game.pf2e.actions.get(discovery.action).variants.size === 0 : true,
           });
           acc.dc.push({
             event: this.id,
@@ -167,6 +168,7 @@ export class Influence extends foundry.abstract.DataModel {
             id: skill.id,
             variantOptions: skill.action ? [...game.pf2e.actions.get(skill.action).variants].map(x => ({ value: x.slug, name: x.name })) : [],
             variant: skill.variant,
+            disabled: skill.action ? game.pf2e.actions.get(skill.action).variants.size === 0 : true,
           });
           acc.dc.push({
             event: this.id,

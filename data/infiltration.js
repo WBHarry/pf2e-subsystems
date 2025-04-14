@@ -182,6 +182,7 @@ export class Infiltration extends foundry.abstract.DataModel {
                   id: skill.id,
                   variantOptions: skill.action ? [...game.pf2e.actions.get(skill.action).variants].map(x => ({ value: x.slug, name: x.name })) : [],
                   variant: skill.variant,
+                  disabled: skill.action ? game.pf2e.actions.get(skill.action).variants.size === 0 : true,
                 });
 
                 return acc;
@@ -233,6 +234,7 @@ export class Infiltration extends foundry.abstract.DataModel {
                   id: skill.id,
                   variantOptions: skill.action ? [...game.pf2e.actions.get(skill.action).variants].map(x => ({ value: x.slug, name: x.name })) : [],
                   variant: skill.variant,
+                  disabled: skill.action ? game.pf2e.actions.get(skill.action).variants.size === 0 : true,
                 });
   
                 return acc;

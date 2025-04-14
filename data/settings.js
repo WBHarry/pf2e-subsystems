@@ -45,6 +45,7 @@ export class InfluenceSettings extends foundry.abstract.DataModel {
     const fields = foundry.data.fields;
     return {
       autoRevealInfluence: new fields.BooleanField({ required: true, initial: false }),
+      showPerceptionAndWill: new fields.BooleanField({ required: true, initial: false }),
     }
   }
 }

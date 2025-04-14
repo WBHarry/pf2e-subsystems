@@ -285,15 +285,15 @@
                                                                         <div class="event-skill-grid-col">
                                                                             <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Action"}}</div>
                                                                             {{#each this.columns.action}}
-                                                                                <select name="{{concat "events." this.event ".objectives." this.objective ".obstacles." this.obstacle ".skillChecks." this.skillCheck ".skills." this.id ".action" }}" class="primary-text-container event-skill-grid-cell">
+                                                                                <select class="infiltration-obstacle-action-input primary-text-container event-skill-grid-cell" data-event="{{this.event}}" data-objective="{{this.objective}}" data-obstacle="{{this.obstacle}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}">
                                                                                     {{selectOptions ../../../actionOptions selected=this.action valueAttr="value" labelAttr="name" localize=true blank="" }}
                                                                                 </select>
                                                                             {{/each}}
                                                                         </div>
                                                                         <div class="event-skill-grid-col">
-                                                                            <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
+                                                                            <div class="event-skill-grid-cell informative header" title="{{localize "PF2ESubsystems.View.VariantExplanation"}}">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
                                                                             {{#each this.columns.variant}}
-                                                                                <select name="{{concat "events." this.event ".objectives." this.objective ".obstacles." this.obstacle ".skillChecks." this.skillCheck ".skills." this.id ".variant" }}" class="primary-text-container event-skill-grid-cell">
+                                                                                <select name="{{concat "events." this.event ".objectives." this.objective ".obstacles." this.obstacle ".skillChecks." this.skillCheck ".skills." this.id ".variant" }}" class="primary-text-container event-skill-grid-cell" {{#if this.disabled}}disabled{{/if}}>
                                                                                     {{selectOptions this.variantOptions selected=this.variant valueAttr="value" labelAttr="name" localize=true blank="" }}
                                                                                 </select>
                                                                             {{/each}}
@@ -546,15 +546,15 @@
                                                                     <div class="event-skill-grid-col">
                                                                         <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Action"}}</div>
                                                                         {{#each this.columns.action}}
-                                                                            <select name="{{concat "events." this.event ".complications." this.complication ".skillChecks." this.skillCheck ".skills." this.id ".action" }}" class="primary-text-container event-skill-grid-cell">
+                                                                            <select class="infiltration-complication-action-input primary-text-container event-skill-grid-cell" data-event="{{this.event}}" data-complication="{{this.complication}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}">
                                                                                 {{selectOptions ../../../actionOptions selected=this.action valueAttr="value" labelAttr="name" localize=true blank="" }}
                                                                             </select>
                                                                         {{/each}}
                                                                     </div>
                                                                     <div class="event-skill-grid-col">
-                                                                        <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
+                                                                        <div class="event-skill-grid-cell informative header" title="{{localize "PF2ESubsystems.View.VariantExplanation"}}">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
                                                                         {{#each this.columns.variant}}
-                                                                            <select name="{{concat "events." this.event ".complications." this.complication ".skillChecks." this.skillCheck ".skills." this.id ".variant" }}" class="primary-text-container event-skill-grid-cell">
+                                                                            <select name="{{concat "events." this.event ".complications." this.complication ".skillChecks." this.skillCheck ".skills." this.id ".variant" }}" class="primary-text-container event-skill-grid-cell" {{#if this.disabled}}disabled{{/if}}>
                                                                                 {{selectOptions this.variantOptions selected=this.variant valueAttr="value" labelAttr="name" localize=true blank="" }}
                                                                             </select>
                                                                         {{/each}}
@@ -794,15 +794,15 @@
                                                             <div class="event-skill-grid-col">
                                                                 <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Action"}}</div>
                                                                 {{#each this.columns.action}}
-                                                                    <select name="{{concat "events." this.event ".preparations.activities." this.activity ".skillChecks." this.skillCheck ".skills." this.id ".action" }}" class="primary-text-container event-skill-grid-cell">
+                                                                    <select class="infiltration-preparation-action-input primary-text-container event-skill-grid-cell" data-event="{{this.event}}" data-activity="{{this.activity}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}">
                                                                         {{selectOptions ../../../actionOptions selected=this.action valueAttr="value" labelAttr="name" localize=true blank="" }}
                                                                     </select>
                                                                 {{/each}}
                                                             </div>
                                                             <div class="event-skill-grid-col">
-                                                                <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
+                                                                <div class="event-skill-grid-cell informative header" title="{{localize "PF2ESubsystems.View.VariantExplanation"}}">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
                                                                 {{#each this.columns.variant}}
-                                                                    <select name="{{concat "events." this.event ".preparations.activities." this.activity ".skillChecks." this.skillCheck ".skills." this.id ".variant" }}" class="primary-text-container event-skill-grid-cell">
+                                                                    <select name="{{concat "events." this.event ".preparations.activities." this.activity ".skillChecks." this.skillCheck ".skills." this.id ".variant" }}" class="primary-text-container event-skill-grid-cell" {{#if this.disabled}}disabled{{/if}}>
                                                                         {{selectOptions this.variantOptions selected=this.variant valueAttr="value" labelAttr="name" localize=true blank="" }}
                                                                     </select>
                                                                 {{/each}}
@@ -866,8 +866,8 @@
                                                     <div class="infiltration-complication-skill-buttons">
                                                         {{#each this.dcAdjustmentValues}}
                                                             <div 
-                                                                class="infiltration-complication-skill-adjustment primary-text-container tertiary-container {{#if ../isGM}}clickable-icon{{/if}} {{#if (not (eq this.value ../selectedAdjustment))}}inactive{{/if}}" 
-                                                                {{#if ../isGM}}data-action="infiltrationActivityToggleAdjustment"{{/if}} data-event="{{../../../event.id}}" data-activity="{{../../id}}" data-skill-check="{{../id}}" data-adjustment="{{this.value}}">{{this.name}}
+                                                                class="infiltration-complication-skill-adjustment primary-text-container tertiary-container {{#if ../../../isGM}}clickable-icon{{/if}} {{#if (not (eq this.value ../selectedAdjustment))}}inactive{{/if}}" 
+                                                                {{#if ../../../isGM}}data-action="infiltrationActivityToggleAdjustment"{{/if}} data-event="{{../../../event.id}}" data-activity="{{../../id}}" data-skill-check="{{../id}}" data-adjustment="{{this.value}}">{{this.name}}
                                                             </div>
                                                         {{/each}}
                                                     </div>
