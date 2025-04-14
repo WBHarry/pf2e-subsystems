@@ -325,7 +325,7 @@
                                             <div class="modifier-card-description {{#if ../isGM}}clickable-icon{{/if}} {{#if this.hidden}}unrevealed{{/if}}" {{#if ../isGM}}data-action="influenceWeaknessToggleHidden"{{/if}} data-event="{{../event.id}}" data-weakness="{{this.id}}">{{{this.enrichedDescription}}}</div>
                                             {{#if ../isGM}}
                                                 <div class="modifier-card-action-container clickable-icon {{#if this.modifier.used}}used{{/if}}" data-action="influenceWeaknessToggleUsed" data-event="{{../event.id}}" data-weakness="{{this.id}}">
-                                                    <div class="modifier-card-action tertiary-container">-{{this.modifier.value}}</div>
+                                                    <div class="modifier-card-action tertiary-container">{{this.modifier.value}}</div>
                                                     <i class="fa-solid fa-bolt-lightning modifier-card-action-icon"></i>
                                                     {{#if (not this.modifier.used)}}<i class="fa-solid fa-slash modifier-card-action-icon-slash"></i>{{/if}}
                                                 </div>
