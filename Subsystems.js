@@ -1583,7 +1583,7 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$2(
   }
 }
 
-const currentVersion = '0.7.0';
+const currentVersion = '0.7.1';
 
 const registerKeyBindings = () => {
   game.keybindings.register(MODULE_ID, "open-system-view", {
@@ -1922,12 +1922,12 @@ const disableRollButton = (disable, html) => {
     return html.match(/style="/) ? html.replace(/style="/, 'style="opacity: 0.4; pointer-events: none; ') : html.replace(/<a/, '<a style="opacity: 0.4; pointer-events: none; "').replace(/<span/, '<span style="opacity: 0.4; pointer-events: none; "');
 }; 
 
-const getActButton = async(action, variant, skill, dc, disableElement) => {
-    return disableRollButton(disableElement, await TextEditor.enrichHTML(`[[/act ${action} ${variant ? `variant=${variant} ` : ''}stat=${skill} dc=${dc}]]`));
+const getActButton = async(action, variant, skill, dc, disableElement, secret = false) => {
+    return disableRollButton(disableElement, await TextEditor.enrichHTML(`[[/act ${action} ${variant ? `variant=${variant} ` : ''}stat=${skill} dc=${dc}${secret ? ' traits=secret' : ''}]]`));
 };
 
-const getCheckButton = async(skill, dc, simple, disableElement) => {
-    return disableRollButton(disableElement, await TextEditor.enrichHTML(`@Check[type:${skill}|dc:${dc}|simple:${simple}]`));
+const getCheckButton = async(skill, dc, simple, disableElement, secret = false) => {
+    return disableRollButton(disableElement, await TextEditor.enrichHTML(`@Check[type:${skill}|dc:${dc}|simple:${simple}${secret ? '|traits:secret' : ''}]`));
 };
 
 const { HandlebarsApplicationMixin: HandlebarsApplicationMixin$1, ApplicationV2: ApplicationV2$1 } = foundry.applications.api;
@@ -4646,7 +4646,7 @@ class SystemView extends HandlebarsApplicationMixin(
             for(var key of Object.keys(context.selectedEvent.extendedDiscoveries.data)) {
               const discovery = context.selectedEvent.extendedDiscoveries.data[key];
               const dc = discovery.dc;
-              discovery.element = discovery.action ? await getActButton(discovery.action, discovery.variant, discovery.skill, dc, false) : await getCheckButton(discovery.skill, dc, false, false);
+              discovery.element = discovery.action ? await getActButton(discovery.action, discovery.variant, discovery.skill, dc, false, true) : await getCheckButton(discovery.skill, dc, false, false, true);
               if (game.user.isGM) {
                 discovery.element = discovery.element.replace('><i', ' disabled><i');
                 discovery.element = discovery.element.replace(

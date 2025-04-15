@@ -2675,7 +2675,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
             for(var key of Object.keys(context.selectedEvent.extendedDiscoveries.data)) {
               const discovery = context.selectedEvent.extendedDiscoveries.data[key];
               const dc = discovery.dc;
-              discovery.element = discovery.action ? await getActButton(discovery.action, discovery.variant, discovery.skill, dc, false) : await getCheckButton(discovery.skill, dc, false, false);
+              discovery.element = discovery.action ? await getActButton(discovery.action, discovery.variant, discovery.skill, dc, false, true) : await getCheckButton(discovery.skill, dc, false, false, true);
               if (game.user.isGM) {
                 discovery.element = discovery.element.replace('><i', ' disabled><i');
                 discovery.element = discovery.element.replace(
