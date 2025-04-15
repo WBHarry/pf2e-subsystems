@@ -2615,15 +2615,21 @@ export default class SystemView extends HandlebarsApplicationMixin(
                 const disableElement = skillCheck.dcAdjustments.length > 0 && !skillCheck.selectedAdjustment;
                 for(var key of Object.keys(skillCheck.skills)){
                   const skill = skillCheck.skills[key];
+                  const secret = activity.tags.includes('secret');
                   if(skill.action) {
-                    skill.element = await getActButton(skill.action, skill.variant, skill.skill, dc, disableElement);  
+                    skill.element = await getActButton(skill.action, skill.variant, skill.skill, dc, disableElement, secret);  
                   }
                   else {
-                    skill.element = await getCheckButton(skill.skill, dc, skill.simple, disableElement);
+                    skill.element = await getCheckButton(skill.skill, dc, skill.simple, disableElement, secret);
                   }
                 }
               }
 
+              const resultOutcomes = Object.values(activity.results).reduce((acc, curr) => {
+                const usedDegree = game.user.isGM ? curr.degreeOfSuccess : (curr.fakeDegreeOfSuccess ?? curr.degreeOfSuccess);
+                acc[usedDegree] += curr.nrOutcomes;
+                return acc;
+              }, { criticalSuccess: 0, success: 0, failure: 0, criticalFailure: 0 });
               for(var key of Object.keys(activity.results)) {
                 var result = activity.results[key];
                 result.name = game.i18n.localize(degreesOfSuccess[result.degreeOfSuccess].name);
@@ -2632,8 +2638,9 @@ export default class SystemView extends HandlebarsApplicationMixin(
                   if(key !== result.degreeOfSuccess) acc[key] = degreesOfSuccess[key];
                   return acc;
                 }, {});
-                
-                const titleElement = `<p><strong class="infiltration-result-container ${result.nrOutcomes === 0 ? 'inactive' : ''} ${context.isGM ? 'clickable-icon' : ''} tertiary-container primary-text-container infiltration-activity-result-button" ${context.isGM ? 'data-action="infiltrationActivityIncreaseResultsOutcome"' : ''} data-event="${context.selectedEvent.id}" data-activity="${activity.id}" data-result="${result.degreeOfSuccess}">${result.name} ${result.nrOutcomes}x</strong>`;
+
+                const shownResultOutcomes = resultOutcomes[result.degreeOfSuccess];
+                const titleElement = `<p><strong class="infiltration-result-container ${result.nrOutcomes === 0 ? 'inactive' : ''} ${context.isGM ? 'clickable-icon' : ''} tertiary-container primary-text-container infiltration-activity-result-button" ${context.isGM ? 'data-action="infiltrationActivityIncreaseResultsOutcome"' : ''} data-event="${context.selectedEvent.id}" data-activity="${activity.id}" data-result="${result.degreeOfSuccess}">${result.name} ${shownResultOutcomes}x</strong>`;
                 const descriptionStartsWithParagraph = result.description.match(/^<p>/);
                 result.enrichedDescription = await TextEditor.enrichHTML(descriptionStartsWithParagraph ? result.description.replace('<p>', `${titleElement} `) : `${titleElement} ${result.description}`);
               }
