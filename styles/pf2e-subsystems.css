@@ -644,10 +644,10 @@ form.pf2e-subsystems.application > header .header-control {
   flex: 33%;
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-section.split.focused {
-  flex: 80%;
+  flex: 60%;
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-section.split.unfocused {
-  flex: 10;
+  flex: 20;
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-section .event-section-title,
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-view-container .event-section-title {
@@ -686,10 +686,10 @@ form.pf2e-subsystems.application > header .header-control {
   flex: 33%;
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-radio-container.focused {
-  flex: 80%;
+  flex: 60%;
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-radio-container.unfocused {
-  flex: 10;
+  flex: 20;
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-radio-container .event-radio-header {
   position: relative;

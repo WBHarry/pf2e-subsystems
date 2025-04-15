@@ -6,7 +6,7 @@
             </div>
             <div class="system-title-inner-container title-large-container primary-text-container">
                 <div>{{this.plural}}</div>
-                <i class="fa-solid fa-plus system-title-add-button primary-text-container clickable-icon" data-action="addEvent"></i>
+                {{#if this.isGM}}<i class="fa-solid fa-plus system-title-add-button primary-text-container clickable-icon" data-action="addEvent"></i>{{/if}}
             </div>
         </div>
                 
