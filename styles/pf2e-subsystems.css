@@ -1664,6 +1664,7 @@ form.pf2e-subsystems.application > header .header-control {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-height: 280px;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .event-sidebar .description-outer-container .description-container {
   padding: 4px;
@@ -1675,6 +1676,9 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .event-sidebar .description-outer-container .description-container textarea {
   flex: 1;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .event-sidebar .infiltration-points-container .event-section-title {
+  border-width: 0;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .event-sidebar .awareness-points-container {
   display: flex;

@@ -130,6 +130,18 @@ export class Infiltration extends foundry.abstract.DataModel {
       }
     }
 
+    get totalInfiltrationPoints() {
+      return Object.values(this.objectives).reduce((acc, curr) => {
+        acc += Object.values(curr.obstacles).reduce((acc, curr) => {
+          acc += curr.infiltrationPoints.current ?? 0;
+
+          return acc;
+        }, 0);
+
+        return acc;
+      }, 0);
+    }
+
     get visibleAwareness() {
       return game.user.isGM ? this.awarenessPoints.current + this.awarenessPoints.hidden : this.awarenessPoints.current; 
     }

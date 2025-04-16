@@ -19,6 +19,12 @@
     </div>
     <div class="event-container">
         <div class="event-sidebar">
+            <div class="infiltration-points-container event-section primary-container accent">
+                <div class="event-section-title title-small-container primary-container">
+                    {{localize "PF2ESubsystems.Infiltration.InfiltrationPoints"}}
+                    {{this.event.totalInfiltrationPoints}}
+                </div>
+            </div>
             {{#if (or this.isGM (not this.settings.hideAwareness))}}
                 <div class="awareness-points-container {{#if this.editMode}}edit-mode{{/if}} event-section primary-container accent">
                     <div class="awareness-points-inner-container event-section-title controls title-small-container primary-container">
@@ -40,7 +46,7 @@
                         {{#each this.event.awarenessPoints.breakpoints}}
                             {{#if (or ../isGM (not this.playerHidden))}}
                                 <div class="awareness-point-breakpoint-container {{#if this.open}}open{{/if}} secondary-container {{#if this.active}}accent{{/if}}">
-                                    <div class="awareness-point-breakpoint-inner-container title-small-container">
+                                    <div class="awareness-point-breakpoint-inner-container text-normal bold">
                                         {{this.breakpoint}}
                                         <div>{{localize "PF2ESubsystems.Basic.Points"}}</div>
                                         {{#if ../editMode}}

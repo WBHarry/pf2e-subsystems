@@ -828,6 +828,18 @@ class Infiltration extends foundry.abstract.DataModel {
       }
     }
 
+    get totalInfiltrationPoints() {
+      return Object.values(this.objectives).reduce((acc, curr) => {
+        acc += Object.values(curr.obstacles).reduce((acc, curr) => {
+          acc += curr.infiltrationPoints.current ?? 0;
+
+          return acc;
+        }, 0);
+
+        return acc;
+      }, 0);
+    }
+
     get visibleAwareness() {
       return game.user.isGM ? this.awarenessPoints.current + this.awarenessPoints.hidden : this.awarenessPoints.current; 
     }
@@ -1591,7 +1603,7 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$3(
   }
 }
 
-const currentVersion = '0.7.5';
+const currentVersion = '0.7.6';
 
 const registerKeyBindings = () => {
   game.keybindings.register(MODULE_ID, "open-system-view", {
@@ -5550,7 +5562,7 @@ Hooks.once("init", () => {
 
     RegisterHandlebarsHelpers.registerHelpers();
     game.socket.on(SOCKET_ID, handleSocketEvent);
-    CONFIG.debug.hooks = true;
+
     loadTemplates([
       "modules/pf2e-subsystems/templates/partials/navigate-back.hbs",
       "modules/pf2e-subsystems/templates/partials/events.hbs",

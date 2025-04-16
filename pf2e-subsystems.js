@@ -20,7 +20,7 @@ Hooks.once("init", () => {
 
     RegisterHandlebarsHelpers.registerHelpers();
     game.socket.on(SOCKET_ID, handleSocketEvent);
-    CONFIG.debug.hooks = true;
+
     loadTemplates([
       "modules/pf2e-subsystems/templates/partials/navigate-back.hbs",
       "modules/pf2e-subsystems/templates/partials/events.hbs",
