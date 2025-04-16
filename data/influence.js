@@ -15,6 +15,7 @@ export class Influence extends foundry.abstract.DataModel {
       const fields = foundry.data.fields;
       return {
         id: new fields.StringField({ required: true }),
+        moduleProvider: new fields.StringField(),
         name: new fields.StringField({ required: true }),
         version: new fields.StringField({ required: true }),
         background: new fields.StringField({ required: true }),

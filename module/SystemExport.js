@@ -86,94 +86,35 @@ export default class SystemExport extends HandlebarsApplicationMixin(Application
             influence: Object.values(game.settings.get(MODULE_ID, 'influence').events).reduce((acc, curr) => {
                 const influence = curr.toObject();
                 if(this.influences.some(x => x.selected && x.id === influence.id)){
-                    acc.push({
-                        ...influence,
-                        discoveries: Object.values(influence.discoveries),
-                        influenceSkills: Object.values(influence.influenceSkills),
-                        influence: Object.values(influence.influence),
-                        weaknesses: Object.values(influence.weaknesses),
-                        resistances: Object.values(influence.resistances),
-                        penalties: Object.values(influence.penalties),
-                    });
+                    acc[influence.id] = influence;
                 }
 
                 return acc;
-            }, []),
+            }, {}),
             chase: Object.values(game.settings.get(MODULE_ID, 'chase').events).reduce((acc, curr) => {
                 const chase = curr.toObject();
                 if(this.chases.some(x => x.selected && x.id === chase.id)){
-                    acc.push({
-                        ...chase,
-                        participants: Object.values(chase.participants),
-                        obstacles: Object.values(chase.obstacles),
-                    });
+                    acc[chase.id] = chase;
                 }
 
                 return acc;
-            }, []),
+            }, {}),
             research: Object.values(game.settings.get(MODULE_ID, 'research').events).reduce((acc, curr) => {
                 const research = curr.toObject();
                 if(this.researches.some(x => x.selected && x.id === research.id)){
-                    acc.push({
-                        ...research,
-                        researchChecks: Object.values(research.researchChecks).map(check => ({
-                            ...check,
-                            skillChecks: Object.values(check.skillChecks).map(skillCheck => ({
-                                ...skillCheck,
-                                skills: Object.values(skillCheck.skills),
-                            }))
-                        })),
-                        researchBreakpoints: Object.values(research.researchBreakpoints),
-                        researchEvents: Object.values(research.researchEvents),
-                    });
+                    acc[research.id] = research;
                 }
 
                 return acc;
-            }, []),
+            }, {}),
             infiltration: Object.values(game.settings.get(MODULE_ID, 'infiltration').events).reduce((acc, curr) => {
                 const infiltration = curr.toObject();
                 if(this.infiltrations.some(x => x.selected && x.id === infiltration.id)){
-                    acc.push({
-                        ...infiltration,
-                        awarenessPoints: {
-                            ...infiltration.awarenessPoints,
-                            breakpoints: Object.values(infiltration.awarenessPoints),
-                        },
-                        edgePoints: Object.values(infiltration.edgePoints),
-                        objectives: Object.values(infiltration.objectives).map(objective => ({
-                            ...objective,
-                            obstacles: Object.values(objective.obstacles).map(obstacle => ({
-                                ...obstacle,
-                                infiltrationPointData: Object.values(obstacle.infiltrationPointData),
-                                skillChecks: Object.values(obstacle.skillChecks).map(skillCheck => ({
-                                    ...skillCheck,
-                                    skills: Object.values(skillCheck.skills),
-                                })),
-                            }))
-                        })),
-                        complications: Object.values(infiltration.complications).map(complication => ({
-                            ...complication,
-                            skillChecks: Object.values(complication.skillChecks).map(skillCheck => ({
-                                ...skillCheck,
-                                skills: Object.values(skillCheck.skills),
-                            })),
-                        })),
-                        opportunities: Object.values(infiltration.opportunities),
-                        preparations: {
-                            ...infiltration.preparations,
-                            activities: Object.values(infiltration.preparations.activities).map(activity => ({
-                                ...activity,
-                                skillChecks: Object.values(activity.skillChecks).map(skillCheck => ({
-                                    ...skillCheck,
-                                    skills: Object.values(skillCheck.skills),
-                                })),
-                            })),
-                        },
-                    });
+                    acc[infiltration.id] = infiltration;
                 }
 
                 return acc;
-            }, []),
+            }, {}),
         };
         saveDataToFile(
             JSON.stringify(jsonData, null, 2),

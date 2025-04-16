@@ -1,5 +1,6 @@
 import { MODULE_ID } from "../data/constants";
 import SystemView from "../module/systemView";
+import { versionCompare } from "./helpers";
 
 export const openSubsystemView = async (tab, event, options) => {
   new SystemView(tab, event, false, options).render(true);
@@ -30,72 +31,21 @@ export const startEvent = async (tab, event) => {
   systemView.onStartEvent(event);
 }
 
-export const registerSubsystemEvents = async (moduleId, jsonData) => {
+export const registerSubsystemEvents = async (moduleId, version, jsonData) => {
   const subsystemProviders = game.settings.get(MODULE_ID, 'subsystem-providers');
-  if(subsystemProviders[moduleId]?.registered) return;
+  if(subsystemProviders[moduleId]?.version && !versionCompare(subsystemProviders[moduleId].version, version)) return;
   
-  if(jsonData.influence?.length > 0) {
+  if(jsonData.influence) {
     const existingInfluence = game.settings.get(MODULE_ID, 'influence');
     await existingInfluence.updateSource({
-      events: jsonData.influence.reduce((acc, influence) => {
-        const influenceId = foundry.utils.randomID();
-        acc[influenceId] = {
-          ...influence,
-          id: influenceId,
-          discoveries: influence.discoveries.reduce((acc, discovery) => {
-            const discoveryId = foundry.utils.randomID();
-            acc[discoveryId] = {
-              ...discovery,
-              id: discoveryId,
-            }
-  
-            return acc;
-          }, {}),
-          influenceSkills: influence.influenceSkills.reduce((acc, influenceSkill) => {
-            const skillId = foundry.utils.randomID();
-            acc[skillId] = {
-              ...influenceSkill,
-              id: skillId,
-            }
-  
-            return acc;
-          }, {}),
-          influence: influence.influence.reduce((acc, influence) => {
-            const influenceId = foundry.utils.randomID();
-            acc[influenceId] = {
-              ...influence,
-              id: influenceId,
-            }
-  
-            return acc;
-          }, {}),
-          weaknesses: influence.weaknesses.reduce((acc, weakness) => {
-            const weaknessId = foundry.utils.randomID();
-            acc[weaknessId] = {
-              ...weakness,
-              id: weaknessId,
-            }
-  
-            return acc;
-          }, {}),
-          resistances: influence.resistances.reduce((acc, resistance) => {
-            const resistanceId = foundry.utils.randomID();
-            acc[resistanceId] = {
-              ...resistance,
-              id: resistanceId,
-            }
-  
-            return acc;
-          }, {}),
-          penalties: influence.penalties.reduce((acc, penalty) => {
-            const penaltyId = foundry.utils.randomID();
-            acc[penaltyId] = {
-              ...penalty,
-              id: penaltyId,
-            }
-  
-            return acc;
-          }, {}),
+      events: Object.values(jsonData.influence).reduce((acc, influence) => {
+        const { influencePoints, ...rest } = influence;
+        acc[influence.id] = {
+          ...rest,
+          moduleProvider: moduleId,
+          timeLimit: {
+            max: influence.timeLimit.max,
+          }
         };
   
         return acc;
@@ -104,28 +54,33 @@ export const registerSubsystemEvents = async (moduleId, jsonData) => {
     await game.settings.set(MODULE_ID, 'influence', existingInfluence);
   }
 
-  if(jsonData.chase?.length > 0) {
+  if(jsonData.chase) {
     const existingChase = game.settings.get(MODULE_ID, 'chase');
     await existingChase.updateSource({
-      events: jsonData.chase.reduce((acc, chase) => {
-        const chaseId = foundry.utils.randomID();
-        acc[chaseId] = {
-          ...chase,
-          id: chaseId,
-          participants: chase.participants.reduce((acc, participant) => {
-            const participantId = foundry.utils.randomID();
-            acc[participantId] = {
-              ...participant,
-              id: participantId,
-            };
-  
+      events: Object.values(jsonData.chase).reduce((acc, chase) => {
+        const { started, ...rest } = chase;
+        acc[chase.id] = {
+          ...rest,
+          moduleProvider: moduleId,
+          rounds: {
+            max: chase.rounds.max,
+          },
+          participants: Object.values(chase.participants).reduce((acc, participant) => {
+            if(!participant.player) {
+              const { hasActed, ...rest } = participant;
+              acc[participant.id] = {
+                ...rest,
+              };
+            }
+
             return acc;
           }, {}),
-          obstacles: chase.obstacles.reduce((acc, obstacle) => {
-            const obstacleId = foundry.utils.randomID();
-            acc[obstacleId] = {
+          obstacles: Object.values(chase.obstacles).reduce((acc, obstacle) => {
+            acc[obstacle.id] = {
               ...obstacle,
-              id: obstacleId,
+              chasePoints: {
+                goal: obstacle.chasePoints.goal, 
+              }
             };
   
             return acc;
@@ -138,56 +93,21 @@ export const registerSubsystemEvents = async (moduleId, jsonData) => {
     await game.settings.set(MODULE_ID, 'chase', existingChase);
   }
 
-  if(jsonData.research?.length > 0) {
+  if(jsonData.research) {
     const existingResearch = game.settings.get(MODULE_ID, 'research');
     await existingResearch.updateSource({
-      events: jsonData.research.reduce((acc, research) => {
-        const researchId = foundry.utils.randomID();
-        acc[researchId] = {
-          ...research,
-          id: researchId,
-          researchChecks: research.researchChecks.reduce((acc, check) => {
-            const researchCheckId = foundry.utils.randomID();
-            acc[researchCheckId] = {
-              ...check,
-              id: researchCheckId,
-              skillChecks: check.skillChecks.reduce((acc, skillCheck) => {
-                const skillCheckId = foundry.utils.randomID();
-                acc[skillCheckId] = {
-                  ...skillCheck,
-                  id: skillCheckId,
-                  skills: skillCheck.skills.reduce((acc, skill) => {
-                    const skillId = foundry.utils.randomID();
-                    acc[skillId] = {
-                      ...skill,
-                      id: skillId,
-                    }
-
-                    return acc;
-                  }, {}),
-                }
-                
-                return acc;
-              }, {}),
-            }
-
-            return acc;
-          }, {}),
-          researchBreakpoints: research.researchBreakpoints.reduce((acc, breakpoint) => {
-            const breakpointId = foundry.utils.randomID();
-            acc[breakpointId] = {
-              ...breakpoint,
-              id: breakpointId,
-            }
-
-            return acc;
-          }, {}),
-          researchEvents: research.researchEvents.reduce((acc, event) => {
-            const eventId = foundry.utils.randomID();
-            acc[eventId] = {
-              ...event,
-              id: eventId,
-            }
+      events: Object.values(jsonData.research).reduce((acc, research) => {
+        const { started, ...rest } = research;
+        acc[research.id] = {
+          ...rest,
+          moduleProvider: moduleId,
+          timeLimit: {
+            unit: research.timeLimit.unit,
+            max: research.timeLimit.max,
+          },
+          researchChecks: Object.values(research.researchChecks).reduce((acc, check) => {
+            const { currentResearchPoints, ...rest } = check;
+            acc[check.id]= rest;
 
             return acc;
           }, {}),
@@ -199,67 +119,36 @@ export const registerSubsystemEvents = async (moduleId, jsonData) => {
     await game.settings.set(MODULE_ID, 'research', existingResearch);
   }
 
-  if(jsonData.infiltration?.length > 0) {
+  if(jsonData.infiltration) {
     const existingInfiltration = game.settings.get(MODULE_ID, 'infiltration');
-    const update = jsonData.infiltration.reduce((acc, infiltration) => {
-      const infiltrationId = foundry.utils.randomID();
-      acc[infiltrationId] = {
+    const update = Object.values(jsonData.infiltration).reduce((acc, infiltration) => {
+      acc[infiltration.id] = {
         ...infiltration,
-        id: infiltrationId,
+        moduleProvider: moduleId,
         awarenessPoints: {
           ...infiltration.awarenessPoints,
-          breakpoints: infiltration.awarenessPoints.breakpoints.reduce((acc, breakpoint) => {
-            const breakpointId = foundry.utils.randomID();
-            acc[breakpointId] = {
-              ...breakpoint,
-              id: breakpointId,
+          breakpoints: Object.values(infiltration.awarenessPoints.breakpoints).reduce((acc, breakpoint) => {
+            const { inUse, ...rest } = breakpoint;
+            acc[breakpoint.id] = {
+              ...rest,
             };
 
             return acc;
           }, {}),
         },
-        edgePoints: infiltration.edgePoints.reduce((acc, point) => {
-          const pointId = foundry.utils.randomID();
-          acc[pointId] = {
-            ...point,
-            id: pointId,
-          };
-
-          return acc;
-        }, {}),
-        objectives: infiltration.objectives.reduce((acc, objective) => {
-          const objectiveId = foundry.utils.randomID();
-          acc[objectiveId] = {
+        objectives: Object.values(infiltration.objectives).reduce((acc, objective) => {
+          acc[objective.id] = {
             ...objective,
-            id: objectiveId,
-            obstacles: objective.obstacles.reduce((acc, obstacle) => {
-              const obstacleId = foundry.utils.randomID();
-              acc[obstacleId] = {
+            obstacles: Object.values(objective.obstacles).reduce((acc, obstacle) => {
+              acc[obstacle.id] = {
                 ...obstacle,
-                id: obstacleId,
-                infiltrationPointData: obstacle.infiltrationPointData.reduce((acc, data) => {
-                  const dataId = foundry.utils.randomID();
-                  acc[dataId] = {
-                    ...data,
-                    id: dataId,
-                  };
-
-                  return acc;
-                }, {}),
-                skillChecks: obstacle.skillChecks.reduce((acc, skillCheck) => {
-                  const skillCheckId = foundry.utils.randomID();
-                  acc[skillCheckId] = {
-                    ...skillCheck,
-                    id: skillCheckId,
-                    skills: skillCheck.skills.reduce((acc, skill) => {
-                      const skillId = foundry.utils.randomID();
-                      acc[skillId] = {
-                        ...skill,
-                        id: skillId,
-                      };
-
-                      return acc;
-                    }, {}),
+                infiltrationPoints: {
+                  max: obstacle.infiltrationPoints.max,
+                },
+                skillChecks: Object.values(obstacle.skillChecks).reduce((acc, skillCheck) => {
+                  const { selectedAdjustment, ...rest } = skillCheck;
+                  acc[skillCheck.id] = {
+                    ...rest,
                   };
 
                   return acc;
@@ -272,25 +161,16 @@ export const registerSubsystemEvents = async (moduleId, jsonData) => {
 
           return acc;
         }, {}),
-        complications: infiltration.complications.reduce((acc, complication) => {
-          const complicationId = foundry.utils.randomID();
-          acc[complicationId] = {
+        complications: Object.values(infiltration.complications).reduce((acc, complication) => {
+          acc[complication.id] = {
             ...complication,
-            id: complicationId,
-            skillChecks: complication.skillChecks.reduce((acc, skillCheck) => {
-              const skillCheckId = foundry.utils.randomID();
-              acc[skillCheckId] = {
-                ...skillCheck,
-                id: skillCheckId,
-                skills: skillCheck.skills.reduce((acc, skill) => {
-                  const skillId = foundry.utils.randomID();
-                  acc[skillId] = {
-                    ...skill,
-                    id: skillId,
-                  };
-
-                  return acc;
-                }, {}),
+            infiltrationPoints: {
+              max: complication.infiltrationPoints.max,
+            },
+            skillChecks: Object.values(complication.skillChecks).reduce((acc, skillCheck) => {
+              const { selectedAdjustment, ...rest } = skillCheck;
+              acc[skillCheck.id] = {
+                ...rest,
               };
 
               return acc;
@@ -299,36 +179,15 @@ export const registerSubsystemEvents = async (moduleId, jsonData) => {
 
           return acc;
         }, {}),
-        opportunities: infiltration.opportunities.reduce((acc, opportunity) => {
-          const opportunityId = foundry.utils.randomID();
-          acc[opportunityId] = {
-            ...opportunity,
-            id: opportunityId,
-          }
-
-          return acc;
-        }, {}),
         preparations: {
           ...infiltration.preparations,
-          activities: infiltration.preparations.activities.reduce((acc, activity) => {
-            const activityId = foundry.utils.randomID();
-            acc[activityId] = {
+          activities: Object.values(infiltration.preparations.activities).reduce((acc, activity) => {
+            acc[activity.id] = {
               ...activity,
-              id: activityId,
-              skillChecks: activity.skillChecks.reduce((acc, skillCheck) => {
-                const skillCheckId = foundry.utils.randomID();
-                acc[skillCheckId] = {
-                  ...skillCheck,
-                  id: skillCheckId,
-                  skills: skillCheck.skills.reduce((acc, skill) => {
-                    const skillId = foundry.utils.randomID();
-                    acc[skillId] = {
-                      ...skill,
-                      id: skillId,
-                    };
-
-                    return acc;
-                  }, {}),
+              skillChecks: Object.values(activity.skillChecks).reduce((acc, skillCheck) => {
+                const { selectedAdjustment, ...rest } = skillCheck;
+                acc[skillCheck.id] = {
+                  ...rest,
                 };
 
                 return acc;
@@ -350,6 +209,10 @@ export const registerSubsystemEvents = async (moduleId, jsonData) => {
 
   game.settings.set(MODULE_ID, 'subsystem-providers', mergeObject(
     game.settings.get(MODULE_ID, 'subsystem-providers'),
-    { [moduleId]: { registered: true } },
+    { 
+      [moduleId]: { 
+        version: version,
+      } 
+    },
   ));
 }
