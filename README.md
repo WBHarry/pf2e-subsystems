@@ -9,7 +9,8 @@ There's a simple automatic process for modules to register their Subsystem event
 ```
 import * as subsystemData from './subsystem-events.json' with {type: "json"};
 
+const subsystemEventsVersion = '1.0.0'; // Expected in the number format of 'x.y.z'. If you increase this number any new events in the JSON will be added, and existing events for users will be updated. (But keeping their currently accrued influence points and so on).
 Hooks.on('pf2e-subsystems-ready', () => {
-    game.modules.get('pf2e-subsystems').lib.registerSubsystemEvents(<YOUR_MODULE_ID>, subsystemData.default);
+    game.modules.get('pf2e-subsystems').lib.registerSubsystemEvents(<YOUR_MODULE_ID>, subsystemEventsVersion, subsystemData.default);
 });
 ```
