@@ -150,7 +150,7 @@
                                                                         <div class="event-skill-grid-cell header tertiary-container accent">{{localize "PF2ESubsystems.Basic.Skill"}}</div>
                                                                         {{#each this.columns.skill}}
                                                                             {{#if this.lore}}
-                                                                                <input type="text" name="{{concat "events." this.event ".researchChecks." this.researchCheck ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" value="{{this.skill}}" class="tertiary-container primary-text-container event-skill-grid-cell" />
+                                                                                <input type="text" value="{{this.skill}}" class="research-skill-check-input tertiary-container primary-text-container event-skill-grid-cell" data-event="{{this.event}}" data-check="{{this.researchCheck}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}" />
                                                                             {{else}}
                                                                                 <select name="{{concat "events." this.event ".researchChecks." this.researchCheck ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" class="tertiary-container primary-text-container event-skill-grid-cell">
                                                                                     {{selectOptions ../../../skillOptions selected=this.skill valueAttr="value" labelAttr="name" localize=true}}

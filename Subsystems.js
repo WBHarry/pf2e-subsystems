@@ -1587,7 +1587,7 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$3(
   }
 }
 
-const currentVersion = '0.7.2';
+const currentVersion = '0.7.3';
 
 const registerKeyBindings = () => {
   game.keybindings.register(MODULE_ID, "open-system-view", {
@@ -1974,8 +1974,11 @@ class SystemExport extends HandlebarsApplicationMixin$2(ApplicationV2$2) {
         tag: "form",
         id: "pf2e-subsystems-export",
         classes: ["pf2e-subsystems", "pf2e-export"],
-        position: { width: "200", height: "auto" },
-        actions: {},
+        actions: {
+            toggleEvent: this.toggleEvent,
+            subsystemToggleAll: this.subsystemToggleAll,
+            export: this.export,
+        },
         form: { handler: this.updateData, submitOnChange: true },
     };
 
@@ -1994,16 +1997,137 @@ class SystemExport extends HandlebarsApplicationMixin$2(ApplicationV2$2) {
         context.researches = this.researches;
         context.infiltrations = this.infiltrations;
 
+        context.canExport = [...context.influences, ...context.chases, ...context.researches, ...context.infiltrations].some(x => x.selected);
+        context.toggledAll = {
+            influence: context.influences.every(x => x.selected),
+            chase: context.chases.every(x => x.selected),
+            research: context.researches.every(x => x.selected),
+            infiltration: context.infiltrations.every(x => x.selected),
+        };
+
         return context;
+    }
+
+    static toggleEvent(_, button) {
+        this[button.dataset.subsystem][button.dataset.event].selected = !this[button.dataset.subsystem][button.dataset.event].selected;
+        this.render();
+    }
+
+    static subsystemToggleAll(_, button) {
+        this[button.dataset.subsystem] = this[button.dataset.subsystem].map(x => ({ ...x, selected: button.dataset.selected === 'true' }));
+        this.render();
     }
 
     static async updateData(event, element, formData) {
         const { influences, chases, researches, infiltrations } = foundry.utils.expandObject(formData.object);
     
         this.influences = influences;
-        this.chases = chases;
+        this.researches = chases;
         this.researches = researches;
         this.infiltrations = infiltrations;
+    }
+
+   static export() {
+        const jsonData = {
+            influence: Object.values(game.settings.get(MODULE_ID, 'influence').events).reduce((acc, curr) => {
+                const influence = curr.toObject();
+                if(this.influences.some(x => x.selected && x.id === influence.id)){
+                    acc.push({
+                        ...influence,
+                        discoveries: Object.values(influence.discoveries),
+                        influenceSkills: Object.values(influence.influenceSkills),
+                        influence: Object.values(influence.influence),
+                        weaknesses: Object.values(influence.weaknesses),
+                        resistances: Object.values(influence.resistances),
+                        penalties: Object.values(influence.penalties),
+                    });
+                }
+
+                return acc;
+            }, []),
+            chase: Object.values(game.settings.get(MODULE_ID, 'chase').events).reduce((acc, curr) => {
+                const chase = curr.toObject();
+                if(this.chases.some(x => x.selected && x.id === chase.id)){
+                    acc.push({
+                        ...chase,
+                        participants: Object.values(chase.participants),
+                        obstacles: Object.values(chase.obstacles),
+                    });
+                }
+
+                return acc;
+            }, []),
+            research: Object.values(game.settings.get(MODULE_ID, 'research').events).reduce((acc, curr) => {
+                const research = curr.toObject();
+                if(this.researches.some(x => x.selected && x.id === research.id)){
+                    acc.push({
+                        ...research,
+                        researchChecks: Object.values(research.researchChecks).map(check => ({
+                            ...check,
+                            skillChecks: Object.values(check.skillChecks).map(skillCheck => ({
+                                ...skillCheck,
+                                skills: Object.values(skillCheck.skills),
+                            }))
+                        })),
+                        researchBreakpoints: Object.values(research.researchBreakpoints),
+                        researchEvents: Object.values(research.researchEvents),
+                    });
+                }
+
+                return acc;
+            }, []),
+            infiltration: Object.values(game.settings.get(MODULE_ID, 'infiltration').events).reduce((acc, curr) => {
+                const infiltration = curr.toObject();
+                if(this.infiltrations.some(x => x.selected && x.id === infiltration.id)){
+                    acc.push({
+                        ...infiltration,
+                        awarenessPoints: {
+                            ...infiltration.awarenessPoints,
+                            breakpoints: Object.values(infiltration.awarenessPoints),
+                        },
+                        edgePoints: Object.values(infiltration.edgePoints),
+                        objectives: Object.values(infiltration.objectives).map(objective => ({
+                            ...objective,
+                            obstacles: Object.values(objective.obstacles).map(obstacle => ({
+                                ...obstacle,
+                                infiltrationPointData: Object.values(obstacle.infiltrationPointData),
+                                skillChecks: Object.values(obstacle.skillChecks).map(skillCheck => ({
+                                    ...skillCheck,
+                                    skills: Object.values(skillCheck.skills),
+                                })),
+                            }))
+                        })),
+                        complications: Object.values(infiltration.complications).map(complication => ({
+                            ...complication,
+                            skillChecks: Object.values(complication.skillChecks).map(skillCheck => ({
+                                ...skillCheck,
+                                skills: Object.values(skillCheck.skills),
+                            })),
+                        })),
+                        opportunities: Object.values(infiltration.opportunities),
+                        preparations: {
+                            ...infiltration.preparations,
+                            activities: Object.values(infiltration.preparations.activities).map(activity => ({
+                                ...activity,
+                                skillChecks: Object.values(activity.skillChecks).map(skillCheck => ({
+                                    ...skillCheck,
+                                    skills: Object.values(skillCheck.skills),
+                                })),
+                            })),
+                        },
+                    });
+                }
+
+                return acc;
+            }, []),
+        };
+        saveDataToFile(
+            JSON.stringify(jsonData, null, 2),
+            "text/json",
+            `pf2e-subsystems-export.json`,
+        );
+
+        ui.notifications.info(game.i18n.localize("PF2ESubsystems.ImportExport.SuccessfullyExported"));
     }
 
     async close(options={}) {
@@ -2261,13 +2385,13 @@ class SystemView extends HandlebarsApplicationMixin(
       form: { handler: this.updateData, submitOnChange: true },
       window: {
         resizable: true,
-        // controls: [
-        //   {
-        //     icon: "fas fa-file-import fa-fw",
-        //     label: "PF2ESubsystems.View.ImportMenu",
-        //     action: "openImportExportMenu",
-        //   },
-        // ],
+        controls: [
+          {
+            icon: "fas fa-file-import fa-fw",
+            label: "PF2ESubsystems.View.ImportMenu",
+            action: "openImportExportMenu",
+          },
+        ],
       },
       dragDrop: [
         { dragSelector: null, dropSelector: ".participants-outer-container" },
@@ -4995,43 +5119,323 @@ const registerSubsystemEvents = async (moduleId, jsonData) => {
   const subsystemProviders = game.settings.get(MODULE_ID, 'subsystem-providers');
   if(subsystemProviders[moduleId]?.registered) return;
   
-  if(jsonData.influence) ;
+  if(jsonData.influence?.length > 0) {
+    const existingInfluence = game.settings.get(MODULE_ID, 'influence');
+    await existingInfluence.updateSource({
+      events: jsonData.influence.reduce((acc, influence) => {
+        const influenceId = foundry.utils.randomID();
+        acc[influenceId] = {
+          ...influence,
+          discoveries: influence.discoveries.reduce((acc, discovery) => {
+            const discoveryId = foundry.utils.randomID();
+            acc[discoveryId] = {
+              ...discovery,
+              id: discoveryId,
+            };
+  
+            return acc;
+          }, {}),
+          influenceSkills: influence.influenceSkills.reduce((acc, influenceSkill) => {
+            const skillId = foundry.utils.randomID();
+            acc[skillId] = {
+              ...influenceSkill,
+              id: skillId,
+            };
+  
+            return acc;
+          }, {}),
+          influence: influence.influence.reduce((acc, influence) => {
+            const influenceId = foundry.utils.randomID();
+            acc[influenceId] = {
+              ...influence,
+              id: influenceId,
+            };
+  
+            return acc;
+          }, {}),
+          weaknesses: influence.weaknesses.reduce((acc, weakness) => {
+            const weaknessId = foundry.utils.randomID();
+            acc[weaknessId] = {
+              ...weakness,
+              id: weaknessId,
+            };
+  
+            return acc;
+          }, {}),
+          resistances: influence.resistances.reduce((acc, resistance) => {
+            const resistanceId = foundry.utils.randomID();
+            acc[resistanceId] = {
+              ...resistance,
+              id: resistanceId,
+            };
+  
+            return acc;
+          }, {}),
+          penalties: influence.penalties.reduce((acc, penalty) => {
+            const penaltyId = foundry.utils.randomID();
+            acc[penaltyId] = {
+              ...penalty,
+              id: penaltyId,
+            };
+  
+            return acc;
+          }, {}),
+        };
+  
+        return acc;
+      }, {}),
+    });
+    await game.settings.set(MODULE_ID, 'influence', existingInfluence);
+  }
 
-  if(jsonData.chase) {
+  if(jsonData.chase?.length > 0) {
     const existingChase = game.settings.get(MODULE_ID, 'chase');
-    await existingChase.updateSource(jsonData.chase.reduce((acc, chase) => {
-      const chaseId = foundry.utils.randomID();
-      acc[chaseId] = {
-        ...chase,
-        id: chaseId,
-        participants: chase.participants.reduce((acc, participant) => {
-          const participantId = foundry.utils.randomID();
-          acc[participantId] = {
-            ...participant,
-            id: participantId,
-          };
-
-          return acc;
-        }, {}),
-        obstacles: chase.obstacles.reduce((acc, obstacle) => {
-          const obstacleId = foundry.utils.randomID();
-          acc[obstacleId] = {
-            ...obstacle,
-            id: obstacleId,
-          };
-
-          return acc;
-        }, {}),
-      };
-
-      return acc;
-    }, {}));
+    await existingChase.updateSource({
+      events: jsonData.chase.reduce((acc, chase) => {
+        const chaseId = foundry.utils.randomID();
+        acc[chaseId] = {
+          ...chase,
+          id: chaseId,
+          participants: chase.participants.reduce((acc, participant) => {
+            const participantId = foundry.utils.randomID();
+            acc[participantId] = {
+              ...participant,
+              id: participantId,
+            };
+  
+            return acc;
+          }, {}),
+          obstacles: chase.obstacles.reduce((acc, obstacle) => {
+            const obstacleId = foundry.utils.randomID();
+            acc[obstacleId] = {
+              ...obstacle,
+              id: obstacleId,
+            };
+  
+            return acc;
+          }, {}),
+        };
+  
+        return acc;
+      }, {}),
+    });
     await game.settings.set(MODULE_ID, 'chase', existingChase);
   }
 
-  if(jsonData.research) ;
+  if(jsonData.research?.length > 0) {
+    const existingResearch = game.settings.get(MODULE_ID, 'research');
+    await existingResearch.updateSource({
+      events: jsonData.research.reduce((acc, research) => {
+        const researchId = foundry.utils.randomID();
+        acc[researchId] = {
+          ...research,
+          id: researchId,
+          researchChecks: research.researchChecks.reduce((acc, check) => {
+            const researchCheckId = foundry.utils.randomID();
+            acc[researchCheckId] = {
+              ...check,
+              id: researchCheckId,
+              skillChecks: check.skillChecks.reduce((acc, skillCheck) => {
+                const skillCheckId = foundry.utils.randomID();
+                acc[skillCheckId] = {
+                  ...skillCheck,
+                  id: skillCheckId,
+                  skills: skillCheck.skills.reduce((acc, skill) => {
+                    const skillId = foundry.utils.randomID();
+                    acc[skillId] = {
+                      ...skill,
+                      id: skillId,
+                    };
 
-  if(jsonData.infiltrate) ;
+                    return acc;
+                  }, {}),
+                };
+                
+                return acc;
+              }, {}),
+            };
+
+            return acc;
+          }, {}),
+          researchBreakpoints: research.researchBreakpoints.reduce((acc, breakpoint) => {
+            const breakpointId = foundry.utils.randomID();
+            acc[breakpointId] = {
+              ...breakpoint,
+              id: breakpointId,
+            };
+
+            return acc;
+          }, {}),
+          researchEvents: research.researchEvents.reduce((acc, event) => {
+            const eventId = foundry.utils.randomID();
+            acc[eventId] = {
+              ...event,
+              id: eventId,
+            };
+
+            return acc;
+          }, {}),
+        };
+  
+        return acc;
+      }, {}),
+    });
+    await game.settings.set(MODULE_ID, 'research', existingResearch);
+  }
+
+  if(jsonData.infiltration?.length > 0) {
+    const existingInfiltration = game.settings.get(MODULE_ID, 'infiltration');
+    const update = jsonData.infiltration.reduce((acc, infiltration) => {
+      const infiltrationId = foundry.utils.randomID();
+      acc[infiltrationId] = {
+        ...infiltration,
+        id: infiltrationId,
+        awarenessPoints: {
+          ...infiltration.awarenessPoints,
+          breakpoints: infiltration.awarenessPoints.breakpoints.reduce((acc, breakpoint) => {
+            const breakpointId = foundry.utils.randomID();
+            acc[breakpointId] = {
+              ...breakpoint,
+              id: breakpointId,
+            };
+
+            return acc;
+          }, {}),
+        },
+        edgePoints: infiltration.edgePoints.reduce((acc, point) => {
+          const pointId = foundry.utils.randomID();
+          acc[pointId] = {
+            ...point,
+            id: pointId,
+          };
+
+          return acc;
+        }, {}),
+        objectives: infiltration.objectives.reduce((acc, objective) => {
+          const objectiveId = foundry.utils.randomID();
+          acc[objectiveId] = {
+            ...objective,
+            id: objectiveId,
+            obstacles: objective.obstacles.reduce((acc, obstacle) => {
+              const obstacleId = foundry.utils.randomID();
+              acc[obstacleId] = {
+                ...obstacle,
+                id: obstacleId,
+                infiltrationPointData: obstacle.infiltrationPointData.reduce((acc, data) => {
+                  const dataId = foundry.utils.randomID();
+                  acc[dataId] = {
+                    ...data,
+                    id: dataId,
+                  };
+
+                  return acc;
+                }, {}),
+                skillChecks: obstacle.skillChecks.reduce((acc, skillCheck) => {
+                  const skillCheckId = foundry.utils.randomID();
+                  acc[skillCheckId] = {
+                    ...skillCheck,
+                    id: skillCheckId,
+                    skills: skillCheck.skills.reduce((acc, skill) => {
+                      const skillId = foundry.utils.randomID();
+                      acc[skillId] = {
+                        ...skill,
+                        id: skillId,
+                      };
+
+                      return acc;
+                    }, {}),
+                  };
+
+                  return acc;
+                }, {}),
+              };
+
+              return acc;
+            }, {}),
+          };
+
+          return acc;
+        }, {}),
+        complications: infiltration.complications.reduce((acc, complication) => {
+          const complicationId = foundry.utils.randomID();
+          acc[complicationId] = {
+            ...complication,
+            id: complicationId,
+            skillChecks: complication.skillChecks.reduce((acc, skillCheck) => {
+              const skillCheckId = foundry.utils.randomID();
+              acc[skillCheckId] = {
+                ...skillCheck,
+                id: skillCheckId,
+                skills: skillCheck.skills.reduce((acc, skill) => {
+                  const skillId = foundry.utils.randomID();
+                  acc[skillId] = {
+                    ...skill,
+                    id: skillId,
+                  };
+
+                  return acc;
+                }, {}),
+              };
+
+              return acc;
+            }, {}),
+          };
+
+          return acc;
+        }, {}),
+        opportunities: infiltration.opportunities.reduce((acc, opportunity) => {
+          const opportunityId = foundry.utils.randomID();
+          acc[opportunityId] = {
+            ...opportunity,
+            id: opportunityId,
+          };
+
+          return acc;
+        }, {}),
+        preparations: {
+          ...infiltration.preparations,
+          activities: infiltration.preparations.activities.reduce((acc, activity) => {
+            const activityId = foundry.utils.randomID();
+            acc[activityId] = {
+              ...activity,
+              id: activityId,
+              skillChecks: activity.skillChecks.reduce((acc, skillCheck) => {
+                const skillCheckId = foundry.utils.randomID();
+                acc[skillCheckId] = {
+                  ...skillCheck,
+                  id: skillCheckId,
+                  skills: skillCheck.skills.reduce((acc, skill) => {
+                    const skillId = foundry.utils.randomID();
+                    acc[skillId] = {
+                      ...skill,
+                      id: skillId,
+                    };
+
+                    return acc;
+                  }, {}),
+                };
+
+                return acc;
+              }, {}),
+            };
+
+            return acc;
+          }, {}),
+        },
+      };
+
+      return acc;
+    }, {});
+    await existingInfiltration.updateSource({
+      events: update,
+    });
+    await game.settings.set(MODULE_ID, 'infiltration', existingInfiltration);
+  }
+
+  game.settings.set(MODULE_ID, 'subsystem-providers', mergeObject(
+    game.settings.get(MODULE_ID, 'subsystem-providers'),
+    { [moduleId]: { registered: true } },
+  ));
 };
 
 var lib = /*#__PURE__*/Object.freeze({

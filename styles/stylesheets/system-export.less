@@ -5,7 +5,63 @@
         gap: @gapNormal;
 
         .selection-container {
+            display: flex;
+            gap: @gapNormal;
+            align-items: flex-start;
 
+            .subsystem-container {
+                display: flex;
+                flex-direction: column;
+                border-width: 2px;
+                border-style: outset;
+                border-radius: 6px;
+                width: 320px;
+
+                .subsystem-header {
+                    border-radius: 6px 6px 0 0;
+                    border-bottom-width: 2px;
+                    border-bottom-style: solid;
+                    padding: 0 @paddingNormal;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    position: relative;
+
+                    .subsystem-header-title {
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+
+                        .subsystem-header-control {
+                            position: absolute;
+                            right: -24px;
+                            height: 20px;
+                            font-size: 20px;
+                        }
+                    }
+                }
+
+                .subsystem-body {
+                    display: flex;
+                    align-items: center;
+                    flex-wrap: wrap;
+                    gap: @gapSmall;
+                    padding: @paddingNormal;
+                    border-radius: 0 0 6px 6px;
+
+                    .subsystem-event {
+                        border-width: 1px;
+                        border-style: solid;
+                        padding: @paddingSmall;
+                        border-radius: 6px;
+                        opacity: 0.4;
+
+                        &.selected {
+                            opacity: 1;
+                        }
+                    }
+                }
+            }
         }
 
         .export-footer {

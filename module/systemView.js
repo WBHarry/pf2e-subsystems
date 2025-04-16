@@ -200,13 +200,13 @@ export default class SystemView extends HandlebarsApplicationMixin(
       form: { handler: this.updateData, submitOnChange: true },
       window: {
         resizable: true,
-        // controls: [
-        //   {
-        //     icon: "fas fa-file-import fa-fw",
-        //     label: "PF2ESubsystems.View.ImportMenu",
-        //     action: "openImportExportMenu",
-        //   },
-        // ],
+        controls: [
+          {
+            icon: "fas fa-file-import fa-fw",
+            label: "PF2ESubsystems.View.ImportMenu",
+            action: "openImportExportMenu",
+          },
+        ],
       },
       dragDrop: [
         { dragSelector: null, dropSelector: ".participants-outer-container" },

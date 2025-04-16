@@ -1,21 +1,69 @@
 <div class="export-container">
     <div class="selection-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>{{localize "Influence"}}</th>
-                    <th>{{localize "Chase"}}</th>
-                    <th>{{localize "Research"}}</th>
-                    <th>{{localize "Infiltration"}}</th>
-                </tr>
-            </thead>
-            <tbody>
-                
-            </tbody>
-        </table>
+        <div class="subsystem-container primary-container title-small-container">
+            <div class="subsystem-header primary-container accent">
+                <div class="subsystem-header-title">
+                    {{localize "PF2ESubsystems.Events.Influence.Single"}}
+                    <div class="subsystem-header-control">
+                        <i class="fa-solid {{#if this.toggledAll.influence}}fa-toggle-on{{else}}fa-toggle-off{{/if}} clickable-icon" data-action="subsystemToggleAll" data-subsystem="influences" data-selected="{{not this.toggledAll.influence}}"></i>
+                    </div>
+                </div>
+
+            </div>
+            <div class="subsystem-body">
+                {{#each this.influences}}
+                    <div class="subsystem-event secondary-container clickable-icon {{#if this.selected}}selected{{/if}}" data-action="toggleEvent" data-subsystem="influences" data-event="{{@index}}">{{this.name}}</div>
+                {{/each}}
+            </div>
+        </div>
+        <div class="subsystem-container primary-container title-small-container">
+            <div class="subsystem-header title-small-container">
+                <div class="subsystem-header-title">
+                    {{localize "PF2ESubsystems.Events.Chase.Single"}}
+                    <div class="subsystem-header-control">
+                        <i class="fa-solid {{#if this.toggledAll.chase}}fa-toggle-on{{else}}fa-toggle-off{{/if}} clickable-icon" data-action="subsystemToggleAll" data-subsystem="chases" data-selected="{{not this.toggledAll.chase}}"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="subsystem-body">
+                {{#each this.chases}}
+                    <div class="subsystem-event secondary-container clickable-icon {{#if this.selected}}selected{{/if}}" data-action="toggleEvent" data-subsystem="chases" data-event="{{@index}}">{{this.name}}</div>
+                {{/each}}
+            </div>
+        </div>
+        <div class="subsystem-container primary-container title-small-container">
+            <div class="subsystem-header">
+                <div class="subsystem-header-title">
+                    {{localize "PF2ESubsystems.Events.Research.Single"}}
+                    <div class="subsystem-header-control">
+                        <i class="fa-solid {{#if this.toggledAll.research}}fa-toggle-on{{else}}fa-toggle-off{{/if}} clickable-icon" data-action="subsystemToggleAll" data-subsystem="researches" data-selected="{{not this.toggledAll.research}}"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="subsystem-body">
+                {{#each this.researches}}
+                    <div class="subsystem-event secondary-container clickable-icon {{#if this.selected}}selected{{/if}}" data-action="toggleEvent" data-subsystem="researches" data-event="{{@index}}">{{this.name}}</div>
+                {{/each}}
+            </div>
+        </div>
+        <div class="subsystem-container primary-container title-small-container">
+            <div class="subsystem-header">
+                <div class="subsystem-header-title">
+                    {{localize "PF2ESubsystems.Events.Infiltration.Single"}}
+                    <div class="subsystem-header-control">
+                        <i class="fa-solid {{#if this.toggledAll.infiltration}}fa-toggle-on{{else}}fa-toggle-off{{/if}} clickable-icon" data-action="subsystemToggleAll" data-subsystem="infiltrations" data-selected="{{not this.toggledAll.infiltration}}"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="subsystem-body">
+                {{#each this.infiltrations}}
+                    <div class="subsystem-event secondary-container clickable-icon {{#if this.selected}}selected{{/if}}" data-action="toggleEvent" data-subsystem="infiltrations" data-event="{{@index}}">{{this.name}}</div>
+                {{/each}}
+            </div>
+        </div>
     </div>
     <div class="export-footer">
-        <button>{{localize "PF2ESubsystems.ImportExport.Export"}}</button>
+        <button {{#if (not this.canExport)}}disabled{{/if}} data-action="export">{{localize "PF2ESubsystems.ImportExport.Export"}}</button>
         <button>{{localize "PF2ESubsystems.Basic.Cancel"}}</button>
     </div>
 </div>

@@ -1344,6 +1344,7 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks .research-check-skill-check .research-check-skill-check-buttons {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 4px;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks .research-check-skill-check .research-check-skill-check-title {
@@ -2148,6 +2149,58 @@ form.pf2e-subsystems.application > header .header-control {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+.pf2e-subsystems.pf2e-export .export-container .selection-container {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.pf2e-subsystems.pf2e-export .export-container .selection-container .subsystem-container {
+  display: flex;
+  flex-direction: column;
+  border-width: 2px;
+  border-style: outset;
+  border-radius: 6px;
+  width: 320px;
+}
+.pf2e-subsystems.pf2e-export .export-container .selection-container .subsystem-container .subsystem-header {
+  border-radius: 6px 6px 0 0;
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.pf2e-subsystems.pf2e-export .export-container .selection-container .subsystem-container .subsystem-header .subsystem-header-title {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.pf2e-subsystems.pf2e-export .export-container .selection-container .subsystem-container .subsystem-header .subsystem-header-title .subsystem-header-control {
+  position: absolute;
+  right: -24px;
+  height: 20px;
+  font-size: 20px;
+}
+.pf2e-subsystems.pf2e-export .export-container .selection-container .subsystem-container .subsystem-body {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 0 0 6px 6px;
+}
+.pf2e-subsystems.pf2e-export .export-container .selection-container .subsystem-container .subsystem-body .subsystem-event {
+  border-width: 1px;
+  border-style: solid;
+  padding: 2px;
+  border-radius: 6px;
+  opacity: 0.4;
+}
+.pf2e-subsystems.pf2e-export .export-container .selection-container .subsystem-container .subsystem-body .subsystem-event.selected {
+  opacity: 1;
 }
 .pf2e-subsystems.pf2e-export .export-container .export-footer {
   display: flex;
