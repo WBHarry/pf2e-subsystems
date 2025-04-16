@@ -41,6 +41,7 @@ export const registerSubsystemEvents = async (moduleId, jsonData) => {
         const influenceId = foundry.utils.randomID();
         acc[influenceId] = {
           ...influence,
+          id: influenceId,
           discoveries: influence.discoveries.reduce((acc, discovery) => {
             const discoveryId = foundry.utils.randomID();
             acc[discoveryId] = {

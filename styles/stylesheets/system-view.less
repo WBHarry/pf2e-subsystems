@@ -230,8 +230,6 @@
                         display: flex;
                         flex-direction: column;
                         cursor: pointer;
-                        border-width: 2px;
-                        border-style: outset;
 
                         &:hover .event-container-header .event-toolbar {
                             overflow: auto;
@@ -282,7 +280,9 @@
 
                         img {
                             max-width: auto;
-
+                            border-width: 0 2px 2px 2px;
+                            border-style: outset;
+                            border-radius: 0 0 6px 6px;
                         }
                     }
                 }

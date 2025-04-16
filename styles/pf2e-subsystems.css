@@ -358,8 +358,6 @@ form.pf2e-subsystems.application > header .header-control {
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  border-width: 2px;
-  border-style: outset;
 }
 .pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-container .event-container:hover .event-container-header .event-toolbar {
   overflow: auto;
@@ -403,6 +401,9 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-container .event-container img {
   max-width: auto;
+  border-width: 0 2px 2px 2px;
+  border-style: outset;
+  border-radius: 0 0 6px 6px;
 }
 .pf2e-subsystems.systems-view .event-outer-container {
   position: relative;
@@ -2081,6 +2082,9 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems .influence-view .event-outer-container .event-container .influence-container .influence-header-container .influence-header-icon {
   position: absolute;
   right: -14px;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .influence-container .influence-header-container .influence-header-icon.dual-digit {
+  right: -24px;
 }
 .pf2e-subsystems .influence-view .event-outer-container .event-container .skills-container {
   display: flex;
