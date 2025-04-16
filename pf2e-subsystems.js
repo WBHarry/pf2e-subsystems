@@ -1,8 +1,8 @@
 import { registerGameSettings, registerKeyBindings } from "./scripts/setup";
-import * as macros from "./scripts/macros.js";
+import * as lib from "./scripts/lib.js";
 import { handleSocketEvent, socketEvent } from "./scripts/socket.js";
 import { handleMigration } from "./scripts/migration.js";
-import { MODULE_ID, SOCKET_ID, tourIDs } from "./data/constants.js";
+import { hooks, MODULE_ID, SOCKET_ID, tourIDs } from "./data/constants.js";
 import RegisterHandlebarsHelpers from "./scripts/handlebarHelpers.js";
 import { ChaseTour } from "./tours/chase/ChaseTour.js";
 import { ResearchTour } from "./tours/research/ResearchTour.js";
@@ -13,9 +13,14 @@ import { InfluenceTour } from "./tours/influence/InfluenceTour.js";
 Hooks.once("init", () => {
     registerGameSettings();
     registerKeyBindings();
+    
+    const module = game.modules.get(MODULE_ID);
+    module.lib = lib;
+    module.hooks = hooks;
+
     RegisterHandlebarsHelpers.registerHelpers();
     game.socket.on(SOCKET_ID, handleSocketEvent);
-
+    CONFIG.debug.hooks = true;
     loadTemplates([
       "modules/pf2e-subsystems/templates/partials/navigate-back.hbs",
       "modules/pf2e-subsystems/templates/partials/events.hbs",
@@ -33,9 +38,8 @@ Hooks.once("init", () => {
 });
 
 Hooks.once("ready", async () => {
-    game.modules.get("pf2e-subsystems").macros = macros;
-
     handleMigration();
+    Hooks.callAll(hooks.subsystemsReady);
 });
 
 Hooks.once("setup", async () => {

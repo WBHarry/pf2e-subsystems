@@ -1,6 +1,10 @@
 export const MODULE_ID = 'pf2e-subsystems';
 export const SOCKET_ID = `module.${MODULE_ID}`;
 
+export const hooks = {
+    subsystemsReady: 'pf2e-subsystems-ready',
+};
+
 export const settingIDs = {
     menus: {
         subsystems: "subsystems-menu"

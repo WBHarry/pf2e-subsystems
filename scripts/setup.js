@@ -15,7 +15,7 @@ export const registerKeyBindings = () => {
     uneditable: [],
     editable: [],
     onDown: () =>
-      game.modules.get(MODULE_ID).macros.openSubsystemView(),
+      game.modules.get(MODULE_ID).lib.openSubsystemView(),
     onUp: () => {},
     restricted: false,
     reservedModifiers: [],
@@ -75,6 +75,14 @@ const generalNonConfigSettings = () => {
     config: false,
     type: String,
     default: "",
+  });
+  game.settings.register(MODULE_ID, "subsystem-providers", {
+    name: "",
+    hint: "",
+    scope: "world",
+    config: false,
+    type: Object,
+    default: {},
   });
 
   game.settings.register(MODULE_ID, "chase", {

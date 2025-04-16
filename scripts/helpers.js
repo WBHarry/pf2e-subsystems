@@ -145,12 +145,16 @@ const disableRollButton = (disable, html) => {
     return html.match(/style="/) ? html.replace(/style="/, 'style="opacity: 0.4; pointer-events: none; ') : html.replace(/<a/, '<a style="opacity: 0.4; pointer-events: none; "').replace(/<span/, '<span style="opacity: 0.4; pointer-events: none; "');
 } 
 
+const correctBackground = (html) => {
+    return html.replace('data-visibility="gm"', 'data-visibility="gm" style="background-color: inherit;"');
+};
+
 export const getActButton = async(action, variant, skill, dc, disableElement, secret = false) => {
-    return disableRollButton(disableElement, await TextEditor.enrichHTML(`[[/act ${action} ${variant ? `variant=${variant} ` : ''}stat=${skill} dc=${dc}${secret ? ' traits=secret' : ''}]]`));
+    return correctBackground(disableRollButton(disableElement, await TextEditor.enrichHTML(`[[/act ${action} ${variant ? `variant=${variant} ` : ''}stat=${skill} dc=${dc}${secret ? ' traits=secret' : ''}]]`)));
 }
 
 export const getCheckButton = async(skill, dc, simple, disableElement, secret = false) => {
-    return disableRollButton(disableElement, await TextEditor.enrichHTML(`@Check[type:${skill}|dc:${dc}|simple:${simple}${secret ? '|traits:secret' : ''}]`));
+    return correctBackground(disableRollButton(disableElement, await TextEditor.enrichHTML(`@Check[type:${skill}|dc:${dc}|simple:${simple}${secret ? '|traits:secret' : ''}]`)));
 }
 
 export const versionCompare = (current, target) => {

@@ -256,50 +256,50 @@
                                                                     <div class="event-field-group">
                                                                         <div class="event-field-form small text-normal primary-text-container">
                                                                             <div>{{localize "PF2ESubsystems.Basic.UseLeveledDC"}}</div>
-                                                                            <input type="checkbox" class="obstacle-complication-leveled-DC" data-event="{{../../event.id}}" data-objective="{{../../currentObjective.id}}" data-obstacle="{{../id}}" data-skill-check="{{this.id}}" {{checked this.difficulty.leveledDC}} />
+                                                                            <input type="checkbox" class="obstacle-complication-leveled-DC tertiary-checkbox" data-event="{{../../event.id}}" data-objective="{{../../currentObjective.id}}" data-obstacle="{{../id}}" data-skill-check="{{this.id}}" {{checked this.difficulty.leveledDC}} />
                                                                         </div>
                                                                         <div class="event-field-form text-normal primary-text-container">
                                                                             <div>{{localize "PF2ESubsystems.Basic.DC"}}</div>
                                                                             <input type="text" name="{{concat "events." ../../event.id ".objectives." ../../currentObjective.id ".obstacles." ../id ".skillChecks." this.id ".difficulty.DC"}}" value="{{this.difficulty.DC}}" class="tertiary-container" {{#if this.difficulty.leveledDC}}disabled placeholder="{{localize "PF2ESubsystems.Basic.LeveledDCIsUsed"}}"{{/if}} />
                                                                         </div>
                                                                     </div>
-                                                                    <div class="event-skill-grid tertiary-container">
+                                                                    <div class="event-skill-grid secondary-container">
                                                                         <div class="event-skill-grid-col">
-                                                                            <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Lore"}}</div>
+                                                                            <div class="event-skill-grid-cell header tertiary-container accent">{{localize "PF2ESubsystems.Basic.Lore"}}</div>
                                                                             {{#each this.columns.lore}}
-                                                                                <input type="checkbox" class="infiltration-obstacle-lore event-skill-grid-cell" data-event="{{this.event}}" data-objective="{{this.objective}}" data-obstacle="{{this.obstacle}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}" {{checked this.lore}} />
+                                                                                <input type="checkbox" class="infiltration-obstacle-lore event-skill-grid-cell tertiary-checkbox" data-event="{{this.event}}" data-objective="{{this.objective}}" data-obstacle="{{this.obstacle}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}" {{checked this.lore}} />
                                                                             {{/each}}
                                                                         </div>
                                                                         <div class="event-skill-grid-col">
-                                                                            <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Skill"}}</div>
+                                                                            <div class="event-skill-grid-cell header tertiary-container accent">{{localize "PF2ESubsystems.Basic.Skill"}}</div>
                                                                             {{#each this.columns.skill}}
                                                                                 {{#if this.lore}}
-                                                                                    <input type="text" name="{{concat "events." this.event ".objectives." this.objective ".obstacles." this.obstacle ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" value="{{this.skill}}" class="primary-text-container event-skill-grid-cell" />
+                                                                                    <input type="text" name="{{concat "events." this.event ".objectives." this.objective ".obstacles." this.obstacle ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" value="{{this.skill}}" class="tertiary-container primary-text-container event-skill-grid-cell" />
                                                                                 {{else}}
-                                                                                    <select name="{{concat "events." this.event ".objectives." this.objective ".obstacles." this.obstacle ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" class="primary-text-container event-skill-grid-cell">
+                                                                                    <select name="{{concat "events." this.event ".objectives." this.objective ".obstacles." this.obstacle ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" class="tertiary-container primary-text-container event-skill-grid-cell">
                                                                                         {{selectOptions ../../../skillOptions selected=this.skill valueAttr="value" labelAttr="name" localize=true}}
                                                                                     </select>
                                                                                 {{/if}}
                                                                             {{/each}}
                                                                         </div>
                                                                         <div class="event-skill-grid-col">
-                                                                            <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Action"}}</div>
+                                                                            <div class="event-skill-grid-cell header tertiary-container accent">{{localize "PF2ESubsystems.Basic.Action"}}</div>
                                                                             {{#each this.columns.action}}
-                                                                                <select class="infiltration-obstacle-action-input primary-text-container event-skill-grid-cell" data-event="{{this.event}}" data-objective="{{this.objective}}" data-obstacle="{{this.obstacle}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}">
+                                                                                <select class="infiltration-obstacle-action-input tertiary-container primary-text-container event-skill-grid-cell" data-event="{{this.event}}" data-objective="{{this.objective}}" data-obstacle="{{this.obstacle}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}">
                                                                                     {{selectOptions ../../../actionOptions selected=this.action valueAttr="value" labelAttr="name" localize=true blank="" }}
                                                                                 </select>
                                                                             {{/each}}
                                                                         </div>
                                                                         <div class="event-skill-grid-col">
-                                                                            <div class="event-skill-grid-cell informative header" title="{{localize "PF2ESubsystems.View.VariantExplanation"}}">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
+                                                                            <div class="event-skill-grid-cell informative header tertiary-container accent" title="{{localize "PF2ESubsystems.View.VariantExplanation"}}">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
                                                                             {{#each this.columns.variant}}
-                                                                                <select name="{{concat "events." this.event ".objectives." this.objective ".obstacles." this.obstacle ".skillChecks." this.skillCheck ".skills." this.id ".variant" }}" class="primary-text-container event-skill-grid-cell" {{#if this.disabled}}disabled{{/if}}>
+                                                                                <select name="{{concat "events." this.event ".objectives." this.objective ".obstacles." this.obstacle ".skillChecks." this.skillCheck ".skills." this.id ".variant" }}" class="tertiary-container primary-text-container event-skill-grid-cell" {{#if this.disabled}}disabled{{/if}}>
                                                                                     {{selectOptions this.variantOptions selected=this.variant valueAttr="value" labelAttr="name" localize=true blank="" }}
                                                                                 </select>
                                                                             {{/each}}
                                                                         </div>
                                                                         <div class="event-skill-grid-col">
-                                                                            <div class="event-skill-grid-cell header">
+                                                                            <div class="event-skill-grid-cell header tertiary-container accent">
                                                                                 <i class="fa-solid fa-plus clickable-icon" data-action="infiltrationAddObstacleSkill" data-event="{{../../event.id}}" data-objective="{{../../currentObjective.id}}" data-obstacle="{{../id}}" data-skill-check="{{this.id}}"></i>
                                                                             </div>
                                                                             {{#each this.columns.action}}
@@ -517,50 +517,50 @@
                                                                 <div class="event-field-group">
                                                                     <div class="event-field-form small text-normal primary-text-container">
                                                                         <div>{{localize "PF2ESubsystems.Basic.UseLeveledDC"}}</div>
-                                                                        <input type="checkbox" class="infiltration-complication-leveled-DC" data-event="{{../../event.id}}" data-complication="{{../id}}" data-skill-check="{{this.id}}" {{checked this.difficulty.leveledDC}} />
+                                                                        <input type="checkbox" class="infiltration-complication-leveled-DC tertiary-checkbox" data-event="{{../../event.id}}" data-complication="{{../id}}" data-skill-check="{{this.id}}" {{checked this.difficulty.leveledDC}} />
                                                                     </div>
                                                                     <div class="event-field-form text-normal primary-text-container">
                                                                         <div>{{localize "PF2ESubsystems.Basic.DC"}}</div>
                                                                         <input type="text" name="{{concat "events." ../../event.id ".complications." ../id ".skillChecks." this.id ".difficulty.DC"}}" value="{{this.difficulty.DC}}" class="tertiary-container" {{#if this.difficulty.leveledDC}}disabled placeholder="{{localize "PF2ESubsystems.Basic.LeveledDCIsUsed"}}"{{/if}} />
                                                                     </div>
                                                                 </div>
-                                                                <div class="event-skill-grid tertiary-container">
+                                                                <div class="event-skill-grid secondary-container">
                                                                     <div class="event-skill-grid-col">
-                                                                        <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Lore"}}</div>
+                                                                        <div class="event-skill-grid-cell header tertiary-container accent">{{localize "PF2ESubsystems.Basic.Lore"}}</div>
                                                                         {{#each this.columns.lore}}
-                                                                            <input type="checkbox" class="infiltration-complication-lore event-skill-grid-cell" data-event="{{this.event}}" data-complication="{{this.complication}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}" {{checked this.lore}} />
+                                                                            <input type="checkbox" class="infiltration-complication-lore event-skill-grid-cell tertiary-checkbox" data-event="{{this.event}}" data-complication="{{this.complication}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}" {{checked this.lore}} />
                                                                         {{/each}}
                                                                     </div>
                                                                     <div class="event-skill-grid-col">
-                                                                        <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Skill"}}</div>
+                                                                        <div class="event-skill-grid-cell header tertiary-container accent">{{localize "PF2ESubsystems.Basic.Skill"}}</div>
                                                                         {{#each this.columns.skill}}
                                                                             {{#if this.lore}}
-                                                                                <input type="text" name="{{concat "events." this.event ".complications." this.complication ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" value="{{this.skill}}" class="primary-text-container event-skill-grid-cell" />
+                                                                                <input type="text" name="{{concat "events." this.event ".complications." this.complication ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" value="{{this.skill}}" class="tertiary-container primary-text-container event-skill-grid-cell" />
                                                                             {{else}}
-                                                                                <select name="{{concat "events." this.event ".complications." this.complication ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" class="primary-text-container event-skill-grid-cell">
+                                                                                <select name="{{concat "events." this.event ".complications." this.complication ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" class="tertiary-container primary-text-container event-skill-grid-cell">
                                                                                     {{selectOptions ../../../skillOptions selected=this.skill valueAttr="value" labelAttr="name" localize=true}}
                                                                                 </select>
                                                                             {{/if}}
                                                                         {{/each}}
                                                                     </div>
                                                                     <div class="event-skill-grid-col">
-                                                                        <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Action"}}</div>
+                                                                        <div class="event-skill-grid-cell header tertiary-container accent">{{localize "PF2ESubsystems.Basic.Action"}}</div>
                                                                         {{#each this.columns.action}}
-                                                                            <select class="infiltration-complication-action-input primary-text-container event-skill-grid-cell" data-event="{{this.event}}" data-complication="{{this.complication}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}">
+                                                                            <select class="infiltration-complication-action-input tertiary-container primary-text-container event-skill-grid-cell" data-event="{{this.event}}" data-complication="{{this.complication}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}">
                                                                                 {{selectOptions ../../../actionOptions selected=this.action valueAttr="value" labelAttr="name" localize=true blank="" }}
                                                                             </select>
                                                                         {{/each}}
                                                                     </div>
                                                                     <div class="event-skill-grid-col">
-                                                                        <div class="event-skill-grid-cell informative header" title="{{localize "PF2ESubsystems.View.VariantExplanation"}}">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
+                                                                        <div class="event-skill-grid-cell informative header tertiary-container accent" title="{{localize "PF2ESubsystems.View.VariantExplanation"}}">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
                                                                         {{#each this.columns.variant}}
-                                                                            <select name="{{concat "events." this.event ".complications." this.complication ".skillChecks." this.skillCheck ".skills." this.id ".variant" }}" class="primary-text-container event-skill-grid-cell" {{#if this.disabled}}disabled{{/if}}>
+                                                                            <select name="{{concat "events." this.event ".complications." this.complication ".skillChecks." this.skillCheck ".skills." this.id ".variant" }}" class="tertiary-container primary-text-container event-skill-grid-cell" {{#if this.disabled}}disabled{{/if}}>
                                                                                 {{selectOptions this.variantOptions selected=this.variant valueAttr="value" labelAttr="name" localize=true blank="" }}
                                                                             </select>
                                                                         {{/each}}
                                                                     </div>
                                                                     <div class="event-skill-grid-col">
-                                                                        <div class="event-skill-grid-cell header">
+                                                                        <div class="event-skill-grid-cell header tertiary-container accent">
                                                                             <i class="fa-solid fa-plus clickable-icon" data-action="infiltrationAddComplicationSkill" data-event="{{../../event.id}}" data-complication="{{../id}}" data-skill-check="{{this.id}}"></i>
                                                                         </div>
                                                                         {{#each this.columns.action}}
@@ -765,50 +765,50 @@
                                                         <div class="event-field-group">
                                                             <div class="event-field-form small text-normal primary-text-container">
                                                                 <div>{{localize "PF2ESubsystems.Basic.UseLeveledDC"}}</div>
-                                                                <input type="checkbox" class="infiltration-activity-leveled-DC" data-event="{{../../event.id}}" data-activity="{{../id}}" data-skill-check="{{this.id}}" {{checked this.difficulty.leveledDC}} />
+                                                                <input type="checkbox" class="infiltration-activity-leveled-DC tertiary-checkbox" data-event="{{../../event.id}}" data-activity="{{../id}}" data-skill-check="{{this.id}}" {{checked this.difficulty.leveledDC}} />
                                                             </div>
                                                             <div class="event-field-form text-normal primary-text-container">
                                                                 <div>{{localize "PF2ESubsystems.Basic.DC"}}</div>
                                                                 <input type="text" name="{{concat "events." ../../event.id ".preparations.activities." ../id ".skillChecks." this.id ".difficulty.DC"}}" value="{{this.difficulty.DC}}" class="tertiary-container" {{#if this.difficulty.leveledDC}}disabled placeholder="{{localize "PF2ESubsystems.Basic.LeveledDCIsUsed"}}"{{/if}} />
                                                             </div>
                                                         </div>
-                                                        <div class="event-skill-grid tertiary-container">
+                                                        <div class="event-skill-grid secondary-container">
                                                             <div class="event-skill-grid-col">
-                                                                <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Lore"}}</div>
+                                                                <div class="event-skill-grid-cell header tertiary-container accent">{{localize "PF2ESubsystems.Basic.Lore"}}</div>
                                                                 {{#each this.columns.lore}}
-                                                                    <input type="checkbox" class="infiltration-activity-lore event-skill-grid-cell" data-event="{{this.event}}" data-activty="{{this.activity}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}" {{checked this.lore}} />
+                                                                    <input type="checkbox" class="infiltration-activity-lore event-skill-grid-cell tertiary-checkbox" data-event="{{this.event}}" data-activty="{{this.activity}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}" {{checked this.lore}} />
                                                                 {{/each}}
                                                             </div>
                                                             <div class="event-skill-grid-col">
-                                                                <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Skill"}}</div>
+                                                                <div class="event-skill-grid-cell header tertiary-container accent">{{localize "PF2ESubsystems.Basic.Skill"}}</div>
                                                                 {{#each this.columns.skill}}
                                                                     {{#if this.lore}}
-                                                                        <input type="text" name="{{concat "events." this.event ".preparations.activities." this.activity ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" value="{{this.skill}}" class="primary-text-container event-skill-grid-cell" />
+                                                                        <input type="text" name="{{concat "events." this.event ".preparations.activities." this.activity ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" value="{{this.skill}}" class="tertiary-container primary-text-container event-skill-grid-cell" />
                                                                     {{else}}
-                                                                        <select name="{{concat "events." this.event ".preparations.activities." this.activity ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" class="primary-text-container event-skill-grid-cell">
+                                                                        <select name="{{concat "events." this.event ".preparations.activities." this.activity ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" class="tertiary-container primary-text-container event-skill-grid-cell">
                                                                             {{selectOptions ../../../skillOptions selected=this.skill valueAttr="value" labelAttr="name" localize=true}}
                                                                         </select>
                                                                     {{/if}}
                                                                 {{/each}}
                                                             </div>
                                                             <div class="event-skill-grid-col">
-                                                                <div class="event-skill-grid-cell header">{{localize "PF2ESubsystems.Basic.Action"}}</div>
+                                                                <div class="event-skill-grid-cell header tertiary-container accent">{{localize "PF2ESubsystems.Basic.Action"}}</div>
                                                                 {{#each this.columns.action}}
-                                                                    <select class="infiltration-preparation-action-input primary-text-container event-skill-grid-cell" data-event="{{this.event}}" data-activity="{{this.activity}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}">
+                                                                    <select class="infiltration-preparation-action-input tertiary-container primary-text-container event-skill-grid-cell" data-event="{{this.event}}" data-activity="{{this.activity}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}">
                                                                         {{selectOptions ../../../actionOptions selected=this.action valueAttr="value" labelAttr="name" localize=true blank="" }}
                                                                     </select>
                                                                 {{/each}}
                                                             </div>
                                                             <div class="event-skill-grid-col">
-                                                                <div class="event-skill-grid-cell informative header" title="{{localize "PF2ESubsystems.View.VariantExplanation"}}">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
+                                                                <div class="event-skill-grid-cell informative header tertiary-container accent" title="{{localize "PF2ESubsystems.View.VariantExplanation"}}">{{localize "PF2ESubsystems.Basic.Variant"}}</div>
                                                                 {{#each this.columns.variant}}
-                                                                    <select name="{{concat "events." this.event ".preparations.activities." this.activity ".skillChecks." this.skillCheck ".skills." this.id ".variant" }}" class="primary-text-container event-skill-grid-cell" {{#if this.disabled}}disabled{{/if}}>
+                                                                    <select name="{{concat "events." this.event ".preparations.activities." this.activity ".skillChecks." this.skillCheck ".skills." this.id ".variant" }}" class="tertiary-container primary-text-container event-skill-grid-cell" {{#if this.disabled}}disabled{{/if}}>
                                                                         {{selectOptions this.variantOptions selected=this.variant valueAttr="value" labelAttr="name" localize=true blank="" }}
                                                                     </select>
                                                                 {{/each}}
                                                             </div>
                                                             <div class="event-skill-grid-col">
-                                                                <div class="event-skill-grid-cell header">
+                                                                <div class="event-skill-grid-cell header tertiary-container accent">
                                                                     <i class="fa-solid fa-plus clickable-icon" data-action="infiltrationAddActivitySkill" data-event="{{../../event.id}}" data-activity="{{../id}}" data-skill-check="{{this.id}}"></i>
                                                                 </div>
                                                                 {{#each this.columns.action}}

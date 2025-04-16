@@ -2,6 +2,7 @@ import { dcAdjustments, defaultInfiltrationPreparations, degreesOfSuccess, MODUL
 import { copyToClipboard, getActButton, getCheckButton, getDCAdjustmentNumber, getSelfDC, setupTagify, translateSubsystem, updateDataModel } from "../scripts/helpers";
 import { currentVersion } from "../scripts/setup";
 import { socketEvent } from "../scripts/socket";
+import SystemExport from "./SystemExport";
 import ValueDialog from "./ValueDialog";
 
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
@@ -76,6 +77,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
         copyStartEventLink: this.copyStartEventLink,
         closeClipboardFallback: this.closeClipboardFallback,
         startEventTour: this.startEventTour,
+        openImportExportMenu: this.openImportExportMenu,
         /* Chases */
         researchUpdateRoundsCurrent: this.researchUpdateRoundsCurrent,
         addPlayerParticipants: this.addPlayerParticipants,
@@ -198,6 +200,13 @@ export default class SystemView extends HandlebarsApplicationMixin(
       form: { handler: this.updateData, submitOnChange: true },
       window: {
         resizable: true,
+        // controls: [
+        //   {
+        //     icon: "fas fa-file-import fa-fw",
+        //     label: "PF2ESubsystems.View.ImportMenu",
+        //     action: "openImportExportMenu",
+        //   },
+        // ],
       },
       dragDrop: [
         { dragSelector: null, dropSelector: ".participants-outer-container" },
@@ -748,7 +757,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
     static copyStartEventLink(_, button){
       const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event];
-      const startMacro = `game.modules.get('${MODULE_ID}').macros.startEvent('${this.tabGroups.main}', '${button.dataset.event}');`;
+      const startMacro = `game.modules.get('${MODULE_ID}').lib.startEvent('${this.tabGroups.main}', '${button.dataset.event}');`;
       copyToClipboard(startMacro).then(() => {
         ui.notifications.info(
           game.i18n.format("PF2ESubsystems.View.StartEventLinkCopied", { name: event.name }),
@@ -766,6 +775,11 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
     static startEventTour(){
       game.tours.get(`${MODULE_ID}.pf2e-subsystems-${this.tabGroups.main}`).start();
+    }
+
+    static openImportExportMenu(){
+      new SystemExport().render(true);
+      this.toggleControls(false);
     }
 
     async onKeyDown(event){

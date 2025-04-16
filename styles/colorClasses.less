@@ -100,6 +100,17 @@ form {
         color: var(--pf2e-subsystem-theming-primary-color);
       }
     }
+
+    input.tertiary-checkbox {
+      &[type="checkbox"] {
+        &::before {
+          color: var(--pf2e-subsystem-theming-tertiary);
+        }
+        &[checked]::after {
+          color: var(--pf2e-subsystem-theming-tertiary-accent);
+        }
+      }
+    }
   
     .spell-container {
       &.even {

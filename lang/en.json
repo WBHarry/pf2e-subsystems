@@ -82,6 +82,10 @@
                 }
             }
         },
+        "ImportExport": {
+            "Title": "Subsystem Export",
+            "Export": "Export"
+        },
         "View": {
             "Title": "Subsystems",
             "NewEvent": "New Event",
@@ -102,6 +106,7 @@
             "OpenEventTour": "Open a tour explaining parts of the subsystem",
             "NewObstacle": "New Obstacle",
             "VariantExplanation": "Some actions have variants. In those cases you can select a variant here. For Treat Wounds and Perform, a variant -must- be selected.",
+            "ImportMenu": "Import/Export",
             "Errors": {
                 "GMMissing": "A logged in GM is required to do this!"
             }

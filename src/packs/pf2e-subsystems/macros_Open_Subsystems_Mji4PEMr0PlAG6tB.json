@@ -1,7 +1,7 @@
 {
   "name": "Open Subsystems",
   "type": "script",
-  "command": "game.modules.get('pf2e-subsystems').macros.openSubsystemView();",
+  "command": "game.modules.get('pf2e-subsystems').lib.openSubsystemView();",
   "img": "icons/magic/symbols/squares-3d-green.webp",
   "author": "XJGoLzDPTeyPNzGC",
   "scope": "global",
@@ -18,8 +18,8 @@
     "systemId": "pf2e",
     "systemVersion": "6.10.2",
     "createdTime": 1743006378886,
-    "modifiedTime": 1743006378886,
-    "lastModifiedBy": "XJGoLzDPTeyPNzGC"
+    "modifiedTime": 1744743688299,
+    "lastModifiedBy": "Xcl0DInNNt4X5wsj"
   },
   "_id": "Mji4PEMr0PlAG6tB",
   "sort": 0,

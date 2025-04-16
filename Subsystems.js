@@ -320,6 +320,10 @@ class Chase extends foundry.abstract.DataModel {
 const MODULE_ID = 'pf2e-subsystems';
 const SOCKET_ID = `module.${MODULE_ID}`;
 
+const hooks = {
+    subsystemsReady: 'pf2e-subsystems-ready',
+};
+
 const settingIDs = {
     menus: {
         subsystems: "subsystems-menu"
@@ -1374,10 +1378,10 @@ class InfluenceSettings extends foundry.abstract.DataModel {
   }
 }
 
-const { HandlebarsApplicationMixin: HandlebarsApplicationMixin$2, ApplicationV2: ApplicationV2$2 } = foundry.applications.api;
+const { HandlebarsApplicationMixin: HandlebarsApplicationMixin$3, ApplicationV2: ApplicationV2$3 } = foundry.applications.api;
 
-class SubsystemsMenu extends HandlebarsApplicationMixin$2(
-  ApplicationV2$2,
+class SubsystemsMenu extends HandlebarsApplicationMixin$3(
+  ApplicationV2$3,
 ) {
   constructor() {
     super({});
@@ -1592,7 +1596,7 @@ const registerKeyBindings = () => {
     uneditable: [],
     editable: [],
     onDown: () =>
-      game.modules.get(MODULE_ID).macros.openSubsystemView(),
+      game.modules.get(MODULE_ID).lib.openSubsystemView(),
     onUp: () => {},
     restricted: false,
     reservedModifiers: [],
@@ -1652,6 +1656,14 @@ const generalNonConfigSettings = () => {
     config: false,
     type: String,
     default: "",
+  });
+  game.settings.register(MODULE_ID, "subsystem-providers", {
+    name: "",
+    hint: "",
+    scope: "world",
+    config: false,
+    type: Object,
+    default: {},
   });
 
   game.settings.register(MODULE_ID, "chase", {
@@ -1922,13 +1934,82 @@ const disableRollButton = (disable, html) => {
     return html.match(/style="/) ? html.replace(/style="/, 'style="opacity: 0.4; pointer-events: none; ') : html.replace(/<a/, '<a style="opacity: 0.4; pointer-events: none; "').replace(/<span/, '<span style="opacity: 0.4; pointer-events: none; "');
 }; 
 
+const correctBackground = (html) => {
+    return html.replace('data-visibility="gm"', 'data-visibility="gm" style="background-color: inherit;"');
+};
+
 const getActButton = async(action, variant, skill, dc, disableElement, secret = false) => {
-    return disableRollButton(disableElement, await TextEditor.enrichHTML(`[[/act ${action} ${variant ? `variant=${variant} ` : ''}stat=${skill} dc=${dc}${secret ? ' traits=secret' : ''}]]`));
+    return correctBackground(disableRollButton(disableElement, await TextEditor.enrichHTML(`[[/act ${action} ${variant ? `variant=${variant} ` : ''}stat=${skill} dc=${dc}${secret ? ' traits=secret' : ''}]]`)));
 };
 
 const getCheckButton = async(skill, dc, simple, disableElement, secret = false) => {
-    return disableRollButton(disableElement, await TextEditor.enrichHTML(`@Check[type:${skill}|dc:${dc}|simple:${simple}${secret ? '|traits:secret' : ''}]`));
+    return correctBackground(disableRollButton(disableElement, await TextEditor.enrichHTML(`@Check[type:${skill}|dc:${dc}|simple:${simple}${secret ? '|traits:secret' : ''}]`)));
 };
+
+const { HandlebarsApplicationMixin: HandlebarsApplicationMixin$2, ApplicationV2: ApplicationV2$2 } = foundry.applications.api;
+
+class SystemExport extends HandlebarsApplicationMixin$2(ApplicationV2$2) {
+    constructor() {
+        super({});
+
+        this.influences = Object.values(game.settings.get(MODULE_ID, 'influence').events).map(influence => {
+            return { id: influence.id, name: influence.name, img: influence.background, selected: false };
+        });
+        this.chases = Object.values(game.settings.get(MODULE_ID, 'chase').events).map(chase => {
+            return { id: chase.id, name: chase.name, img: chase.background, selected: false };
+        });
+        this.researches = Object.values(game.settings.get(MODULE_ID, 'research').events).map(research => {
+            return { id: research.id, name: research.name, img: research.background, selected: false };
+        });
+        this.infiltrations = Object.values(game.settings.get(MODULE_ID, 'infiltration').events).map(infiltration => {
+            return { id: infiltration.id, name: infiltration.name, img: infiltration.background, selected: false };
+        });
+    }
+
+    get title() {
+        return game.i18n.localize("PF2ESubsystems.ImportExport.Title");
+    }
+
+    static DEFAULT_OPTIONS = {
+        tag: "form",
+        id: "pf2e-subsystems-export",
+        classes: ["pf2e-subsystems", "pf2e-export"],
+        position: { width: "200", height: "auto" },
+        actions: {},
+        form: { handler: this.updateData, submitOnChange: true },
+    };
+
+    static PARTS = {
+        main: {
+            id: "main",
+            template: "modules/pf2e-subsystems/templates/export-menu.hbs",
+        },
+    }
+
+    async _prepareContext(_options) {
+        const context = await super._prepareContext(_options);
+
+        context.influences = this.influences;
+        context.chases = this.chases;
+        context.researches = this.researches;
+        context.infiltrations = this.infiltrations;
+
+        return context;
+    }
+
+    static async updateData(event, element, formData) {
+        const { influences, chases, researches, infiltrations } = foundry.utils.expandObject(formData.object);
+    
+        this.influences = influences;
+        this.chases = chases;
+        this.researches = researches;
+        this.infiltrations = infiltrations;
+    }
+
+    async close(options={}) {
+        await super.close(options);
+    }
+}
 
 const { HandlebarsApplicationMixin: HandlebarsApplicationMixin$1, ApplicationV2: ApplicationV2$1 } = foundry.applications.api;
 
@@ -2057,6 +2138,7 @@ class SystemView extends HandlebarsApplicationMixin(
         copyStartEventLink: this.copyStartEventLink,
         closeClipboardFallback: this.closeClipboardFallback,
         startEventTour: this.startEventTour,
+        openImportExportMenu: this.openImportExportMenu,
         /* Chases */
         researchUpdateRoundsCurrent: this.researchUpdateRoundsCurrent,
         addPlayerParticipants: this.addPlayerParticipants,
@@ -2179,6 +2261,13 @@ class SystemView extends HandlebarsApplicationMixin(
       form: { handler: this.updateData, submitOnChange: true },
       window: {
         resizable: true,
+        // controls: [
+        //   {
+        //     icon: "fas fa-file-import fa-fw",
+        //     label: "PF2ESubsystems.View.ImportMenu",
+        //     action: "openImportExportMenu",
+        //   },
+        // ],
       },
       dragDrop: [
         { dragSelector: null, dropSelector: ".participants-outer-container" },
@@ -2719,7 +2808,7 @@ class SystemView extends HandlebarsApplicationMixin(
 
     static copyStartEventLink(_, button){
       const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event];
-      const startMacro = `game.modules.get('${MODULE_ID}').macros.startEvent('${this.tabGroups.main}', '${button.dataset.event}');`;
+      const startMacro = `game.modules.get('${MODULE_ID}').lib.startEvent('${this.tabGroups.main}', '${button.dataset.event}');`;
       copyToClipboard(startMacro).then(() => {
         ui.notifications.info(
           game.i18n.format("PF2ESubsystems.View.StartEventLinkCopied", { name: event.name }),
@@ -2737,6 +2826,11 @@ class SystemView extends HandlebarsApplicationMixin(
 
     static startEventTour(){
       game.tours.get(`${MODULE_ID}.pf2e-subsystems-${this.tabGroups.main}`).start();
+    }
+
+    static openImportExportMenu(){
+      new SystemExport().render(true);
+      this.toggleControls(false);
     }
 
     async onKeyDown(event){
@@ -4897,10 +4991,54 @@ const startEvent = async (tab, event) => {
   systemView.onStartEvent(event);
 };
 
-var macros = /*#__PURE__*/Object.freeze({
+const registerSubsystemEvents = async (moduleId, jsonData) => {
+  const subsystemProviders = game.settings.get(MODULE_ID, 'subsystem-providers');
+  if(subsystemProviders[moduleId]?.registered) return;
+  
+  if(jsonData.influence) ;
+
+  if(jsonData.chase) {
+    const existingChase = game.settings.get(MODULE_ID, 'chase');
+    await existingChase.updateSource(jsonData.chase.reduce((acc, chase) => {
+      const chaseId = foundry.utils.randomID();
+      acc[chaseId] = {
+        ...chase,
+        id: chaseId,
+        participants: chase.participants.reduce((acc, participant) => {
+          const participantId = foundry.utils.randomID();
+          acc[participantId] = {
+            ...participant,
+            id: participantId,
+          };
+
+          return acc;
+        }, {}),
+        obstacles: chase.obstacles.reduce((acc, obstacle) => {
+          const obstacleId = foundry.utils.randomID();
+          acc[obstacleId] = {
+            ...obstacle,
+            id: obstacleId,
+          };
+
+          return acc;
+        }, {}),
+      };
+
+      return acc;
+    }, {}));
+    await game.settings.set(MODULE_ID, 'chase', existingChase);
+  }
+
+  if(jsonData.research) ;
+
+  if(jsonData.infiltrate) ;
+};
+
+var lib = /*#__PURE__*/Object.freeze({
   __proto__: null,
   addEvent: addEvent,
   openSubsystemView: openSubsystemView,
+  registerSubsystemEvents: registerSubsystemEvents,
   startEvent: startEvent
 });
 
@@ -5182,9 +5320,14 @@ class InfluenceTour extends Tour {
 Hooks.once("init", () => {
     registerGameSettings();
     registerKeyBindings();
+    
+    const module = game.modules.get(MODULE_ID);
+    module.lib = lib;
+    module.hooks = hooks;
+
     RegisterHandlebarsHelpers.registerHelpers();
     game.socket.on(SOCKET_ID, handleSocketEvent);
-
+    CONFIG.debug.hooks = true;
     loadTemplates([
       "modules/pf2e-subsystems/templates/partials/navigate-back.hbs",
       "modules/pf2e-subsystems/templates/partials/events.hbs",
@@ -5202,9 +5345,8 @@ Hooks.once("init", () => {
 });
 
 Hooks.once("ready", async () => {
-    game.modules.get("pf2e-subsystems").macros = macros;
-
     handleMigration();
+    Hooks.callAll(hooks.subsystemsReady);
 });
 
 Hooks.once("setup", async () => {
