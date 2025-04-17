@@ -1634,6 +1634,13 @@ export default class SystemView extends HandlebarsApplicationMixin(
     }
 
     static async infiltrationPreparationsActivitiesReset(_, button) {
+      const confirmed = await Dialog.confirm({
+        title: game.i18n.localize("PF2ESubsystems.View.ConfirmRestoreDefaultTitle"),
+        content: game.i18n.format("PF2ESubsystems.View.ConfirmRestoreDefaultText", { type: translateSubsystem(this.tabGroups.main) }),
+      });
+
+      if(!confirmed) return;
+
       const infiltrations = game.settings.get(MODULE_ID, this.tabGroups.main).toObject();
       infiltrations.events[button.dataset.event].preparations.activities = defaultInfiltrationPreparations;
       await game.settings.set(MODULE_ID, this.tabGroups.main, infiltrations);
@@ -2113,16 +2120,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
       }});
     }
 
-    async updateObstacleLore(event) {
-      event.stopPropagation();
-      const button = event.currentTarget;
-
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.objectives.${button.dataset.objective}.obstacles.${button.dataset.obstacle}.skillChecks.${button.dataset.skillCheck}.skills.${button.dataset.skill}`]: {
-        lore: button.checked,
-        skill: button.checked ? 'something-lore' : 'acrobatics',
-      }});
-    }
-
     async updateComplicationLeveldDC(event) {
       event.stopPropagation();
       const button = event.currentTarget;
@@ -2157,6 +2154,54 @@ export default class SystemView extends HandlebarsApplicationMixin(
       }});
     }
 
+    async updateInfiltrationPreparationSkill(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+      const currentLore = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].preparations.activities[button.dataset.activity].skillChecks[button.dataset.skillCheck].skills[button.dataset.skill].lore;
+      let newSkill = button.value;
+
+      if(currentLore){
+        const loreMatch = newSkill.match('-lore');
+        if(!loreMatch || loreMatch.length === 0) {
+          newSkill = 'something-lore';
+          ui.notifications.warn(game.i18n.localize('PF2ESubsystems.Research.Errors.LoreError'));
+        }
+      }
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.skillChecks.${button.dataset.skillCheck}.skills.${button.dataset.skill}`]: {
+        skill: newSkill,
+      }});
+    }
+
+    async updateInfiltrationObstacleLore(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.objectives.${button.dataset.objective}.obstacles.${button.dataset.obstacle}.skillChecks.${button.dataset.skillCheck}.skills.${button.dataset.skill}`]: {
+        lore: button.checked,
+        skill: button.checked ? 'something-lore' : 'acrobatics',
+      }});
+    }
+
+    async updateInfiltrationObstacleSkill(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+      const currentLore = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].objectives[button.dataset.objective].obstacles[button.dataset.obstacle].skillChecks[button.dataset.skillCheck].skills[button.dataset.skill].lore;
+      let newSkill = button.value;
+
+      if(currentLore){
+        const loreMatch = newSkill.match('-lore');
+        if(!loreMatch || loreMatch.length === 0) {
+          newSkill = 'something-lore';
+          ui.notifications.warn(game.i18n.localize('PF2ESubsystems.Research.Errors.LoreError'));
+        }
+      }
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.objectives.${button.dataset.objective}.obstacles.${button.dataset.obstacle}.skillChecks.${button.dataset.skillCheck}.skills.${button.dataset.skill}`]: {
+        skill: newSkill,
+      }});
+    }
+
     async updateComplicationLore(event) {
       event.stopPropagation();
       const button = event.currentTarget;
@@ -2164,6 +2209,25 @@ export default class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.skillChecks.${button.dataset.skillCheck}.skills.${button.dataset.skill}`]: {
         lore: button.checked,
         skill: button.checked ? 'something-lore' : 'acrobatics',
+      }});
+    }
+
+    async updateInfiltrationComplicationSkill(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+      const currentLore = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].complications[button.dataset.complication].skillChecks[button.dataset.skillCheck].skills[button.dataset.skill].lore;
+      let newSkill = button.value;
+
+      if(currentLore){
+        const loreMatch = newSkill.match('-lore');
+        if(!loreMatch || loreMatch.length === 0) {
+          newSkill = 'something-lore';
+          ui.notifications.warn(game.i18n.localize('PF2ESubsystems.Research.Errors.LoreError'));
+        }
+      }
+
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.skillChecks.${button.dataset.skillCheck}.skills.${button.dataset.skill}`]: {
+        skill: newSkill,
       }});
     }
 
@@ -2271,11 +2335,14 @@ export default class SystemView extends HandlebarsApplicationMixin(
           $(htmlElement).find('.radio-button').on('contextmenu', this.toggleObjectiveHidden.bind(this));
           $(htmlElement).find('.complication-max-infiltration-pointers').on('change', this.updateComplicationInfiltrationPoints.bind(this));
           $(htmlElement).find('.obstacle-complication-leveled-DC').on('change', this.updateObstacleLeveldDC.bind(this));
-          $(htmlElement).find('.infiltration-obstacle-lore').on('change', this.updateObstacleLore.bind(this));
+          $(htmlElement).find('.infiltration-obstacle-lore').on('change', this.updateInfiltrationObstacleLore.bind(this));
+          $(htmlElement).find('.infiltration-obstacle-skill').on('change', this.updateInfiltrationObstacleSkill.bind(this));
           $(htmlElement).find('.infiltration-complication-leveled-DC').on('change', this.updateComplicationLeveldDC.bind(this));
           $(htmlElement).find('.infiltration-complication-lore').on('change', this.updateComplicationLore.bind(this));
+          $(htmlElement).find('.infiltration-complication-skill').on('change', this.updateInfiltrationComplicationSkill.bind(this));
           $(htmlElement).find('.infiltration-activity-leveled-DC').on('change', this.updateInfiltrationActivityLeveldDC.bind(this));
           $(htmlElement).find('.infiltration-activity-lore').on('change', this.updateInfiltrationActivityLore.bind(this));
+          $(htmlElement).find('.infiltration-activity-skill').on('change', this.updateInfiltrationPreparationSkill.bind(this));
           $(htmlElement).find('.infiltration-activity-result-button').on('contextmenu', this.infiltrationActivityDecreaseResultsOutcome.bind(this));
           $(htmlElement).find('.infiltration-obstacle-action-input').on('change', this.infiltrationObstacleActionUpdate.bind(this));
           $(htmlElement).find('.infiltration-complication-action-input').on('change', this.infiltrationComplicationActionUpdate.bind(this));

@@ -280,7 +280,7 @@
                                                                             <div class="event-skill-grid-cell header tertiary-container accent">{{localize "PF2ESubsystems.Basic.Skill"}}</div>
                                                                             {{#each this.columns.skill}}
                                                                                 {{#if this.lore}}
-                                                                                    <input type="text" name="{{concat "events." this.event ".objectives." this.objective ".obstacles." this.obstacle ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" value="{{this.skill}}" class="tertiary-container primary-text-container event-skill-grid-cell" />
+                                                                                    <input type="text" value="{{this.skill}}" class="infiltration-obstacle-skill tertiary-container primary-text-container event-skill-grid-cell" data-event="{{this.event}}" data-objective="{{this.objective}}" data-obstacle="{{this.obstacle}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}" />
                                                                                 {{else}}
                                                                                     <select name="{{concat "events." this.event ".objectives." this.objective ".obstacles." this.obstacle ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" class="tertiary-container primary-text-container event-skill-grid-cell">
                                                                                         {{selectOptions ../../../skillOptions selected=this.skill valueAttr="value" labelAttr="name" localize=true}}
@@ -541,7 +541,7 @@
                                                                         <div class="event-skill-grid-cell header tertiary-container accent">{{localize "PF2ESubsystems.Basic.Skill"}}</div>
                                                                         {{#each this.columns.skill}}
                                                                             {{#if this.lore}}
-                                                                                <input type="text" name="{{concat "events." this.event ".complications." this.complication ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" value="{{this.skill}}" class="tertiary-container primary-text-container event-skill-grid-cell" />
+                                                                                <input type="text" value="{{this.skill}}" class="infiltration-complication-skill tertiary-container primary-text-container event-skill-grid-cell" data-event="{{this.event}}" data-complication="{{this.complication}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}" />
                                                                             {{else}}
                                                                                 <select name="{{concat "events." this.event ".complications." this.complication ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" class="tertiary-container primary-text-container event-skill-grid-cell">
                                                                                     {{selectOptions ../../../skillOptions selected=this.skill valueAttr="value" labelAttr="name" localize=true}}
@@ -687,7 +687,7 @@
                                     <i class="fa-solid fa-maximize clickable-icon {{#if (eq this.layout.preparations 2)}}selected{{/if}}" data-action="setInfiltrationPreparationLayout" data-option="2"></i> --}}
 
                                     <i class="fa-solid fa-plus clickable-icon" data-action="infiltrationPreparationsActivityAdd" data-event="{{this.event.id}}"></i>
-                                    <i class="fa-solid fa-rotate-left clickable-icon" data-action="infiltrationPreparationsActivitiesReset" data-event="{{this.event.id}}"></i>
+                                    <i class="fa-solid fa-rotate-left clickable-icon" data-action="infiltrationPreparationsActivitiesReset" data-event="{{this.event.id}}" title="{{localize "PF2ESubsystems.Basic.RestoreToDefault"}}"></i>
                                 </div>
                             </div>
                         {{/if}}
@@ -782,14 +782,14 @@
                                                             <div class="event-skill-grid-col">
                                                                 <div class="event-skill-grid-cell header tertiary-container accent">{{localize "PF2ESubsystems.Basic.Lore"}}</div>
                                                                 {{#each this.columns.lore}}
-                                                                    <input type="checkbox" class="infiltration-activity-lore event-skill-grid-cell tertiary-checkbox" data-event="{{this.event}}" data-activty="{{this.activity}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}" {{checked this.lore}} />
+                                                                    <input type="checkbox" class="infiltration-activity-lore event-skill-grid-cell tertiary-checkbox" data-event="{{this.event}}" data-activity="{{this.activity}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}" {{checked this.lore}} />
                                                                 {{/each}}
                                                             </div>
                                                             <div class="event-skill-grid-col">
                                                                 <div class="event-skill-grid-cell header tertiary-container accent">{{localize "PF2ESubsystems.Basic.Skill"}}</div>
                                                                 {{#each this.columns.skill}}
                                                                     {{#if this.lore}}
-                                                                        <input type="text" name="{{concat "events." this.event ".preparations.activities." this.activity ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" value="{{this.skill}}" class="tertiary-container primary-text-container event-skill-grid-cell" />
+                                                                        <input type="text" value="{{this.skill}}" class="infiltration-activity-skill tertiary-container primary-text-container event-skill-grid-cell" data-event="{{this.event}}" data-activity="{{this.activity}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}" />
                                                                     {{else}}
                                                                         <select name="{{concat "events." this.event ".preparations.activities." this.activity ".skillChecks." this.skillCheck ".skills." this.id ".skill" }}" class="tertiary-container primary-text-container event-skill-grid-cell">
                                                                             {{selectOptions ../../../skillOptions selected=this.skill valueAttr="value" labelAttr="name" localize=true}}

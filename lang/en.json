@@ -25,7 +25,8 @@
             "Action": "Action",
             "Variant": "Variant",
             "Overcome": "Overcome",
-            "Trigger": "Trigger"
+            "Trigger": "Trigger",
+            "RestoreToDefault": "Restore To Default"
         },
         "TimeUnits": {
             "Year": {
@@ -108,6 +109,8 @@
             "NewObstacle": "New Obstacle",
             "VariantExplanation": "Some actions have variants. In those cases you can select a variant here. For Treat Wounds and Perform, a variant -must- be selected.",
             "ImportMenu": "Export",
+            "ConfirmRestoreDefaultTitle": "Restore Default Values",
+            "ConfirmRestoreDefaultText": "This will restore the default values of this section. Are you sure?",
             "Errors": {
                 "GMMissing": "A logged in GM is required to do this!"
             }
