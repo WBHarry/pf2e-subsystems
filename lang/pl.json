@@ -25,7 +25,8 @@
             "Action": "Akcja",
             "Variant": "Wariant",
             "Overcome": "Przezwyciężenie",
-            "Trigger": "Wyzwalacz"
+            "Trigger": "Wyzwalacz",
+            "RestoreToDefault": "Przywróć domyślne"
         },
         "TimeUnits": {
             "Year": {
@@ -77,9 +78,15 @@
                     "AutoRevealAwareness": "Automatyczne ujawnianie punktów krytycznych Czujności"
                 },
                 "Influence": {
-                    "AutoRevealInfluence": "Automatyczne ujawnianie Wpływania"
+                    "AutoRevealInfluence": "Automatyczne ujawnianie Wpływania",
+                    "ShowPerceptionAndWill": "Pokaż graczom Percepcję i Wolę"
                 }
             }
+        },
+        "ImportExport": {
+            "Title": "Eksport podsystemów",
+            "Export": "Eksportuj",
+            "SuccessfullyExported": "Pomyślnie wyeksportowano zdarzenia podsystemu"
         },
         "View": {
             "Title": "Podsystemy",
@@ -100,6 +107,10 @@
             "ConfirmDeleteEventText": "Czy na pewno chcesz usunąć wydarzenie {type}?",
             "OpenEventTour": "Otwórz wycieczkę objaśniającą części podsystemu",
             "NewObstacle": "Nowa przeszkoda",
+            "VariantExplanation": "Niektóre akcje mają warianty. W takich przypadkach można wybrać wariant tutaj. W przypadku akcji Leczenie Ran i Występowanie wariant musi zostać wybrany.",
+            "ImportMenu": "Eksportuj",
+            "ConfirmRestoreDefaultTitle": "Przywróć wartości domyślne",
+            "ConfirmRestoreDefaultText": "Spowoduje to przywrócenie domyślnych wartości tej sekcji. Czy na pewno?",
             "Errors": {
                 "GMMissing": "Aby to zrobić, wymagany jest zalogowany MG!"
             }
@@ -257,7 +268,8 @@
             "InfluencePoints": "Punkty",
             "Modifier": "Modyfikator",
             "InfluenceSkillLabelTitle": "Etykieta {skill}",
-            "Rounds": "Rundy"
+            "Rounds": "Rundy",
+            "EditInfluenceSkillLabel": "Edytuj etykietę umiejętności opcjonalnej"
         },
         "KeyBindings": {
             "OpenSystemView": {
