@@ -112,6 +112,7 @@
             "ConfirmRestoreDefaultTitle": "Restore Default Values",
             "ConfirmRestoreDefaultText": "This will restore the default values of this section. Are you sure?",
             "TextDialogTitle": "{name} Text Editor",
+            "LinkDialogTitle": "{name} Links",
             "Errors": {
                 "GMMissing": "A logged in GM is required to do this!"
             }
@@ -270,7 +271,8 @@
             "Modifier": "Modifier",
             "InfluenceSkillLabelTitle": "{skill} Label",
             "Rounds": "Rounds",
-            "EditInfluenceSkillLabel": "Edit Optional Skill Label"
+            "EditInfluenceSkillLabel": "Edit Optional Skill Label",
+            "NPCLinkDialogTitle": "Open Links To Connected NPCs" 
         },
         "KeyBindings": {
             "OpenSystemView": {

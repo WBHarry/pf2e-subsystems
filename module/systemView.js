@@ -2,6 +2,7 @@ import { dcAdjustments, defaultInfiltrationPreparations, degreesOfSuccess, MODUL
 import { copyToClipboard, getActButton, getCheckButton, getDCAdjustmentNumber, getSelfDC, setupTagify, translateSubsystem, updateDataModel } from "../scripts/helpers";
 import { currentVersion } from "../scripts/setup";
 import { socketEvent } from "../scripts/socket";
+import LinkDialog from "./LinkDialog";
 import SystemExport from "./SystemExport";
 import TextDialog from "./TextDialog";
 import ValueDialog from "./ValueDialog";
@@ -199,6 +200,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
         influenceInfluenceSkillToggleOpen: this.influenceInfluenceSkillToggleOpen,
         influenceSkillLabelMenu: this.influenceSkillLabelMenu,
         influenceRoundsUpdate: this.influenceRoundsUpdate,
+        influenceOpenLinkedNPCs: this.influenceOpenLinkedNPCs,
       },
       form: { handler: this.updateData, submitOnChange: true },
       window: {
@@ -2009,6 +2011,18 @@ export default class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.timeLimit.current`]: button.dataset.increase ? currentRound + 1 : currentRound - 1 });
     }
 
+    static async influenceOpenLinkedNPCs(_, button) {
+      const npcLinkData = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].linkedNPCsData;
+      new Promise((resolve, reject) => {
+        new LinkDialog(resolve, reject, npcLinkData, game.i18n.format('PF2ESubsystems.View.LinkDialogTitle', { name: game.i18n.localize("TYPES.Actor.npc") })).render(true);
+      }).then(id => {
+        game.modules.get('pf2e-bestiary-tracking').macros.openBestiary({ position: { top: this.position.top + 50 } }, id);
+        this.minimize();
+      });
+
+      button.dataset.event
+    }
+
     async updateInfluenceDiscoveryLore(event) {
       event.stopPropagation();
       const button = event.currentTarget;
@@ -2774,6 +2788,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
           await this.setupEvents(influenceEvents, context);
 
           if(context.selectedEvent) {
+            context.selectedEvent.linkedNPCs = context.selectedEvent.linkedNPCsData;
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
             context.selectedEvent.extendedDiscoveries = context.selectedEvent.discoveryData;
             context.selectedEvent.extendedInfluenceSkills = context.selectedEvent.influenceSkillData;

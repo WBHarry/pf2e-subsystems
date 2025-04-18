@@ -1110,6 +1110,19 @@ class Influence extends foundry.abstract.DataModel {
       }
     }
 
+    get linkedNPCsData() {
+      if(!game.modules.get('pf2e-bestiary-tracking')?.active || !game.journal.get(game.settings.get('pf2e-bestiary-tracking', 'bestiary-tracking'))) return null;
+
+      const npcEntries = game.journal.get(game.settings.get('pf2e-bestiary-tracking', 'bestiary-tracking')).pages.filter(x => x.type === 'pf2e-bestiary-tracking.npc' && (game.user.isGM || !x.system.hidden) && x.system.npcData.influenceEventIds.includes(this.id));
+      if(npcEntries.length === 0) return null;
+
+      return npcEntries.map(x => ({
+        id: x.system.uuid,
+        name: x.system.name.value,
+        img: x.system.img,
+      }));
+    }
+
     get dcModifier() {
       const weaknessMod = Object.values(this.weaknesses).reduce((acc, weakness) => {
         if(weakness.modifier.used) acc -= weakness.modifier.value;
@@ -1395,10 +1408,10 @@ class InfluenceSettings extends foundry.abstract.DataModel {
   }
 }
 
-const { HandlebarsApplicationMixin: HandlebarsApplicationMixin$4, ApplicationV2: ApplicationV2$4 } = foundry.applications.api;
+const { HandlebarsApplicationMixin: HandlebarsApplicationMixin$5, ApplicationV2: ApplicationV2$5 } = foundry.applications.api;
 
-class SubsystemsMenu extends HandlebarsApplicationMixin$4(
-  ApplicationV2$4,
+class SubsystemsMenu extends HandlebarsApplicationMixin$5(
+  ApplicationV2$5,
 ) {
   constructor() {
     super({});
@@ -1974,6 +1987,67 @@ const versionCompare = (current, target) => {
     return false;
   };
 
+const { HandlebarsApplicationMixin: HandlebarsApplicationMixin$4, ApplicationV2: ApplicationV2$4 } = foundry.applications.api;
+
+class LinkDialog extends HandlebarsApplicationMixin$4(ApplicationV2$4) {
+    constructor(resolve, reject, links, label) {
+        super({});
+
+        this.resolve = resolve;
+        this.reject = reject;
+        this.links = links;
+        this.label = label;
+    }
+
+    get title() {
+        return this.label;
+    }
+
+    static DEFAULT_OPTIONS = {
+        tag: "form",
+        id: "pf2e-subsystems-value-dialog",
+        classes: ["pf2e-subsystems", "pf2e-link-dialog"],
+        position: { width: "560", height: "auto" },
+        actions: {
+            openLink: this.openLink,
+        },
+    };
+
+    static PARTS = {
+        main: {
+            id: "main",
+            template: "modules/pf2e-subsystems/templates/link-dialog.hbs",
+        },
+    }
+
+    async _prepareContext(_options) {
+        const context = await super._prepareContext(_options);
+        context.links = this.links;
+
+        return context;
+    }
+
+    static async openLink(_, button) {
+        this.resolve(button.dataset.link);
+        this.close({ updateClose: true });
+    }
+
+    // static async updateData(event, element, formData) {
+    //     const data = foundry.utils.expandObject(formData.object);
+    //     this.resolve(data.value);
+    //     this.close({ updateClose: true });
+    // }
+
+    async close(options={}) {
+        const { updateClose, ...baseOptions } = options;
+        if(!updateClose){
+            this.reject();
+        }
+
+        await super.close(baseOptions);
+    }
+}
+
 const { HandlebarsApplicationMixin: HandlebarsApplicationMixin$3, ApplicationV2: ApplicationV2$3 } = foundry.applications.api;
 
 class SystemExport extends HandlebarsApplicationMixin$3(ApplicationV2$3) {
@@ -2412,6 +2486,7 @@ class SystemView extends HandlebarsApplicationMixin(
         influenceInfluenceSkillToggleOpen: this.influenceInfluenceSkillToggleOpen,
         influenceSkillLabelMenu: this.influenceSkillLabelMenu,
         influenceRoundsUpdate: this.influenceRoundsUpdate,
+        influenceOpenLinkedNPCs: this.influenceOpenLinkedNPCs,
       },
       form: { handler: this.updateData, submitOnChange: true },
       window: {
@@ -4212,6 +4287,18 @@ class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.timeLimit.current`]: button.dataset.increase ? currentRound + 1 : currentRound - 1 });
     }
 
+    static async influenceOpenLinkedNPCs(_, button) {
+      const npcLinkData = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].linkedNPCsData;
+      new Promise((resolve, reject) => {
+        new LinkDialog(resolve, reject, npcLinkData, game.i18n.format('PF2ESubsystems.View.LinkDialogTitle', { name: game.i18n.localize("TYPES.Actor.npc") })).render(true);
+      }).then(id => {
+        game.modules.get('pf2e-bestiary-tracking').macros.openBestiary({ position: { top: this.position.top + 50 } }, id);
+        this.minimize();
+      });
+
+      button.dataset.event;
+    }
+
     async updateInfluenceDiscoveryLore(event) {
       event.stopPropagation();
       const button = event.currentTarget;
@@ -4977,6 +5064,7 @@ class SystemView extends HandlebarsApplicationMixin(
           await this.setupEvents(influenceEvents, context);
 
           if(context.selectedEvent) {
+            context.selectedEvent.linkedNPCs = context.selectedEvent.linkedNPCsData;
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
             context.selectedEvent.extendedDiscoveries = context.selectedEvent.discoveryData;
             context.selectedEvent.extendedInfluenceSkills = context.selectedEvent.influenceSkillData;

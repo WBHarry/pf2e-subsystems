@@ -1,0 +1,42 @@
+.pf2e-subsystems {
+    .value-dialog-container {
+        display: flex;
+        gap: @gapSmall;
+        
+        .value-dialog-input {
+            border-width: 1px;
+            border-style: solid;
+            border-radius: 6px;
+            flex: 1;
+        }
+        
+        .value-dialog-confirm {
+            font-size: 24px;
+            padding: @paddingNormal;
+            flex: 0;
+        
+            i {
+            margin: 0;
+            }
+        }
+    }
+
+    .link-dialog-container {
+        display: flex;
+        align-items: center;
+        gap: @gapNormal;
+        flex-wrap: wrap;
+
+        .link-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            width: calc(33% - 4px);
+
+            .link-label {
+                position: absolute;
+                top: 0;
+            }
+        }
+    }
+}

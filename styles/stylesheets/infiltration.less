@@ -63,6 +63,7 @@
                         overflow: hidden;
                         
                         .event-section-item-container {
+                            flex: 1;
                             overflow: auto;
                             
                             .infiltration-complications-inner-container {
@@ -204,7 +205,6 @@
                                 display: flex;
                                 flex-direction: column;
                                 align-items: center;
-                                padding: 0 @paddingNormal;
                                 position: relative;
                                 border-width: 1px;
                                 border-style: solid;
@@ -214,6 +214,8 @@
                                     flex: 1;
 
                                     .awareness-point-breakpoint-main-container {
+                                        padding: 0 @paddingNormal @paddingNormal;
+                                        
                                         textarea {
                                             flex: 1;
                                         }

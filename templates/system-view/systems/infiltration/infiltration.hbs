@@ -70,9 +70,13 @@
                                                     <input type="text" data-dtype="Number" name="{{concat "events." ../event.id ".awarenessPoints.breakpoints." this.id ".dcIncrease"}}" value="{{this.dcIncrease}}" class="tertiary-container" />
                                                 </div>
                                             </div>
-                                            <textarea class="data-input tertiary-container" name="{{concat "events." ../event.id ".awarenessPoints.breakpoints." this.id ".description"}}" value="{{this.description}}">
+                                            <fieldset class="dialog-editable-text-display tertiary-container">
+                                                <legend>
+                                                    <strong>{{localize "PF2ESubsystems.Basic.Description"}}</strong>
+                                                    <i class="fa-solid fa-pen-to-square edit-icon clickable-icon" data-action="useEditTextDialog" data-path="{{concat "events." ../event.id ".awarenessPoints.breakpoints." this.id ".description" }}"></i>
+                                                </legend>
                                                 {{{this.enrichedDescription}}}
-                                            </textarea>
+                                            </fieldset>
                                         {{else}}
                                             <div class="text-normal italic">{{{this.enrichedDescription}}}</div>
                                         {{/if}}
@@ -101,9 +105,13 @@
                                             <input type="text" name="{{concat "events." ../event.id ".edgePoints." this.id ".name"}}" value="{{this.name}}" class="tertiary-container" />
                                         </div>
                                     </div>
-                                    <textarea class="tertiary-container" name="{{concat "events." ../event.id ".edgePoints." this.id ".description"}}" value="{{this.description}}">
+                                    <fieldset class="dialog-editable-text-display tertiary-container">
+                                        <legend>
+                                            <strong>{{localize "PF2ESubsystems.Basic.Description"}}</strong>
+                                            <i class="fa-solid fa-pen-to-square edit-icon clickable-icon" data-action="useEditTextDialog" data-path="{{concat "events." ../event.id ".edgePoints." this.id ".description"}}"></i>
+                                        </legend>
                                         {{{this.enrichedDescription}}}
-                                    </textarea>
+                                    </fieldset>
                                 </div>
                             {{else}}
                                 <div class="event-section-header-container">

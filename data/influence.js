@@ -88,6 +88,19 @@ export class Influence extends foundry.abstract.DataModel {
       }
     }
 
+    get linkedNPCsData() {
+      if(!game.modules.get('pf2e-bestiary-tracking')?.active || !game.journal.get(game.settings.get('pf2e-bestiary-tracking', 'bestiary-tracking'))) return null;
+
+      const npcEntries = game.journal.get(game.settings.get('pf2e-bestiary-tracking', 'bestiary-tracking')).pages.filter(x => x.type === 'pf2e-bestiary-tracking.npc' && (game.user.isGM || !x.system.hidden) && x.system.npcData.influenceEventIds.includes(this.id));
+      if(npcEntries.length === 0) return null;
+
+      return npcEntries.map(x => ({
+        id: x.system.uuid,
+        name: x.system.name.value,
+        img: x.system.img,
+      }));
+    }
+
     get dcModifier() {
       const weaknessMod = Object.values(this.weaknesses).reduce((acc, weakness) => {
         if(weakness.modifier.used) acc -= weakness.modifier.value;

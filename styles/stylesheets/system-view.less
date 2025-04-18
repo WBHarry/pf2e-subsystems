@@ -297,6 +297,19 @@
             flex-direction: column;
             gap: @gapNormal;
 
+            .dialog-editable-text-display {
+                legend {
+                    display: flex;
+                    align-items: center;
+                    gap: @gapSmall;
+                    margin: 0 auto;
+
+                    .edit-icon {
+                        font-size: 16px;
+                    }
+                }
+            }
+
             .event-tabs {
                 display: flex;
                 border-width: 1px;
@@ -319,12 +332,23 @@
                 }
             }
 
+            .event-header-right {
+                display: flex;
+                align-items: center;
+            }
+
             .event-information {
                 font-size: 19px;
                 color: var(--pf2e-subsystem-theming-primary-color);
                 border-style: solid;
                 border-radius: 50%;
                 border-color: var(--pf2e-subsystem-theming-secondary-border);
+            }
+
+            .event-header-right {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
             }
 
             .event-clipboard-fallback {

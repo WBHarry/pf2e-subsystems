@@ -44,14 +44,13 @@
             {{/if}}
             <div class="research-premise primary-container accent">
                 <div class="title-container primary-container">
-                    {{localize "PF2ESubsystems.Basic.Premise"}}
+                    <div class="event-section-inner-title">
+                        {{localize "PF2ESubsystems.Basic.Premise"}}
+                        {{#if this.editMode}}<i class="fa-solid fa-pen-to-square clickable-icon title-edit-icon" data-action="useEditTextDialog" data-path="{{concat "events." this.event.id ".premise"}}"></i>{{/if}}
+                    </div>
                 </div>
                 <div class="research-premise-content">
-                    {{#if this.editMode}}
-                        <textarea class="secondary-container" name="{{concat "events." this.event.id ".premise"}}" value="{{this.event.premise}}">{{{this.event.enrichedPremise}}}</textarea>
-                    {{else}}
-                        {{{this.event.enrichedPremise}}}
-                    {{/if}}
+                    {{{this.event.enrichedPremise}}}
                 </div>
             </div>
         </div>

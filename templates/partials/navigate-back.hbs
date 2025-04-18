@@ -6,10 +6,15 @@
         </div>
         {{#if this.showTour}}<i class="event-information clickable-icon fa-solid fa-circle-info" data-action="startEventTour" title="{{localize "PF2ESubsystems.View.OpenEventTour"}}"></i>{{/if}}
     </div>
-    {{#if this.clipboardFallback}}
-        <div class="event-clipboard-fallback secondary-container">
-            <input type="text" value="{{this.clipboardFallback}}" class="clipboard-fallback-input secondary-container" />
-            <button data-action="closeClipboardFallback" class="tertiary-container"><i class="fa-solid fa-x"></i></button>
-        </div>
-    {{/if}}
+    <div class="event-header-right">
+        {{#if @partial-block}}
+            {{> @partial-block }}
+        {{/if}}
+        {{#if this.clipboardFallback}}
+            <div class="event-clipboard-fallback secondary-container">
+                <input type="text" value="{{this.clipboardFallback}}" class="clipboard-fallback-input secondary-container" />
+                <button data-action="closeClipboardFallback" class="tertiary-container"><i class="fa-solid fa-x"></i></button>
+            </div>
+        {{/if}}
+    </div>
 </div>
