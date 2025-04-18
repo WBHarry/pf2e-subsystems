@@ -56,20 +56,20 @@
             }
         },
         "ValueDialog": {
-            "Title": "Value Dialog"
+            "Title": "Boîte de dialogue des valeurs"
         },
         "Menus": {
             "Subsystems": {
-                "Name": "Subsystems",
-                "Label": "Subsystems Menu",
-                "Hint": "Change settings on different subsystems",
-                "Title": "Subsystems Menu",
+                "Name": "Sous-systèmes",
+                "Label": "Menu des Sous-systèmes",
+                "Hint": "Modifie les paramètres de différents sous-systèmes",
+                "Title": "Menu des Sous-systèmes",
                 "Chase": {
-                    "PlayersCanEditPosition": "Allow players to edit their position",
-                    "HideObstacleLockIcon": "Hide obstacle lock icon"
+                    "PlayersCanEditPosition": "Permettre aux joueurs de modifier leur position",
+                    "HideObstacleLockIcon": "Masquer l'icône de verrouillage des obstacles"
                 },
                 "Research": {
-                    "HideResearchCheckMaxRP": "Hide the Max RP of Research Checks to players"
+                    "HideResearchCheckMaxRP": "Cacher aux joueurs le PR maximum des tests de recherche"
                 },
                 "Infiltration": {
                     "DefaultAwarenessBreakpoints": "Default Awareness Breakpoints",
