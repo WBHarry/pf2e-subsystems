@@ -668,6 +668,18 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-view-container .event-section-title.controls {
   height: 45px;
 }
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section .event-section-title .event-section-inner-title,
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-view-container .event-section-title .event-section-inner-title {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section .event-section-title .event-section-inner-title .title-edit-icon,
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-view-container .event-section-title .event-section-inner-title .title-edit-icon {
+  position: absolute;
+  right: -20px;
+  font-size: 16px;
+}
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-section .event-section-container,
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-view-container .event-section-container {
   flex: 1;

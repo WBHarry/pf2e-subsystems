@@ -3,6 +3,7 @@ import { copyToClipboard, getActButton, getCheckButton, getDCAdjustmentNumber, g
 import { currentVersion } from "../scripts/setup";
 import { socketEvent } from "../scripts/socket";
 import SystemExport from "./SystemExport";
+import TextDialog from "./TextDialog";
 import ValueDialog from "./ValueDialog";
 
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
@@ -78,6 +79,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
         closeClipboardFallback: this.closeClipboardFallback,
         startEventTour: this.startEventTour,
         openImportExportMenu: this.openImportExportMenu,
+        useEditTextDialog: this.useEditTextDialog,
         /* Chases */
         researchUpdateRoundsCurrent: this.researchUpdateRoundsCurrent,
         addPlayerParticipants: this.addPlayerParticipants,
@@ -781,6 +783,15 @@ export default class SystemView extends HandlebarsApplicationMixin(
     static openImportExportMenu(){
       new SystemExport().render(true);
       this.toggleControls(false);
+    }
+
+    static useEditTextDialog(_, button){
+      const initialText = foundry.utils.getProperty(game.settings.get(MODULE_ID, this.tabGroups.main), button.dataset.path);
+      new Promise((resolve, reject) => {
+        new TextDialog(resolve, reject, initialText, game.i18n.format('PF2ESubsystems.View.TextDialogTitle', { name: game.i18n.localize('PF2ESubsystems.Basic.Premise') })).render(true);
+      }).then(async html => {
+        await updateDataModel(this.tabGroups.main, { [button.dataset.path]: html });
+      });
     }
 
     async onKeyDown(event){

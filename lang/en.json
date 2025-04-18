@@ -111,6 +111,7 @@
             "ImportMenu": "Export",
             "ConfirmRestoreDefaultTitle": "Restore Default Values",
             "ConfirmRestoreDefaultText": "This will restore the default values of this section. Are you sure?",
+            "TextDialogTitle": "{name} Text Editor",
             "Errors": {
                 "GMMissing": "A logged in GM is required to do this!"
             }

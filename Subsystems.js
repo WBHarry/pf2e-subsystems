@@ -1395,10 +1395,10 @@ class InfluenceSettings extends foundry.abstract.DataModel {
   }
 }
 
-const { HandlebarsApplicationMixin: HandlebarsApplicationMixin$3, ApplicationV2: ApplicationV2$3 } = foundry.applications.api;
+const { HandlebarsApplicationMixin: HandlebarsApplicationMixin$4, ApplicationV2: ApplicationV2$4 } = foundry.applications.api;
 
-class SubsystemsMenu extends HandlebarsApplicationMixin$3(
-  ApplicationV2$3,
+class SubsystemsMenu extends HandlebarsApplicationMixin$4(
+  ApplicationV2$4,
 ) {
   constructor() {
     super({});
@@ -1974,9 +1974,9 @@ const versionCompare = (current, target) => {
     return false;
   };
 
-const { HandlebarsApplicationMixin: HandlebarsApplicationMixin$2, ApplicationV2: ApplicationV2$2 } = foundry.applications.api;
+const { HandlebarsApplicationMixin: HandlebarsApplicationMixin$3, ApplicationV2: ApplicationV2$3 } = foundry.applications.api;
 
-class SystemExport extends HandlebarsApplicationMixin$2(ApplicationV2$2) {
+class SystemExport extends HandlebarsApplicationMixin$3(ApplicationV2$3) {
     constructor() {
         super({});
 
@@ -2101,6 +2101,66 @@ class SystemExport extends HandlebarsApplicationMixin$2(ApplicationV2$2) {
 
     async close(options={}) {
         await super.close(options);
+    }
+}
+
+const { HandlebarsApplicationMixin: HandlebarsApplicationMixin$2, ApplicationV2: ApplicationV2$2 } = foundry.applications.api;
+
+class TextDialog extends HandlebarsApplicationMixin$2(ApplicationV2$2) {
+    constructor(resolve, reject, initialText, label) {
+        super({});
+
+        this.resolve = resolve;
+        this.reject = reject;
+        this.initialText = initialText;
+        this.label = label;
+    }
+
+    get title() {
+        return this.label;
+    }
+
+    static DEFAULT_OPTIONS = {
+        tag: "form",
+        id: "pf2e-subsystems-text-dialog",
+        classes: ["pf2e-subsystems", "pf2e-text-dialog"],
+        position: { width: "560", height: "auto" },
+        actions: {},
+        form: { handler: this.updateData, submitOnChange: true },
+    };
+
+    static PARTS = {
+        main: {
+            id: "main",
+            template: "modules/pf2e-subsystems/templates/text-dialog.hbs",
+        },
+    }
+
+    async _prepareContext(_options) {
+        const context = await super._prepareContext(_options);
+        context.text = this.initialText;
+        context.enrichedText = await TextEditor.enrichHTML(context.text);
+
+        return context;
+    }
+
+    _attachPartListeners(partId, htmlElement, options) {
+        super._attachPartListeners(partId, htmlElement, options);
+    }
+
+    static async updateData(event, element, formData) {
+        const data = foundry.utils.expandObject(formData.object);
+        this.resolve(data.text);
+        this.close({ updateClose: true });
+    }
+
+    async close(options={}) {
+        const { updateClose, ...baseOptions } = options;
+        if(!updateClose){
+            this.reject();
+        }
+
+        await super.close(baseOptions);
     }
 }
 
@@ -2232,6 +2292,7 @@ class SystemView extends HandlebarsApplicationMixin(
         closeClipboardFallback: this.closeClipboardFallback,
         startEventTour: this.startEventTour,
         openImportExportMenu: this.openImportExportMenu,
+        useEditTextDialog: this.useEditTextDialog,
         /* Chases */
         researchUpdateRoundsCurrent: this.researchUpdateRoundsCurrent,
         addPlayerParticipants: this.addPlayerParticipants,
@@ -2925,6 +2986,15 @@ class SystemView extends HandlebarsApplicationMixin(
     static openImportExportMenu(){
       new SystemExport().render(true);
       this.toggleControls(false);
+    }
+
+    static useEditTextDialog(_, button){
+      const initialText = foundry.utils.getProperty(game.settings.get(MODULE_ID, this.tabGroups.main), button.dataset.path);
+      new Promise((resolve, reject) => {
+        new TextDialog(resolve, reject, initialText, game.i18n.format('PF2ESubsystems.View.TextDialogTitle', { name: game.i18n.localize('PF2ESubsystems.Basic.Premise') })).render(true);
+      }).then(async html => {
+        await updateDataModel(this.tabGroups.main, { [button.dataset.path]: html });
+      });
     }
 
     async onKeyDown(event){
