@@ -271,6 +271,7 @@ export class Preparations extends foundry.abstract.DataModel {
       usesPreparation: new fields.BooleanField({ required: true, initial: false }),
       activities: new TypedObjectField(new fields.SchemaField({
         id: new fields.StringField({ required: true }),
+        hidden: new fields.BooleanField({ required: true, initial: false }),
         name: new fields.StringField(),
         tags: new fields.ArrayField(new fields.StringField()),
         cost: new fields.HTMLField(),

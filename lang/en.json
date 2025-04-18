@@ -208,7 +208,7 @@
             "Requirements": "Requirements",
             "OpportunityDescription": "Describe this opportunity here",
             "Trigger": "Trigger",
-            "MaxInfiltrationPoints": "Influence (Optional)",
+            "MaxInfiltrationPoints": "Infiltration Points (Optional)",
             "ComplicationsDescription": "Describe this complication here",
             "ComplicationResultDescription": "Describe the result here",
             "ConfirmRemoveEdgeTitle": "Remove Edge Point",

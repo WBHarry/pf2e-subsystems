@@ -165,6 +165,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
         infiltrationToggleEdgeFaked: this.infiltrationToggleEdgeFaked,
         infiltrationToggleEdgeUsed: this.infiltrationToggleEdgeUsed,
         infiltrationEdgeRemove: this.infiltrationEdgeRemove,
+        infiltrationPreparationActivityToggleHidden: this.infiltrationPreparationActivityToggleHidden,
         /* Influence */
         influenceDiscoveryAdd: this.influenceDiscoveryAdd,
         influenceDiscoveryRemove: this.influenceDiscoveryRemove,
@@ -1825,6 +1826,11 @@ export default class SystemView extends HandlebarsApplicationMixin(
     static async infiltrationEdgeRemove(_, button) {
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.edgePoints.-=${button.dataset.edge}`]: null });
     }
+
+    static async infiltrationPreparationActivityToggleHidden(_, button) {
+      const currentHidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].preparations.activities[button.dataset.activity].hidden;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.hidden`]: !currentHidden });
+    }
     //#endregion 
 
     //#region influence
@@ -1977,7 +1983,11 @@ export default class SystemView extends HandlebarsApplicationMixin(
     static async influenceSkillLabelMenu(_, button) {
       const activeSkill = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].influenceSkills[button.dataset.skill];
       new Promise((resolve, reject) => {
-        new ValueDialog(resolve, reject, activeSkill.label, game.i18n.format("PF2ESubsystems.Influence.InfluenceSkillLabelTitle", { skill: activeSkill.skill ? `${game.i18n.localize(CONFIG.PF2E.skills[activeSkill.skill].label)}` : game.i18n.localize("PF2ESubsystems.Basic.Skill") })).render(true);
+        new ValueDialog(resolve, reject, activeSkill.label, game.i18n.format("PF2ESubsystems.Influence.InfluenceSkillLabelTitle", { 
+          skill: 
+            activeSkill.lore ? activeSkill.skill :
+            activeSkill.skill ? `${game.i18n.localize(CONFIG.PF2E.skills[activeSkill.skill].label)}` : game.i18n.localize("PF2ESubsystems.Basic.Skill") 
+        })).render(true);
       }).then(async value => {
         await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influenceSkills.${button.dataset.skill}.label`]: value });
       });
