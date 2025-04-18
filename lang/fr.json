@@ -3,55 +3,55 @@
         "Name": "PF2e Subsystems",
         "Basic": {
             "Confirm": "Confirmer",
-            "Cancel": "Cancel",
-            "Save": "Save",
-            "Edit": "Edit",
-            "Remove": "Remove",
-            "Players": "Players",
-            "Name": "Name",
+            "Cancel": "Annuler",
+            "Save": "Sauvegarder",
+            "Edit": "Modifier",
+            "Remove": "Supprimer",
+            "Players": "Joueurs",
+            "Name": "Nom",
             "Image": "Image",
             "Description": "Description",
-            "DC": "DC",
-            "Premise": "Premise",
-            "SkillChecks": "Skill Checks",
+            "DC": "DD",
+            "Premise": "Prémisse",
+            "SkillChecks": "Tests de Compétence",
             "Points": "Points",
-            "Breakpoint": "Breakpoint",
-            "DCIncrease": "DC Increase",
-            "DCAdjustments": "DC Adjustments",
-            "UseLeveledDC": "Use Leveled DC",
-            "LeveledDCIsUsed": "Leveled DC is used",
-            "Lore": "Lore",
-            "Skill": "Skill",
+            "Breakpoint": "Seuil",
+            "DCIncrease": "Augmentation du DD",
+            "DCAdjustments": "Ajustement du DD",
+            "UseLeveledDC": "Utiliser le DD par niveau",
+            "LeveledDCIsUsed": "Le DD par niveau est utilisé",
+            "Lore": "Connaissance",
+            "Skill": "Compétence",
             "Action": "Action",
-            "Variant": "Variant",
-            "Overcome": "Overcome",
-            "Trigger": "Trigger",
-            "RestoreToDefault": "Restore To Default"
+            "Variant": "Variante",
+            "Overcome": "Surmonter",
+            "Trigger": "Déclencheur",
+            "RestoreToDefault": "Rétablir par défaut"
         },
         "TimeUnits": {
             "Year": {
-                "Single": "Year",
-                "Plural": "Years"
+                "Single": "Année",
+                "Plural": "Années"
             },
             "Month": {
-                "Single": "Month",
-                "Plural": "Months"
+                "Single": "Mois",
+                "Plural": "Mois"
             },
             "Day": {
-                "Single": "Day",
-                "Plural": "Days"
+                "Single": "Jour",
+                "Plural": "Jours"
             },
             "Hour": {
-                "Single": "Hour",
-                "Plural": "Hours"
+                "Single": "Heure",
+                "Plural": "Heures"
             }
         },
         "Macros": {
             "StartEvent": {
                 "Errors": {
-                    "MissingTab": "You didn't provide the tab parameter",
-                    "MissingEvent": "You didn't provide the event parameter",
-                    "MissingEventEntity": "The event you provided doesn't exist"
+                    "MissingTab": "Vous n'avez pas fourni le paramètre tab",
+                    "MissingEvent": "Vous n'avez pas fourni le paramètre de l'événement",
+                    "MissingEventEntity": "L'événement que vous avez indiqué n'existe pas"
                 }
             }
         },
