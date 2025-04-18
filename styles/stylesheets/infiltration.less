@@ -3,7 +3,6 @@
         // height: 100%;
         .event-outer-container {
             .event-container { 
-
                 .infiltration-edges-container {
                     display: flex;
                     flex-direction: column;
@@ -58,7 +57,17 @@
                     }
                 }
 
+                .infiltration-obstacle-container {
+                    .obstacle-skill-grid {
+                        grid-template-columns: 0fr 2fr 2fr 1fr 0fr 0fr;
+                    }
+                }
+
                 .infiltration-complication-container {
+                    .complication-skill-grid {
+                        grid-template-columns: 0fr 2fr 2fr 1fr 0fr;
+                    }
+
                     .infiltration-complications-container {
                         overflow: hidden;
                         
@@ -473,6 +482,10 @@
                                 line-height: 18px;
                             }
                         }
+                    }
+
+                    .activity-skill-grid {
+                        grid-template-columns: 0fr 2fr 2fr 1fr 0fr;
                     }
                 }
             }

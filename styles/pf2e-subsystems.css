@@ -253,39 +253,51 @@ form.pf2e-subsystems.application > header .header-control {
   opacity: 0.4;
 }
 .pf2e-subsystems.systems-view .event-tab .event-tab-container {
+  margin: 0 4px 4px;
+}
+.pf2e-subsystems.systems-view .event-tab .event-tab-container,
+.pf2e-subsystems.systems-view .event-tab .event-tab-container-major {
   flex: 1;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-.pf2e-subsystems.systems-view .event-tab .event-tab-container .event-skill-checks-container {
+.pf2e-subsystems.systems-view .event-tab .event-tab-container .event-skill-checks-container,
+.pf2e-subsystems.systems-view .event-tab .event-tab-container-major .event-skill-checks-container {
   table-layout: fixed;
   width: 100%;
 }
-.pf2e-subsystems.systems-view .event-tab .event-tab-container .event-skill-checks-container .event-skill-check-small {
+.pf2e-subsystems.systems-view .event-tab .event-tab-container .event-skill-checks-container .event-skill-check-small,
+.pf2e-subsystems.systems-view .event-tab .event-tab-container-major .event-skill-checks-container .event-skill-check-small {
   width: 40px;
 }
-.pf2e-subsystems.systems-view .event-tab .event-tab-container .event-skill-checks-container .event-skill-check-end {
+.pf2e-subsystems.systems-view .event-tab .event-tab-container .event-skill-checks-container .event-skill-check-end,
+.pf2e-subsystems.systems-view .event-tab .event-tab-container-major .event-skill-checks-container .event-skill-check-end {
   width: 56px;
 }
-.pf2e-subsystems.systems-view .event-tab .event-tab-container .event-skill-checks-container .event-skill-check-value-container {
+.pf2e-subsystems.systems-view .event-tab .event-tab-container .event-skill-checks-container .event-skill-check-value-container,
+.pf2e-subsystems.systems-view .event-tab .event-tab-container-major .event-skill-checks-container .event-skill-check-value-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   height: 49px;
 }
-.pf2e-subsystems.systems-view .event-tab .event-tab-container .event-skill-checks-container .event-skill-check-value-container select {
+.pf2e-subsystems.systems-view .event-tab .event-tab-container .event-skill-checks-container .event-skill-check-value-container select,
+.pf2e-subsystems.systems-view .event-tab .event-tab-container-major .event-skill-checks-container .event-skill-check-value-container select {
   text-align: center;
 }
-.pf2e-subsystems.systems-view .event-tab .event-tab-container .event-skill-checks-container .event-skill-check-value-container input {
+.pf2e-subsystems.systems-view .event-tab .event-tab-container .event-skill-checks-container .event-skill-check-value-container input,
+.pf2e-subsystems.systems-view .event-tab .event-tab-container-major .event-skill-checks-container .event-skill-check-value-container input {
   margin: 0 0 5px;
 }
-.pf2e-subsystems.systems-view .event-tab .event-tab-container .event-skill-checks-container .event-skill-check-value-container.full {
+.pf2e-subsystems.systems-view .event-tab .event-tab-container .event-skill-checks-container .event-skill-check-value-container.full,
+.pf2e-subsystems.systems-view .event-tab .event-tab-container-major .event-skill-checks-container .event-skill-check-value-container.full {
   flex: 1;
 }
-.pf2e-subsystems.systems-view .event-tab .event-tab-container .event-skill-checks-container .event-skill-check-value-container.dc input {
+.pf2e-subsystems.systems-view .event-tab .event-tab-container .event-skill-checks-container .event-skill-check-value-container.dc input,
+.pf2e-subsystems.systems-view .event-tab .event-tab-container-major .event-skill-checks-container .event-skill-check-value-container.dc input {
   width: 32px;
 }
 .pf2e-subsystems.systems-view .event-select-container {
@@ -1420,8 +1432,8 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-outer-container .research-check-skill-checks-container .research-check-skill-check-inner-container i {
   margin-top: 2px;
 }
-.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-outer-container .research-check-skill-checks-container .research-check-skill-check-inner-container .research-check-table {
-  grid-template-columns: 1fr 4fr 4fr 3fr 1fr 1fr;
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-outer-container .research-check-skill-checks-container .research-check-skill-check-inner-container .research-skill-grid {
+  grid-template-columns: 0fr 2fr 2fr 1fr 0.5fr 0fr;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-outer-container .research-check-skill-checks-container .research-check-skill-check-inner-container .research-check-skill-check-value-container {
   display: flex;
@@ -1625,6 +1637,12 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-edges-container .infiltration-edge-container .event-section-opener {
   font-size: 24px;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-obstacle-container .obstacle-skill-grid {
+  grid-template-columns: 0fr 2fr 2fr 1fr 0fr 0fr;
+}
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complication-container .complication-skill-grid {
+  grid-template-columns: 0fr 2fr 2fr 1fr 0fr;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complication-container .infiltration-complications-container {
   overflow: hidden;
@@ -1963,6 +1981,9 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .preparation-cards-container .preparation-card .preparation-activity-results-description {
   line-height: 18px;
 }
+.pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .activity-skill-grid {
+  grid-template-columns: 0fr 2fr 2fr 1fr 0fr;
+}
 .pf2e-subsystems .influence-view .event-outer-container .event-npc-selection {
   padding: 4px;
   border-radius: 6px;
@@ -2107,6 +2128,12 @@ form.pf2e-subsystems.application > header .header-control {
   position: absolute;
   right: 4px;
   font-size: 32px;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .discovery-container .influence-skill-grid {
+  grid-template-columns: 0fr 2fr 2fr 1fr 0.5fr 0fr;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .influence-skills-container .influence-skill-grid {
+  grid-template-columns: 0fr 2fr 2fr 1fr 0.5fr 0fr;
 }
 .pf2e-subsystems .influence-view .event-outer-container .event-container .influence-skills-container .tools-column-cell {
   margin-right: 4px;
@@ -2402,7 +2429,6 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems .event-skill-grid {
   display: grid;
   grid-auto-flow: column;
-  column-gap: 4px;
   border-width: 2px;
   border-style: solid;
   border-radius: 6px;
@@ -2412,6 +2438,30 @@ form.pf2e-subsystems.application > header .header-control {
   display: grid;
   grid-auto-flow: row;
   text-align: center;
+}
+.pf2e-subsystems .event-skill-grid .event-skill-grid-col .event-skill-grid-cell-container {
+  border-right-width: 4px;
+  border-right-style: solid;
+  border-right-color: var(--pf2e-subsystem-theming-secondary);
+}
+.pf2e-subsystems .event-skill-grid .event-skill-grid-col .event-skill-grid-cell-container.first {
+  border-left-width: 4px;
+  border-left-style: solid;
+  border-left-color: var(--pf2e-subsystem-theming-secondary);
+  border-radius: 0 0 0 6px;
+}
+.pf2e-subsystems .event-skill-grid .event-skill-grid-col .event-skill-grid-cell-container.first.header {
+  border-radius: 3px 0 0 0;
+}
+.pf2e-subsystems .event-skill-grid .event-skill-grid-col .event-skill-grid-cell-container.last {
+  border-radius: 0 0 6px 0;
+}
+.pf2e-subsystems .event-skill-grid .event-skill-grid-col .event-skill-grid-cell-container.last.header {
+  border-radius: 0 3px 0 0;
+}
+.pf2e-subsystems .event-skill-grid .event-skill-grid-col .event-skill-grid-cell-container.header {
+  border-right-color: var(--pf2e-subsystem-theming-tertiary-accent);
+  border-left-color: var(--pf2e-subsystem-theming-tertiary-accent);
 }
 .pf2e-subsystems .event-skill-grid .event-skill-grid-col .event-skill-grid-cell {
   display: flex;

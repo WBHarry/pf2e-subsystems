@@ -12,6 +12,7 @@
             "Image": "Image",
             "Description": "Description",
             "DC": "DC",
+            "Modifier": "Modifier",
             "Premise": "Premise",
             "SkillChecks": "Skill Checks",
             "Points": "Points",

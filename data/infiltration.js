@@ -78,6 +78,7 @@ export class Infiltration extends foundry.abstract.DataModel {
                 action: new fields.StringField(),
                 variant: new fields.StringField(),
                 lore: new fields.BooleanField({ required: true, initial: false }),
+                modifier: new fields.NumberField({ integer: true, nullable: true, initial: null }),
               })),
             })),
             description: new fields.HTMLField(),

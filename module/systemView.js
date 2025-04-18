@@ -2611,9 +2611,17 @@ export default class SystemView extends HandlebarsApplicationMixin(
                       variant: skill.variant,
                       disabled: skill.action ? game.pf2e.actions.get(skill.action).variants.size === 0 : true,
                     });
+                    acc.modifier.push({
+                      event: context.selectedEvent.id,
+                      objective: context.currentObjective.id,
+                      obstacle: obstacle.id,
+                      skillCheck: skillCheck.id,
+                      id: skill.id,
+                      modifier: skill.modifier,
+                    });
     
                     return acc;
-                  }, { lore: [], skill: [], action: [], variant: [] }),
+                  }, { lore: [], skill: [], action: [], variant: [], modifier: [] }),
                 }
     
                 return acc;

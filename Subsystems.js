@@ -776,6 +776,7 @@ class Infiltration extends foundry.abstract.DataModel {
                 action: new fields.StringField(),
                 variant: new fields.StringField(),
                 lore: new fields.BooleanField({ required: true, initial: false }),
+                modifier: new fields.NumberField({ integer: true, nullable: true, initial: null }),
               })),
             })),
             description: new fields.HTMLField(),
@@ -1617,7 +1618,7 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$5(
   }
 }
 
-const currentVersion = '0.7.7';
+const currentVersion = '0.7.8';
 
 const registerKeyBindings = () => {
   game.keybindings.register(MODULE_ID, "open-system-view", {
@@ -4887,9 +4888,17 @@ class SystemView extends HandlebarsApplicationMixin(
                       variant: skill.variant,
                       disabled: skill.action ? game.pf2e.actions.get(skill.action).variants.size === 0 : true,
                     });
+                    acc.modifier.push({
+                      event: context.selectedEvent.id,
+                      objective: context.currentObjective.id,
+                      obstacle: obstacle.id,
+                      skillCheck: skillCheck.id,
+                      id: skill.id,
+                      modifier: skill.modifier,
+                    });
     
                     return acc;
-                  }, { lore: [], skill: [], action: [], variant: [] }),
+                  }, { lore: [], skill: [], action: [], variant: [], modifier: [] }),
                 };
     
                 return acc;

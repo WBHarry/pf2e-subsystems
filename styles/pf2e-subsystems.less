@@ -143,7 +143,6 @@
   .event-skill-grid {
     display: grid;
     grid-auto-flow: column;
-    column-gap: @gapSmall;
     border-width: 2px;
     border-style: solid;
     border-radius: 6px;
@@ -153,6 +152,36 @@
       display: grid;
       grid-auto-flow: row;
       text-align: center;
+
+      .event-skill-grid-cell-container {
+        border-right-width: @gapSmall;
+        border-right-style: solid;
+        border-right-color: var(--pf2e-subsystem-theming-secondary);
+
+        &.first {
+          border-left-width: @gapSmall;
+          border-left-style: solid;
+          border-left-color: var(--pf2e-subsystem-theming-secondary);
+          border-radius: 0 0 0 6px;
+
+          &.header {
+            border-radius: 3px 0 0 0;
+          }
+        }
+
+        &.last {
+          border-radius: 0 0 6px 0;
+
+          &.header {
+            border-radius: 0 3px 0 0;
+          }
+        }
+        
+        &.header {
+          border-right-color: var(--pf2e-subsystem-theming-tertiary-accent);
+          border-left-color: var(--pf2e-subsystem-theming-tertiary-accent);
+        }
+      }
 
       .event-skill-grid-cell {
         display: flex;
