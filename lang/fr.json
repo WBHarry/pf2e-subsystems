@@ -1,0 +1,282 @@
+{
+    "PF2ESubsystems": {
+        "Name": "PF2e Subsystems",
+        "Basic": {
+            "Confirm": "Confirmer",
+            "Cancel": "Cancel",
+            "Save": "Save",
+            "Edit": "Edit",
+            "Remove": "Remove",
+            "Players": "Players",
+            "Name": "Name",
+            "Image": "Image",
+            "Description": "Description",
+            "DC": "DC",
+            "Premise": "Premise",
+            "SkillChecks": "Skill Checks",
+            "Points": "Points",
+            "Breakpoint": "Breakpoint",
+            "DCIncrease": "DC Increase",
+            "DCAdjustments": "DC Adjustments",
+            "UseLeveledDC": "Use Leveled DC",
+            "LeveledDCIsUsed": "Leveled DC is used",
+            "Lore": "Lore",
+            "Skill": "Skill",
+            "Action": "Action",
+            "Variant": "Variant",
+            "Overcome": "Overcome",
+            "Trigger": "Trigger",
+            "RestoreToDefault": "Restore To Default"
+        },
+        "TimeUnits": {
+            "Year": {
+                "Single": "Year",
+                "Plural": "Years"
+            },
+            "Month": {
+                "Single": "Month",
+                "Plural": "Months"
+            },
+            "Day": {
+                "Single": "Day",
+                "Plural": "Days"
+            },
+            "Hour": {
+                "Single": "Hour",
+                "Plural": "Hours"
+            }
+        },
+        "Macros": {
+            "StartEvent": {
+                "Errors": {
+                    "MissingTab": "You didn't provide the tab parameter",
+                    "MissingEvent": "You didn't provide the event parameter",
+                    "MissingEventEntity": "The event you provided doesn't exist"
+                }
+            }
+        },
+        "ValueDialog": {
+            "Title": "Value Dialog"
+        },
+        "Menus": {
+            "Subsystems": {
+                "Name": "Subsystems",
+                "Label": "Subsystems Menu",
+                "Hint": "Change settings on different subsystems",
+                "Title": "Subsystems Menu",
+                "Chase": {
+                    "PlayersCanEditPosition": "Allow players to edit their position",
+                    "HideObstacleLockIcon": "Hide obstacle lock icon"
+                },
+                "Research": {
+                    "HideResearchCheckMaxRP": "Hide the Max RP of Research Checks to players"
+                },
+                "Infiltration": {
+                    "DefaultAwarenessBreakpoints": "Default Awareness Breakpoints",
+                    "HideAwareness": "Completly Hide Awareness From Players",
+                    "AutoApplyAwareness": "Auto apply awareness DC modifiers",
+                    "AutoRevealAwareness": "Auto reveal awareness breakpoints"
+                },
+                "Influence": {
+                    "AutoRevealInfluence": "Auto Reveal Influence",
+                    "ShowPerceptionAndWill": "Show Perception And Will To Players"
+                }
+            }
+        },
+        "ImportExport": {
+            "Title": "Subsystem Export",
+            "Export": "Export",
+            "SuccessfullyExported": "Subsystem events successfully exported"
+        },
+        "View": {
+            "Title": "Subsystems",
+            "NewEvent": "New Event",
+            "Subsystems": "Subsystems",
+            "ToggleEditMode": "Toggle Edit Mode",
+            "ReturnToSubsystems": "Return To Subsystems",
+            "HideFromPlayers": "Hide From Players",
+            "RevealToPlayers": "Reveal To Players",
+            "StartEvent": "Start Event",
+            "EditEvent": "Edit Event",
+            "StartEventLinkCopied": "StartEvent Macro for {name} copied to clipboard.",
+            "CopyStartEventLink": "Copy a macro to start this event",
+            "TimeUnit": "Time Unit",
+            "CurrentTime": "Current Time",
+            "MaxTime": "Max Time",
+            "ConfirmDeleteEventTitle": "Delete Subsystem Event",
+            "ConfirmDeleteEventText": "Are you sure you want to delete the {type} event?",
+            "OpenEventTour": "Open a tour explaining parts of the subsystem",
+            "NewObstacle": "New Obstacle",
+            "VariantExplanation": "Some actions have variants. In those cases you can select a variant here. For Treat Wounds and Perform, a variant -must- be selected.",
+            "ImportMenu": "Export",
+            "ConfirmRestoreDefaultTitle": "Restore Default Values",
+            "ConfirmRestoreDefaultText": "This will restore the default values of this section. Are you sure?",
+            "TextDialogTitle": "{name} Text Editor",
+            "Errors": {
+                "GMMissing": "A logged in GM is required to do this!"
+            }
+        },
+        "Events": {
+            "Chase": {
+                "Single": "Chase",
+                "Plural": "Chases"
+            },
+            "Influence": {
+                "Single": "Influence",
+                "Plural": "Influence"
+            },
+            "Research": {
+                "Single": "Research",
+                "Plural": "Research"
+            },
+            "Infiltration": {
+                "Single": "Infiltration",
+                "Plural": "Infiltrations"
+            }
+        },
+        "Chase": {
+            "NavigateBack": "Return To Chases",
+            "EditChase": "Edit Chase",
+            "CreateChase": "Create New Chase",
+            "Premise": "Premise",
+            "Rounds": "Rounds",
+            "MaxRounds": "Max Rounds",
+            "AddObstacle": "Add Obstacle",
+            "AdvanceObstacle": "Move PC to the next obstacle",
+            "RetreatObstacle": "Move PC to the previous obstacle",
+            "MarkPlayerActed": "Mark that the player has acted",
+            "CreateParticipant": "Create New Participant",
+            "EditParticipant": "Edit Participant",
+            "NewParticipant": "New Participant",
+            "Participants": "Participants",
+            "AddParticipant": "Add Participant",
+            "AddAllPlayers": "Add All Players",
+            "AdvanceAllPCs": "Move all PCs to the next obstacle",
+            "RetreatAllPCs": "Move all PCs to the previous obstacle",
+            "AdvanceAllNPCs": "Move all NPCs to the next obstacle",
+            "RetreatAllNPCs": "Move all NPCs to the previous obstacle",
+            "AddOrDragInActor": "Add or drag in an actor.",
+            "ChasePoints": "Chase Points",
+            "Errors": {
+                "UnlockObstacle": "You have to unlock obstacles from start to end",
+                "LockObstacle": "You have to lock obstacles from end to start",
+                "LockFirstObstacle": "You can't lock the first obstacle",
+                "ParticipantAlreadyExists": "That actor is already a participant!"
+            }
+            
+        },
+        "Research": {
+            "NavigateBack": "Return To Research",
+            "EditResearch": "Edit Research",
+            "CreateResearch": "Create New Research",
+            "MaxResearchPoints": "Maximum RP",
+            "Skill": "Skill",
+            "Action": "Action",
+            "TimeLimit": "Time",
+            "ResearchChecks": "Research Checks",
+            "ResearchPoints": "Research Points",
+            "SkillChecks": "Skill Checks",
+            "Lore": "Lore",
+            "Basic": "Basic",
+            "Timing": "Timing",
+            "ResearchEvents": "Research Events",
+            "ResearchBreakpoints": "Research Breakpoints",
+            "ResearchBreakpoint": "Breakpoint",
+            "ResearchChecksUnknown": "You know of no ways to research..",
+            "ResearchBreakpointsUnknown": "You've made no research breakthroughs..",
+            "ResearchCheckTab": {
+                "Description": "Description",
+                "SkillChecks": "Skill Checks"
+            },
+            "Errors": {
+                "LoreError": "A lore skill must be in the format of 'something-lore'"
+            }
+        },
+        "Infiltration": {
+            "NavigateBack": "Return To Infiltrations",
+            "EditInfiltration": "Edit Infiltration",
+            "CreateInfiltration": "Create New Infiltration",
+            "AddObjective": "Add Objective",
+            "InfiltrationPoints": "Infiltration Points",
+            "NewObjective": "New Objective",
+            "Individual": "Individual",
+            "AwarenessPoints": "Awareness",
+            "EdgePoints": "Edge Points",
+            "Opportunities": "Opportunities",
+            "Complications": "Complications",
+            "NewOpportunity": "New Opportunity",
+            "NewComplication": "New Complication",
+            "Requirements": "Requirements",
+            "OpportunityDescription": "Describe this opportunity here",
+            "Trigger": "Trigger",
+            "MaxInfiltrationPoints": "Infiltration Points (Optional)",
+            "ComplicationsDescription": "Describe this complication here",
+            "ComplicationResultDescription": "Describe the result here",
+            "ConfirmRemoveEdgeTitle": "Remove Edge Point",
+            "ConfirmRemoveEdgeText": "This result is linked to the Edge Point \"{edge}\". Do you want to remove it?",
+            "AddAwarenessBreakpoint": "Add additional awareness breakpoint",
+            "AddNewObstacle": "Add New Obstacle",
+            "HiddenAwarenessNumber": "Hidden awareness from edge points or other sources",
+            "Preparations": {
+                "NewPreparationActivity": "New Activity",
+                "MaxAttempts": "Max Attempts",
+                "EdgeLabel": "Edge Label",
+                "IsUsed": "Preparations Active",
+                "NotUsed": "Preparations Inactivated",
+                "AwarenessPoints": "Awareness Points",
+                "FakeDegreeOfSuccess": "Fake Degree Shown To Players"
+            },
+            "InfiltrationTab": {
+                "Infiltration": "Infiltration",
+                "Preparations": "Preparations"
+            },
+            "InfiltrationObstacleSkillsTab": {
+                "Description": "Description",
+                "SkillChecks": "Checks",
+                "Results": "Results"
+            },
+            "InfiltrationComplicationTab": {
+                "Description": "Description",
+                "SkillChecks": "Checks",
+                "Results": "Results"
+            },
+            "InfiltrationActivityTab": {
+                "Description": "Description",
+                "SkillChecks": "Checks",
+                "Results": "Results"
+            },
+            "Awareness": {
+                "DefaultBreakpoint5": "Suspicions are raised. Increase the DCs for obstacles by 1. The first time the PCs reach this tier, a complication occurs.",
+                "DefaultBreakpoint10": "The first time the PCs reach this tier, a complication occurs.",
+                "DefaultBreakpoint15": "Increase the DCs for obstacles by a total of 2, and the first time the PCs reach this tier, a complication occurs.",
+                "DefaultBreakpoint20": "The infiltration fails.",
+                "NewAwarenessBreakpoint": "New Breakpoint",
+                "ActivateAwarenessBreakpoint": "Activate awareness breakpoint"
+            }
+        },
+        "Influence": {
+            "NavigateBack": "Return To Influence",
+            "EditInfluence": "Edit Influence",
+            "CreateInfluence": "Create New Influence",
+            "Perception": "Perception",
+            "Will": "Will",
+            "Discovery": "Discovery",
+            "InfluenceSkills": "Influence Skills",
+            "Influence": "Influence",
+            "Weaknesses": "Weaknesses",
+            "Resistances": "Resistances",
+            "Penalties": "Penalties",
+            "InfluencePoints": "Points",
+            "Modifier": "Modifier",
+            "InfluenceSkillLabelTitle": "{skill} Label",
+            "Rounds": "Rounds",
+            "EditInfluenceSkillLabel": "Edit Optional Skill Label"
+        },
+        "KeyBindings": {
+            "OpenSystemView": {
+                "Name": "Open Subsystems View",
+                "Hint": "Opens the subsystem window"
+            }
+        }
+    }
+}
