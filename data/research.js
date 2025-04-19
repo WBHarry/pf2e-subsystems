@@ -82,6 +82,7 @@ export class Research extends foundry.abstract.DataModel {
                   skillCheck: skillCheck.id,
                   id: skill.id,
                   action: skill.action,
+                  label: skill.label,
                 });
                 acc.variant.push({ 
                   event: this.id,
@@ -129,6 +130,7 @@ class ResearchChecks extends foundry.abstract.DataModel {
         description: new fields.HTMLField(),
         skills: new TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
+          label: new fields.StringField(),
           skill: new fields.StringField(),
           action: new fields.StringField(),
           lore: new fields.BooleanField({ required: true, initial: false }),

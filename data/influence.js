@@ -30,6 +30,7 @@ export class Influence extends foundry.abstract.DataModel {
         }),
         discoveries: new TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
+            label: new fields.StringField(),
             hidden: new fields.BooleanField({ required: true, initial: false }),
             skill: new fields.StringField({ required: true, initial: 'acrobatics' }),
             action: new fields.StringField(),
@@ -88,6 +89,19 @@ export class Influence extends foundry.abstract.DataModel {
       }
     }
 
+    get linkedNPCsData() {
+      if(!game.modules.get('pf2e-bestiary-tracking')?.active || !game.journal.get(game.settings.get('pf2e-bestiary-tracking', 'bestiary-tracking'))) return null;
+
+      const npcEntries = game.journal.get(game.settings.get('pf2e-bestiary-tracking', 'bestiary-tracking')).pages.filter(x => x.type === 'pf2e-bestiary-tracking.npc' && (game.user.isGM || !x.system.hidden) && x.system.npcData.influenceEventIds.includes(this.id));
+      if(npcEntries.length === 0) return null;
+
+      return npcEntries.map(x => ({
+        id: x.system.uuid,
+        name: x.system.name.value,
+        img: x.system.img,
+      }));
+    }
+
     get dcModifier() {
       const weaknessMod = Object.values(this.weaknesses).reduce((acc, weakness) => {
         if(weakness.modifier.used) acc -= weakness.modifier.value;
@@ -124,6 +138,7 @@ export class Influence extends foundry.abstract.DataModel {
             event: this.id,
             id: discovery.id,
             action: discovery.action,
+            label: discovery.label,
           });
           acc.variant.push({ 
             event: this.id,

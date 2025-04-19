@@ -1,6 +1,15 @@
 .pf2e-subsystems {
     .influence-view {
         .event-outer-container {
+            .event-npc-selection {
+                padding: @paddingNormal;
+                border-radius: 6px;
+
+                i {
+                    margin: 0;
+                }
+            }
+
             .event-container { 
                 .event-sidebar {
                     img {
@@ -170,18 +179,15 @@
                     }
                 }
 
+                .discovery-container {
+                    .influence-skill-grid {
+                        grid-template-columns: 0fr 2fr 2fr 1fr 0.5fr 0fr;
+                    }
+                }
+
                 .influence-skills-container {
-                    .tools-column-cell {
-                        margin-right: @marginNormal;
-
-                        .label-tag {
-                            opacity: 0.6;
-
-                            &.active {
-                                opacity: 1;
-                                filter: drop-shadow(0 0 3px var(--pf2e-subsystem-theming-border));
-                            }
-                        }
+                    .influence-skill-grid {
+                        grid-template-columns: 0fr 2fr 2fr 1fr 0.5fr 0fr;
                     }
                 }
 

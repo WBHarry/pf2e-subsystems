@@ -111,6 +111,8 @@
             "ImportMenu": "Eksportuj",
             "ConfirmRestoreDefaultTitle": "Przywróć wartości domyślne",
             "ConfirmRestoreDefaultText": "Spowoduje to przywrócenie domyślnych wartości tej sekcji. Czy na pewno?",
+            "TextDialogTitle": "Edytor tekstu {name}",
+            "LinkDialogTitle": "Więzy {name}",
             "Errors": {
                 "GMMissing": "Aby to zrobić, wymagany jest zalogowany MG!"
             }
@@ -208,7 +210,7 @@
             "Requirements": "Wymagania",
             "OpportunityDescription": "Opisz tę możliwość tutaj",
             "Trigger": "Wyzwalacz",
-            "MaxInfiltrationPoints": "Wpływ (opcjonalnie)",
+            "MaxInfiltrationPoints": "Punkty Infiltracji (Opcjonalne)",
             "ComplicationsDescription": "Opisz tę komplikację tutaj",
             "ComplicationResultDescription": "Opisz wynik tutaj",
             "ConfirmRemoveEdgeTitle": "Usuń punkty brzegowe",
@@ -269,7 +271,8 @@
             "Modifier": "Modyfikator",
             "InfluenceSkillLabelTitle": "Etykieta {skill}",
             "Rounds": "Rundy",
-            "EditInfluenceSkillLabel": "Edytuj etykietę umiejętności opcjonalnej"
+            "EditInfluenceSkillLabel": "Edytuj etykietę umiejętności opcjonalnej",
+            "NPCLinkDialogTitle": "Otwieranie więzów do połączonych postaci niezależnych" 
         },
         "KeyBindings": {
             "OpenSystemView": {

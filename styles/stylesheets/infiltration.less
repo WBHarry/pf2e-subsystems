@@ -3,7 +3,6 @@
         // height: 100%;
         .event-outer-container {
             .event-container { 
-
                 .infiltration-edges-container {
                     display: flex;
                     flex-direction: column;
@@ -58,11 +57,22 @@
                     }
                 }
 
+                .infiltration-obstacle-container {
+                    .obstacle-skill-grid {
+                        grid-template-columns: 0fr 2fr 2fr 1fr 0.8fr 0fr;
+                    }
+                }
+
                 .infiltration-complication-container {
+                    .complication-skill-grid {
+                        grid-template-columns: 0fr 2fr 2fr 1fr 0.8fr 0fr;
+                    }
+
                     .infiltration-complications-container {
                         overflow: hidden;
                         
                         .event-section-item-container {
+                            flex: 1;
                             overflow: auto;
                             
                             .infiltration-complications-inner-container {
@@ -204,7 +214,6 @@
                                 display: flex;
                                 flex-direction: column;
                                 align-items: center;
-                                padding: 0 @paddingNormal;
                                 position: relative;
                                 border-width: 1px;
                                 border-style: solid;
@@ -214,6 +223,8 @@
                                     flex: 1;
 
                                     .awareness-point-breakpoint-main-container {
+                                        padding: 0 @paddingNormal @paddingNormal;
+                                        
                                         textarea {
                                             flex: 1;
                                         }
@@ -471,6 +482,10 @@
                                 line-height: 18px;
                             }
                         }
+                    }
+
+                    .activity-skill-grid {
+                        grid-template-columns: 0fr 2fr 2fr 1fr 0.8fr 0fr;
                     }
                 }
             }

@@ -1,0 +1,8 @@
+<div class="link-dialog-container">
+    {{#each this.links}}
+        <div class="link-container clickable-icon" data-action="openLink" data-link="{{this.id}}">
+            <div class="link-label title-small-container">{{this.name}}</div>
+            <img src="{{this.img}}" />
+        </div>
+    {{/each}}
+</div>

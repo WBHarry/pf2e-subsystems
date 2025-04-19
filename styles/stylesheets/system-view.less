@@ -98,8 +98,12 @@
             &.unused {
                 opacity: 0.4;
             }
-
+            
             .event-tab-container {
+                margin: 0 @marginNormal @marginNormal;
+            }
+
+            .event-tab-container, .event-tab-container-major {
                 flex: 1;
                 overflow: hidden;
                 display: flex;
@@ -157,6 +161,7 @@
             flex-direction: column; 
             align-items: flex-start;
             justify-content: start;
+            height: 100%;
 
             &.tabs {
                 width: 100%;
@@ -168,6 +173,7 @@
                 flex-direction: column;
                 flex: 1;
                 width: 100%;
+                overflow: hidden;
 
                 .system-title-container {
                     position: relative;
@@ -224,6 +230,7 @@
                     display: grid;
                     grid-template-columns: repeat(4, 1fr);
                     gap: @gapHuge;
+                    overflow: auto;
 
                     .event-container {
                         position: relative;
@@ -243,7 +250,6 @@
                         .event-container-header {
                             border-width: 2px;
                             border-style: outset;
-                            border-color: black;
                             border-radius: 6px 6px 0 0;
                             
                             text-align: center;
@@ -297,6 +303,19 @@
             flex-direction: column;
             gap: @gapNormal;
 
+            .dialog-editable-text-display {
+                legend {
+                    display: flex;
+                    align-items: center;
+                    gap: @gapSmall;
+                    margin: 0 auto;
+
+                    .edit-icon {
+                        font-size: 16px;
+                    }
+                }
+            }
+
             .event-tabs {
                 display: flex;
                 border-width: 1px;
@@ -319,12 +338,23 @@
                 }
             }
 
+            .event-header-right {
+                display: flex;
+                align-items: center;
+            }
+
             .event-information {
                 font-size: 19px;
                 color: var(--pf2e-subsystem-theming-primary-color);
                 border-style: solid;
                 border-radius: 50%;
                 border-color: var(--pf2e-subsystem-theming-secondary-border);
+            }
+
+            .event-header-right {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
             }
 
             .event-clipboard-fallback {
@@ -574,14 +604,14 @@
                         overflow: hidden;
                         display: flex;
                         flex-direction: column;
-                        flex: 33%; 
+                        // flex: 33%; 
 
                         &.focused {
-                            flex: 60%;
+                            // flex: 60%;
                         }
     
                         &.unfocused {
-                            flex: 20;
+                            // flex: 20;
                         }
                     }
                 }
@@ -634,14 +664,14 @@
                     border-radius: @borderRadiusNormal;
                     padding: 0;
                     overflow: hidden;
-                    flex: 33%;
+                    // flex: 33%;
                     
                     &.focused {
-                        flex: 60%;
+                        // flex: 60%;
                     }
 
                     &.unfocused {
-                        flex: 20;
+                        // flex: 20;
                     }
 
                     .event-radio-header {
