@@ -738,7 +738,7 @@
                         {{/if}}
                         <div class="preparation-cards-container">
                             {{#each this.event.extendedPreparations.activities}}
-                                {{#if (or ../isGM (this.hidden))}}
+                                {{#if (or ../isGM this.hidden)}}
                                     <div class="event-section-inner-container preparation-card primary-container" data-activity="{{this.id}}">
                                         <div class="event-section-header-container preparation-activity-header">
                                             {{#if ../editMode}}
@@ -908,12 +908,6 @@
                                                             {{/each}}
                                                         </div>
                                                         {{#if this.selectedResult}}
-                                                            {{!-- <div class="event-field-group">
-                                                                <div class="event-field-form text-normal primary-text-container">
-                                                                    <div>{{localize "PF2ESubsystems.Infiltration.Preparations.AwarenessPoints"}}</div>
-                                                                    <input type="text" data-dtype="Number" name="{{concat "events." ../event.id ".preparations.activities." this.id ".results." this.selectedResult.degreeOfSuccess ".awarenessPoints"}}" value="{{this.selectedResult.awarenessPoints}}" class="tertiary-container" />
-                                                                </div>
-                                                            </div> --}}
                                                             <div class="event-field-group">
                                                                 <div class="event-field-form text-normal primary-text-container">
                                                                     <div>{{localize "PF2ESubsystems.Infiltration.Preparations.FakeDegreeOfSuccess"}}</div>
@@ -970,5 +964,4 @@
             </div>
         </div>
     </div>
-
 </div>
