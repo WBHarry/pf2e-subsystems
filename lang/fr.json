@@ -12,6 +12,7 @@
             "Image": "Image",
             "Description": "Description",
             "DC": "DD",
+            "Modifier": "Modificateur",
             "Premise": "Prémisse",
             "SkillChecks": "Tests de Compétence",
             "Points": "Points",
@@ -26,7 +27,8 @@
             "Variant": "Variante",
             "Overcome": "Surmonter",
             "Trigger": "Déclencheur",
-            "RestoreToDefault": "Rétablir par défaut"
+            "RestoreToDefault": "Rétablir par défaut",
+            "LeveledDCExplanation": "Saisissez un DD fixe, ou cochez la case pour utiliser le DD par niveau au niveau du joueur."
         },
         "TimeUnits": {
             "Year": {
@@ -111,7 +113,8 @@
             "ImportMenu": "Exportation",
             "ConfirmRestoreDefaultTitle": "Rétablir les valeurs par défaut",
             "ConfirmRestoreDefaultText": "Cela rétablira les valeurs par défaut de cette section. Êtes-vous sûr ?",
-            "TextDialogTitle": "{name} Éditeur de texte",
+            "TextDialogTitle": "Éditeur de texte {name}",
+            "LinkDialogTitle": "Liens {name}",
             "Errors": {
                 "GMMissing": "Pour faire cela, un MJ doit être connecté !"
             }
