@@ -83,7 +83,7 @@
                 }
             }
         },
-        "ImportExport": {
+        "Export": {
             "Title": "Eksport podsystemów",
             "Export": "Eksportuj",
             "SuccessfullyExported": "Pomyślnie wyeksportowano zdarzenia podsystemu"
@@ -108,7 +108,7 @@
             "OpenEventTour": "Otwórz wycieczkę objaśniającą części podsystemu",
             "NewObstacle": "Nowa przeszkoda",
             "VariantExplanation": "Niektóre akcje mają warianty. W takich przypadkach można wybrać wariant tutaj. W przypadku akcji Leczenie Ran i Występowanie wariant musi zostać wybrany.",
-            "ImportMenu": "Eksportuj",
+            "ExportMenu": "Eksportuj",
             "ConfirmRestoreDefaultTitle": "Przywróć wartości domyślne",
             "ConfirmRestoreDefaultText": "Spowoduje to przywrócenie domyślnych wartości tej sekcji. Czy na pewno?",
             "TextDialogTitle": "Edytor tekstu {name}",

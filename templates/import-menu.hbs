@@ -1,0 +1,70 @@
+<div class="import-export-container">
+    <input class="file-path secondary-container primary-text-container" type="file" name="fileData.path" value="{{this.fileData.path}}" accept=".json" />
+    <div class="selection-container">
+        <div class="subsystem-container primary-container title-small-container">
+            <div class="subsystem-header primary-container accent">
+                <div class="subsystem-header-title">
+                    {{localize "PF2ESubsystems.Events.Influence.Single"}}
+                    <div class="subsystem-header-control">
+                        <i class="fa-solid {{#if this.toggledAll.influence}}fa-toggle-on{{else}}fa-toggle-off{{/if}} clickable-icon" data-action="subsystemToggleAll" data-subsystem="influence" data-selected="{{not this.toggledAll.influence}}"></i>
+                    </div>
+                </div>
+
+            </div>
+            <div class="subsystem-body">
+                {{#each this.influence}}
+                    <div class="subsystem-event secondary-container clickable-icon {{#if this.selected}}selected{{/if}}" data-action="toggleEvent" data-subsystem="influence" data-event="{{@index}}">{{this.name}}</div>
+                {{/each}}
+            </div>
+        </div>
+        <div class="subsystem-container primary-container title-small-container">
+            <div class="subsystem-header primary-container accent">
+                <div class="subsystem-header-title">
+                    {{localize "PF2ESubsystems.Events.Chase.Single"}}
+                    <div class="subsystem-header-control">
+                        <i class="fa-solid {{#if this.toggledAll.chase}}fa-toggle-on{{else}}fa-toggle-off{{/if}} clickable-icon" data-action="subsystemToggleAll" data-subsystem="chase" data-selected="{{not this.toggledAll.chase}}"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="subsystem-body">
+                {{#each this.chase}}
+                    <div class="subsystem-event secondary-container clickable-icon {{#if this.selected}}selected{{/if}}" data-action="toggleEvent" data-subsystem="chase" data-event="{{@index}}">{{this.name}}</div>
+                {{/each}}
+            </div>
+        </div>
+        <div class="subsystem-container primary-container title-small-container">
+            <div class="subsystem-header primary-container accent">
+                <div class="subsystem-header-title">
+                    {{localize "PF2ESubsystems.Events.Research.Single"}}
+                    <div class="subsystem-header-control">
+                        <i class="fa-solid {{#if this.toggledAll.research}}fa-toggle-on{{else}}fa-toggle-off{{/if}} clickable-icon" data-action="subsystemToggleAll" data-subsystem="research" data-selected="{{not this.toggledAll.research}}"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="subsystem-body">
+                {{#each this.research}}
+                    <div class="subsystem-event secondary-container clickable-icon {{#if this.selected}}selected{{/if}}" data-action="toggleEvent" data-subsystem="research" data-event="{{@index}}">{{this.name}}</div>
+                {{/each}}
+            </div>
+        </div>
+        <div class="subsystem-container primary-container title-small-container">
+            <div class="subsystem-header primary-container accent">
+                <div class="subsystem-header-title">
+                    {{localize "PF2ESubsystems.Events.Infiltration.Single"}}
+                    <div class="subsystem-header-control">
+                        <i class="fa-solid {{#if this.toggledAll.infiltration}}fa-toggle-on{{else}}fa-toggle-off{{/if}} clickable-icon" data-action="subsystemToggleAll" data-subsystem="infiltration" data-selected="{{not this.toggledAll.infiltration}}"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="subsystem-body">
+                {{#each this.infiltration}}
+                    <div class="subsystem-event secondary-container clickable-icon {{#if this.selected}}selected{{/if}}" data-action="toggleEvent" data-subsystem="infiltration" data-event="{{@index}}">{{this.name}}</div>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+    <footer class="flexrow">
+        <button data-action="importEvents" {{#if (not this.exportEnabled)}}disabled{{/if}} class="tertiary-container primary-text-container"><i class="fas fa-file-import"></i> Import</button>
+        <button data-action="close" class="tertiary-container primary-text-container"><i class="fas fa-times"></i> Cancel</button>
+    </footer>
+</div>

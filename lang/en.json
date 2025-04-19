@@ -85,10 +85,15 @@
                 }
             }
         },
-        "ImportExport": {
+        "Export": {
             "Title": "Subsystem Export",
             "Export": "Export",
             "SuccessfullyExported": "Subsystem events successfully exported"
+        },
+        "Import": {
+            "Title": "Subsystem Import",
+            "Import": "Import",
+            "ImportSuccessful": "Successfully imported all selected subsystem events"
         },
         "View": {
             "Title": "Subsystems",
@@ -110,7 +115,8 @@
             "OpenEventTour": "Open a tour explaining parts of the subsystem",
             "NewObstacle": "New Obstacle",
             "VariantExplanation": "Some actions have variants. In those cases you can select a variant here. For Treat Wounds and Perform, a variant -must- be selected.",
-            "ImportMenu": "Export",
+            "ExportMenu": "Export",
+            "ImportMenu": "Import",
             "ConfirmRestoreDefaultTitle": "Restore Default Values",
             "ConfirmRestoreDefaultText": "This will restore the default values of this section. Are you sure?",
             "TextDialogTitle": "{name} Text Editor",

@@ -378,3 +378,15 @@ export const defaultInfiltrationPreparations = {
         maxAttempts: 1,
     }
 }
+
+export const extendedSkills = () => ({
+    ...Object.keys(CONFIG.PF2E.skills).reduce((acc, skill) => {
+        acc[skill] = {
+            value: skill,
+            name: game.i18n.localize(CONFIG.PF2E.skills[skill].label),
+        };
+
+        return acc;
+    }, {}),
+    perception: { value: 'perception', name: game.i18n.localize('PF2E.PerceptionLabel') },
+});

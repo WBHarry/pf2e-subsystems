@@ -171,3 +171,18 @@ export const versionCompare = (current, target) => {
 export const hyphenateText = (text) => {
     return text.replaceAll(' ', '-');
 };
+
+export const readTextFromFile = (file) => {
+    const reader = new FileReader();
+    return new Promise((resolve, reject) => {
+        reader.onload = (ev) => {
+            resolve(reader.result);
+        };
+        reader.onerror = (ev) => {
+            reader.abort();
+        reject();
+        };
+        
+        reader.readAsText(file);
+    });
+};

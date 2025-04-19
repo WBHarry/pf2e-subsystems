@@ -85,7 +85,7 @@
                 }
             }
         },
-        "ImportExport": {
+        "Export": {
             "Title": "Exportation des Sous-systèmes",
             "Export": "Exporter",
             "SuccessfullyExported": "Exportation réussie des événements de Sous-système"
@@ -110,7 +110,7 @@
             "OpenEventTour": "Ouvrir une visite guidée expliquant certaines parties du sous-système",
             "NewObstacle": "Nouvel obstacle",
             "VariantExplanation": "Certaines actions ont des variantes. Dans ces cas, vous pouvez sélectionner une variante ici. Pour Soigner les blessures et Se produire, une variante -doit- être sélectionnée.",
-            "ImportMenu": "Exportation",
+            "ExportMenu": "Exportation",
             "ConfirmRestoreDefaultTitle": "Rétablir les valeurs par défaut",
             "ConfirmRestoreDefaultText": "Cela rétablira les valeurs par défaut de cette section. Êtes-vous sûr ?",
             "TextDialogTitle": "Éditeur de texte {name}",

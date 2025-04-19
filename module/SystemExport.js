@@ -21,13 +21,13 @@ export default class SystemExport extends HandlebarsApplicationMixin(Application
     }
 
     get title() {
-        return game.i18n.localize("PF2ESubsystems.ImportExport.Title");
+        return game.i18n.localize("PF2ESubsystems.Export.Title");
     }
 
     static DEFAULT_OPTIONS = {
         tag: "form",
         id: "pf2e-subsystems-export",
-        classes: ["pf2e-subsystems", "pf2e-export"],
+        classes: ["pf2e-subsystems", "pf2e-import-export"],
         actions: {
             toggleEvent: this.toggleEvent,
             subsystemToggleAll: this.subsystemToggleAll,
@@ -122,7 +122,7 @@ export default class SystemExport extends HandlebarsApplicationMixin(Application
             `pf2e-subsystems-export.json`,
         );
 
-        ui.notifications.info(game.i18n.localize("PF2ESubsystems.ImportExport.SuccessfullyExported"));
+        ui.notifications.info(game.i18n.localize("PF2ESubsystems.Export.SuccessfullyExported"));
     }
 
     async close(options={}) {

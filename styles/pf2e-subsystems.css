@@ -40,6 +40,9 @@ form.pf2e-subsystems.application > header .header-control {
   border-color: var(--pf2e-subsystem-theming-border);
   color: var(--pf2e-subsystem-theming-primary-color);
 }
+.pf2e-subsystems button.primary-container[disabled] {
+  opacity: 0.6;
+}
 .pf2e-subsystems .primary-container-faded {
   background-color: var(--pf2e-subsystem-theming-primary-faded);
   border-color: var(--pf2e-subsystem-theming-border);
@@ -66,6 +69,9 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems input.secondary-container .data-icon {
   filter: var(--pf2e-subsystem-theming-icon-filter);
 }
+.pf2e-subsystems button.secondary-container[disabled] {
+  opacity: 0.6;
+}
 .pf2e-subsystems .tertiary-container,
 .pf2e-subsystems input.tertiary-container {
   background-color: var(--pf2e-subsystem-theming-tertiary);
@@ -85,6 +91,9 @@ form.pf2e-subsystems.application > header .header-control {
   background-color: var(--pf2e-subsystem-theming-tertiary);
   border-color: var(--pf2e-subsystem-theming-border);
   color: var(--pf2e-subsystem-theming-primary-color);
+}
+.pf2e-subsystems button.tertiary-container[disabled] {
+  opacity: 0.6;
 }
 .pf2e-subsystems input.tertiary-checkbox[type="checkbox"] {
   background-color: inherit;
@@ -2201,17 +2210,17 @@ form.pf2e-subsystems.application > header .header-control {
   border-radius: 6px;
   padding: 2px;
 }
-.pf2e-subsystems.pf2e-export .export-container {
+.pf2e-subsystems.pf2e-import-export .import-export-container {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-.pf2e-subsystems.pf2e-export .export-container .selection-container {
+.pf2e-subsystems.pf2e-import-export .import-export-container .selection-container {
   display: flex;
   gap: 8px;
   align-items: flex-start;
 }
-.pf2e-subsystems.pf2e-export .export-container .selection-container .subsystem-container {
+.pf2e-subsystems.pf2e-import-export .import-export-container .selection-container .subsystem-container {
   display: flex;
   flex-direction: column;
   border-width: 2px;
@@ -2219,7 +2228,7 @@ form.pf2e-subsystems.application > header .header-control {
   border-radius: 6px;
   width: 320px;
 }
-.pf2e-subsystems.pf2e-export .export-container .selection-container .subsystem-container .subsystem-header {
+.pf2e-subsystems.pf2e-import-export .import-export-container .selection-container .subsystem-container .subsystem-header {
   border-radius: 6px 6px 0 0;
   border-bottom-width: 2px;
   border-bottom-style: solid;
@@ -2229,18 +2238,18 @@ form.pf2e-subsystems.application > header .header-control {
   justify-content: center;
   position: relative;
 }
-.pf2e-subsystems.pf2e-export .export-container .selection-container .subsystem-container .subsystem-header .subsystem-header-title {
+.pf2e-subsystems.pf2e-import-export .import-export-container .selection-container .subsystem-container .subsystem-header .subsystem-header-title {
   position: relative;
   display: flex;
   align-items: center;
 }
-.pf2e-subsystems.pf2e-export .export-container .selection-container .subsystem-container .subsystem-header .subsystem-header-title .subsystem-header-control {
+.pf2e-subsystems.pf2e-import-export .import-export-container .selection-container .subsystem-container .subsystem-header .subsystem-header-title .subsystem-header-control {
   position: absolute;
   right: -24px;
   height: 20px;
   font-size: 20px;
 }
-.pf2e-subsystems.pf2e-export .export-container .selection-container .subsystem-container .subsystem-body {
+.pf2e-subsystems.pf2e-import-export .import-export-container .selection-container .subsystem-container .subsystem-body {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -2248,17 +2257,17 @@ form.pf2e-subsystems.application > header .header-control {
   padding: 4px;
   border-radius: 0 0 6px 6px;
 }
-.pf2e-subsystems.pf2e-export .export-container .selection-container .subsystem-container .subsystem-body .subsystem-event {
+.pf2e-subsystems.pf2e-import-export .import-export-container .selection-container .subsystem-container .subsystem-body .subsystem-event {
   border-width: 1px;
   border-style: solid;
   padding: 2px;
   border-radius: 6px;
   opacity: 0.4;
 }
-.pf2e-subsystems.pf2e-export .export-container .selection-container .subsystem-container .subsystem-body .subsystem-event.selected {
+.pf2e-subsystems.pf2e-import-export .import-export-container .selection-container .subsystem-container .subsystem-body .subsystem-event.selected {
   opacity: 1;
 }
-.pf2e-subsystems.pf2e-export .export-container .export-footer {
+.pf2e-subsystems.pf2e-import-export .import-export-container .export-footer {
   display: flex;
   align-items: center;
   gap: 4px;

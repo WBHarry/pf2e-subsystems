@@ -1,4 +1,4 @@
-<div class="export-container">
+<div class="import-export-container">
     <div class="selection-container">
         <div class="subsystem-container primary-container title-small-container">
             <div class="subsystem-header primary-container accent">
@@ -63,7 +63,7 @@
         </div>
     </div>
     <div class="export-footer">
-        <button {{#if (not this.canExport)}}disabled{{/if}} data-action="export">{{localize "PF2ESubsystems.ImportExport.Export"}}</button>
-        <button>{{localize "PF2ESubsystems.Basic.Cancel"}}</button>
+        <button {{#if (not this.canExport)}}disabled{{/if}} data-action="export" class="tertiary-container primary-text-container">{{localize "PF2ESubsystems.Export.Export"}}</button>
+        <button class="tertiary-container primary-text-container">{{localize "PF2ESubsystems.Basic.Cancel"}}</button>
     </div>
 </div>
