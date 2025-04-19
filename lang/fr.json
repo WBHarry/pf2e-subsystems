@@ -206,76 +206,76 @@
             "Complications": "Complications",
             "NewOpportunity": "Nouvelle opportunité",
             "NewComplication": "Nouvelle complication",
-            "Requirements": "Requirements",
-            "OpportunityDescription": "Describe this opportunity here",
-            "Trigger": "Trigger",
-            "MaxInfiltrationPoints": "Infiltration Points (Optional)",
-            "ComplicationsDescription": "Describe this complication here",
-            "ComplicationResultDescription": "Describe the result here",
-            "ConfirmRemoveEdgeTitle": "Remove Edge Point",
-            "ConfirmRemoveEdgeText": "This result is linked to the Edge Point \"{edge}\". Do you want to remove it?",
-            "AddAwarenessBreakpoint": "Add additional awareness breakpoint",
-            "AddNewObstacle": "Add New Obstacle",
-            "HiddenAwarenessNumber": "Hidden awareness from edge points or other sources",
+            "Requirements": "Conditions",
+            "OpportunityDescription": "Décrivez cette opportunité ici",
+            "Trigger": "Déclencheur",
+            "MaxInfiltrationPoints": "Points d'infiltration (Facultatif)",
+            "ComplicationsDescription": "Décrivez cette complication ici",
+            "ComplicationResultDescription": "Décrivez le résultat ici",
+            "ConfirmRemoveEdgeTitle": "Retirer un Point d'avantage",
+            "ConfirmRemoveEdgeText": "Ce résultat est lié au Point d'avantage \"{edge}\". Voulez-vous le supprimer ?",
+            "AddAwarenessBreakpoint": "Ajouter un seuil de vigilance supplémentaire",
+            "AddNewObstacle": "Ajouter un nouvel obstacle",
+            "HiddenAwarenessNumber": "Vigilance cachée venant des Points d'avantage ou d'autres sources",
             "Preparations": {
-                "NewPreparationActivity": "New Activity",
-                "MaxAttempts": "Max Attempts",
-                "EdgeLabel": "Edge Label",
-                "IsUsed": "Preparations Active",
-                "NotUsed": "Preparations Inactivated",
-                "AwarenessPoints": "Awareness Points",
-                "FakeDegreeOfSuccess": "Fake Degree Shown To Players"
+                "NewPreparationActivity": "Nouvelle activité",
+                "MaxAttempts": "Tentatives maximales",
+                "EdgeLabel": "Label de l'avantage",
+                "IsUsed": "Préparations Activé",
+                "NotUsed": "Préparations Inactivé",
+                "AwarenessPoints": "Points de vigilance",
+                "FakeDegreeOfSuccess": "Faux degré montré aux joueurs"
             },
             "InfiltrationTab": {
                 "Infiltration": "Infiltration",
-                "Preparations": "Preparations"
+                "Preparations": "Préparations"
             },
             "InfiltrationObstacleSkillsTab": {
                 "Description": "Description",
-                "SkillChecks": "Checks",
-                "Results": "Results"
+                "SkillChecks": "Tests",
+                "Results": "Résultats"
             },
             "InfiltrationComplicationTab": {
                 "Description": "Description",
-                "SkillChecks": "Checks",
-                "Results": "Results"
+                "SkillChecks": "Tests",
+                "Results": "Résultats"
             },
             "InfiltrationActivityTab": {
                 "Description": "Description",
-                "SkillChecks": "Checks",
-                "Results": "Results"
+                "SkillChecks": "Tests",
+                "Results": "Résultats"
             },
             "Awareness": {
-                "DefaultBreakpoint5": "Suspicions are raised. Increase the DCs for obstacles by 1. The first time the PCs reach this tier, a complication occurs.",
-                "DefaultBreakpoint10": "The first time the PCs reach this tier, a complication occurs.",
-                "DefaultBreakpoint15": "Increase the DCs for obstacles by a total of 2, and the first time the PCs reach this tier, a complication occurs.",
-                "DefaultBreakpoint20": "The infiltration fails.",
-                "NewAwarenessBreakpoint": "New Breakpoint",
-                "ActivateAwarenessBreakpoint": "Activate awareness breakpoint"
+                "DefaultBreakpoint5": "L’opposition a des soupçons. Augmentez de 1 le DD des obstacles. Quand les PJ atteignent ce seuil pour la première fois, une complication se produit.",
+                "DefaultBreakpoint10": "Une complication se produit quand les PJ atteignent ce seuil pour la première fois.",
+                "DefaultBreakpoint15": "Augmentez le DD des obstacles d’un total de 2. Une complication se produit quand les PJ atteignent ce seuil pour la première fois.",
+                "DefaultBreakpoint20": "L’infiltration échoue.",
+                "NewAwarenessBreakpoint": "Nouveau Seuil",
+                "ActivateAwarenessBreakpoint": "Activer le seuil de vigilance"
             }
         },
         "Influence": {
-            "NavigateBack": "Return To Influence",
-            "EditInfluence": "Edit Influence",
-            "CreateInfluence": "Create New Influence",
+            "NavigateBack": "Retour à Influence",
+            "EditInfluence": "Modifier l'Influence",
+            "CreateInfluence": "Créer une nouvelle Influence",
             "Perception": "Perception",
-            "Will": "Will",
-            "Discovery": "Discovery",
-            "InfluenceSkills": "Influence Skills",
+            "Will": "Volonté",
+            "Discovery": "Découverte",
+            "InfluenceSkills": "Compétences d'Influence",
             "Influence": "Influence",
-            "Weaknesses": "Weaknesses",
-            "Resistances": "Resistances",
-            "Penalties": "Penalties",
+            "Weaknesses": "Faiblesses",
+            "Resistances": "Résistances",
+            "Penalties": "Pénalités",
             "InfluencePoints": "Points",
-            "Modifier": "Modifier",
-            "InfluenceSkillLabelTitle": "{skill} Label",
+            "Modifier": "Modificateur",
+            "InfluenceSkillLabelTitle": "Label de {skill}",
             "Rounds": "Rounds",
-            "EditInfluenceSkillLabel": "Edit Optional Skill Label"
+            "EditInfluenceSkillLabel": "Modifier le Label optionnel de la compétence"
         },
         "KeyBindings": {
             "OpenSystemView": {
-                "Name": "Open Subsystems View",
-                "Hint": "Opens the subsystem window"
+                "Name": "Ouvrir l'affichage Sous-systèmes",
+                "Hint": "Ouvre la fenêtre Sous-systèmes"
             }
         }
     }
