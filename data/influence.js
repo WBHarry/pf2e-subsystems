@@ -30,6 +30,7 @@ export class Influence extends foundry.abstract.DataModel {
         }),
         discoveries: new TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
+            label: new fields.StringField(),
             hidden: new fields.BooleanField({ required: true, initial: false }),
             skill: new fields.StringField({ required: true, initial: 'acrobatics' }),
             action: new fields.StringField(),
@@ -137,6 +138,7 @@ export class Influence extends foundry.abstract.DataModel {
             event: this.id,
             id: discovery.id,
             action: discovery.action,
+            label: discovery.label,
           });
           acc.variant.push({ 
             event: this.id,

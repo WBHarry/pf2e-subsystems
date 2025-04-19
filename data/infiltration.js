@@ -78,7 +78,11 @@ export class Infiltration extends foundry.abstract.DataModel {
                 action: new fields.StringField(),
                 variant: new fields.StringField(),
                 lore: new fields.BooleanField({ required: true, initial: false }),
-                modifier: new fields.NumberField({ integer: true, nullable: true, initial: null }),
+                label: new fields.StringField(),
+                difficulty: new fields.SchemaField({
+                  leveledDC: new fields.BooleanField({ required: true, initial: true }),
+                  DC: new fields.NumberField(),
+                }),
               })),
             })),
             description: new fields.HTMLField(),
@@ -109,6 +113,11 @@ export class Infiltration extends foundry.abstract.DataModel {
               action: new fields.StringField(),
               variant: new fields.StringField(),
               lore: new fields.BooleanField({ required: true, initial: false }),
+              label: new fields.StringField(),
+              difficulty: new fields.SchemaField({
+                leveledDC: new fields.BooleanField({ required: true, initial: true }),
+                DC: new fields.NumberField(),
+              }),
             })),
           })),
           description: new fields.HTMLField(),
@@ -188,6 +197,7 @@ export class Infiltration extends foundry.abstract.DataModel {
                   skillCheck: skillCheck.id,
                   id: skill.id,
                   action: skill.action,
+                  label: skill.label,
                 });
                 acc.variant.push({ 
                   event: this.id,
@@ -198,9 +208,17 @@ export class Infiltration extends foundry.abstract.DataModel {
                   variant: skill.variant,
                   disabled: skill.action ? game.pf2e.actions.get(skill.action).variants.size === 0 : true,
                 });
+                acc.dc.push({ 
+                  event: this.id,
+                  complication: complication.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  dc: skill.difficulty.DC,
+                  leveledDC: skill.difficulty.leveledDC,
+                });
 
                 return acc;
-              }, { lore: [], skill: [], action: [], variant: [] }),
+              }, { lore: [], skill: [], action: [], variant: [], dc: [] }),
             }
 
             return acc;
@@ -240,6 +258,7 @@ export class Infiltration extends foundry.abstract.DataModel {
                   skillCheck: skillCheck.id,
                   id: skill.id,
                   action: skill.action,
+                  label: skill.label,
                 });
                 acc.variant.push({ 
                   event: this.id,
@@ -250,9 +269,17 @@ export class Infiltration extends foundry.abstract.DataModel {
                   variant: skill.variant,
                   disabled: skill.action ? game.pf2e.actions.get(skill.action).variants.size === 0 : true,
                 });
+                acc.dc.push({
+                  event: this.id,
+                  activity: activity.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  dc: skill.difficulty.DC,
+                  leveledDC: skill.difficulty.leveledDC,
+                });
   
                 return acc;
-              }, { lore: [], skill: [], action: [], variant: [] }),
+              }, { lore: [], skill: [], action: [], variant: [], dc: [] }),
             }
   
             return acc;
@@ -294,6 +321,11 @@ export class Preparations extends foundry.abstract.DataModel {
             action: new fields.StringField(),
             variant: new fields.StringField(),
             lore: new fields.BooleanField({ required: true, initial: false }),
+            label: new fields.StringField(),
+            difficulty: new fields.SchemaField({
+              leveledDC: new fields.BooleanField({ required: true, initial: true }),
+              DC: new fields.NumberField(),
+            }),
           })),
         })),
         results: new fields.SchemaField({

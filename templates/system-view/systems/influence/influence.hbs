@@ -137,7 +137,8 @@
                                             </div>
                                             {{#each this.action}}
                                                 <div class="event-skill-grid-cell-container last">
-                                                    <div class="event-skill-grid-cell">
+                                                    <div class="event-skill-grid-cell spaced tools-column-cell">
+                                                        <i class="fa-solid fa-tag clickable-icon label-tag {{#if this.label}}active{{/if}}" data-action="useSkillLabelMenu" data-path="{{concat "events." this.event ".discoveries." this.id}}" title="{{localize "PF2ESubsystems.Influence.EditInfluenceSkillLabel"}}"></i>
                                                         <i class="fa-solid fa-trash clickable-icon" data-action="influenceDiscoveryRemove" data-event="{{this.event}}" data-discovery="{{this.id}}"></i>
                                                     </div>
                                                 </div>
@@ -151,7 +152,10 @@
                                 {{#each this.event.extendedDiscoveries.data}}
                                     {{#if (or ../isGM (not this.hidden))}}
                                         <div class="skill-container {{#if (not this.hidden)}}revealed{{/if}} secondary-container" {{#if ../isGM}}data-action="influenceDiscoveryToggleHidden"{{/if}} data-event="{{../event.id}}" data-discovery="{{this.id}}">
-                                            {{{this.element}}}
+                                            <div class="flexrow">
+                                                {{{this.element}}}
+                                                {{#if this.label}}<div class="text-normal italic {{#if this.hidden}}disabled{{/if}}">({{this.label}})</div>{{/if}}
+                                            </div>
                                         </div>
                                     {{/if}}
                                 {{/each}}
@@ -228,7 +232,7 @@
                                             {{#each this.action}}
                                                 <div class="event-skill-grid-cell-container last">
                                                     <div class="event-skill-grid-cell spaced tools-column-cell">
-                                                        <i class="fa-solid fa-tag clickable-icon label-tag {{#if this.label}}active{{/if}}" data-action="influenceSkillLabelMenu" data-event="{{this.event}}" data-skill="{{this.id}}" title="{{localize "PF2ESubsystems.Influence.EditInfluenceSkillLabel"}}"></i>
+                                                        <i class="fa-solid fa-tag clickable-icon label-tag {{#if this.label}}active{{/if}}" data-action="useSkillLabelMenu" data-path="{{concat "events." this.event ".influenceSkills." this.id}}" title="{{localize "PF2ESubsystems.Influence.EditInfluenceSkillLabel"}}"></i>
                                                         <i class="fa-solid fa-trash clickable-icon" data-action="influenceSkillRemove" data-event="{{this.event}}" data-skill="{{this.id}}"></i>
                                                     </div>
                                                 </div>
@@ -242,8 +246,10 @@
                                 {{#each this.event.extendedInfluenceSkills.data}}
                                     {{#if (or ../isGM (not this.hidden))}}
                                         <div class="skill-container {{#if (not this.hidden)}}revealed{{/if}} secondary-container" {{#if ../isGM}}data-action="influenceInfluenceSkillToggleHidden"{{/if}} data-event="{{../event.id}}" data-skill="{{this.id}}">
-                                            {{{this.element}}}
-                                            {{#if this.label}}({{this.label}}){{/if}}
+                                            <div class="flexrow">
+                                                {{{this.element}}}
+                                                {{#if this.label}}<div class="text-normal italic {{#if this.selectedAdjustment}}disabled{{/if}}">({{this.label}})</div>{{/if}}
+                                            </div>
                                         </div>
                                     {{/if}}
                                 {{/each}}

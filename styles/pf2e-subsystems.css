@@ -86,6 +86,9 @@ form.pf2e-subsystems.application > header .header-control {
   border-color: var(--pf2e-subsystem-theming-border);
   color: var(--pf2e-subsystem-theming-primary-color);
 }
+.pf2e-subsystems input.tertiary-checkbox[type="checkbox"] {
+  background-color: inherit;
+}
 .pf2e-subsystems input.tertiary-checkbox[type="checkbox"]::before {
   color: var(--pf2e-subsystem-theming-tertiary);
 }
@@ -305,6 +308,7 @@ form.pf2e-subsystems.application > header .header-control {
   flex-direction: column;
   align-items: flex-start;
   justify-content: start;
+  height: 100%;
 }
 .pf2e-subsystems.systems-view .event-select-container.tabs {
   width: 100%;
@@ -315,6 +319,7 @@ form.pf2e-subsystems.application > header .header-control {
   flex-direction: column;
   flex: 1;
   width: 100%;
+  overflow: hidden;
 }
 .pf2e-subsystems.systems-view .event-select-container .events-outer-container .system-title-container {
   position: relative;
@@ -364,6 +369,7 @@ form.pf2e-subsystems.application > header .header-control {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 32px;
+  overflow: auto;
 }
 .pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-container .event-container {
   position: relative;
@@ -380,7 +386,6 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-container .event-container .event-container-header {
   border-width: 2px;
   border-style: outset;
-  border-color: black;
   border-radius: 6px 6px 0 0;
   text-align: center;
   text-wrap: auto;
@@ -678,13 +683,6 @@ form.pf2e-subsystems.application > header .header-control {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  flex: 33%;
-}
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section.split.focused {
-  flex: 60%;
-}
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section.split.unfocused {
-  flex: 20;
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-section .event-section-title,
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-view-container .event-section-title {
@@ -732,13 +730,6 @@ form.pf2e-subsystems.application > header .header-control {
   border-radius: 4px;
   padding: 0;
   overflow: hidden;
-  flex: 33%;
-}
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-radio-container.focused {
-  flex: 60%;
-}
-.pf2e-subsystems.systems-view .event-outer-container .event-container .event-radio-container.unfocused {
-  flex: 20;
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-radio-container .event-radio-header {
   position: relative;
@@ -1639,10 +1630,10 @@ form.pf2e-subsystems.application > header .header-control {
   font-size: 24px;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-obstacle-container .obstacle-skill-grid {
-  grid-template-columns: 0fr 2fr 2fr 1fr 0fr 0fr;
+  grid-template-columns: 0fr 2fr 2fr 1fr 0.8fr 0fr;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complication-container .complication-skill-grid {
-  grid-template-columns: 0fr 2fr 2fr 1fr 0fr;
+  grid-template-columns: 0fr 2fr 2fr 1fr 0.8fr 0fr;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complication-container .infiltration-complications-container {
   overflow: hidden;
@@ -1982,7 +1973,7 @@ form.pf2e-subsystems.application > header .header-control {
   line-height: 18px;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .activity-skill-grid {
-  grid-template-columns: 0fr 2fr 2fr 1fr 0fr;
+  grid-template-columns: 0fr 2fr 2fr 1fr 0.8fr 0fr;
 }
 .pf2e-subsystems .influence-view .event-outer-container .event-npc-selection {
   padding: 4px;
@@ -2134,16 +2125,6 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems .influence-view .event-outer-container .event-container .influence-skills-container .influence-skill-grid {
   grid-template-columns: 0fr 2fr 2fr 1fr 0.5fr 0fr;
-}
-.pf2e-subsystems .influence-view .event-outer-container .event-container .influence-skills-container .tools-column-cell {
-  margin-right: 4px;
-}
-.pf2e-subsystems .influence-view .event-outer-container .event-container .influence-skills-container .tools-column-cell .label-tag {
-  opacity: 0.6;
-}
-.pf2e-subsystems .influence-view .event-outer-container .event-container .influence-skills-container .tools-column-cell .label-tag.active {
-  opacity: 1;
-  filter: drop-shadow(0 0 3px var(--pf2e-subsystem-theming-border));
 }
 .pf2e-subsystems .influence-view .event-outer-container .event-container .influence-container .influence-header-container {
   position: relative;
@@ -2395,6 +2376,10 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems input.text-normal.centered {
   text-align: center;
 }
+.pf2e-subsystems .text-normal.disabled,
+.pf2e-subsystems input.text-normal.disabled {
+  opacity: 0.4;
+}
 .pf2e-subsystems .text-helper-big,
 .pf2e-subsystems input.text-helper-big {
   font-size: 12px;
@@ -2434,6 +2419,16 @@ form.pf2e-subsystems.application > header .header-control {
   border-radius: 6px;
   border-color: var(--pf2e-subsystem-theming-border);
 }
+.pf2e-subsystems .event-skill-grid .tools-column-cell {
+  margin-right: 4px;
+}
+.pf2e-subsystems .event-skill-grid .tools-column-cell .label-tag {
+  opacity: 0.6;
+}
+.pf2e-subsystems .event-skill-grid .tools-column-cell .label-tag.active {
+  opacity: 1;
+  filter: drop-shadow(0 0 3px var(--pf2e-subsystem-theming-border));
+}
 .pf2e-subsystems .event-skill-grid .event-skill-grid-col {
   display: grid;
   grid-auto-flow: row;
@@ -2443,6 +2438,9 @@ form.pf2e-subsystems.application > header .header-control {
   border-right-width: 4px;
   border-right-style: solid;
   border-right-color: var(--pf2e-subsystem-theming-secondary);
+  display: flex;
+  align-items: center;
+  gap: 2px;
 }
 .pf2e-subsystems .event-skill-grid .event-skill-grid-col .event-skill-grid-cell-container.first {
   border-left-width: 4px;
@@ -2485,6 +2483,9 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems .event-skill-grid .event-skill-grid-col input {
   margin: 0;
+}
+.pf2e-subsystems .event-skill-grid .event-skill-grid-col input[disabled] {
+  opacity: 0.4;
 }
 .pf2e-subsystems .event-skill-grid .event-skill-grid-col select {
   padding: 0;

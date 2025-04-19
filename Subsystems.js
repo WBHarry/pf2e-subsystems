@@ -776,7 +776,11 @@ class Infiltration extends foundry.abstract.DataModel {
                 action: new fields.StringField(),
                 variant: new fields.StringField(),
                 lore: new fields.BooleanField({ required: true, initial: false }),
-                modifier: new fields.NumberField({ integer: true, nullable: true, initial: null }),
+                label: new fields.StringField(),
+                difficulty: new fields.SchemaField({
+                  leveledDC: new fields.BooleanField({ required: true, initial: true }),
+                  DC: new fields.NumberField(),
+                }),
               })),
             })),
             description: new fields.HTMLField(),
@@ -807,6 +811,11 @@ class Infiltration extends foundry.abstract.DataModel {
               action: new fields.StringField(),
               variant: new fields.StringField(),
               lore: new fields.BooleanField({ required: true, initial: false }),
+              label: new fields.StringField(),
+              difficulty: new fields.SchemaField({
+                leveledDC: new fields.BooleanField({ required: true, initial: true }),
+                DC: new fields.NumberField(),
+              }),
             })),
           })),
           description: new fields.HTMLField(),
@@ -886,6 +895,7 @@ class Infiltration extends foundry.abstract.DataModel {
                   skillCheck: skillCheck.id,
                   id: skill.id,
                   action: skill.action,
+                  label: skill.label,
                 });
                 acc.variant.push({ 
                   event: this.id,
@@ -896,9 +906,17 @@ class Infiltration extends foundry.abstract.DataModel {
                   variant: skill.variant,
                   disabled: skill.action ? game.pf2e.actions.get(skill.action).variants.size === 0 : true,
                 });
+                acc.dc.push({ 
+                  event: this.id,
+                  complication: complication.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  dc: skill.difficulty.DC,
+                  leveledDC: skill.difficulty.leveledDC,
+                });
 
                 return acc;
-              }, { lore: [], skill: [], action: [], variant: [] }),
+              }, { lore: [], skill: [], action: [], variant: [], dc: [] }),
             };
 
             return acc;
@@ -938,6 +956,7 @@ class Infiltration extends foundry.abstract.DataModel {
                   skillCheck: skillCheck.id,
                   id: skill.id,
                   action: skill.action,
+                  label: skill.label,
                 });
                 acc.variant.push({ 
                   event: this.id,
@@ -948,9 +967,17 @@ class Infiltration extends foundry.abstract.DataModel {
                   variant: skill.variant,
                   disabled: skill.action ? game.pf2e.actions.get(skill.action).variants.size === 0 : true,
                 });
+                acc.dc.push({
+                  event: this.id,
+                  activity: activity.id,
+                  skillCheck: skillCheck.id,
+                  id: skill.id,
+                  dc: skill.difficulty.DC,
+                  leveledDC: skill.difficulty.leveledDC,
+                });
   
                 return acc;
-              }, { lore: [], skill: [], action: [], variant: [] }),
+              }, { lore: [], skill: [], action: [], variant: [], dc: [] }),
             };
   
             return acc;
@@ -992,6 +1019,11 @@ class Preparations extends foundry.abstract.DataModel {
             action: new fields.StringField(),
             variant: new fields.StringField(),
             lore: new fields.BooleanField({ required: true, initial: false }),
+            label: new fields.StringField(),
+            difficulty: new fields.SchemaField({
+              leveledDC: new fields.BooleanField({ required: true, initial: true }),
+              DC: new fields.NumberField(),
+            }),
           })),
         })),
         results: new fields.SchemaField({
@@ -1053,6 +1085,7 @@ class Influence extends foundry.abstract.DataModel {
         }),
         discoveries: new TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
+            label: new fields.StringField(),
             hidden: new fields.BooleanField({ required: true, initial: false }),
             skill: new fields.StringField({ required: true, initial: 'acrobatics' }),
             action: new fields.StringField(),
@@ -1160,6 +1193,7 @@ class Influence extends foundry.abstract.DataModel {
             event: this.id,
             id: discovery.id,
             action: discovery.action,
+            label: discovery.label,
           });
           acc.variant.push({ 
             event: this.id,
@@ -1301,6 +1335,7 @@ class Research extends foundry.abstract.DataModel {
                   skillCheck: skillCheck.id,
                   id: skill.id,
                   action: skill.action,
+                  label: skill.label,
                 });
                 acc.variant.push({ 
                   event: this.id,
@@ -1348,6 +1383,7 @@ class ResearchChecks extends foundry.abstract.DataModel {
         description: new fields.HTMLField(),
         skills: new TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
+          label: new fields.StringField(),
           skill: new fields.StringField(),
           action: new fields.StringField(),
           lore: new fields.BooleanField({ required: true, initial: false }),
@@ -2368,6 +2404,7 @@ class SystemView extends HandlebarsApplicationMixin(
         startEventTour: this.startEventTour,
         openImportExportMenu: this.openImportExportMenu,
         useEditTextDialog: this.useEditTextDialog,
+        useSkillLabelMenu: this.useSkillLabelMenu,
         /* Chases */
         researchUpdateRoundsCurrent: this.researchUpdateRoundsCurrent,
         addPlayerParticipants: this.addPlayerParticipants,
@@ -2485,7 +2522,6 @@ class SystemView extends HandlebarsApplicationMixin(
         influencePenaltyToggleUsed: this.influencePenaltyToggleUsed,
         influenceDiscoveryToggleOpen: this.influenceDiscoveryToggleOpen,
         influenceInfluenceSkillToggleOpen: this.influenceInfluenceSkillToggleOpen,
-        influenceSkillLabelMenu: this.influenceSkillLabelMenu,
         influenceRoundsUpdate: this.influenceRoundsUpdate,
         influenceOpenLinkedNPCs: this.influenceOpenLinkedNPCs,
       },
@@ -4270,8 +4306,8 @@ class SystemView extends HandlebarsApplicationMixin(
       this.render({ parts: [this.tabGroups.main] });
     }
 
-    static async influenceSkillLabelMenu(_, button) {
-      const activeSkill = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].influenceSkills[button.dataset.skill];
+    static async useSkillLabelMenu(_, button) {
+      const activeSkill = foundry.utils.getProperty(game.settings.get(MODULE_ID, this.tabGroups.main), button.dataset.path);
       new Promise((resolve, reject) => {
         new ValueDialog(resolve, reject, activeSkill.label, game.i18n.format("PF2ESubsystems.Influence.InfluenceSkillLabelTitle", { 
           skill: 
@@ -4279,7 +4315,7 @@ class SystemView extends HandlebarsApplicationMixin(
             activeSkill.skill ? `${game.i18n.localize(CONFIG.PF2E.skills[activeSkill.skill].label)}` : game.i18n.localize("PF2ESubsystems.Basic.Skill") 
         })).render(true);
       }).then(async value => {
-        await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influenceSkills.${button.dataset.skill}.label`]: value });
+        await updateDataModel(this.tabGroups.main, { [`${button.dataset.path}.label`]: value });
       });
     }
 
@@ -4444,14 +4480,15 @@ class SystemView extends HandlebarsApplicationMixin(
       }});
     }
 
-    async updateInfiltrationActivityLeveldDC(event) {
+    async infiltrationActivityLeveledDCUpdate(event) {
       event.stopPropagation();
       const button = event.currentTarget;
+      const currentLeveledDC = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].preparations.activities[button.dataset.activity].skillChecks[button.dataset.skillCheck].skills[button.dataset.skill].difficulty.leveledDC;
 
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.skillChecks.${button.dataset.skillCheck}`]: {
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.skillChecks.${button.dataset.skillCheck}.skills.${button.dataset.skill}`]: {
         difficulty: {
-          leveledDC: button.checked,
-          DC: button.checked ? null : 10,
+          leveledDC: !currentLeveledDC,
+          DC: currentLeveledDC ? 10 : null,
         }
       }});
     }
@@ -4511,6 +4548,32 @@ class SystemView extends HandlebarsApplicationMixin(
 
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.objectives.${button.dataset.objective}.obstacles.${button.dataset.obstacle}.skillChecks.${button.dataset.skillCheck}.skills.${button.dataset.skill}`]: {
         skill: newSkill,
+      }});
+    }
+
+    async infiltrationObstacleLeveledDCUpdate(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+      const currentLeveledDC = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].objectives[button.dataset.objective].obstacles[button.dataset.obstacle].skillChecks[button.dataset.skillCheck].skills[button.dataset.skill].difficulty.leveledDC;
+      
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.objectives.${button.dataset.objective}.obstacles.${button.dataset.obstacle}.skillChecks.${button.dataset.skillCheck}.skills.${button.dataset.skill}`]: {
+        difficulty: {
+          DC: currentLeveledDC ? 10 : null,
+          leveledDC: !currentLeveledDC,
+        },
+      }});
+    }
+
+    async infiltrationComplicationLeveledDCUpdate(event) {
+      event.stopPropagation();
+      const button = event.currentTarget;
+      const currentLeveledDC = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].complications[button.dataset.complication].skillChecks[button.dataset.skillCheck].skills[button.dataset.skill].difficulty.leveledDC;
+      
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.skillChecks.${button.dataset.skillCheck}.skills.${button.dataset.skill}`]: {
+        difficulty: {
+          DC: currentLeveledDC ? 10 : null,
+          leveledDC: !currentLeveledDC,
+        },
       }});
     }
 
@@ -4649,13 +4712,16 @@ class SystemView extends HandlebarsApplicationMixin(
           $(htmlElement).find('.obstacle-complication-leveled-DC').on('change', this.updateObstacleLeveldDC.bind(this));
           $(htmlElement).find('.infiltration-obstacle-lore').on('change', this.updateInfiltrationObstacleLore.bind(this));
           $(htmlElement).find('.infiltration-obstacle-skill').on('change', this.updateInfiltrationObstacleSkill.bind(this));
+          $(htmlElement).find('.infiltration-obstacle-leveled-dc').on('change', this.infiltrationObstacleLeveledDCUpdate.bind(this));
           $(htmlElement).find('.infiltration-complication-leveled-DC').on('change', this.updateComplicationLeveldDC.bind(this));
           $(htmlElement).find('.infiltration-complication-lore').on('change', this.updateComplicationLore.bind(this));
           $(htmlElement).find('.infiltration-complication-skill').on('change', this.updateInfiltrationComplicationSkill.bind(this));
-          $(htmlElement).find('.infiltration-activity-leveled-DC').on('change', this.updateInfiltrationActivityLeveldDC.bind(this));
+          $(htmlElement).find('.infiltration-complication-leveled-dc').on('change', this.infiltrationComplicationLeveledDCUpdate.bind(this));
+          // $(htmlElement).find('.infiltration-activity-leveled-DC').on('change', this.updateInfiltrationActivityLeveldDC.bind(this));
           $(htmlElement).find('.infiltration-activity-lore').on('change', this.updateInfiltrationActivityLore.bind(this));
           $(htmlElement).find('.infiltration-activity-skill').on('change', this.updateInfiltrationPreparationSkill.bind(this));
           $(htmlElement).find('.infiltration-activity-result-button').on('contextmenu', this.infiltrationActivityDecreaseResultsOutcome.bind(this));
+          $(htmlElement).find('.infiltration-activity-leveled-dc').on('change', this.infiltrationActivityLeveledDCUpdate.bind(this));
           $(htmlElement).find('.infiltration-obstacle-action-input').on('change', this.infiltrationObstacleActionUpdate.bind(this));
           $(htmlElement).find('.infiltration-complication-action-input').on('change', this.infiltrationComplicationActionUpdate.bind(this));
           $(htmlElement).find('.infiltration-preparation-action-input').on('change', this.infiltrationPreparationActionUpdate.bind(this));
@@ -4877,6 +4943,7 @@ class SystemView extends HandlebarsApplicationMixin(
                       skillCheck: skillCheck.id,
                       id: skill.id,
                       action: skill.action,
+                      label: skill.label,
                     });
                     acc.variant.push({ 
                       event: context.selectedEvent.id,
@@ -4888,17 +4955,19 @@ class SystemView extends HandlebarsApplicationMixin(
                       variant: skill.variant,
                       disabled: skill.action ? game.pf2e.actions.get(skill.action).variants.size === 0 : true,
                     });
-                    acc.modifier.push({
+                    acc.dc.push({ 
                       event: context.selectedEvent.id,
                       objective: context.currentObjective.id,
                       obstacle: obstacle.id,
                       skillCheck: skillCheck.id,
                       id: skill.id,
-                      modifier: skill.modifier,
+                      skill: skill.skill,
+                      dc: skill.difficulty.DC,
+                      leveledDC: skill.difficulty.leveledDC,
                     });
     
                     return acc;
-                  }, { lore: [], skill: [], action: [], variant: [], modifier: [] }),
+                  }, { lore: [], skill: [], action: [], variant: [], dc: [] }),
                 };
     
                 return acc;
@@ -4916,12 +4985,11 @@ class SystemView extends HandlebarsApplicationMixin(
                   value: x,
                 }));
   
-                  let dc = skillCheck.difficulty.leveledDC ? getSelfDC() : skillCheck.difficulty.DC;
-                dc = skillCheck.selectedAdjustment ? dc+getDCAdjustmentNumber(skillCheck.selectedAdjustment) : dc;
-                dc += awarenessDCIncrease;
+                const dcAdjustment = (skillCheck.selectedAdjustment ? getDCAdjustmentNumber(skillCheck.selectedAdjustment) : 0) + awarenessDCIncrease;
                 const disableElement = skillCheck.dcAdjustments.length > 0 && !skillCheck.selectedAdjustment;
                 for(var key of Object.keys(skillCheck.skills)){
                   const skill = skillCheck.skills[key];
+                  let dc = (skill.difficulty.leveledDC ? getSelfDC() : skill.difficulty.DC) + dcAdjustment;
                   if(skill.action) {
                     skill.element = await getActButton(skill.action, skill.variant, skill.skill, dc);
                   }
@@ -4970,12 +5038,12 @@ class SystemView extends HandlebarsApplicationMixin(
                   value: x,
                 }));
 
-                let dc = skillCheck.difficulty.leveledDC ? getSelfDC() : skillCheck.difficulty.DC;
-                dc = skillCheck.selectedAdjustment ? dc+getDCAdjustmentNumber(skillCheck.selectedAdjustment) : dc;
-                dc += awarenessDCIncrease;
+                
+                const dcAdjustment = skillCheck.selectedAdjustment ? getDCAdjustmentNumber(skillCheck.selectedAdjustment) : 0;
                 const disableElement = skillCheck.dcAdjustments.length > 0 && !skillCheck.selectedAdjustment;
                 for(var key of Object.keys(skillCheck.skills)){
                   const skill = skillCheck.skills[key];
+                  const dc = (skill.difficulty.leveledDC ? getSelfDC() : skill.difficulty.DC) + dcAdjustment;
                   if(skill.action) {
                     skill.element = await getActButton(skill.action, skill.variant, skill.skill, dc, disableElement);
                   }
@@ -5011,11 +5079,11 @@ class SystemView extends HandlebarsApplicationMixin(
                   value: x,
                 }));
 
-                let dc = skillCheck.difficulty.leveledDC ? getSelfDC() : skillCheck.difficulty.DC;
-                dc = skillCheck.selectedAdjustment ? dc+getDCAdjustmentNumber(skillCheck.selectedAdjustment) : dc;
+                const dcAdjustment = skillCheck.selectedAdjustment ? getDCAdjustmentNumber(skillCheck.selectedAdjustment) : 0;
                 const disableElement = skillCheck.dcAdjustments.length > 0 && !skillCheck.selectedAdjustment;
                 for(var key of Object.keys(skillCheck.skills)){
                   const skill = skillCheck.skills[key];
+                  const dc = (skill.difficulty.leveledDC ? getSelfDC() : skill.difficulty.DC) + dcAdjustment;
                   const secret = activity.tags.includes('secret');
                   if(skill.action) {
                     skill.element = await getActButton(skill.action, skill.variant, skill.skill, dc, disableElement, secret);  
@@ -5530,6 +5598,100 @@ const handleMigration = async () => {
         version = currentVersion;
         await game.settings.set(MODULE_ID, "version", version);
     }
+
+    await migrateEvents();
+};
+
+const migrateEvents = async () => {
+    await migrateInfiltration();
+};
+
+const migrateInfiltration = async () => {
+    const infiltration = game.settings.get(MODULE_ID, 'infiltration');
+    for(var event of Object.values(infiltration.events)){
+        if(versionCompare(event.version, '0.7.8')){
+            await infiltration.updateSource({ events: {
+                [event.id]: {
+                    objectives: Object.values(event.objectives).reduce((acc, objective) => {
+                        acc[objective.id] = {
+                            obstacles: Object.values(objective.obstacles).reduce((acc, obstacle) => {
+                                acc[obstacle.id] = {
+                                    skillChecks: Object.values(obstacle.skillChecks).reduce((acc, skillCheck) => {
+                                        acc[skillCheck.id] = {
+                                            skills: Object.values(skillCheck.skills).reduce((acc, skill) => {
+                                                acc[skill.id] = {
+                                                    difficulty: {
+                                                        DC: skillCheck.difficulty.DC,
+                                                        leveledDC: skillCheck.difficulty.leveledDC,
+                                                    }
+                                                };
+    
+                                                return acc;
+                                            }, {}),
+                                        };
+    
+                                        return acc;
+                                    }, {}),
+                                };
+    
+                                return acc;
+                            }, {}),
+                        };
+        
+                        return acc;
+                    }, {}),
+                    complications: Object.values(event.complications).reduce((acc, complication) => {
+                        acc[complication.id] = {
+                            skillChecks: Object.values(complication.skillChecks).reduce((acc, skillCheck) => {
+                                acc[skillCheck.id] = {
+                                    skills: Object.values(skillCheck.skills).reduce((acc, skill) => {
+                                        acc[skill.id] = {
+                                            difficulty: {
+                                                DC: skillCheck.difficulty.DC,
+                                                leveledDC: skillCheck.difficulty.leveledDC,
+                                            }
+                                        };
+
+                                        return acc;
+                                    }, {}),
+                                };
+
+                                return acc;
+                            }, {}),
+                        };
+
+                        return acc;
+                    }, {}),
+                    preparations: {
+                        activities: Object.values(event.preparations.activities).reduce((acc, activity) => {
+                            acc[activity.id] = {
+                                skillChecks: Object.values(activity.skillChecks).reduce((acc, skillCheck) => {
+                                    acc[skillCheck.id] = {
+                                        skills: Object.values(skillCheck.skills).reduce((acc, skill) => {
+                                            acc[skill.id] = {
+                                                difficulty: {
+                                                    DC: skillCheck.difficulty.DC,
+                                                    leveledDC: skillCheck.difficulty.leveledDC,
+                                                }
+                                            };
+    
+                                            return acc;
+                                        }, {}),
+                                    };
+    
+                                    return acc;
+                                }, {}),
+                            };
+    
+                            return acc;
+                        }, {}),
+                    }
+                }
+            }});
+        }
+    }
+
+    await game.settings.set(MODULE_ID, 'infiltration', infiltration);
 };
 
 class RegisterHandlebarsHelpers {

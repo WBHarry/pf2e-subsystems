@@ -195,10 +195,9 @@
                                                                         </div>
                                                                         {{#each this.columns.action}}
                                                                             <div class="event-skill-grid-cell-container last">
-                                                                                <div class="event-skill-grid-cell">
-                                                                                    {{#if (gt @index 0)}}
-                                                                                        <i class="fa-solid fa-trash clickable-icon" data-action="researchRemoveSkill" data-event="{{this.event}}" data-check="{{this.researchCheck}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}"></i>
-                                                                                    {{/if}}
+                                                                                <div class="event-skill-grid-cell spaced tools-column-cell">
+                                                                                    <i class="fa-solid fa-tag clickable-icon label-tag {{#if this.label}}active{{/if}}" data-action="useSkillLabelMenu" data-path="{{concat "events." this.event ".researchChecks." this.researchCheck ".skillChecks." this.skillCheck ".skills." this.id}}" title="{{localize "PF2ESubsystems.Influence.EditInfluenceSkillLabel"}}"></i>
+                                                                                    <i class="fa-solid fa-trash clickable-icon" data-action="researchRemoveSkill" data-event="{{this.event}}" data-check="{{this.researchCheck}}" data-skill-check="{{this.skillCheck}}" data-skill="{{this.id}}"></i>
                                                                                 </div>
                                                                             </div>
                                                                         {{/each}}
@@ -234,7 +233,12 @@
                                                         <span class="research-check-skill-check-title">{{{this.description}}}</span>
                                                         <div class="research-check-skill-check-buttons">
                                                             {{#each this.skills}}
-                                                                <div class="research-check-skill-check-button">{{{this.element}}}</div>
+                                                                <div class="research-check-skill-check-button">
+                                                                    <div class="flexrow">
+                                                                        {{{this.element}}}
+                                                                        {{#if this.label}}<div class="text-normal italic {{#if this.hidden}}disabled{{/if}}">({{this.label}})</div>{{/if}}
+                                                                    </div>
+                                                                </div>
                                                             {{/each}}
                                                         </div>
                                                     </div>

@@ -27,7 +27,8 @@
             "Variant": "Variant",
             "Overcome": "Overcome",
             "Trigger": "Trigger",
-            "RestoreToDefault": "Restore To Default"
+            "RestoreToDefault": "Restore To Default",
+            "LeveledDCExplanation": "Enter either a set DC, or tick the checkbox to use leveled DC at player level."
         },
         "TimeUnits": {
             "Year": {
