@@ -50,70 +50,70 @@
             "StartEvent": {
                 "Errors": {
                     "MissingTab": "Vous n'avez pas fourni le paramètre tab",
-                    "MissingEvent": "Vous n'avez pas fourni le paramètre de l'événement",
+                    "MissingEvent": "Vous n'avez pas fourni le paramètre événement",
                     "MissingEventEntity": "L'événement que vous avez indiqué n'existe pas"
                 }
             }
         },
         "ValueDialog": {
-            "Title": "Boîte de dialogue des valeurs"
+            "Title": "Boîte de dialogue de la valeur"
         },
         "Menus": {
             "Subsystems": {
                 "Name": "Sous-systèmes",
                 "Label": "Menu des Sous-systèmes",
-                "Hint": "Modifie les paramètres de différents sous-systèmes",
+                "Hint": "Modifier les paramètres de différents sous-systèmes",
                 "Title": "Menu des Sous-systèmes",
                 "Chase": {
                     "PlayersCanEditPosition": "Permettre aux joueurs de modifier leur position",
                     "HideObstacleLockIcon": "Masquer l'icône de verrouillage des obstacles"
                 },
                 "Research": {
-                    "HideResearchCheckMaxRP": "Cacher aux joueurs le PR maximum des tests de recherche"
+                    "HideResearchCheckMaxRP": "Cacher le nombre maximum de PR des tests de recherche aux joueurs"
                 },
                 "Infiltration": {
-                    "DefaultAwarenessBreakpoints": "Default Awareness Breakpoints",
-                    "HideAwareness": "Completly Hide Awareness From Players",
-                    "AutoApplyAwareness": "Auto apply awareness DC modifiers",
-                    "AutoRevealAwareness": "Auto reveal awareness breakpoints"
+                    "DefaultAwarenessBreakpoints": "Seuil de Points de vigilance par défaut",
+                    "HideAwareness": "Cacher complètement la Vigilance aux joueurs",
+                    "AutoApplyAwareness": "Appliquer automatiquement les modificateurs de DD",
+                    "AutoRevealAwareness": "Révéler automatiquement les seuils de Vigilance"
                 },
                 "Influence": {
-                    "AutoRevealInfluence": "Auto Reveal Influence",
-                    "ShowPerceptionAndWill": "Show Perception And Will To Players"
+                    "AutoRevealInfluence": "Révéler automatiquement l'Influence",
+                    "ShowPerceptionAndWill": "Montrer la Perception et la Volonté aux joueurs"
                 }
             }
         },
         "ImportExport": {
-            "Title": "Subsystem Export",
-            "Export": "Export",
-            "SuccessfullyExported": "Subsystem events successfully exported"
+            "Title": "Exportation des Sous-systèmes",
+            "Export": "Exporter",
+            "SuccessfullyExported": "Exportation réussie des événements de Sous-système"
         },
         "View": {
-            "Title": "Subsystems",
-            "NewEvent": "New Event",
-            "Subsystems": "Subsystems",
-            "ToggleEditMode": "Toggle Edit Mode",
-            "ReturnToSubsystems": "Return To Subsystems",
-            "HideFromPlayers": "Hide From Players",
-            "RevealToPlayers": "Reveal To Players",
-            "StartEvent": "Start Event",
-            "EditEvent": "Edit Event",
-            "StartEventLinkCopied": "StartEvent Macro for {name} copied to clipboard.",
-            "CopyStartEventLink": "Copy a macro to start this event",
-            "TimeUnit": "Time Unit",
-            "CurrentTime": "Current Time",
-            "MaxTime": "Max Time",
-            "ConfirmDeleteEventTitle": "Delete Subsystem Event",
-            "ConfirmDeleteEventText": "Are you sure you want to delete the {type} event?",
-            "OpenEventTour": "Open a tour explaining parts of the subsystem",
-            "NewObstacle": "New Obstacle",
-            "VariantExplanation": "Some actions have variants. In those cases you can select a variant here. For Treat Wounds and Perform, a variant -must- be selected.",
-            "ImportMenu": "Export",
-            "ConfirmRestoreDefaultTitle": "Restore Default Values",
-            "ConfirmRestoreDefaultText": "This will restore the default values of this section. Are you sure?",
-            "TextDialogTitle": "{name} Text Editor",
+            "Title": "Sous-systèmes",
+            "NewEvent": "Nouvel événement",
+            "Subsystems": "Sous-systèmes",
+            "ToggleEditMode": "Basculer en mode édition",
+            "ReturnToSubsystems": "Retour à Sous-systèmes",
+            "HideFromPlayers": "Cacher aux joueurs",
+            "RevealToPlayers": "Révéler aux joueurs",
+            "StartEvent": "Commencer l'événement",
+            "EditEvent": "Modifier l'évènement",
+            "StartEventLinkCopied": "StartEvent Macro pour {name} copiée dans le presse-papiers.",
+            "CopyStartEventLink": "Copier une macro qui commence l'événement",
+            "TimeUnit": "Unité de temps",
+            "CurrentTime": "Temps actuel",
+            "MaxTime": "Temps maximal",
+            "ConfirmDeleteEventTitle": "Supprimer un événement de sous-système",
+            "ConfirmDeleteEventText": "Êtes-vous sûr de vouloir supprimer l'événement de {type} ?",
+            "OpenEventTour": "Ouvrir une visite guidée expliquant certaines parties du sous-système",
+            "NewObstacle": "Nouvel obstacle",
+            "VariantExplanation": "Certaines actions ont des variantes. Dans ces cas, vous pouvez sélectionner une variante ici. Pour Soigner les blessures et Se produire, une variante -doit- être sélectionnée.",
+            "ImportMenu": "Exportation",
+            "ConfirmRestoreDefaultTitle": "Rétablir les valeurs par défaut",
+            "ConfirmRestoreDefaultText": "Cela rétablira les valeurs par défaut de cette section. Êtes-vous sûr ?",
+            "TextDialogTitle": "{name} Éditeur de texte",
             "Errors": {
-                "GMMissing": "A logged in GM is required to do this!"
+                "GMMissing": "Pour faire cela, un MJ doit être connecté !"
             }
         },
         "Events": {
