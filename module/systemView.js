@@ -2518,10 +2518,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
                 for(var skillKey of skills){
                   const skillCheck = checkSkill.skills[skillKey];
                   if(skillCheck.action) {
-                    skillCheck.element = await getActButton(skillCheck.action, skillCheck.variant, skillCheck.skill, skillCheck.dc, false);  
+                    skillCheck.element = await getActButton(skillCheck.action, skillCheck.variant, skillCheck.skill, skillCheck.dc, false, false, `${game.i18n.localize('PF2ESubsystems.Events.Research.Single')}: ${researchCheck.name}`, false);  
                   }
                   else {
-                    skillCheck.element = await getCheckButton(skillCheck.skill, skillCheck.dc, skillCheck.simple, false);
+                    skillCheck.element = await getCheckButton(skillCheck.skill, skillCheck.dc, skillCheck.simple, false, false, `${game.i18n.localize('PF2ESubsystems.Events.Research.Single')}: ${researchCheck.name} (${skillCheck.skill.lore ? skillCheck.skill.skill : game.i18n.localize(CONFIG.PF2E.skills[skillCheck.skill.skill].label)})`);
                   }
                   skillCheck.isFirst = skills[0] === skillCheck.id;
                 }
@@ -2678,10 +2678,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
                   const skill = skillCheck.skills[key];
                   let dc = (skill.difficulty.leveledDC ? getSelfDC() : skill.difficulty.DC) + dcAdjustment;
                   if(skill.action) {
-                    skill.element = await getActButton(skill.action, skill.variant, skill.skill, dc);
+                    skill.element = await getActButton(skill.action, skill.variant, skill.skill, dc, false, false, `${game.i18n.localize('PF2ESubsystems.Events.Infiltration.Single')}: ${obstacle.name}`, false);
                   }
                   else {
-                    skill.element = await getCheckButton(skill.skill, dc, skill.simple, disableElement);
+                    skill.element = await getCheckButton(skill.skill, dc, skill.simple, disableElement, false, `${game.i18n.localize('PF2ESubsystems.Events.Infiltration.Single')}: ${obstacle.name} (${skill.lore ? skill.skill : game.i18n.localize(CONFIG.PF2E.skills[skill.skill].label)})`);
                   }
                 }
               }
@@ -2732,10 +2732,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
                   const skill = skillCheck.skills[key];
                   const dc = (skill.difficulty.leveledDC ? getSelfDC() : skill.difficulty.DC) + dcAdjustment;
                   if(skill.action) {
-                    skill.element = await getActButton(skill.action, skill.variant, skill.skill, dc, disableElement);
+                    skill.element = await getActButton(skill.action, skill.variant, skill.skill, dc, disableElement, false, `${game.i18n.localize('PF2ESubsystems.Events.Infiltration.Single')}: ${complication.name}`, false);
                   }
                   else {
-                    skill.element = await getCheckButton(skill.skill, dc, skill.simple, disableElement);
+                    skill.element = await getCheckButton(skill.skill, dc, skill.simple, disableElement, false, `${game.i18n.localize('PF2ESubsystems.Events.Infiltration.Single')}: ${complication.name} (${skill.lore ? skill.skill : game.i18n.localize(CONFIG.PF2E.skills[skill.skill].label)})`);
                   }
                 }
               }
@@ -2773,10 +2773,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
                   const dc = (skill.difficulty.leveledDC ? getSelfDC() : skill.difficulty.DC) + dcAdjustment;
                   const secret = activity.tags.includes('secret');
                   if(skill.action) {
-                    skill.element = await getActButton(skill.action, skill.variant, skill.skill, dc, disableElement, secret);  
+                    skill.element = await getActButton(skill.action, skill.variant, skill.skill, dc, disableElement, secret, `${game.i18n.localize('PF2ESubsystems.Events.Infiltration.Single')}: ${activity.name}`, false);  
                   }
                   else {
-                    skill.element = await getCheckButton(skill.skill, dc, skill.simple, disableElement, secret);
+                    skill.element = await getCheckButton(skill.skill, dc, skill.simple, disableElement, secret, `${game.i18n.localize('PF2ESubsystems.Events.Infiltration.Single')}: ${activity.name} ${skill.lore ? `(${skill.skill})` : game.i18n.localize(CONFIG.PF2E.skills[skill.skill].label)})`);
                   }
                 }
               }
@@ -2839,7 +2839,9 @@ export default class SystemView extends HandlebarsApplicationMixin(
             for(var key of Object.keys(context.selectedEvent.extendedDiscoveries.data)) {
               const discovery = context.selectedEvent.extendedDiscoveries.data[key];
               const dc = discovery.dc;
-              discovery.element = discovery.action ? await getActButton(discovery.action, discovery.variant, discovery.skill, dc, false, true) : await getCheckButton(discovery.skill, dc, false, false, true);
+              discovery.element = discovery.action ? 
+                await getActButton(discovery.action, discovery.variant, discovery.skill, dc, false, true, `${game.i18n.localize('PF2ESubsystems.Events.Influence.Single')}: ${discovery.name}`, false) : 
+                await getCheckButton(discovery.skill, dc, false, false, true, `${game.i18n.localize('PF2ESubsystems.Events.Influence.Single')}: ${discovery.name} ${discovery.lore ? `(${discovery.skill})` : game.i18n.localize(CONFIG.PF2E.skills[discovery.skill].label)})`);
               if (game.user.isGM) {
                 discovery.element = discovery.element.replace('><i', ' disabled><i');
                 discovery.element = discovery.element.replace(
@@ -2856,7 +2858,9 @@ export default class SystemView extends HandlebarsApplicationMixin(
             for(var key of Object.keys(context.selectedEvent.extendedInfluenceSkills.data)) {
               const skill = context.selectedEvent.extendedInfluenceSkills.data[key];
               const dc = skill.dc + context.dcModifier;
-              skill.element = skill.action ? await getActButton(skill.action, skill.variant, skill.skill, dc, false) : await getCheckButton(skill.skill, dc, false, false);
+              skill.element = skill.action ? 
+                await getActButton(skill.action, skill.variant, skill.skill, dc, false, false, `${game.i18n.localize('PF2ESubsystems.Events.Influence.Single')}: ${skill.name}`, false) : 
+                await getCheckButton(skill.skill, dc, false, false, false, `${game.i18n.localize('PF2ESubsystems.Events.Influence.Single')}: ${skill.name} ${skill.lore ? `(${skill.skill})` : game.i18n.localize(CONFIG.PF2E.skills[skill.skill].label)})`);
               if (game.user.isGM) {
                 skill.element = skill.element.replace('><i', ' disabled><i');
                 skill.element = skill.element.replace(

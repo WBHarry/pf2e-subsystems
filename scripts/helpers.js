@@ -149,12 +149,12 @@ const correctBackground = (html) => {
     return html.replace('data-visibility="gm"', 'data-visibility="gm" style="background-color: inherit;"');
 };
 
-export const getActButton = async(action, variant, skill, dc, disableElement, secret = false) => {
-    return correctBackground(disableRollButton(disableElement, await TextEditor.enrichHTML(`[[/act ${action} ${variant ? `variant=${variant} ` : ''}stat=${skill} dc=${dc}${secret ? ' traits=secret' : ''}]]`)));
+export const getActButton = async(action, variant, skill, dc, disableElement, secret = false, title, simpleTitle) => {
+    return correctBackground(disableRollButton(disableElement, await TextEditor.enrichHTML(`[[/act ${action} ${variant ? `variant=${variant} ` : ''}stat=${skill} dc=${dc}${title ? ` title=${hyphenateText(title)}` : ''}${simpleTitle ? ' simpleTitle' : ''}${secret ? ' traits=secret' : ''}]]`)));
 }
 
-export const getCheckButton = async(skill, dc, simple, disableElement, secret = false) => {
-    return correctBackground(disableRollButton(disableElement, await TextEditor.enrichHTML(`@Check[type:${skill}|dc:${dc}|simple:${simple}${secret ? '|traits:secret' : ''}]`)));
+export const getCheckButton = async(skill, dc, simple, disableElement, secret = false, title) => {
+    return correctBackground(disableRollButton(disableElement, await TextEditor.enrichHTML(`@Check[type:${skill}|dc:${dc}|simple:${simple}${title ? `|title:${title}` : ''}${secret ? '|traits:secret' : ''}]`)));
 }
 
 export const versionCompare = (current, target) => {
@@ -166,4 +166,8 @@ export const versionCompare = (current, target) => {
     }
   
     return false;
-  };
+};
+
+export const hyphenateText = (text) => {
+    return text.replaceAll(' ', '-');
+};
