@@ -1,0 +1,285 @@
+{
+    "PF2ESubsystems": {
+        "Name": "PF2e Subsystems",
+        "Basic": {
+            "Confirm": "Confirmer",
+            "Cancel": "Annuler",
+            "Save": "Sauvegarder",
+            "Edit": "Modifier",
+            "Remove": "Supprimer",
+            "Players": "Joueurs",
+            "Name": "Nom",
+            "Image": "Image",
+            "Description": "Description",
+            "DC": "DD",
+            "Modifier": "Modificateur",
+            "Premise": "Prémisse",
+            "SkillChecks": "Tests de Compétence",
+            "Points": "Points",
+            "Breakpoint": "Seuil",
+            "DCIncrease": "Augmentation du DD",
+            "DCAdjustments": "Ajustement du DD",
+            "UseLeveledDC": "Utiliser le DD par niveau",
+            "LeveledDCIsUsed": "Le DD par niveau est utilisé",
+            "Lore": "Connaissance",
+            "Skill": "Compétence",
+            "Action": "Action",
+            "Variant": "Variante",
+            "Overcome": "Surmonter",
+            "Trigger": "Déclencheur",
+            "RestoreToDefault": "Rétablir par défaut",
+            "LeveledDCExplanation": "Saisissez un DD fixe, ou cochez la case pour utiliser le DD par niveau au niveau du joueur."
+        },
+        "TimeUnits": {
+            "Year": {
+                "Single": "Année",
+                "Plural": "Années"
+            },
+            "Month": {
+                "Single": "Mois",
+                "Plural": "Mois"
+            },
+            "Day": {
+                "Single": "Jour",
+                "Plural": "Jours"
+            },
+            "Hour": {
+                "Single": "Heure",
+                "Plural": "Heures"
+            }
+        },
+        "Macros": {
+            "StartEvent": {
+                "Errors": {
+                    "MissingTab": "Vous n'avez pas fourni le paramètre tab",
+                    "MissingEvent": "Vous n'avez pas fourni le paramètre événement",
+                    "MissingEventEntity": "L'événement que vous avez indiqué n'existe pas"
+                }
+            }
+        },
+        "ValueDialog": {
+            "Title": "Boîte de dialogue de la valeur"
+        },
+        "Menus": {
+            "Subsystems": {
+                "Name": "Sous-systèmes",
+                "Label": "Menu des Sous-systèmes",
+                "Hint": "Modifier les paramètres de différents sous-systèmes",
+                "Title": "Menu des Sous-systèmes",
+                "Chase": {
+                    "PlayersCanEditPosition": "Permettre aux joueurs de modifier leur position",
+                    "HideObstacleLockIcon": "Masquer l'icône de verrouillage des obstacles"
+                },
+                "Research": {
+                    "HideResearchCheckMaxRP": "Cacher le nombre maximum de PR des tests de recherche aux joueurs"
+                },
+                "Infiltration": {
+                    "DefaultAwarenessBreakpoints": "Seuil de Points de vigilance par défaut",
+                    "HideAwareness": "Cacher complètement la Vigilance aux joueurs",
+                    "AutoApplyAwareness": "Appliquer automatiquement les modificateurs de DD",
+                    "AutoRevealAwareness": "Révéler automatiquement les seuils de Vigilance"
+                },
+                "Influence": {
+                    "AutoRevealInfluence": "Révéler automatiquement l'Influence",
+                    "ShowPerceptionAndWill": "Montrer la Perception et la Volonté aux joueurs"
+                }
+            }
+        },
+        "ImportExport": {
+            "Title": "Exportation des Sous-systèmes",
+            "Export": "Exporter",
+            "SuccessfullyExported": "Exportation réussie des événements de Sous-système"
+        },
+        "View": {
+            "Title": "Sous-systèmes",
+            "NewEvent": "Nouvel événement",
+            "Subsystems": "Sous-systèmes",
+            "ToggleEditMode": "Basculer en mode édition",
+            "ReturnToSubsystems": "Retour à Sous-systèmes",
+            "HideFromPlayers": "Cacher aux joueurs",
+            "RevealToPlayers": "Révéler aux joueurs",
+            "StartEvent": "Commencer l'événement",
+            "EditEvent": "Modifier l'évènement",
+            "StartEventLinkCopied": "StartEvent Macro pour {name} copiée dans le presse-papiers.",
+            "CopyStartEventLink": "Copier une macro qui commence l'événement",
+            "TimeUnit": "Unité de temps",
+            "CurrentTime": "Temps actuel",
+            "MaxTime": "Durée maximal",
+            "ConfirmDeleteEventTitle": "Supprimer un événement de sous-système",
+            "ConfirmDeleteEventText": "Êtes-vous sûr de vouloir supprimer l'événement de {type} ?",
+            "OpenEventTour": "Ouvrir une visite guidée expliquant certaines parties du sous-système",
+            "NewObstacle": "Nouvel obstacle",
+            "VariantExplanation": "Certaines actions ont des variantes. Dans ces cas, vous pouvez sélectionner une variante ici. Pour Soigner les blessures et Se produire, une variante -doit- être sélectionnée.",
+            "ImportMenu": "Exportation",
+            "ConfirmRestoreDefaultTitle": "Rétablir les valeurs par défaut",
+            "ConfirmRestoreDefaultText": "Cela rétablira les valeurs par défaut de cette section. Êtes-vous sûr ?",
+            "TextDialogTitle": "Éditeur de texte {name}",
+            "LinkDialogTitle": "Liens {name}",
+            "Errors": {
+                "GMMissing": "Pour faire cela, un MJ doit être connecté !"
+            }
+        },
+        "Events": {
+            "Chase": {
+                "Single": "Poursuite",
+                "Plural": "Poursuites"
+            },
+            "Influence": {
+                "Single": "Influence",
+                "Plural": "Influence"
+            },
+            "Research": {
+                "Single": "Recherche",
+                "Plural": "Recherche"
+            },
+            "Infiltration": {
+                "Single": "Infiltration",
+                "Plural": "Infiltrations"
+            }
+        },
+        "Chase": {
+            "NavigateBack": "Retour à Poursuites",
+            "EditChase": "Modifier la Poursuite",
+            "CreateChase": "Créer une nouvelle Poursuite",
+            "Premise": "Prémisse",
+            "Rounds": "Rounds",
+            "MaxRounds": "Rounds Max",
+            "AddObstacle": "Ajouter un obstacle",
+            "AdvanceObstacle": "Déplacer le PJ vers l'obstacle suivant",
+            "RetreatObstacle": "Déplacer le PJ vers l'obstacle précédent",
+            "MarkPlayerActed": "Signaler que le joueur a agi",
+            "CreateParticipant": "Créer un nouveau participant",
+            "EditParticipant": "Modifier le participant",
+            "NewParticipant": "Nouveau participant",
+            "Participants": "Participants",
+            "AddParticipant": "Ajouter un participant",
+            "AddAllPlayers": "Ajouter tous les joueurs",
+            "AdvanceAllPCs": "Déplacer tous les PJs vers l'obstacle suivant",
+            "RetreatAllPCs": "Déplacer tous les PJs vers l'obstacle précédent",
+            "AdvanceAllNPCs": "Déplacer tous les PNJs vers l'obstacle suivant",
+            "RetreatAllNPCs": "Déplacer tous les PNJs vers l'obstacle précédent",
+            "AddOrDragInActor": "Ajouter ou faire glisser un acteur.",
+            "ChasePoints": "Points de poursuite",
+            "Errors": {
+                "UnlockObstacle": "Vous devez déverrouiller les obstacles du début à la fin.",
+                "LockObstacle": "Vous devez bloquer les obstacles de la fin au début",
+                "LockFirstObstacle": "Vous ne pouvez pas verrouiller le premier obstacle",
+                "ParticipantAlreadyExists": "Cet acteur est déjà un participant !"
+            }
+            
+        },
+        "Research": {
+            "NavigateBack": "Retour à Recherche",
+            "EditResearch": "Modifier la Recherche",
+            "CreateResearch": "Créer une nouvelle Recherche",
+            "MaxResearchPoints": "PR Maximum",
+            "Skill": "Compétence",
+            "Action": "Action",
+            "TimeLimit": "Durée",
+            "ResearchChecks": "Tests de recherche",
+            "ResearchPoints": "Points de recherche",
+            "SkillChecks": "Tests de compétences",
+            "Lore": "Connaissance",
+            "Basic": "Simple",
+            "Timing": "Timing",
+            "ResearchEvents": "Événements de recherche",
+            "ResearchBreakpoints": "Seuils de recherche",
+            "ResearchBreakpoint": "Seuil",
+            "ResearchChecksUnknown": "Vous ne connaissez aucun moyen de recherche..",
+            "ResearchBreakpointsUnknown": "Vous n'avez fait aucune percée dans vos recherches..",
+            "ResearchCheckTab": {
+                "Description": "Description",
+                "SkillChecks": "Tests de compétences"
+            },
+            "Errors": {
+                "LoreError": "Une compétence de connaissance doit être au format 'something-lore'"
+            }
+        },
+        "Infiltration": {
+            "NavigateBack": "Retour à Infiltrations",
+            "EditInfiltration": "Modifier l'Infiltration",
+            "CreateInfiltration": "Créer une nouvelle Infiltration",
+            "AddObjective": "Ajouter un objectif",
+            "InfiltrationPoints": "Points d'infiltration",
+            "NewObjective": "Nouvel objectif",
+            "Individual": "Individuel",
+            "AwarenessPoints": "Vigilance",
+            "EdgePoints": "Points d'avantage",
+            "Opportunities": "Opportunités",
+            "Complications": "Complications",
+            "NewOpportunity": "Nouvelle opportunité",
+            "NewComplication": "Nouvelle complication",
+            "Requirements": "Conditions",
+            "OpportunityDescription": "Décrivez cette opportunité ici",
+            "Trigger": "Déclencheur",
+            "MaxInfiltrationPoints": "Points d'infiltration (Facultatif)",
+            "ComplicationsDescription": "Décrivez cette complication ici",
+            "ComplicationResultDescription": "Décrivez le résultat ici",
+            "ConfirmRemoveEdgeTitle": "Retirer un Point d'avantage",
+            "ConfirmRemoveEdgeText": "Ce résultat est lié au Point d'avantage \"{edge}\". Voulez-vous le supprimer ?",
+            "AddAwarenessBreakpoint": "Ajouter un seuil de vigilance supplémentaire",
+            "AddNewObstacle": "Ajouter un nouvel obstacle",
+            "HiddenAwarenessNumber": "Vigilance cachée venant des Points d'avantage ou d'autres sources",
+            "Preparations": {
+                "NewPreparationActivity": "Nouvelle activité",
+                "MaxAttempts": "Tentatives maximales",
+                "EdgeLabel": "Label de l'avantage",
+                "IsUsed": "Préparations Activé",
+                "NotUsed": "Préparations Inactivé",
+                "AwarenessPoints": "Points de vigilance",
+                "FakeDegreeOfSuccess": "Faux degré montré aux joueurs"
+            },
+            "InfiltrationTab": {
+                "Infiltration": "Infiltration",
+                "Preparations": "Préparations"
+            },
+            "InfiltrationObstacleSkillsTab": {
+                "Description": "Description",
+                "SkillChecks": "Tests",
+                "Results": "Résultats"
+            },
+            "InfiltrationComplicationTab": {
+                "Description": "Description",
+                "SkillChecks": "Tests",
+                "Results": "Résultats"
+            },
+            "InfiltrationActivityTab": {
+                "Description": "Description",
+                "SkillChecks": "Tests",
+                "Results": "Résultats"
+            },
+            "Awareness": {
+                "DefaultBreakpoint5": "L’opposition a des soupçons. Augmentez de 1 le DD des obstacles. Quand les PJ atteignent ce seuil pour la première fois, une complication se produit.",
+                "DefaultBreakpoint10": "Une complication se produit quand les PJ atteignent ce seuil pour la première fois.",
+                "DefaultBreakpoint15": "Augmentez le DD des obstacles d’un total de 2. Une complication se produit quand les PJ atteignent ce seuil pour la première fois.",
+                "DefaultBreakpoint20": "L’infiltration échoue.",
+                "NewAwarenessBreakpoint": "Nouveau Seuil",
+                "ActivateAwarenessBreakpoint": "Activer le seuil de vigilance"
+            }
+        },
+        "Influence": {
+            "NavigateBack": "Retour à Influence",
+            "EditInfluence": "Modifier l'Influence",
+            "CreateInfluence": "Créer une nouvelle Influence",
+            "Perception": "Perception",
+            "Will": "Volonté",
+            "Discovery": "Découverte",
+            "InfluenceSkills": "Compétences d'Influence",
+            "Influence": "Influence",
+            "Weaknesses": "Faiblesses",
+            "Resistances": "Résistances",
+            "Penalties": "Pénalités",
+            "InfluencePoints": "Points",
+            "Modifier": "Modificateur",
+            "InfluenceSkillLabelTitle": "Label de {skill}",
+            "Rounds": "Rounds",
+            "EditInfluenceSkillLabel": "Modifier le Label optionnel de la compétence"
+        },
+        "KeyBindings": {
+            "OpenSystemView": {
+                "Name": "Ouvrir l'affichage Sous-systèmes",
+                "Hint": "Ouvre la fenêtre Sous-systèmes"
+            }
+        }
+    }
+}
