@@ -24,6 +24,7 @@ const migrateInfiltration = async () => {
         if(versionCompare(event.version, '0.7.8')){
             await infiltration.updateSource({ events: {
                 [event.id]: {
+                    version: '0.7.8',
                     objectives: Object.values(event.objectives).reduce((acc, objective) => {
                         acc[objective.id] = {
                             obstacles: Object.values(objective.obstacles).reduce((acc, obstacle) => {
