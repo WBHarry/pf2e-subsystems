@@ -1,6 +1,17 @@
 @import "../variables.less";
 
 .pf2e-subsystems {
+    [data-visibility="gm"]:not(.dice-result > *) {
+        background-color: var(--pf2e-subsystem-theming-primary-faded);
+        color: var(--pf2e-subsystem-theming-primary-color);
+    }
+
+    .inline-check.with-repost {
+        [data-visibility="gm"]:not(.dice-result > *) {
+            color: inherit;
+        }
+    }
+
     &.systems-view {
         .window-content {
             overflow: visible;

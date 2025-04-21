@@ -100,6 +100,11 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems input.tertiary-checkbox[type="checkbox"]::before {
   color: var(--pf2e-subsystem-theming-tertiary);
+  background: var(--pf2e-subsystem-theming-tertiary);
+  outline-color: var(--pf2e-subsystem-theming-primary-color);
+}
+.pf2e-subsystems input.tertiary-checkbox[type="checkbox"][checked]::before {
+  color: var(--pf2e-subsystem-theming-primary-color);
 }
 .pf2e-subsystems input.tertiary-checkbox[type="checkbox"][checked]::after {
   color: var(--pf2e-subsystem-theming-tertiary-accent);
@@ -185,6 +190,13 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems .bookmark:hover {
   background-color: var(--pf2e-subsystem-theming-primary-accent);
+}
+.pf2e-subsystems [data-visibility="gm"]:not(.dice-result > *) {
+  background-color: var(--pf2e-subsystem-theming-primary-faded);
+  color: var(--pf2e-subsystem-theming-primary-color);
+}
+.pf2e-subsystems .inline-check.with-repost [data-visibility="gm"]:not(.dice-result > *) {
+  color: inherit;
 }
 .pf2e-subsystems.systems-view .window-content {
   overflow: visible;
@@ -2060,9 +2072,6 @@ form.pf2e-subsystems.application > header .header-control {
   gap: 4px;
 }
 .pf2e-subsystems .influence-view .event-outer-container .event-container .influence-cards .influence-card {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   padding: 4px;
   border-width: 2px;
   border-style: solid;

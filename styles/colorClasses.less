@@ -119,6 +119,11 @@ form {
         
         &::before {
           color: var(--pf2e-subsystem-theming-tertiary);
+          background: var(--pf2e-subsystem-theming-tertiary);
+          outline-color: var(--pf2e-subsystem-theming-primary-color);
+        }
+        &[checked]::before {
+          color: var(--pf2e-subsystem-theming-primary-color);
         }
         &[checked]::after {
           color: var(--pf2e-subsystem-theming-tertiary-accent);
