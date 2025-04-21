@@ -12,6 +12,7 @@
             "Image": "Obraz",
             "Description": "Opis",
             "DC": "ST",
+            "Modifier": "Modyfikator",
             "Premise": "Założenie",
             "SkillChecks": "Testy umiejętności",
             "Points": "Punkty",
@@ -26,7 +27,8 @@
             "Variant": "Wariant",
             "Overcome": "Przezwyciężenie",
             "Trigger": "Wyzwalacz",
-            "RestoreToDefault": "Przywróć domyślne"
+            "RestoreToDefault": "Przywróć domyślne",
+            "LeveledDCExplanation": "Wprowadź ustawiony ST lub zaznacz pole wyboru, aby użyć ST na poziomie gracza."
         },
         "TimeUnits": {
             "Year": {
@@ -88,6 +90,11 @@
             "Export": "Eksportuj",
             "SuccessfullyExported": "Pomyślnie wyeksportowano zdarzenia podsystemu"
         },
+        "Import": {
+            "Title": "Import podsystemów",
+            "Import": "Importuj",
+            "ImportSuccessful": "Pomyślnie zaimportowano wszystkie wybrane zdarzenia podsystemu"
+        },
         "View": {
             "Title": "Podsystemy",
             "NewEvent": "Nowe wydarzenie",
@@ -109,6 +116,7 @@
             "NewObstacle": "Nowa przeszkoda",
             "VariantExplanation": "Niektóre akcje mają warianty. W takich przypadkach można wybrać wariant tutaj. W przypadku akcji Leczenie Ran i Występowanie wariant musi zostać wybrany.",
             "ExportMenu": "Eksportuj",
+            "ImportMenu": "Importuj",
             "ConfirmRestoreDefaultTitle": "Przywróć wartości domyślne",
             "ConfirmRestoreDefaultText": "Spowoduje to przywrócenie domyślnych wartości tej sekcji. Czy na pewno?",
             "TextDialogTitle": "Edytor tekstu {name}",
