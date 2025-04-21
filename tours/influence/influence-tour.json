@@ -224,7 +224,7 @@
             "penalties": {
                 "1": {
                     "id": "1",
-                    "hidden": true,
+                    "hidden": false,
                     "description": "You break it, you buy it. Any critical failures working with his things incurs a monetary cost. If not payed, he will start up the Doomsday Shredder(TM) against them in a chase!",
                     "modifier": {
                         "used": false,

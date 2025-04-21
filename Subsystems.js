@@ -1670,7 +1670,7 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$6(
   }
 }
 
-const currentVersion = '0.7.10';
+const currentVersion = '0.7.11';
 
 const registerKeyBindings = () => {
   game.keybindings.register(MODULE_ID, "open-system-view", {
@@ -2868,12 +2868,6 @@ const getDefaultSelected = (event) => ({
   influence: {},
 });
 
-const getDefaultLayout = (event) => ({
-  infiltration: {
-    preparations: 0,
-  }
-});
-
 class SystemView extends HandlebarsApplicationMixin(
     ApplicationV2,
   ) {
@@ -2881,7 +2875,6 @@ class SystemView extends HandlebarsApplicationMixin(
       super(options);
 
       this.selected = getDefaultSelected(event);
-      this.layout = getDefaultLayout();
       this.eventSearchValue = "";
 
       if(tab) {
@@ -3003,7 +2996,6 @@ class SystemView extends HandlebarsApplicationMixin(
         infiltrationPreparationsActivityAdd: this.infiltrationPreparationsActivityAdd,
         infiltrationPreparationsActivityRemove: this.infiltrationPreparationsActivityRemove,
         infiltrationPreparationsActivitiesReset: this.infiltrationPreparationsActivitiesReset,
-        setInfiltrationPreparationLayout: this.setInfiltrationPreparationLayout,
         infiltrationPreparationsToggleIsUsed: this.infiltrationPreparationsToggleIsUsed,
         infiltrationPreparationsToggleOpenActivity: this.infiltrationPreparationsToggleOpenActivity,
         infiltrationAddActivitySkill: this.infiltrationAddActivitySkill,
@@ -4551,11 +4543,6 @@ class SystemView extends HandlebarsApplicationMixin(
       this.render({ parts: [this.tabGroups.main] });
     }
 
-    static async setInfiltrationPreparationLayout(_, button) {
-      this.layout.infiltration.preparations = Number.parseInt(button.dataset.option);
-      this.render({ parts: [this.tabGroups.main] });
-    }
-
     static async infiltrationPreparationsToggleIsUsed(_, button) {
       const currentUses = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].preparations.usesPreparation;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.usesPreparation`]: !currentUses });
@@ -5463,7 +5450,6 @@ class SystemView extends HandlebarsApplicationMixin(
           context.obstacleTabs  = this.getInfiltrationObstacleTabs();
           context.complicationTabs = this.getInfiltrationComplicationTabs();
           context.activityTabs = this.getInfiltrationActivityTabs();
-          context.layout = this.layout.infiltration;
 
           context.infiltrationObstacleStyle = this.selected.openInfiltrationObstacle ? 'focused' : (this.selected.openInfiltrationOpportunity || this.selected.openInfiltrationComplication) ? 'unfocused' : '';
           context.infiltrationOpportunityStyle = this.selected.openInfiltrationOpportunity ? 'focused' : (this.selected.openInfiltrationObstacle || this.selected.openInfiltrationComplication) ? 'unfocused' : '';
@@ -5471,9 +5457,6 @@ class SystemView extends HandlebarsApplicationMixin(
           
           await this.setupEvents(infiltrationEvents, context);
           if(context.selectedEvent) {
-            // if(!this.tabGroups.sidebar) {
-        
-            // }
             context.sidebarTabs = this.getSidebarTabs(context.selectedEvent.pins.sidebar);
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
             context.selectedEvent.enrichedGMNotes = await TextEditor.enrichHTML(context.selectedEvent.gmNotes);
@@ -5572,7 +5555,7 @@ class SystemView extends HandlebarsApplicationMixin(
                 const disableElement = skillCheck.dcAdjustments.length > 0 && !skillCheck.selectedAdjustment;
                 for(var key of Object.keys(skillCheck.skills)){
                   const skill = skillCheck.skills[key];
-                  let dc = (skill.difficulty.leveledDC ? getSelfDC() : skill.difficulty.DC) + dcAdjustment;
+                  let dc = (skill.difficulty.leveledDC ? getSelfDC() : (skill.difficulty.DC??0)) + dcAdjustment;
                   if(skill.action) {
                     skill.element = await getActButton(skill.action, skill.variant, skill.skill, dc, disableElement, false, `${game.i18n.localize('PF2ESubsystems.Events.Infiltration.Single')}: ${obstacle.name}`);
                   }
@@ -5626,7 +5609,7 @@ class SystemView extends HandlebarsApplicationMixin(
                 const disableElement = skillCheck.dcAdjustments.length > 0 && !skillCheck.selectedAdjustment;
                 for(var key of Object.keys(skillCheck.skills)){
                   const skill = skillCheck.skills[key];
-                  const dc = (skill.difficulty.leveledDC ? getSelfDC() : skill.difficulty.DC) + dcAdjustment;
+                  const dc = (skill.difficulty.leveledDC ? getSelfDC() : (skill.difficulty.DC??0)) + dcAdjustment;
                   if(skill.action) {
                     skill.element = await getActButton(skill.action, skill.variant, skill.skill, dc, disableElement, false, `${game.i18n.localize('PF2ESubsystems.Events.Infiltration.Single')}: ${complication.name}`);
                   }
@@ -5666,7 +5649,7 @@ class SystemView extends HandlebarsApplicationMixin(
                 const disableElement = skillCheck.dcAdjustments.length > 0 && !skillCheck.selectedAdjustment;
                 for(var key of Object.keys(skillCheck.skills)){
                   const skill = skillCheck.skills[key];
-                  const dc = (skill.difficulty.leveledDC ? getSelfDC() : skill.difficulty.DC) + dcAdjustment;
+                  const dc = (skill.difficulty.leveledDC ? getSelfDC() : (skill.difficulty.DC??0)) + dcAdjustment;
                   const secret = activity.tags.includes('secret');
                   if(skill.action) {
                     skill.element = await getActButton(skill.action, skill.variant, skill.skill, dc, disableElement, secret, `${game.i18n.localize('PF2ESubsystems.Events.Infiltration.Single')}: ${activity.name}`);  
@@ -6410,8 +6393,11 @@ class InfiltrationTour extends Tour {
         case 'create-infiltration':
           this.#systemView = await new SystemView('infiltration', null, true).render(true);
           break;
-        case 'infiltration-overview-1':
+        case 'infiltration-overview-0':
           this.#systemView.selected.event = 'tour-event';
+          await this.#systemView.render({ parts: ['infiltration'], force: true });
+          break;
+        case 'infiltration-overview-1':
           this.#systemView.selected.infiltration.awarenessBreakpoint = null;
           await this.#systemView.render({ parts: ['infiltration'], force: true });
           break;
@@ -6479,11 +6465,14 @@ class InfiltrationTour extends Tour {
       let index = stepIndex;
       if(!game.user.isGM){
         switch(stepIndex) {
-          case 11:
-            index = this.stepIndex === 12 ? 10 : 12;
+          case 10:
+            index = this.stepIndex === 11 ? 9 : 11;
             break;
-          case 18:
-            index = this.stepIndex === 19 ? 17 : 19;
+          case 13:
+            index = this.stepIndex === 14 ? 12 : 14;
+            break;
+          case 20:
+            index = this.stepIndex === 21 ? 19 : 21;
             break;
         }
       }
@@ -6526,8 +6515,8 @@ class InfluenceTour extends Tour {
       let index = stepIndex;
       if(!game.user.isGM){
         switch(stepIndex) {
-            case 2:
-                index = this.stepIndex === 3 ? 1 : 3;
+            case 3:
+                index = this.stepIndex === 4 ? 2 : 4;
                 break;
         }
       }

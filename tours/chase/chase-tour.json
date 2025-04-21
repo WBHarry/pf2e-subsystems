@@ -6,13 +6,13 @@
     "steps": [
         {
             "id": "create-chase",
-            "selector": ".system-title-add-button",
+            "selector": ".chase-view .system-title-inner-container",
             "title": "Create A Chase",
             "content": "Click to add a chase.\n(You can use the <strong>←</strong> and → arrow keys to navigate the Tour!)"
         },
         {
             "id": "edit-chase",
-            "selector": ".event-container",
+            "selector": ".chase-view .event-container",
             "title": "Edit A Chase",
             "content": "Hover an existing chase to access Reveal/Hide, Edit and Remove functionality.\nClick to enter the chase event."
         },

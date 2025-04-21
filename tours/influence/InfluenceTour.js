@@ -22,8 +22,8 @@ export class InfluenceTour extends Tour {
       let index = stepIndex;
       if(!game.user.isGM){
         switch(stepIndex) {
-            case 2:
-                index = this.stepIndex === 3 ? 1 : 3;
+            case 3:
+                index = this.stepIndex === 4 ? 2 : 4;
                 break;
         }
       }

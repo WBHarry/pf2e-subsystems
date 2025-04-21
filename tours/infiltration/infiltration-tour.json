@@ -17,6 +17,12 @@
             "content": "Hover an existing infiltration event to access Reveal/Hide, Edit and Remove functionality.\nClick to enter the infiltration event."
         },
         {
+            "id": "infiltration-overview-0",
+            "selector": ".infiltration-points-container",
+            "title": "Infiltration Points",
+            "content": "During an infiltration, infiltration points are accumulated as players pass obstacles. The total sum of points is shown here."
+        },
+        {
             "id": "infiltration-overview-1",
             "selector": ".awareness-points-container",
             "title": "Awareness Points",
@@ -60,6 +66,12 @@
         },
         {
             "id": "infiltration-overview-3",
+            "selector": ".sidebar-tabs",
+            "title": "Premise/Notes",
+            "content": "As a GM you can swap the lower section of the sidebar between the Infiltration Premise and private GM notes.\nBy rightclicking on a tab, you pin it as the default view. This can be useful if you have import notes for how to run the event that you don't want to miss."
+        },
+        {
+            "id": "infiltration-overview-31",
             "selector": ".description-outer-container",
             "title": "Premise",
             "content": "The narrative premise of the infiltration event"
@@ -142,8 +154,12 @@
             "id": "tour-event",
             "name": "The Forebearers' Crown",
             "version": "",
+            "pins": {
+                "sidebar": "premise"
+            },
             "background": "icons/environment/settlement/watchtower-moonlit-blue.webp",
             "premise": "The only thing that can bring peace to the succession wars is the ancient crown of the royal forebearers. It supposedly rests still within the dark castle of the dark lands. There you must go.",
+            "totalInfiltrationPoints": 5,
             "visibleAwareness": 0,
             "awarenessPoints": {
                 "current": 0,
@@ -221,12 +237,12 @@
                                 "1": {
                                     "id": "1",
                                     "dcAdjustments": [],
-                                    "difficulty": {
-                                        "leveledDC": true
-                                    },
                                     "skills": {
                                         "1": {
-                                            "id": "1"
+                                            "id": "1",
+                                            "difficulty": {
+                                                "leveledDC": true
+                                            }
                                         }
                                     }
                                 }
@@ -246,12 +262,12 @@
                                 "1": {
                                     "id": "1",
                                     "dcAdjustments": [],
-                                    "difficulty": {
-                                        "leveledDC": true
-                                    },
                                     "skills": {
                                         "1": {
-                                            "id": "1"
+                                            "id": "1",
+                                            "difficulty": {
+                                                "leveledDC": true
+                                            }
                                         }
                                     }
                                 }
@@ -271,12 +287,12 @@
                                 "1": {
                                     "id": "1",
                                     "dcAdjustments": [],
-                                    "difficulty": {
-                                        "leveledDC": true
-                                    },
                                     "skills": {
                                         "1": {
-                                            "id": "1"
+                                            "id": "1",
+                                            "difficulty": {
+                                                "leveledDC": true
+                                            }
                                         }
                                     }
                                 }
@@ -335,6 +351,24 @@
                     }
                 }
             },
+            "complications": {
+                "1": {
+                    "id": "1",
+                    "name": "Eyes Everwhere",
+                    "trigger": "The group reaches 5 Awareness Points for the first time",
+                    "description": "",
+                    "skillChecks": {},
+                    "results": {}
+                },
+                "2": {
+                    "id": "2",
+                    "name": "Bereft Of Hope",
+                    "trigger": "A player critically fails for the first time",
+                    "description": "",
+                    "skillChecks": {},
+                    "results": {}
+                }
+            },
             "complicationsData": {
                 "1": {
                     "id": "1",
@@ -373,12 +407,12 @@
             "preparationsActivitiesData": {
                 "bribeContact": {
                     "id": "bribeContact",
+                    "hidden": false,
                     "name": "Bribe Contact",
                     "tags": ["downtime", "secret"],
                     "cost": "A bribe worth at least one-tenth of the Currency per Additional PC listed on Table 10–9: Party Treasure by Level. Doubling this amount grants a +2 circumstance bonus to the check.",
                     "requirements": "You've successfully Gained a Contact.",
                     "description": "You offer a bribe to your contact to help the heist in some way.",
-                    
                     "results": {
                         "success": {
                             "degreeOfSuccess": "success",
@@ -408,17 +442,20 @@
                             "id": "1",
                             "dcAdjustments": ["hard", "veryHard"],
                             "selectedAdjustment": "hard",
-                            "difficulty": {
-                                "leveledDC": true
-                            },
                             "skills": {
                                 "1": {
                                     "id": "1",
-                                    "skill": "deception"
+                                    "skill": "deception",
+                                    "difficulty": {
+                                        "leveledDC": true
+                                    }
                                 },
                                 "2": {
                                     "id": "2",
-                                    "skill": "diplomacy"
+                                    "skill": "diplomacy",
+                                    "difficulty": {
+                                        "leveledDC": true
+                                    }
                                 }
                             }
                         }
@@ -428,6 +465,7 @@
                 },
                 "forgeDocuments": {
                     "id": "forgeDocuments",
+                    "hidden": false,
                     "name": "Forge Documents",
                     "tags": ["downtime", "secret"],
                     "description": "You prepare forgeries that might serve as convincing props. Attempt a hard or very hard Society check.",
@@ -454,13 +492,13 @@
                         "1": {
                             "id": "1",
                             "dcAdjustments": ["hard", "veryHard"],
-                            "difficulty": {
-                                "leveledDC": true
-                            },
                             "skills": {
                                 "1": {
                                     "id": "1",
-                                    "skill": "society"
+                                    "skill": "society",
+                                    "difficulty": {
+                                        "leveledDC": true
+                                    }
                                 }
                             }
                         }
@@ -470,6 +508,7 @@
                 },
                 "gainContact": {
                     "id": "gainContact",
+                    "hidden": false,
                     "name": "Gain Contact",
                     "tags": ["downtime"],
                     "description": "You try to make contact with an individual who can aid you in the infiltration. Attempt a normal, hard, or very hard DC Diplomacy or Society check, or a check using a Lore skill appropriate to your prospective contact.",
@@ -494,17 +533,20 @@
                         "1": {
                             "id": "1",
                             "dcAdjustments": ["standard", "hard", "veryHard"],
-                            "difficulty": {
-                                "leveledDC": true
-                            },
                             "skills": {
                                 "1": {
                                     "id": "1",
-                                    "skill": "diplomacy"
+                                    "skill": "diplomacy",
+                                    "difficulty": {
+                                        "leveledDC": true
+                                    }
                                 },
                                 "2": {
                                     "id": "2",
-                                    "skill": "society"
+                                    "skill": "society",
+                                    "difficulty": {
+                                        "leveledDC": true
+                                    }
                                 }
                             }
                         }
@@ -514,6 +556,7 @@
                 },
                 "gossip": {
                     "id": "gossip",
+                    "hidden": false,
                     "name": "Gossip",
                     "tags": ["downtime", "secret"],
                     "description": "You seek out rumors about the infiltration’s target. Attempt a normal, hard, or very hard Diplomacy check.",
@@ -544,13 +587,13 @@
                         "1": {
                             "id": "1",
                             "dcAdjustments": ["standard", "hard", "veryHard"],
-                            "difficulty": {
-                                "leveledDC": true
-                            },
                             "skills": {
                                 "1": {
                                     "id": "1",
-                                    "skill": "diplomacy"
+                                    "skill": "diplomacy",
+                                    "difficulty": {
+                                        "leveledDC": true
+                                    }
                                 }
                             }
                         }
@@ -560,6 +603,7 @@
                 },
                 "scoutLocation": {
                     "id": "scoutLocation",
+                    "hidden": false,
                     "name": "Scout Location",
                     "tags": ["downtime", "secret"],
                     "description": "You spend time observing the place or group you wish to infiltrate. Attempt a normal, hard, or very hard DC Perception, Society or Stealth check.",
@@ -585,13 +629,13 @@
                         "1": {
                             "id": "1",
                             "dcAdjustments": ["standard", "hard", "veryHard"],
-                            "difficulty": {
-                                "leveledDC": true
-                            },
                             "skills": {
                                 "1": {
                                     "id": "1",
-                                    "skill": "diplomacy"
+                                    "skill": "diplomacy",
+                                    "difficulty": {
+                                        "leveledDC": true
+                                    }
                                 }
                             }
                         }
@@ -601,6 +645,7 @@
                 },
                 "secureDisguises": {
                     "id": "secureDisguises",
+                    "hidden": false,
                     "name": "Secure Disguises",
                     "tags": ["downtime"],
                     "description": "You seek to procure or create disguises. Attempt a normal, hard, or very hard Crafting, Deception, Performance, or Society check.",
@@ -620,25 +665,34 @@
                         "1": {
                             "id": "1",
                             "dcAdjustments": ["hard", "veryHard"],
-                            "difficulty": {
-                                "leveledDC": true
-                            },
                             "skills": {
                                 "1": {
                                     "id": "1",
-                                    "skill": "crafting"
+                                    "skill": "crafting",
+                                    "difficulty": {
+                                        "leveledDC": true
+                                    }
                                 },
                                 "2": {
                                     "id": "2",
-                                    "skill": "deception"
+                                    "skill": "deception",
+                                    "difficulty": {
+                                        "leveledDC": true
+                                    }
                                 },
                                 "3": {
                                     "id": "3",
-                                    "skill": "performance"
+                                    "skill": "performance",
+                                    "difficulty": {
+                                        "leveledDC": true
+                                    }
                                 },
                                 "4": {
                                     "id": "4",
-                                    "skill": "society"
+                                    "skill": "society",
+                                    "difficulty": {
+                                        "leveledDC": true
+                                    }
                                 }
                             }
                         }

@@ -762,10 +762,6 @@
                                     {{/if}}
                                 </button>
                                 <div class="preparation-toolbar-inner">
-                                    {{!-- <i class="fa-solid fa-table-cells-large clickable-icon {{#if (eq this.layout.preparations 0)}}selected{{/if}}" data-action="setInfiltrationPreparationLayout" data-option="0"></i>
-                                    <i class="fa-solid fa-table-cells clickable-icon {{#if (eq this.layout.preparations 1)}}selected{{/if}}" data-action="setInfiltrationPreparationLayout" data-option="1"></i>
-                                    <i class="fa-solid fa-maximize clickable-icon {{#if (eq this.layout.preparations 2)}}selected{{/if}}" data-action="setInfiltrationPreparationLayout" data-option="2"></i> --}}
-
                                     <i class="fa-solid fa-plus clickable-icon" data-action="infiltrationPreparationsActivityAdd" data-event="{{this.event.id}}"></i>
                                     <i class="fa-solid fa-rotate-left clickable-icon" data-action="infiltrationPreparationsActivitiesReset" data-event="{{this.event.id}}" title="{{localize "PF2ESubsystems.Basic.RestoreToDefault"}}"></i>
                                 </div>
@@ -773,7 +769,7 @@
                         {{/if}}
                         <div class="preparation-cards-container">
                             {{#each this.event.extendedPreparations.activities}}
-                                {{#if (or ../isGM this.hidden)}}
+                                {{#if (or ../isGM (not this.hidden))}}
                                     <div class="event-section-inner-container preparation-card primary-container" data-activity="{{this.id}}">
                                         <div class="event-section-header-container preparation-activity-header">
                                             {{#if ../editMode}}

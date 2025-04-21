@@ -3,7 +3,7 @@
   "name": "pf2e-subsystems",
   "title": "PF2e Subsystems",
   "description": "A module to handle the various subsystems of play in the PF2e system",
-  "version": "0.7.10",
+  "version": "0.7.11",
   "authors": [
     {
       "name": "HarryBoy"

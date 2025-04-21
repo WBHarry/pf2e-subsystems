@@ -10,8 +10,11 @@ export class InfiltrationTour extends Tour {
         case 'create-infiltration':
           this.#systemView = await new SystemView('infiltration', null, true).render(true);
           break;
-        case 'infiltration-overview-1':
+        case 'infiltration-overview-0':
           this.#systemView.selected.event = 'tour-event';
+          await this.#systemView.render({ parts: ['infiltration'], force: true });
+          break;
+        case 'infiltration-overview-1':
           this.#systemView.selected.infiltration.awarenessBreakpoint = null;
           await this.#systemView.render({ parts: ['infiltration'], force: true });
           break;
@@ -79,11 +82,14 @@ export class InfiltrationTour extends Tour {
       let index = stepIndex;
       if(!game.user.isGM){
         switch(stepIndex) {
-          case 11:
-            index = this.stepIndex === 12 ? 10 : 12;
+          case 10:
+            index = this.stepIndex === 11 ? 9 : 11;
             break;
-          case 18:
-            index = this.stepIndex === 19 ? 17 : 19;
+          case 13:
+            index = this.stepIndex === 14 ? 12 : 14;
+            break;
+          case 20:
+            index = this.stepIndex === 21 ? 19 : 21;
             break;
         }
       }
