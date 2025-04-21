@@ -728,8 +728,12 @@ class Infiltration extends foundry.abstract.DataModel {
         moduleProvider: new fields.StringField(),
         name: new fields.StringField({ required: true }),
         version: new fields.StringField({ required: true }),
+        pins: new fields.SchemaField({
+          sidebar: new fields.StringField({ required: true, initial: 'premise' }),
+        }),
         background: new fields.StringField({ required: true }),
         premise: new fields.HTMLField({ required: true, initial: "" }),
+        gmNotes: new fields.HTMLField({ required: true, initial: "" }),
         hidden: new fields.BooleanField({ initial: true }),
         started: new fields.BooleanField({ required: true, initial: false }),
         awarenessPoints: new fields.SchemaField({
@@ -3101,12 +3105,43 @@ class SystemView extends HandlebarsApplicationMixin(
 
     tabGroups = {
       main: 'systemView',
+      sidebar: '',
       influenceResearchChecks: 'description',
       infiltration: 'infiltration',
       infiltrationObstacleSkills: 'description',
       infiltrationComplication: 'description',
       infiltrationActivity: 'description',
     };
+
+    getSidebarTabs(sidebarPin) {
+      const tabs = {
+        premise: {
+          active: !game.user.isGM || sidebarPin === 'premise',
+          cssClass: '',
+          group: 'sidebar',
+          id: 'premise',
+          icon: game.user.isGM && sidebarPin === 'premise' ? 'fa-solid fa-thumbtack' : null,
+          label: game.i18n.localize('PF2ESubsystems.Basic.Premise'),
+        },
+        notes: {
+          active: game.user.isGM && sidebarPin === 'notes',
+          cssClass: '',
+          group: 'sidebar',
+          id: 'notes',
+          icon: game.user.isGM && sidebarPin === 'notes' ? 'fa-solid fa-thumbtack' : null,
+          label: game.i18n.localize('PF2ESubsystems.View.SidebarTabs.Notes'),
+        },
+      };
+  
+      for (const v of Object.values(tabs)) {
+        v.active = this.tabGroups[v.group]
+          ? this.tabGroups[v.group] === v.id
+          : v.active;
+        v.cssClass = v.active ? `${v.cssClass} active` : "";
+      }
+  
+      return tabs;
+    }
 
     getTabs() {
       const tabs = {
@@ -3595,6 +3630,7 @@ class SystemView extends HandlebarsApplicationMixin(
     static navigateToSystem(){
       this.selected = getDefaultSelected();
       this.editMode = false;
+      this.tabGroups.sidebar = '';
       this.render({ parts: [this.tabGroups.main] });
     }
 
@@ -3635,6 +3671,12 @@ class SystemView extends HandlebarsApplicationMixin(
       this.toggleControls(false);
     }
 
+    async onPinTab(event) {
+      const button = event.currentTarget;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.pins.${button.dataset.group}`]: button.dataset.tab });
+      //event-tab-pin;
+    }
+    
     static useEditTextDialog(_, button){
       const initialText = foundry.utils.getProperty(game.settings.get(MODULE_ID, this.tabGroups.main), button.dataset.path);
       new Promise((resolve, reject) => {
@@ -5230,6 +5272,7 @@ class SystemView extends HandlebarsApplicationMixin(
       super._attachPartListeners(partId, htmlElement, options);
 
       $(htmlElement).find('.clipboard-fallback-input').on('change', event => event.preventDefault());
+      $(htmlElement).find('.event-tab').on('contextmenu', this.onPinTab.bind(this));
       switch(partId){
         case 'chase':
           $(htmlElement).find('.radio-button').on('contextmenu', this.toggleObstacleLock.bind(this));
@@ -5428,7 +5471,12 @@ class SystemView extends HandlebarsApplicationMixin(
           
           await this.setupEvents(infiltrationEvents, context);
           if(context.selectedEvent) {
+            // if(!this.tabGroups.sidebar) {
+        
+            // }
+            context.sidebarTabs = this.getSidebarTabs(context.selectedEvent.pins.sidebar);
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
+            context.selectedEvent.enrichedGMNotes = await TextEditor.enrichHTML(context.selectedEvent.gmNotes);
             context.selectedEvent.extendedComplications = context.selectedEvent.complicationsData;
             context.selectedEvent.extendedPreparations = {
               ...context.selectedEvent.preparations,
@@ -5670,6 +5718,7 @@ class SystemView extends HandlebarsApplicationMixin(
         case 'influence':
           const { events: influenceEvents } = game.settings.get(MODULE_ID, 'influence');
           
+          this.tabGroups.sidebar = game.user.isGM ? this.tabGroups.sidebar : 'premise';
           context.settings = game.settings.get(MODULE_ID, settingIDs.influence.settings);
           context.selected = this.selected;
           context.tab = context.systems.influence;

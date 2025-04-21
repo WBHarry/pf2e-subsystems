@@ -143,15 +143,50 @@
                     {{/each}}
                 </div>
             </div>
-            <div class="description-outer-container event-section primary-container accent">
-                <div class="event-section-title title-container primary-container">
-                    <div class="event-section-inner-title">
-                        {{localize "PF2ESubsystems.Basic.Premise"}}
-                        {{#if this.editMode}}<i class="fa-solid fa-pen-to-square clickable-icon title-edit-icon" data-action="useEditTextDialog" data-path="{{concat "events." this.event.id ".premise"}}"></i>{{/if}}
+            {{#if this.isGM}}
+                <nav class="tabs event-tabs sidebar-tabs secondary-container">
+                    {{#each this.sidebarTabs as |tab|}}
+                        <a 
+                            class="{{tab.cssClass}} event-tab tertiary-container" 
+                            data-action="tab" 
+                            data-event="{{../event.id}}"
+                            data-group="{{tab.group}}" 
+                            data-tab="{{tab.id}}"
+                        >
+                            <label>{{tab.label}}</label>
+                            <i class="event-tab-pin {{tab.icon}}"></i>
+                        </a>
+                    {{/each}}
+                </nav>
+            {{/if}}
+            <div class="event-tab tab {{sidebarTabs.premise.cssClass}}" data-group="{{sidebarTabs.premise.group}}" data-tab="{{sidebarTabs.premise.id}}">
+                <div class="sidebar-tab-container">
+                    <div class="description-outer-container event-section primary-container accent">
+                        <div class="event-section-title title-container primary-container">
+                            <div class="event-section-inner-title">
+                                {{localize "PF2ESubsystems.Basic.Premise"}}
+                                {{#if this.editMode}}<i class="fa-solid fa-pen-to-square clickable-icon title-edit-icon" data-action="useEditTextDialog" data-path="{{concat "events." this.event.id ".premise"}}"></i>{{/if}}
+                            </div>
+                        </div>
+                        <div class="description-container">
+                            {{{this.event.enrichedPremise}}}
+                        </div>
                     </div>
                 </div>
-                <div class="description-container"> 
-                    {{{this.event.premise}}}
+            </div>
+            <div class="event-tab tab {{sidebarTabs.notes.cssClass}}" data-group="{{sidebarTabs.notes.group}}" data-tab="{{sidebarTabs.notes.id}}">
+                <div class="sidebar-tab-container">
+                    <div class="description-outer-container event-section primary-container accent">
+                        <div class="event-section-title title-container primary-container">
+                            <div class="event-section-inner-title">
+                                {{localize "PF2ESubsystems.Basic.Notes"}}
+                                {{#if this.editMode}}<i class="fa-solid fa-pen-to-square clickable-icon title-edit-icon" data-action="useEditTextDialog" data-path="{{concat "events." this.event.id ".gmNotes"}}"></i>{{/if}}
+                            </div>
+                        </div>
+                        <div class="description-container"> 
+                            {{{this.event.enrichedGMNotes}}}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

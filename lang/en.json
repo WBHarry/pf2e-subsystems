@@ -28,7 +28,8 @@
             "Overcome": "Overcome",
             "Trigger": "Trigger",
             "RestoreToDefault": "Restore To Default",
-            "LeveledDCExplanation": "Enter either a set DC, or tick the checkbox to use leveled DC at player level."
+            "LeveledDCExplanation": "Enter either a set DC, or tick the checkbox to use leveled DC at player level.",
+            "Notes": "Notes"
         },
         "TimeUnits": {
             "Year": {
@@ -121,6 +122,10 @@
             "ConfirmRestoreDefaultText": "This will restore the default values of this section. Are you sure?",
             "TextDialogTitle": "{name} Text Editor",
             "LinkDialogTitle": "{name} Links",
+            "SidebarTabs": {
+                "Main": "Main",
+                "Notes": "Notes"
+            },
             "Errors": {
                 "GMMissing": "A logged in GM is required to do this!"
             }

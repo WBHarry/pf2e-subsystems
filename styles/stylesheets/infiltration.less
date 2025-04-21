@@ -3,11 +3,19 @@
         // height: 100%;
         .event-outer-container {
             .event-container { 
+                .edge-points-container {
+                    max-height: 160px;
+                    overflow: hidden;
+                    display: flex;
+                    flex-direction: column;
+                }
                 .infiltration-edges-container {
                     display: flex;
                     flex-direction: column;
                     gap: 4px;
                     padding: @paddingNormal;
+                    flex: 1;
+                    overflow: auto;
 
                     .infiltration-edge-container {
                         border-width: 1px;

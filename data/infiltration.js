@@ -18,8 +18,12 @@ export class Infiltration extends foundry.abstract.DataModel {
         moduleProvider: new fields.StringField(),
         name: new fields.StringField({ required: true }),
         version: new fields.StringField({ required: true }),
+        pins: new fields.SchemaField({
+          sidebar: new fields.StringField({ required: true, initial: 'premise' }),
+        }),
         background: new fields.StringField({ required: true }),
         premise: new fields.HTMLField({ required: true, initial: "" }),
+        gmNotes: new fields.HTMLField({ required: true, initial: "" }),
         hidden: new fields.BooleanField({ initial: true }),
         started: new fields.BooleanField({ required: true, initial: false }),
         awarenessPoints: new fields.SchemaField({

@@ -335,6 +335,10 @@
                     &:last-of-type {
                         border-radius: 0 6px 6px 0;
                     }
+
+                    i {
+                        font-size: 12px;
+                    }
                 }
             }
 
@@ -771,6 +775,22 @@
                     display: flex;
                     flex-direction: column;
                     gap: @gapNormal;
+
+                    .sidebar-tabs {
+                        width: 100%;
+                    }
+
+                    > .event-tab {
+                        height: 100%;
+                    }
+
+                    .sidebar-tab-container {
+                        width: 200px;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 8px;
+                        height: 100%;
+                    }
 
                     .event-image {
                         width: 200px;
