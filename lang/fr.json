@@ -117,6 +117,7 @@
             "NewObstacle": "Nouvel obstacle",
             "VariantExplanation": "Certaines actions ont des variantes. Dans ces cas, vous pouvez sélectionner une variante ici. Pour Soigner les blessures et Se produire, une variante -doit- être sélectionnée.",
             "ExportMenu": "Exportation",
+            "ImportMenu": "Importation",
             "ConfirmRestoreDefaultTitle": "Rétablir les valeurs par défaut",
             "ConfirmRestoreDefaultText": "Cela rétablira les valeurs par défaut de cette section. Êtes-vous sûr ?",
             "TextDialogTitle": "Éditeur de texte {name}",
