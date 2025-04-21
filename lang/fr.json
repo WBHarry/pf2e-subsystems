@@ -28,7 +28,8 @@
             "Overcome": "Surmonter",
             "Trigger": "Déclencheur",
             "RestoreToDefault": "Rétablir par défaut",
-            "LeveledDCExplanation": "Saisissez un DD fixe, ou cochez la case pour utiliser le DD par niveau au niveau du joueur."
+            "LeveledDCExplanation": "Saisissez un DD fixe, ou cochez la case pour utiliser le DD par niveau au niveau du joueur.",
+            "Notes": "Notes"
         },
         "TimeUnits": {
             "Year": {
@@ -90,6 +91,11 @@
             "Export": "Exporter",
             "SuccessfullyExported": "Exportation réussie des événements de Sous-système"
         },
+        "Import": {
+            "Title": "Importation des Sous-systèmes",
+            "Import": "Importer",
+            "ImportSuccessful": "Importation réussie des événements de Sous-système"
+        },
         "View": {
             "Title": "Sous-systèmes",
             "NewEvent": "Nouvel événement",
@@ -115,6 +121,10 @@
             "ConfirmRestoreDefaultText": "Cela rétablira les valeurs par défaut de cette section. Êtes-vous sûr ?",
             "TextDialogTitle": "Éditeur de texte {name}",
             "LinkDialogTitle": "Liens {name}",
+            "SidebarTabs": {
+                "Main": "Principal",
+                "Notes": "Notes"
+            },
             "Errors": {
                 "GMMissing": "Pour faire cela, un MJ doit être connecté !"
             }
@@ -225,7 +235,7 @@
                 "MaxAttempts": "Tentatives maximales",
                 "EdgeLabel": "Label de l'avantage",
                 "IsUsed": "Préparations Activé",
-                "NotUsed": "Préparations Inactivé",
+                "NotUsed": "Préparations Désactivé",
                 "AwarenessPoints": "Points de vigilance",
                 "FakeDegreeOfSuccess": "Faux degré montré aux joueurs"
             },
