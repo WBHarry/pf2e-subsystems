@@ -246,8 +246,12 @@ class Chase extends foundry.abstract.DataModel {
         moduleProvider: new fields.StringField(),
         name: new fields.StringField({ required: true }),
         version: new fields.StringField({ required: true }),
+        pins: new fields.SchemaField({
+          sidebar: new fields.StringField({ required: true, initial: 'premise' }),
+        }),
         background: new fields.StringField({ required: true }),
         premise: new fields.HTMLField({ required: true, initial: "" }),
+        gmNotes: new fields.HTMLField({ required: true, initial: "" }),
         hidden: new fields.BooleanField({ initial: true }),
         rounds: new fields.SchemaField({
           current: new fields.NumberField({ initial: 0 }),
@@ -1089,8 +1093,12 @@ class Influence extends foundry.abstract.DataModel {
         moduleProvider: new fields.StringField(),
         name: new fields.StringField({ required: true }),
         version: new fields.StringField({ required: true }),
+        pins: new fields.SchemaField({
+          sidebar: new fields.StringField({ required: true, initial: 'premise' }),
+        }),
         background: new fields.StringField({ required: true }),
         premise: new fields.HTMLField({ required: true, initial: "" }),
+        gmNotes: new fields.HTMLField({ required: true, initial: "" }),
         hidden: new fields.BooleanField({ initial: true }),
         perception: new fields.NumberField({ required: true, integer: true, initial: 0 }),
         will: new fields.NumberField({ required: true, integer: true, initial: 0 }),
@@ -1286,8 +1294,12 @@ class Research extends foundry.abstract.DataModel {
         moduleProvider: new fields.StringField(),
         name: new fields.StringField({ required: true }),
         version: new fields.StringField({ required: true }),
+        pins: new fields.SchemaField({
+          sidebar: new fields.StringField({ required: true, initial: 'premise' }),
+        }),
         background: new fields.StringField({ required: true }),
         premise: new fields.HTMLField({ required: true, initial: "" }),
+        gmNotes: new fields.HTMLField({ required: true, initial: "" }),
         tags: new fields.ArrayField(new fields.StringField(), { required: true, initial: [] }),
         hidden: new fields.BooleanField({ initial: true }),
         timeLimit: new fields.SchemaField({
@@ -5355,7 +5367,9 @@ class SystemView extends HandlebarsApplicationMixin(
           context.tab = context.systems.chase;
           await this.setupEvents(chaseEvents, context);
           if(context.selectedEvent) {
+            context.sidebarTabs = this.getSidebarTabs(context.selectedEvent.pins.sidebar);
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
+            context.selectedEvent.enrichedGMNotes = await TextEditor.enrichHTML(context.selectedEvent.gmNotes);
             context.showRounds = this.editMode || context.selectedEvent.rounds.max;
           }
           
@@ -5379,7 +5393,9 @@ class SystemView extends HandlebarsApplicationMixin(
           context.skillCheckTabs = this.getResearchSkillCheckTabs();
           await this.setupEvents(viewEvents, context);
           if(context.selectedEvent) {
+            context.sidebarTabs = this.getSidebarTabs(context.selectedEvent.pins.sidebar);
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
+            context.selectedEvent.enrichedGMNotes = await TextEditor.enrichHTML(context.selectedEvent.gmNotes);
             context.showTimeLimit = this.editMode || context.selectedEvent.timeLimit.max;
             context.selectedEvent.timeLimit.unitName = timeUnits[context.selectedEvent.timeLimit.unit]?.name;
 
@@ -5708,8 +5724,10 @@ class SystemView extends HandlebarsApplicationMixin(
           await this.setupEvents(influenceEvents, context);
 
           if(context.selectedEvent) {
+            context.sidebarTabs = this.getSidebarTabs(context.selectedEvent.pins.sidebar);
             context.selectedEvent.linkedNPCs = context.selectedEvent.linkedNPCsData;
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
+            context.selectedEvent.enrichedGMNotes = await TextEditor.enrichHTML(context.selectedEvent.gmNotes);
             context.selectedEvent.extendedDiscoveries = context.selectedEvent.discoveryData;
             context.selectedEvent.extendedInfluenceSkills = context.selectedEvent.influenceSkillData;
             context.dcModifier = context.selectedEvent.dcModifier;

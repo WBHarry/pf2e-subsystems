@@ -69,6 +69,10 @@
         "tour-event": {
             "id": "tour-event",
             "name": "Crazed Inventor",
+            "version": "",
+            "pins": {
+                "sidebar": "premise"
+            },
             "background": "icons/weapons/thrown/bomb-gas-grey-purple.webp",
             "perception": 10,
             "will": 7,

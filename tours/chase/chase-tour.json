@@ -88,6 +88,9 @@
             "id": "tour-event",
             "name": "Lavaland Chase",
             "version": "",
+            "pins": {
+                "sidebar": "premise"
+            },
             "background": "icons/environment/wilderness/cave-entrance-vulcano.webp",
             "premise": "Your travels to retrieve the legendary artifact have led you to these lands of sulfur, heat and parched throats. Your attempts at questioning the resident fire lizards backfired, and you find yourselves in a deadly chase throughout dangerous terrain!",
             "hidden": false,

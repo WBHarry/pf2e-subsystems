@@ -937,6 +937,12 @@ form.pf2e-subsystems.application > header .header-control {
   display: flex;
   align-items: center;
 }
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .event-tab {
+  height: auto;
+}
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .tab[data-tab].active {
+  flex: none;
+}
 .pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .description-outer-container {
   border-width: 2px;
   border-style: outset;
@@ -1225,6 +1231,17 @@ form.pf2e-subsystems.application > header .header-control {
   display: flex;
   flex-direction: column;
   padding: 0 8px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-sidebar .sidebar-tab-container .description-outer-container {
+  flex: 1;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-sidebar .sidebar-tab-container .description-outer-container .notes-container {
+  flex: 1;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  word-wrap: break-word;
+  overflow: auto;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-sidebar .research-points-container {
   display: flex;

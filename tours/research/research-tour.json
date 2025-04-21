@@ -82,6 +82,9 @@
             "id": "tour-event",
             "name": "The Hag's Secret",
             "version": "",
+            "pins": {
+                "sidebar": "premise"
+            },
             "background": "icons/magic/symbols/runes-carved-stone-green.webp",
             "premise": "Finally. You've come upon the swamp hag's abode within Heretic Swamp. The inside and surrounding area may just provide some insight into the curse that's befallen the village..",
             "tags": [],

@@ -17,8 +17,12 @@ export class Research extends foundry.abstract.DataModel {
         moduleProvider: new fields.StringField(),
         name: new fields.StringField({ required: true }),
         version: new fields.StringField({ required: true }),
+        pins: new fields.SchemaField({
+          sidebar: new fields.StringField({ required: true, initial: 'premise' }),
+        }),
         background: new fields.StringField({ required: true }),
         premise: new fields.HTMLField({ required: true, initial: "" }),
+        gmNotes: new fields.HTMLField({ required: true, initial: "" }),
         tags: new fields.ArrayField(new fields.StringField(), { required: true, initial: [] }),
         hidden: new fields.BooleanField({ initial: true }),
         timeLimit: new fields.SchemaField({

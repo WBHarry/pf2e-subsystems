@@ -2520,7 +2520,9 @@ export default class SystemView extends HandlebarsApplicationMixin(
           context.tab = context.systems.chase;
           await this.setupEvents(chaseEvents, context);
           if(context.selectedEvent) {
+            context.sidebarTabs = this.getSidebarTabs(context.selectedEvent.pins.sidebar);
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
+            context.selectedEvent.enrichedGMNotes = await TextEditor.enrichHTML(context.selectedEvent.gmNotes);
             context.showRounds = this.editMode || context.selectedEvent.rounds.max;
           }
           
@@ -2544,7 +2546,9 @@ export default class SystemView extends HandlebarsApplicationMixin(
           context.skillCheckTabs = this.getResearchSkillCheckTabs();
           await this.setupEvents(viewEvents, context);
           if(context.selectedEvent) {
+            context.sidebarTabs = this.getSidebarTabs(context.selectedEvent.pins.sidebar);
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
+            context.selectedEvent.enrichedGMNotes = await TextEditor.enrichHTML(context.selectedEvent.gmNotes);
             context.showTimeLimit = this.editMode || context.selectedEvent.timeLimit.max;
             context.selectedEvent.timeLimit.unitName = timeUnits[context.selectedEvent.timeLimit.unit]?.name;
 
@@ -2873,8 +2877,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
           await this.setupEvents(influenceEvents, context);
 
           if(context.selectedEvent) {
+            context.sidebarTabs = this.getSidebarTabs(context.selectedEvent.pins.sidebar);
             context.selectedEvent.linkedNPCs = context.selectedEvent.linkedNPCsData;
             context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
+            context.selectedEvent.enrichedGMNotes = await TextEditor.enrichHTML(context.selectedEvent.gmNotes);
             context.selectedEvent.extendedDiscoveries = context.selectedEvent.discoveryData;
             context.selectedEvent.extendedInfluenceSkills = context.selectedEvent.influenceSkillData;
             context.dcModifier = context.selectedEvent.dcModifier;
