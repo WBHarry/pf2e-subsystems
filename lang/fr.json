@@ -284,7 +284,8 @@
             "Modifier": "Modificateur",
             "InfluenceSkillLabelTitle": "Label de {skill}",
             "Rounds": "Rounds",
-            "EditInfluenceSkillLabel": "Modifier le Label optionnel de la compétence"
+            "EditInfluenceSkillLabel": "Modifier le Label optionnel de la compétence",
+            "NPCLinkDialogTitle": "Ouvrir des liens pour les PJs connectés" 
         },
         "KeyBindings": {
             "OpenSystemView": {
