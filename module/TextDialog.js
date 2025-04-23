@@ -33,7 +33,7 @@ export default class TextDialog extends HandlebarsApplicationMixin(ApplicationV2
     async _prepareContext(_options) {
         const context = await super._prepareContext(_options);
         context.text = this.initialText;
-        context.enrichedText = await TextEditor.enrichHTML(context.text);
+        context.enrichedText = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.text);
 
         return context;
     }

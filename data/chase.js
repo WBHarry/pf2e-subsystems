@@ -1,11 +1,8 @@
-import { TypedObjectField } from "./modelHelpers";
-
-/* !!V13!! Use TypedObjectField */ 
 export class Chases extends foundry.abstract.DataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
     return {
-      events: new TypedObjectField(new fields.EmbeddedDataField(Chase)),
+      events: new fields.TypedObjectField(new fields.EmbeddedDataField(Chase)),
     }
   }
 }
@@ -30,7 +27,7 @@ export class Chase extends foundry.abstract.DataModel {
           max: new fields.NumberField({}), 
         }),
         started: new fields.BooleanField({ required: true, initial: false }),
-        participants: new TypedObjectField(new fields.SchemaField({
+        participants: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
           name: new fields.StringField({ required: true }),
           img: new fields.StringField({ required: true }),
@@ -40,7 +37,7 @@ export class Chase extends foundry.abstract.DataModel {
           obstacle: new fields.NumberField({ required: true, initial: 1 }),
           hasActed: new fields.BooleanField({ required: true, initial: false }),
         })),
-        obstacles: new TypedObjectField(new fields.SchemaField({
+        obstacles: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
           name: new fields.StringField({ required: true }),
           img: new fields.StringField({}),

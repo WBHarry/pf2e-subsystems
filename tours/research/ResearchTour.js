@@ -1,6 +1,6 @@
 import SystemView from "../../module/systemView";
 
-export class ResearchTour extends Tour {
+export class ResearchTour extends foundry.nue.Tour {
     #systemView;
 
     async _preStep() {

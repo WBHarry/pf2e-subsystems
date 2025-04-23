@@ -1,11 +1,8 @@
-import { TypedObjectField } from "./modelHelpers";
-
-/* !!V13!! Use TypedObjectField */ 
 export class Influences extends foundry.abstract.DataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
     return {
-      events: new TypedObjectField(new fields.EmbeddedDataField(Influence)),
+      events: new fields.TypedObjectField(new fields.EmbeddedDataField(Influence)),
     }
   }
 }
@@ -32,7 +29,7 @@ export class Influence extends foundry.abstract.DataModel {
           current: new fields.NumberField({ required: true, integer: true, initial: 0 }),
           max: new fields.NumberField({ integer: true, nullable: true, initial: null }),
         }),
-        discoveries: new TypedObjectField(new fields.SchemaField({
+        discoveries: new fields.TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
             label: new fields.StringField(),
             hidden: new fields.BooleanField({ required: true, initial: false }),
@@ -42,7 +39,7 @@ export class Influence extends foundry.abstract.DataModel {
             dc: new fields.NumberField({ required: true, integer: true, initial: 10 }),
             lore: new fields.BooleanField({ required: true, initial: false }),
         })),
-        influenceSkills: new TypedObjectField(new fields.SchemaField({
+        influenceSkills: new fields.TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
             name: new fields.StringField({ required: true }),
             label: new fields.StringField(),
@@ -53,14 +50,14 @@ export class Influence extends foundry.abstract.DataModel {
             dc: new fields.NumberField({ required: true, integer: true, initial: 10 }),
             lore: new fields.BooleanField({ required: true, initial: false }),
         })),
-        influence: new TypedObjectField(new fields.SchemaField({
+        influence: new fields.TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
             name: new fields.StringField({ required: true }),
             hidden: new fields.BooleanField({ required: true, initial: true }),
             points: new fields.NumberField({ required: true, integer: true, initial: 0 }),
             description: new fields.HTMLField({ required: true }),
         })),
-        weaknesses: new TypedObjectField(new fields.SchemaField({
+        weaknesses: new fields.TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
             name: new fields.StringField({ required: true }),
             hidden: new fields.BooleanField({ required: true, initial: true }),
@@ -70,7 +67,7 @@ export class Influence extends foundry.abstract.DataModel {
                 value: new fields.NumberField({ required: true, integer: true, initial: 1 })
             }),
         })),
-        resistances: new TypedObjectField(new fields.SchemaField({
+        resistances: new fields.TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
             name: new fields.StringField({ required: true }),
             hidden: new fields.BooleanField({ required: true, initial: true }),
@@ -80,7 +77,7 @@ export class Influence extends foundry.abstract.DataModel {
                 value: new fields.NumberField({ required: true, integer: true, initial: 1 })
             }),
         })),
-        penalties: new TypedObjectField(new fields.SchemaField({
+        penalties: new fields.TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
             name: new fields.StringField({ required: true }),
             hidden: new fields.BooleanField({ required: true, initial: true }),

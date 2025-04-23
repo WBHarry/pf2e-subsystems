@@ -1,10 +1,8 @@
-import { TypedObjectField } from "./modelHelpers";
-
 export class Researches extends foundry.abstract.DataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
     return {
-      events: new TypedObjectField(new fields.EmbeddedDataField(Research)),
+      events: new fields.TypedObjectField(new fields.EmbeddedDataField(Research)),
     }
   }
 }
@@ -32,14 +30,14 @@ export class Research extends foundry.abstract.DataModel {
         }),
         started: new fields.BooleanField({ required: true, initial: false }),
         researchPoints: new fields.NumberField({ required: true, initial: 0 }),
-        researchChecks: new TypedObjectField(new fields.EmbeddedDataField(ResearchChecks)),
-        researchBreakpoints: new TypedObjectField(new fields.SchemaField({
+        researchChecks: new fields.TypedObjectField(new fields.EmbeddedDataField(ResearchChecks)),
+        researchBreakpoints: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
           hidden: new fields.BooleanField({ required: true, initial: true }),
           breakpoint: new fields.NumberField({ requird: true, initial: 5 }),
           description: new fields.HTMLField(),
         })),
-        researchEvents: new TypedObjectField(new fields.SchemaField({
+        researchEvents: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
           name: new fields.StringField({ required: true, initial: "New Research Event" }),
           hidden: new fields.BooleanField({ required: true, initial: true }),
@@ -128,11 +126,11 @@ class ResearchChecks extends foundry.abstract.DataModel {
       description: new fields.HTMLField(),
       currentResearchPoints: new fields.NumberField({ required: true, initial: 0 }),
       maximumResearchPoints: new fields.NumberField({ required: true, initial: 5 }),
-      skillChecks: new TypedObjectField(new fields.SchemaField({
+      skillChecks: new fields.TypedObjectField(new fields.SchemaField({
         id: new fields.StringField({ required: true }),
         hidden: new fields.BooleanField({ required: true, initial: true }),
         description: new fields.HTMLField(),
-        skills: new TypedObjectField(new fields.SchemaField({
+        skills: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
           label: new fields.StringField(),
           skill: new fields.StringField(),

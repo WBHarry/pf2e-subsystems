@@ -184,7 +184,7 @@
 
                                         &.editing {
                                             flex-direction: column;
-                                            margin: -3px -3px -3px 0;
+                                            margin: -3px -4px -3px 0;
                                             height: 100%;
                                             gap: 0px;
 
@@ -193,6 +193,15 @@
                                                 padding: 0;
                                                 margin: 0;
                                                 width: 24px;
+                                                height: auto;
+                                                min-height: auto;
+                                                border-width: 0 0px 1px 1px;
+                                                border-radius: 0 6px 0 0;
+
+                                                &:last-of-type {
+                                                    border-width: 0 0 0 1px;
+                                                    border-radius: 0 0 6px 0;
+                                                }
 
                                                 i {
                                                     margin: 0;

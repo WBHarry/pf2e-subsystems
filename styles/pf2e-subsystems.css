@@ -191,6 +191,11 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems .bookmark:hover {
   background-color: var(--pf2e-subsystem-theming-primary-accent);
 }
+.pf2e-subsystems nav.tabs {
+  line-height: inherit;
+  border-top-width: 0;
+  border-bottom-width: 0;
+}
 .pf2e-subsystems [data-visibility="gm"]:not(.dice-result > *) {
   background-color: var(--pf2e-subsystem-theming-primary-faded);
   color: var(--pf2e-subsystem-theming-primary-color);
@@ -256,6 +261,7 @@ form.pf2e-subsystems.application > header .header-control {
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: none;
 }
 .pf2e-subsystems.systems-view .systems-container .main-section .systems-section .system-section img {
   border: 0;
@@ -263,6 +269,7 @@ form.pf2e-subsystems.application > header .header-control {
   border-width: 2px;
   border-style: outset;
   border-color: var(--pf2e-subsystem-theming-border);
+  pointer-events: none;
 }
 .pf2e-subsystems.systems-view .systems-container .main-section .systems-section .system-section .locked-section {
   position: absolute;
@@ -1083,7 +1090,7 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar.editing {
   flex-direction: column;
-  margin: -3px -3px -3px 0;
+  margin: -3px -4px -3px 0;
   height: 100%;
   gap: 0px;
 }
@@ -1092,6 +1099,14 @@ form.pf2e-subsystems.application > header .header-control {
   padding: 0;
   margin: 0;
   width: 24px;
+  height: auto;
+  min-height: auto;
+  border-width: 0 0px 1px 1px;
+  border-radius: 0 6px 0 0;
+}
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar.editing button:last-of-type {
+  border-width: 0 0 0 1px;
+  border-radius: 0 0 6px 0;
 }
 .pf2e-subsystems .chase-view .event-outer-container .event-container .event-sidebar .participants-outer-container .participants-container .participant-container .participant-data-container .participant-toolbar.editing button i {
   margin: 0;
@@ -1344,6 +1359,7 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .event-folding.unfolded {
   height: auto;
+  margin-top: 8px;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container {
   border-width: 2px;
@@ -1410,6 +1426,9 @@ form.pf2e-subsystems.application > header .header-control {
   position: absolute;
   right: 0;
   font-size: 32px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .event-tab {
+  gap: 8px;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-description {
   font-style: italic;
@@ -2336,6 +2355,8 @@ form.pf2e-subsystems.application > header .header-control {
   font-size: 24px;
   padding: 4px;
   flex: 0;
+  height: auto;
+  min-height: auto;
 }
 .pf2e-subsystems .value-dialog-container .value-dialog-confirm i {
   margin: 0;
@@ -2373,6 +2394,15 @@ form.pf2e-subsystems.application > header .header-control {
   /* Texts */
   /* Tagify */
   /* Visibility */
+}
+.pf2e-subsystems .prosemirror,
+.pf2e-subsystems prose-mirror {
+  gap: 0;
+  width: 100%;
+}
+.pf2e-subsystems .prosemirror .editor-container,
+.pf2e-subsystems prose-mirror .editor-container {
+  margin: 0 8px;
 }
 .pf2e-subsystems .tab[data-tab].active {
   display: flex;
@@ -2569,6 +2599,7 @@ form.pf2e-subsystems.application > header .header-control {
   display: flex;
   align-items: center;
   gap: 8px;
+  pointer-events: none;
 }
 .pf2e-subsystems .navigate-container i {
   font-size: 16px;

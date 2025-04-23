@@ -21,7 +21,7 @@ Hooks.once("init", () => {
     RegisterHandlebarsHelpers.registerHelpers();
     game.socket.on(SOCKET_ID, handleSocketEvent);
 
-    loadTemplates([
+    foundry.applications.handlebars.loadTemplates([
       "modules/pf2e-subsystems/templates/partials/navigate-back.hbs",
       "modules/pf2e-subsystems/templates/partials/events.hbs",
       "modules/pf2e-subsystems/templates/partials/radio-button.hbs",
@@ -72,16 +72,18 @@ async function registerTours() {
   }
 }
 
-Hooks.on("renderJournalDirectory", async (tab, html) => {
+Hooks.on("renderJournalDirectory", async (tab, html, _, options) => {
   if (tab.id === "journal") {
-    const buttons = $(tab.element).find(".directory-footer.action-buttons");
-    buttons.prepend(`
+    if (options.parts && !options.parts.includes("footer")) return;
+    
+    const buttons = tab.element.querySelector(".directory-footer.action-buttons");
+    buttons.insertAdjacentHTML('afterbegin', `
             <button id="pf2e-subsystems">
                 <i class="fa-solid fa-list" />
-                <span style="font-size: var(--font-size-14); font-family: var(--font-primary); font-weight: 400;">${game.i18n.localize("PF2ESubsystems.Name")}</span>
+                <span style="font-weight: 400; font-family: var(--font-sans);">${game.i18n.localize("PF2ESubsystems.Name")}</span>
             </button>`);
 
-    $(buttons).find("#pf2e-subsystems")[0].onclick = () => {
+    buttons.querySelector("#pf2e-subsystems").onclick = () => {
       new SystemView().render(true);
     };
   }

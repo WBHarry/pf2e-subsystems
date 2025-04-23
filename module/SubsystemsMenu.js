@@ -1,6 +1,7 @@
 import { defaultInfiltrationAwarenessBreakpoints, MODULE_ID, settingIDs } from "../data/constants";
 
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
+const { implementation: TextEditor } = foundry.applications.ux.TextEditor;
 
 export default class SubsystemsMenu extends HandlebarsApplicationMixin(
   ApplicationV2,

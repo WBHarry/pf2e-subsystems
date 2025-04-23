@@ -9,6 +9,7 @@ import TextDialog from "./TextDialog";
 import ValueDialog from "./ValueDialog";
 
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
+const { implementation: TextEditor } = foundry.applications.ux.TextEditor;
 
 const getDefaultSelected = (event) => ({
   event: event ?? null,
@@ -515,7 +516,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
   
       return tabs;
     }
-    
 
     changeTab(tab, group, options) {
       switch(group){
@@ -558,7 +558,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
     }
 
     static filePickerListener(dialog) {
-      return $(dialog.element).find('[data-action="browseBackground"]').on('click', event => {
+      return dialog.element.querySelector('[data-action="browseBackground"]').addEventListener('click', event => {
         event.preventDefault();
         const current = 'icons/svg/cowled.svg';
         new FilePicker({
@@ -566,7 +566,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
           type: "image",
           redirectToRoot: current ? [current] : [],
           callback: async path => {
-            $(dialog.element).find('[name="background"]')[0].value = path;
+            dialog.element.querySelector('[name="background"]').value = path;
           },
         }).browse();
       });
@@ -773,7 +773,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
     }
 
     static async removeEvent(_, button){
-      const confirmed = await Dialog.confirm({
+      const confirmed = await foundry.applications.api.DialogV2.confirm({
         title: game.i18n.localize("PF2ESubsystems.View.ConfirmDeleteEventTitle"),
         content: game.i18n.format("PF2ESubsystems.View.ConfirmDeleteEventText", { type: translateSubsystem(this.tabGroups.main) }),
       });
@@ -1043,7 +1043,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
         position: { width: 400 },
       }).render(true);
 
-      $(dialog.element).find('[data-action="browseParticipantImage"]').on('click', event => {
+      dialog.element.querySelector('[data-action="browseParticipantImage"]').addEventListener('click', event => {
         event.preventDefault();
         const current = existing?.img ?? 'icons/svg/cowled.svg';
         new FilePicker({
@@ -1051,7 +1051,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
           type: "image",
           redirectToRoot: current ? [current] : [],
           callback: async path => {
-            $(dialog.element).find('[name="image"]')[0].value = path;
+            dialog.element.querySelector('[name="image"]').value = path;
           },
           top: this.position.top + 40,
           left: this.position.left + 10
@@ -1695,7 +1695,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
     }
 
     static async infiltrationPreparationsActivitiesReset(_, button) {
-      const confirmed = await Dialog.confirm({
+      const confirmed = await foundry.applications.api.DialogV2.confirm({
         title: game.i18n.localize("PF2ESubsystems.View.ConfirmRestoreDefaultTitle"),
         content: game.i18n.format("PF2ESubsystems.View.ConfirmRestoreDefaultText", { type: translateSubsystem(this.tabGroups.main) }),
       });
@@ -2336,141 +2336,87 @@ export default class SystemView extends HandlebarsApplicationMixin(
     }
 
     async infiltrationObstacleUpdateDCAdjustment(event) {
-      const button = event.detail.tagify.DOM.originalInput;
-      const value = event.detail?.value
-      ? JSON.parse(event.detail.value)
+      const button = event.target;
+      const value = event.target.value
+      ? JSON.parse(event.target.value)
       : [];
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.objectives.${button.dataset.objective}.obstacles.${button.dataset.obstacle}.skillChecks.${button.dataset.skillCheck}.dcAdjustments`]: value.map(x => x.value) });
     }
 
-    async infiltrationObstacleRemoveDCAdjustment(event) {
-      const button = $(event[0].node).parent().parent().find('input.obstacle-dc-adjustment')[0];
-      const settingId = this.tabGroups.main;
-      return new Promise(async function (resolve) {
-        const skillCheck = game.settings.get(MODULE_ID, settingId).events[button.dataset.event].objectives[button.dataset.objective].obstacles[button.dataset.obstacle].skillChecks[button.dataset.skillCheck];
-        const newValue = skillCheck.dcAdjustments.filter(x => x !== event[0].data.value);
-        await updateDataModel(settingId, { [`events.${button.dataset.event}.objectives.${button.dataset.objective}.obstacles.${button.dataset.obstacle}.skillChecks.${button.dataset.skillCheck}`]: {
-          dcAdjustments: newValue,
-          selectedAdjustment: skillCheck.selectedAdjustment === event[0].data.value ? null : skillCheck.selectedAdjustment,
-        }});
-        resolve();
-      });
-    }
-
     async infiltrationPreparationsUpdateActivityTags(event) {
-      const button = event.detail.tagify.DOM.originalInput;
-      const value = event.detail?.value
-      ? JSON.parse(event.detail.value)
+      const button = event.target;
+      const value = event.target.value
+      ? JSON.parse(event.target.value)
       : [];
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.tags`]: value.map(x => x.value) });
     }
-
-    async infiltrationPreparationsRemoveActivityTags(event) {
-      const button = $(event[0].node).parent().parent().find('input.infiltration-preparations-activity-tags')[0];
-      const settingId = this.tabGroups.main;
-      return new Promise(async function (resolve) {
-        const tags = game.settings.get(MODULE_ID, settingId).events[button.dataset.event].preparations.activities[button.dataset.activity].tags;
-        const newValue = tags.filter(x => x !== event[0].data.value);
-        await updateDataModel(settingId, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.tags`]: newValue });
-        resolve();
-      });
-    }
  
     async infiltrationComplicationUpdateDCAdjustment(event) {
-      const button = event.detail.tagify.DOM.originalInput;
-      const value = event.detail?.value
-      ? JSON.parse(event.detail.value)
+      const button = event.target;
+      const value = event.target.value
+      ? JSON.parse(event.target.value)
       : [];
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.skillChecks.${button.dataset.skillCheck}.dcAdjustments`]: value.map(x => x.value) });
     }
 
-    async infiltrationComplicationRemoveDCAdjustment(event) {
-      const button = $(event[0].node).parent().parent().find('input.complication-dc-adjustment')[0];
-      const settingId = this.tabGroups.main;
-      return new Promise(async function (resolve) {
-        const skillCheck = game.settings.get(MODULE_ID, settingId).events[button.dataset.event].complications[button.dataset.complication].skillChecks[button.dataset.skillCheck];
-        const newValue = skillCheck.dcAdjustments.filter(x => x !== event[0].data.value);
-        await updateDataModel(settingId, { [`events.${button.dataset.event}.complications.${button.dataset.complication}.skillChecks.${button.dataset.skillCheck}`]: {
-          dcAdjustments: newValue,
-          selectedAdjustment: skillCheck.selectedAdjustment === event[0].data.value ? null : skillCheck.selectedAdjustment,
-        }});
-        resolve();
-      });
-    }
-
     async infiltrationActivityUpdateDCAdjustment(event) {
-      const button = event.detail.tagify.DOM.originalInput;
-      const value = event.detail?.value
-      ? JSON.parse(event.detail.value)
+      const button = event.target;
+      const value = event.target.value
+      ? JSON.parse(event.target.value)
       : [];
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.skillChecks.${button.dataset.skillCheck}.dcAdjustments`]: value.map(x => x.value) });
-    }
-
-    async infiltrationActivityRemoveDCAdjustment(event) {
-      const button = $(event[0].node).parent().parent().find('input.infiltration-activities-dc-adjustment')[0];
-      const settingId = this.tabGroups.main;
-      return new Promise(async function (resolve) {
-        const skillCheck = game.settings.get(MODULE_ID, settingId).events[button.dataset.event].preparations.activities[button.dataset.activity].skillChecks[button.dataset.skillCheck];
-        const newValue = skillCheck.dcAdjustments.filter(x => x !== event[0].data.value);
-        await updateDataModel(settingId, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.skillChecks.${button.dataset.skillCheck}`]: {
-          dcAdjustments: newValue,
-          selectedAdjustment: skillCheck.selectedAdjustment === event[0].data.value ? null : skillCheck.selectedAdjustment,
-        }});
-        resolve();
-      });
     }
 
     _attachPartListeners(partId, htmlElement, options) {
       super._attachPartListeners(partId, htmlElement, options);
 
-      $(htmlElement).find('.clipboard-fallback-input').on('change', event => event.preventDefault());
-      $(htmlElement).find('.event-tab').on('contextmenu', this.onPinTab.bind(this));
+      htmlElement.querySelectorAll('.clipboard-fallback-input').forEach(event => event.addEventListener('change', event => event.preventDefault()));
+      htmlElement.querySelectorAll('.event-tab').forEach(element => element.addEventListener('contextmenu', this.onPinTab.bind(this)));
       switch(partId){
         case 'chase':
-          $(htmlElement).find('.radio-button').on('contextmenu', this.toggleObstacleLock.bind(this));
-          $(htmlElement).find('.chase-event-chase-points-container input').on('change', this.updateObstacleChasePoints.bind(this));
+          htmlElement.querySelectorAll('.radio-button').forEach(event => event.addEventListener('contextmenu', this.toggleObstacleLock.bind(this)));
+          htmlElement.querySelectorAll('.chase-event-chase-points-container input').forEach(event => event.addEventListener('change', this.updateObstacleChasePoints.bind(this)));
           break;
         case 'research':
-          $(htmlElement).find('.research-lore-input').on('change', this.updateResearchLore.bind(this));
-          $(htmlElement).find('.research-skill-check-input').on('change', this.updateResearchSkillCheck.bind(this));
-          $(htmlElement).find('.research-check-maximum-input').on('change', this.researchCheckMaxPointsUpdate.bind(this))
-          $(htmlElement).find('.research-check-action-input').on('change', this.researchCheckActionUpdate.bind(this))
+          htmlElement.querySelectorAll('.research-lore-input').forEach(event => event.addEventListener('change', this.updateResearchLore.bind(this)));
+          htmlElement.querySelectorAll('.research-skill-check-input').forEach(event => event.addEventListener('change', this.updateResearchSkillCheck.bind(this)));
+          htmlElement.querySelectorAll('.research-check-maximum-input').forEach(event => event.addEventListener('change', this.researchCheckMaxPointsUpdate.bind(this)));
+          htmlElement.querySelectorAll('.research-check-action-input').forEach(event => event.addEventListener('change', this.researchCheckActionUpdate.bind(this)));
           break;
         case 'infiltration':
-          $(htmlElement).find('.radio-button').on('contextmenu', this.toggleObjectiveHidden.bind(this));
-          $(htmlElement).find('.complication-max-infiltration-pointers').on('change', this.updateComplicationInfiltrationPoints.bind(this));
-          $(htmlElement).find('.obstacle-complication-leveled-DC').on('change', this.updateObstacleLeveldDC.bind(this));
-          $(htmlElement).find('.infiltration-obstacle-lore').on('change', this.updateInfiltrationObstacleLore.bind(this));
-          $(htmlElement).find('.infiltration-obstacle-skill').on('change', this.updateInfiltrationObstacleSkill.bind(this));
-          $(htmlElement).find('.infiltration-obstacle-leveled-dc').on('change', this.infiltrationObstacleLeveledDCUpdate.bind(this));
-          $(htmlElement).find('.infiltration-complication-leveled-DC').on('change', this.updateComplicationLeveldDC.bind(this));
-          $(htmlElement).find('.infiltration-complication-lore').on('change', this.updateComplicationLore.bind(this));
-          $(htmlElement).find('.infiltration-complication-skill').on('change', this.updateInfiltrationComplicationSkill.bind(this));
-          $(htmlElement).find('.infiltration-complication-leveled-dc').on('change', this.infiltrationComplicationLeveledDCUpdate.bind(this));
-          // $(htmlElement).find('.infiltration-activity-leveled-DC').on('change', this.updateInfiltrationActivityLeveldDC.bind(this));
-          $(htmlElement).find('.infiltration-activity-lore').on('change', this.updateInfiltrationActivityLore.bind(this));
-          $(htmlElement).find('.infiltration-activity-skill').on('change', this.updateInfiltrationPreparationSkill.bind(this));
-          $(htmlElement).find('.infiltration-activity-result-button').on('contextmenu', this.infiltrationActivityDecreaseResultsOutcome.bind(this));
-          $(htmlElement).find('.infiltration-activity-leveled-dc').on('change', this.infiltrationActivityLeveledDCUpdate.bind(this));
-          $(htmlElement).find('.infiltration-obstacle-action-input').on('change', this.infiltrationObstacleActionUpdate.bind(this));
-          $(htmlElement).find('.infiltration-complication-action-input').on('change', this.infiltrationComplicationActionUpdate.bind(this));
-          $(htmlElement).find('.infiltration-preparation-action-input').on('change', this.infiltrationPreparationActionUpdate.bind(this));
+          htmlElement.querySelectorAll('.radio-button').forEach(event => event.addEventListener('contextmenu', this.toggleObjectiveHidden.bind(this)));
+          htmlElement.querySelectorAll('.complication-max-infiltration-pointers').forEach(event => event.addEventListener('change', this.updateComplicationInfiltrationPoints.bind(this)));
+          htmlElement.querySelectorAll('.obstacle-complication-leveled-DC').forEach(event => event.addEventListener('change', this.updateObstacleLeveldDC.bind(this)));
+          htmlElement.querySelectorAll('.infiltration-obstacle-lore').forEach(event => event.addEventListener('change', this.updateInfiltrationObstacleLore.bind(this)));
+          htmlElement.querySelectorAll('.infiltration-obstacle-skill').forEach(event => event.addEventListener('change', this.updateInfiltrationObstacleSkill.bind(this)));
+          htmlElement.querySelectorAll('.infiltration-obstacle-leveled-dc').forEach(event => event.addEventListener('change', this.infiltrationObstacleLeveledDCUpdate.bind(this)));
+          htmlElement.querySelectorAll('.infiltration-complication-leveled-DC').forEach(event => event.addEventListener('change', this.updateComplicationLeveldDC.bind(this)));
+          htmlElement.querySelectorAll('.infiltration-complication-lore').forEach(event => event.addEventListener('change', this.updateComplicationLore.bind(this)));
+          htmlElement.querySelectorAll('.infiltration-complication-skill').forEach(event => event.addEventListener('change', this.updateInfiltrationComplicationSkill.bind(this)));
+          htmlElement.querySelectorAll('.infiltration-complication-leveled-dc').forEach(event => event.addEventListener('change', this.infiltrationComplicationLeveledDCUpdate.bind(this)));
+          htmlElement.querySelectorAll('.infiltration-activity-lore').forEach(event => event.addEventListener('change', this.updateInfiltrationActivityLore.bind(this)));
+          htmlElement.querySelectorAll('.infiltration-activity-skill').forEach(event => event.addEventListener('change', this.updateInfiltrationPreparationSkill.bind(this)));
+          htmlElement.querySelectorAll('.infiltration-activity-result-button').forEach(event => event.addEventListener('contextmenu', this.infiltrationActivityDecreaseResultsOutcome.bind(this)));
+          htmlElement.querySelectorAll('.infiltration-activity-leveled-dc').forEach(event => event.addEventListener('change', this.infiltrationActivityLeveledDCUpdate.bind(this)));
+          htmlElement.querySelectorAll('.infiltration-obstacle-action-input').forEach(event => event.addEventListener('change', this.infiltrationObstacleActionUpdate.bind(this)));
+          htmlElement.querySelectorAll('.infiltration-complication-action-input').forEach(event => event.addEventListener('change', this.infiltrationComplicationActionUpdate.bind(this)));
+          htmlElement.querySelectorAll('.infiltration-preparation-action-input').forEach(event => event.addEventListener('change', this.infiltrationPreparationActionUpdate.bind(this)));
 
           const adjustmentOptions = Object.values(dcAdjustments);
           const tagOptions = Object.keys(CONFIG.PF2E.actionTraits).map(x => ({ value: x, name: game.i18n.localize(CONFIG.PF2E.actionTraits[x]) }));
 
-          setupTagify(htmlElement, '.complication-dc-adjustment', adjustmentOptions, this.infiltrationComplicationUpdateDCAdjustment.bind(this), this.infiltrationComplicationRemoveDCAdjustment.bind(this));
-          setupTagify(htmlElement, '.obstacle-dc-adjustment', adjustmentOptions, this.infiltrationObstacleUpdateDCAdjustment.bind(this), this.infiltrationObstacleRemoveDCAdjustment.bind(this));
-          setupTagify(htmlElement, '.infiltration-preparations-activity-tags', tagOptions, this.infiltrationPreparationsUpdateActivityTags.bind(this), this.infiltrationPreparationsRemoveActivityTags.bind(this));
-          setupTagify(htmlElement, '.infiltration-activity-dc-adjustment', adjustmentOptions, this.infiltrationActivityUpdateDCAdjustment.bind(this), this.infiltrationActivityRemoveDCAdjustment.bind(this));
+          setupTagify(htmlElement, '.complication-dc-adjustment', adjustmentOptions, this.infiltrationComplicationUpdateDCAdjustment.bind(this));
+          setupTagify(htmlElement, '.obstacle-dc-adjustment', adjustmentOptions, this.infiltrationObstacleUpdateDCAdjustment.bind(this));
+          setupTagify(htmlElement, '.infiltration-preparations-activity-tags', tagOptions, this.infiltrationPreparationsUpdateActivityTags.bind(this));
+          setupTagify(htmlElement, '.infiltration-activity-dc-adjustment', adjustmentOptions, this.infiltrationActivityUpdateDCAdjustment.bind(this));
           break;
         case 'influence':
-          $(htmlElement).find('.influence-discovery-lore-input').on('change', this.updateInfluenceDiscoveryLore.bind(this));
-          $(htmlElement).find('.influence-skill-lore-input').on('change', this.updateInfluenceSkillLore.bind(this));
-          $(htmlElement).find('.influence-discovery-skill-input').on('change', this.updateInfluenceDiscoverySkill.bind(this));
-          $(htmlElement).find('.influence-influence-skill-skill-input').on('change', this.updateInfluenceInfluenceSkillSkill.bind(this));
-          $(htmlElement).find('.influence-discovery-action-input').on('change', this.updateInfluenceDiscoveryAction.bind(this));
-          $(htmlElement).find('.influence-influence-action-input').on('change', this.updateInfluenceInfluenceAction.bind(this));
+          htmlElement.querySelectorAll('.influence-discovery-lore-input').forEach(event => event.addEventListener('change', this.updateInfluenceDiscoveryLore.bind(this)));
+          htmlElement.querySelectorAll('.influence-skill-lore-input').forEach(event => event.addEventListener('change', this.updateInfluenceSkillLore.bind(this)));
+          htmlElement.querySelectorAll('.influence-discovery-skill-input').forEach(event => event.addEventListener('change', this.updateInfluenceDiscoverySkill.bind(this)));
+          htmlElement.querySelectorAll('.influence-influence-skill-skill-input').forEach(event => event.addEventListener('change', this.updateInfluenceInfluenceSkillSkill.bind(this)));
+          htmlElement.querySelectorAll('.influence-discovery-action-input').forEach(event => event.addEventListener('change', this.updateInfluenceDiscoveryAction.bind(this)));
+          htmlElement.querySelectorAll('.influence-influence-action-input').forEach(event => event.addEventListener('change', this.updateInfluenceInfluenceAction.bind(this)));
           break;
       }
     }
@@ -3075,7 +3021,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
           drop: this._onDrop.bind(this),
         };
   
-        const newHandler = new DragDrop(d);
+        const newHandler = new foundry.applications.ux.DragDrop.implementation(d);
         newHandler.bind(this.element);
   
         return newHandler;

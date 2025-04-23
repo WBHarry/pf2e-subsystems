@@ -1,6 +1,6 @@
 import SystemView from "../../module/systemView";
 
-export class InfiltrationTour extends Tour {
+export class InfiltrationTour extends foundry.nue.Tour {
     #systemView;
 
     async _preStep() {

@@ -3,16 +3,16 @@
   "name": "pf2e-subsystems",
   "title": "PF2e Subsystems",
   "description": "A module to handle the various subsystems of play in the PF2e system",
-  "version": "0.7.12",
+  "version": "0.8.0",
   "authors": [
     {
       "name": "HarryBoy"
     }
   ],
   "compatibility": {
-    "minimum": 12,
+    "minimum": 13,
     "verified": "12.331",
-    "maximum": 12
+    "maximum": 13
   },
   "relationships": {
     "systems": [

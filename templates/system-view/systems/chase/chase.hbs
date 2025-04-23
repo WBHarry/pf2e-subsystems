@@ -206,15 +206,17 @@
                         {{/if}}
                     {{/if}}
                 
-                    <div class="chase-event-data-container secondary-container">
+                    
                         {{#if this.editMode}}
-                            <prose-mirror class="data-input" name="{{concat "events." this.event.id ".obstacles." this.currentObstacle.id ".overcome"}}" value="{{this.currentObstacle.overcome}}">
+                            <prose-mirror class="data-input secondary-container" name="{{concat "events." this.event.id ".obstacles." this.currentObstacle.id ".overcome"}}" value="{{this.currentObstacle.overcome}}">
                                 {{{this.currentObstacle.enrichedOvercome}}}
                             </prose-mirror>
                         {{else}}
+                            <div class="chase-event-data-container secondary-container">
                             {{{this.currentObstacle.enrichedOvercome}}}
+                            </div>
                         {{/if}}
-                    </div>
+                  
                 </div>
             </fieldset>
         </div>

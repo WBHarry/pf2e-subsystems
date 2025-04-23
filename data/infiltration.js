@@ -1,11 +1,10 @@
 import { degreesOfSuccess, MODULE_ID, settingIDs } from "./constants";
-import { TypedObjectField } from "./modelHelpers";
 
 export class Infiltrations extends foundry.abstract.DataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
     return {
-      events: new TypedObjectField(new fields.EmbeddedDataField(Infiltration)),
+      events: new fields.TypedObjectField(new fields.EmbeddedDataField(Infiltration)),
     }
   }
 }
@@ -29,7 +28,7 @@ export class Infiltration extends foundry.abstract.DataModel {
         awarenessPoints: new fields.SchemaField({
           current: new fields.NumberField({ required: true, initial: 0 }),
           hidden: new fields.NumberField({ required: true, initial: 0}),
-          breakpoints: new TypedObjectField(new fields.SchemaField({
+          breakpoints: new fields.TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
             hidden: new fields.BooleanField({ required: true, initial: true }),
             inUse: new fields.BooleanField({ required: true, inttial: false }),
@@ -38,7 +37,7 @@ export class Infiltration extends foundry.abstract.DataModel {
             description: new fields.HTMLField(),
           })),
         }),
-        edgePoints: new TypedObjectField(new fields.SchemaField({
+        edgePoints: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
           name: new fields.StringField({ required: true }),
           faked: new fields.BooleanField({ required: true, initial: false }),
@@ -49,12 +48,12 @@ export class Infiltration extends foundry.abstract.DataModel {
           description: new fields.HTMLField(),
           hiddenDescription: new fields.HTMLField(),
         })),
-        objectives: new TypedObjectField(new fields.SchemaField({
+        objectives: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
           hidden: new fields.BooleanField({ required: true, initial: false }),
           name: new fields.StringField({ required: true }),
           position: new fields.NumberField({ required: true }),
-          obstacles: new TypedObjectField(new fields.SchemaField({
+          obstacles: new fields.TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
             hidden: new fields.BooleanField({ required: true, initial: false }),
             name: new fields.StringField({ required: true }),
@@ -65,8 +64,8 @@ export class Infiltration extends foundry.abstract.DataModel {
               current: new fields.NumberField({ required: true, initial: 0 }),
               max: new fields.NumberField({ required: true, initial: 2 }),
             }),
-            infiltrationPointData: new TypedObjectField(new fields.NumberField({ required: true, initial: 0 })),
-            skillChecks: new TypedObjectField(new fields.SchemaField({
+            infiltrationPointData: new fields.TypedObjectField(new fields.NumberField({ required: true, initial: 0 })),
+            skillChecks: new fields.TypedObjectField(new fields.SchemaField({
               id: new fields.StringField({ required: true }),
               hidden: new fields.BooleanField({ required: true, initial: true }),
               description: new fields.HTMLField(),
@@ -76,7 +75,7 @@ export class Infiltration extends foundry.abstract.DataModel {
                 leveledDC: new fields.BooleanField({ required: true, initial: true }),
                 DC: new fields.NumberField(),
               }),
-              skills: new TypedObjectField(new fields.SchemaField({
+              skills: new fields.TypedObjectField(new fields.SchemaField({
                 id: new fields.StringField({ required: true }),
                 skill: new fields.StringField(),
                 action: new fields.StringField(),
@@ -92,7 +91,7 @@ export class Infiltration extends foundry.abstract.DataModel {
             description: new fields.HTMLField(),
           })),
         })),
-        complications: new TypedObjectField(new fields.SchemaField({
+        complications: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
           hidden: new fields.BooleanField({ required: true, initial: true }),
           name: new fields.StringField({ required: true }),
@@ -101,7 +100,7 @@ export class Infiltration extends foundry.abstract.DataModel {
             max: new fields.NumberField(),
           }),
           trigger: new fields.StringField(),
-          skillChecks: new TypedObjectField(new fields.SchemaField({
+          skillChecks: new fields.TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
             hidden: new fields.BooleanField({ required: true, initial: true }),
             description: new fields.HTMLField(),
@@ -111,7 +110,7 @@ export class Infiltration extends foundry.abstract.DataModel {
               leveledDC: new fields.BooleanField({ required: true, initial: true }),
               DC: new fields.NumberField(),
             }),
-            skills: new TypedObjectField(new fields.SchemaField({
+            skills: new fields.TypedObjectField(new fields.SchemaField({
               id: new fields.StringField({ required: true }),
               skill: new fields.StringField(),
               action: new fields.StringField(),
@@ -133,7 +132,7 @@ export class Infiltration extends foundry.abstract.DataModel {
           }),
           resultsOutcome: new fields.StringField(),
         })),
-        opportunities: new TypedObjectField(new fields.SchemaField({
+        opportunities: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
           hidden: new fields.BooleanField({ required: true, initial: true }),
           name: new fields.StringField({ required: true }),
@@ -301,7 +300,7 @@ export class Preparations extends foundry.abstract.DataModel {
 
     return {
       usesPreparation: new fields.BooleanField({ required: true, initial: false }),
-      activities: new TypedObjectField(new fields.SchemaField({
+      activities: new fields.TypedObjectField(new fields.SchemaField({
         id: new fields.StringField({ required: true }),
         hidden: new fields.BooleanField({ required: true, initial: false }),
         name: new fields.StringField(),
@@ -309,7 +308,7 @@ export class Preparations extends foundry.abstract.DataModel {
         cost: new fields.HTMLField(),
         requirements: new fields.HTMLField(),
         description: new fields.HTMLField(),
-        skillChecks: new TypedObjectField(new fields.SchemaField({
+        skillChecks: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
           hidden: new fields.BooleanField({ required: true, initial: true }),
           description: new fields.HTMLField(),
@@ -319,7 +318,7 @@ export class Preparations extends foundry.abstract.DataModel {
             leveledDC: new fields.BooleanField({ required: true, initial: true }),
             DC: new fields.NumberField(),
           }),
-          skills: new TypedObjectField(new fields.SchemaField({
+          skills: new fields.TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
             skill: new fields.StringField(),
             action: new fields.StringField(),

@@ -60,9 +60,9 @@ export default class SystemImport extends HandlebarsApplicationMixin(Application
     _attachPartListeners(partId, htmlElement, options) {
         super._attachPartListeners(partId, htmlElement, options);
 
-        $(htmlElement)
-            .find(".file-path")
-            .on("change", async (event) => {
+        htmlElement
+            .querySelector(".file-path")
+            .addEventListener("change", async (event) => {
                 if (event.currentTarget.value) {
                     const text = await readTextFromFile(event.currentTarget.files[0]);
                     let jsonObject = null;

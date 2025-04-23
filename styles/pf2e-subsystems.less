@@ -25,6 +25,15 @@
 }
 
 .pf2e-subsystems {
+  .prosemirror, prose-mirror {
+    gap: 0;
+    width: 100%;
+
+    .editor-container {
+      margin: 0 @marginLarge;
+    }
+  }
+
   .tab[data-tab].active {
     display: flex;
     flex-direction: column;
@@ -277,6 +286,7 @@
         display: flex;
         align-items: center;
         gap: @gapNormal;
+        pointer-events: none;
       }
     }
 

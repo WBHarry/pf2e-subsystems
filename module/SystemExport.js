@@ -116,7 +116,7 @@ export default class SystemExport extends HandlebarsApplicationMixin(Application
                 return acc;
             }, {}),
         };
-        saveDataToFile(
+        foundry.utils.saveDataToFile(
             JSON.stringify(jsonData, null, 2),
             "text/json",
             `pf2e-subsystems-export.json`,

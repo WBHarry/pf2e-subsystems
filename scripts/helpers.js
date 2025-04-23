@@ -3,6 +3,8 @@ import { levelDCTable } from "../data/statisticsData";
 import { socketEvent } from "./socket";
 import Tagify from "@yaireo/tagify";
 
+const { implementation: TextEditor } = foundry.applications.ux.TextEditor;
+
 export async function updateDataModel(setting, data){
     if(game.user.isGM){
         Hooks.callAll(socketEvent.GMUpdate, { setting, data });
@@ -94,7 +96,7 @@ export const getSelfDC = () => {
     }
 }
 
-export const setupTagify = (html, htmlClass, options, onChange, onRemove) => {
+export const setupTagify = (html, htmlClass, options, onChange) => {
     const tagFunc = (tagData) => {
         return `
             <tag
@@ -111,16 +113,14 @@ export const setupTagify = (html, htmlClass, options, onChange, onRemove) => {
         `;
         }
 
-    for(var input of $(html).find(htmlClass)) {
+    const input = html.querySelector(htmlClass);
+    if(input) {
         const traitsTagify = new Tagify(input, {
             tagTextProp: "name",
             enforceWhitelist: true,
             whitelist: options.map((option) => {
                 return { value: option.value, name: game.i18n.localize(option.name) };
             }),
-            hooks: { 
-                beforeRemoveTag: e => onRemove(e),
-            },
             dropdown: {
                 mapValueTo: "value",
                 searchKeys: ["value"],
@@ -134,8 +134,8 @@ export const setupTagify = (html, htmlClass, options, onChange, onRemove) => {
             },
         });
 
-        traitsTagify.on("change", onChange);
-    }
+        input.addEventListener('change', onChange)
+    }  
 }
 
 
