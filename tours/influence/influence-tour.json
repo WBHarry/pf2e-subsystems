@@ -7,13 +7,13 @@
         {
             "id": "create-influence",
             "selector": ".influence-view .system-title-inner-container",
-            "title": "Create Infiltration Event",
+            "title": "Create Influence Event",
             "content": "Click to add an influence event.\n(You can use the <strong>←</strong> and → arrow keys to navigate the Tour!)"
         },
         {
             "id": "edit-influence",
             "selector": ".influence-view .event-container",
-            "title": "Edit Infiltration Event",
+            "title": "Edit Influence Event",
             "content": "Hover an existing influence event to access Reveal/Hide, Edit and Remove functionality.\nClick to enter the influence event."
         },
         {
@@ -23,43 +23,43 @@
             "content": "A timelimit is optionally shown for the event.\nThe influence challenge presents two statistics the party's attempts are typically compared against, perception and will.\nIt also details the premise of the influence event."
         },
         {
-            "id": "infiltration-overview-2",
+            "id": "influence-overview-2",
             "selector": ".event-header-toolbar",
             "title": "Toolbar",
             "content": "<strong>Start Event</strong>: This will open up this influence window for all online players so you can run it.\n<strong>Edit Event</strong>: This toggles you into edit mode to setup your influence event.\n<strong>Macro</strong>: The third icon copies a macro you can use to open this event."
         },
         {
-            "id": "infiltration-overview-3",
+            "id": "influence-overview-3",
             "selector": ".discovery-container",
             "title": "Discovery",
             "content": "The suggested skills used by players to learn about influence skills, weaknesses, resistances and penalties.\nThe GM can click these to hide/reveal them to players."
         },
         {
-            "id": "infiltration-overview-4",
+            "id": "influence-overview-4",
             "selector": ".influence-skills-container",
             "title": "Influence Skills",
             "content": "The suggested influence skills used to gain influence points in the event. The GM can click these to hide/reveal them to players.\nThe DC's are influenced by any weaknesses, resistances or penalties the GM has activated."
         },
         {
-            "id": "infiltration-overview-5",
+            "id": "influence-overview-5",
             "selector": ".influence-container",
             "title": "Influence",
             "content": "The current influence points earned during the event. Here is where the GM can present the gradual results of the players efforts.\nThese can be revealed manually by clicking, or optionally set to auto reveal as the influence points reach the required total.\nInfluence Points can be raised and lowered using the ↑ and ↓ arrows."
         },
         {
-            "id": "infiltration-overview-6",
+            "id": "influence-overview-6",
             "selector": ".weaknesses-container",
             "title": "Weaknesses",
             "content": "Any potential weaknesses inherent to the event. The GM can click these to hide/reveal them to players.\nClicking the right modifier section will lower the DC of all Influence Skill checks for players while it's active."
         },
         {
-            "id": "infiltration-overview-7",
+            "id": "influence-overview-7",
             "selector": ".resistances-container",
             "title": "Resistances",
             "content": "Any potential resistances inherent to the event. The GM can click these to hide/reveal them to players.\nClicking the right modifier section will raise the DC of all Influence Skill checks for players while it's active."
         },
         {
-            "id": "infiltration-overview-8",
+            "id": "influence-overview-8",
             "selector": ".penalties-container",
             "title": "Penalties",
             "content": "Any potential penalties inherent to the event. The GM can click these to hide/reveal them to players.\nClicking the optional right modifier section will raise the DC of all Influence Skill checks for players while it's active."
