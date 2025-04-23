@@ -1682,7 +1682,7 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$6(
   }
 }
 
-const currentVersion = '0.7.11';
+const currentVersion = '0.7.12';
 
 const registerKeyBindings = () => {
   game.keybindings.register(MODULE_ID, "open-system-view", {
