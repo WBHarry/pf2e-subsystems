@@ -197,7 +197,7 @@ form.pf2e-subsystems.application > header .header-control {
   border-bottom-width: 0;
 }
 .pf2e-subsystems [data-visibility="gm"]:not(.dice-result > *) {
-  background-color: var(--pf2e-subsystem-theming-primary-faded);
+  background-color: var(--pf2e-subsystem-theming-primary-faded) !important;
   color: var(--pf2e-subsystem-theming-primary-color);
 }
 .pf2e-subsystems .inline-check.with-repost [data-visibility="gm"]:not(.dice-result > *) {
@@ -546,15 +546,16 @@ form.pf2e-subsystems.application > header .header-control {
   height: 16px;
   border-style: solid;
   border-width: 1px;
-  border-color: var(--pf2e-subsystem-theming-secondary-border);
+  border-color: var(--pf2e-subsystem-theming-border);
   border-radius: 6px;
   content: "";
+  padding: 8px;
 }
 .pf2e-subsystems.systems-view .event-outer-container .edit-mode-box-container i {
   position: absolute;
   font-size: 12px;
   filter: var(--pf2e-subsystem-theming-primary-outline);
-  color: var(--pf2e-subsystem-theming-secondary-border);
+  color: var(--pf2e-subsystem-theming-icon);
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container {
   flex: 1;

@@ -1451,7 +1451,7 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$6(
   }
 }
 
-const currentVersion = '0.7.12';
+const currentVersion = '0.8.0';
 
 const registerKeyBindings = () => {
   game.keybindings.register(MODULE_ID, "open-system-view", {
@@ -3155,7 +3155,7 @@ class SystemView extends HandlebarsApplicationMixin(
 
     static editImage(_, button) {
       const current = foundry.utils.getProperty(game.settings.get(MODULE_ID, this.tabGroups.main), button.dataset.path);
-      const fp = new FilePicker({
+      const fp = new foundry.applications.apps.FilePicker.implementation({
           current,
           type: "image",
           redirectToRoot: current ? [current] : [],
@@ -3177,7 +3177,7 @@ class SystemView extends HandlebarsApplicationMixin(
       return dialog.element.querySelector('[data-action="browseBackground"]').addEventListener('click', event => {
         event.preventDefault();
         const current = 'icons/svg/cowled.svg';
-        new FilePicker({
+        new foundry.applications.apps.FilePicker.implementation({
           current,
           type: "image",
           redirectToRoot: [current] ,
@@ -3192,7 +3192,7 @@ class SystemView extends HandlebarsApplicationMixin(
       switch(subsystem){
         case 'chase':
           return {  
-            content: await renderTemplate("modules/pf2e-subsystems/templates/system-view/systems/chase/chaseDataDialog.hbs", { name: existing?.name, background: existing?.background }),
+            content: await foundry.applications.handlebars.renderTemplate("modules/pf2e-subsystems/templates/system-view/systems/chase/chaseDataDialog.hbs", { name: existing?.name, background: existing?.background }),
             title: game.i18n.localize(existing ? 'PF2ESubsystems.Chase.EditChase' : 'PF2ESubsystems.Chase.CreateChase'),
             callback: (button) => {
               const elements = button.form.elements;
@@ -3226,7 +3226,7 @@ class SystemView extends HandlebarsApplicationMixin(
           };
         case 'research':
           return {  
-            content: await renderTemplate("modules/pf2e-subsystems/templates/system-view/systems/chase/chaseDataDialog.hbs", { name: existing?.name, background: existing?.background }),
+            content: await foundry.applications.handlebars.renderTemplate("modules/pf2e-subsystems/templates/system-view/systems/chase/chaseDataDialog.hbs", { name: existing?.name, background: existing?.background }),
             title: game.i18n.localize(existing ? 'PF2ESubsystems.Research.EditResearch' : 'PF2ESubsystems.Research.CreateResearch'),
             callback: (button) => {
               const elements = button.form.elements;
@@ -3250,7 +3250,7 @@ class SystemView extends HandlebarsApplicationMixin(
           };
         case 'infiltration':
           return {  
-            content: await renderTemplate("modules/pf2e-subsystems/templates/system-view/systems/chase/chaseDataDialog.hbs", { name: existing?.name, background: existing?.background }),
+            content: await foundry.applications.handlebars.renderTemplate("modules/pf2e-subsystems/templates/system-view/systems/chase/chaseDataDialog.hbs", { name: existing?.name, background: existing?.background }),
             title: game.i18n.localize(existing ? 'PF2ESubsystems.Infiltration.EditInfiltration' : 'PF2ESubsystems.Infiltration.CreateInfiltration'),
             callback: (button) => {
               const elements = button.form.elements;
@@ -3287,7 +3287,7 @@ class SystemView extends HandlebarsApplicationMixin(
           };
         case 'influence':
           return {  
-            content: await renderTemplate("modules/pf2e-subsystems/templates/system-view/systems/chase/chaseDataDialog.hbs", { name: existing?.name, background: existing?.background }),
+            content: await foundry.applications.handlebars.renderTemplate("modules/pf2e-subsystems/templates/system-view/systems/chase/chaseDataDialog.hbs", { name: existing?.name, background: existing?.background }),
             title: game.i18n.localize(existing ? 'PF2ESubsystems.Influence.EditInfluence' : 'PF2ESubsystems.Influence.CreateInfluence'),
             callback: (button) => {
               const elements = button.form.elements;
@@ -3390,7 +3390,9 @@ class SystemView extends HandlebarsApplicationMixin(
 
     static async removeEvent(_, button){
       const confirmed = await foundry.applications.api.DialogV2.confirm({
-        title: game.i18n.localize("PF2ESubsystems.View.ConfirmDeleteEventTitle"),
+        window: {
+          title: game.i18n.localize("PF2ESubsystems.View.ConfirmDeleteEventTitle"),
+        },
         content: game.i18n.format("PF2ESubsystems.View.ConfirmDeleteEventText", { type: translateSubsystem(this.tabGroups.main) }),
       });
 
@@ -3652,7 +3654,7 @@ class SystemView extends HandlebarsApplicationMixin(
             icon: "fa-solid fa-x",
           },
         ],
-        content: await renderTemplate("modules/pf2e-subsystems/templates/system-view/systems/chase/participantDataDialog.hbs", { name: existing?.name, image: existing?.img }),
+        content: await foundry.applications.handlebars.renderTemplate("modules/pf2e-subsystems/templates/system-view/systems/chase/participantDataDialog.hbs", { name: existing?.name, image: existing?.img }),
         window: {
           title: existing ? game.i18n.localize('PF2ESubsystems.Chase.EditParticipant') : game.i18n.localize('PF2ESubsystems.Chase.CreateParticipant'),
         },
@@ -3662,7 +3664,7 @@ class SystemView extends HandlebarsApplicationMixin(
       dialog.element.querySelector('[data-action="browseParticipantImage"]').addEventListener('click', event => {
         event.preventDefault();
         const current = existing?.img ?? 'icons/svg/cowled.svg';
-        new FilePicker({
+        new foundry.applications.apps.FilePicker.implementation({
           current,
           type: "image",
           redirectToRoot: current ? [current] : [],
@@ -4307,12 +4309,23 @@ class SystemView extends HandlebarsApplicationMixin(
     }
 
     static async infiltrationPreparationsActivityRemove(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.-=${button.dataset.activity}`]: null });
+      const activity = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].preparations.activities[button.dataset.activity];
+      const confirmed = await foundry.applications.api.DialogV2.confirm({
+        window: {
+          title: game.i18n.localize("PF2ESubsystems.Infiltration.Preparations.ConfirmDeletePreparationActivityTitle"),
+        },
+        content: game.i18n.format("PF2ESubsystems.Infiltration.Preparations.ConfirmDeletePreparationActivityText", { activity: activity.name }),
+      });
+      if(confirmed) {
+        await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.-=${button.dataset.activity}`]: null });
+      }
     }
 
     static async infiltrationPreparationsActivitiesReset(_, button) {
       const confirmed = await foundry.applications.api.DialogV2.confirm({
-        title: game.i18n.localize("PF2ESubsystems.View.ConfirmRestoreDefaultTitle"),
+        window: {
+          title: game.i18n.localize("PF2ESubsystems.View.ConfirmRestoreDefaultTitle"),
+        },
         content: game.i18n.format("PF2ESubsystems.View.ConfirmRestoreDefaultText", { type: translateSubsystem(this.tabGroups.main) }),
       });
 

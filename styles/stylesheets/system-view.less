@@ -8,7 +8,7 @@
     }
 
     [data-visibility="gm"]:not(.dice-result > *) {
-        background-color: var(--pf2e-subsystem-theming-primary-faded);
+        background-color: var(--pf2e-subsystem-theming-primary-faded) !important;
         color: var(--pf2e-subsystem-theming-primary-color);
     }
 
@@ -429,15 +429,16 @@
                 height: 16px;
                 border-style: solid;
                 border-width: 1px;
-                border-color: var(--pf2e-subsystem-theming-secondary-border);
+                border-color: var(--pf2e-subsystem-theming-border);
                 border-radius: 6px;
                 content: "";
+                padding: 8px;
 
                 i {
                     position: absolute;
                     font-size: 12px;
                     filter: var(--pf2e-subsystem-theming-primary-outline);
-                    color: var(--pf2e-subsystem-theming-secondary-border);
+                    color: var(--pf2e-subsystem-theming-icon);
                 }
             }
 

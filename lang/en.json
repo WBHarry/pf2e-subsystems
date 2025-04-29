@@ -238,7 +238,9 @@
                 "IsUsed": "Preparations Active",
                 "NotUsed": "Preparations Inactivated",
                 "AwarenessPoints": "Awareness Points",
-                "FakeDegreeOfSuccess": "Fake Degree Shown To Players"
+                "FakeDegreeOfSuccess": "Fake Degree Shown To Players",
+                "ConfirmDeletePreparationActivityTitle": "Delete Preparation Activity",
+                "ConfirmDeletePreparationActivityText": "Are you sure you want to delete the {activity} activity?"
             },
             "InfiltrationTab": {
                 "Infiltration": "Infiltration",
