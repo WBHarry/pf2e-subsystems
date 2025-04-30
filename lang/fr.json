@@ -238,7 +238,9 @@
                 "IsUsed": "Préparations Activé",
                 "NotUsed": "Préparations Désactivé",
                 "AwarenessPoints": "Points de vigilance",
-                "FakeDegreeOfSuccess": "Faux degré montré aux joueurs"
+                "FakeDegreeOfSuccess": "Faux degré montré aux joueurs",
+                "ConfirmDeletePreparationActivityTitle": "Supprimer l'activité de préparation",
+                "ConfirmDeletePreparationActivityText": "Êtes-vous sûr de vouloir supprimer l'activité {activity} ?"
             },
             "InfiltrationTab": {
                 "Infiltration": "Infiltration",
