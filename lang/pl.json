@@ -28,7 +28,8 @@
             "Overcome": "Przezwyciężenie",
             "Trigger": "Wyzwalacz",
             "RestoreToDefault": "Przywróć domyślne",
-            "LeveledDCExplanation": "Wprowadź ustawiony ST lub zaznacz pole wyboru, aby użyć ST na poziomie gracza."
+            "LeveledDCExplanation": "Wprowadź ustawiony ST lub zaznacz pole wyboru, aby użyć ST na poziomie gracza.",
+            "Notes": "Notatki"
         },
         "TimeUnits": {
             "Year": {
@@ -121,6 +122,10 @@
             "ConfirmRestoreDefaultText": "Spowoduje to przywrócenie domyślnych wartości tej sekcji. Czy na pewno?",
             "TextDialogTitle": "Edytor tekstu {name}",
             "LinkDialogTitle": "Więzy {name}",
+            "SidebarTabs": {
+                "Main": "Główny",
+                "Notes": "Notatki"
+            },
             "Errors": {
                 "GMMissing": "Aby to zrobić, wymagany jest zalogowany MG!"
             }
@@ -233,7 +238,9 @@
                 "IsUsed": "Przygotowania aktywne",
                 "NotUsed": "Przygotowania nieaktywne",
                 "AwarenessPoints": "Punkty Czujności",
-                "FakeDegreeOfSuccess": "Fałszywy stopień pokazywany graczom"
+                "FakeDegreeOfSuccess": "Fałszywy stopień pokazywany graczom",
+                "ConfirmDeletePreparationActivityTitle": "Usuń przygotowanie działania",
+                "ConfirmDeletePreparationActivityText": "Czy na pewno chcesz usunąć aktywność {activity}?"
             },
             "InfiltrationTab": {
                 "Infiltration": "Infiltracja",
