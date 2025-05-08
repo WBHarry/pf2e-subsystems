@@ -42,6 +42,10 @@ export class Research extends foundry.abstract.DataModel {
           name: new fields.StringField({ required: true, initial: "New Research Event" }),
           hidden: new fields.BooleanField({ required: true, initial: true }),
           timing: new fields.StringField(),
+          modifier: new fields.SchemaField({
+            value: new fields.NumberField({ integer: true, nullable: true, initial: null }),
+            active: new fields.BooleanField({ initial: false }),
+          }),
           description: new fields.HTMLField(),
         })),
       }
@@ -113,6 +117,16 @@ export class Research extends foundry.abstract.DataModel {
   
         return acc;
       }, {});
+    }
+
+    get researchCheckModifier() {
+      return Object.values(this.researchEvents).reduce((acc, event) => {
+        if(event.modifier.value !== null && event.modifier.active) {
+          acc += event.modifier.value;
+        }
+
+        return acc;
+      }, 0);
     }
 }
 

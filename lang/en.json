@@ -193,6 +193,8 @@
             "Lore": "Lore",
             "Basic": "Basic",
             "Timing": "Timing",
+            "OptionalModifier": "Optional Modifier",
+            "ModifierHint": "Optionally show a button for the GM that will increase or decrease research check DCs by the entered value when active.",
             "ResearchEvents": "Research Events",
             "ResearchBreakpoints": "Research Breakpoints",
             "ResearchBreakpoint": "Breakpoint",

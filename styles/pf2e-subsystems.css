@@ -594,7 +594,7 @@ form.pf2e-subsystems.application > header .header-control {
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-inner-tabs a {
   flex: 1;
-  padding: 4px;
+  padding: 2px 4px;
   border-width: 2px;
   border-style: solid;
   border-radius: 4px;
@@ -666,6 +666,10 @@ form.pf2e-subsystems.application > header .header-control {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin: 0 4px;
+}
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-section-header-container.edit-mode {
+  height: 25px;
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-section-header-container .subtext {
   display: flex;
@@ -1358,6 +1362,11 @@ form.pf2e-subsystems.application > header .header-control {
   overflow: hidden;
   transition: all 0.5;
 }
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .event-folding.spaced {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .event-folding.unfolded {
   height: auto;
   margin-top: 8px;
@@ -1388,9 +1397,11 @@ form.pf2e-subsystems.application > header .header-control {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  height: 28px;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-header.extended {
   padding: 0 64px;
+  margin: 4px 0;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-header nav {
   width: 100%;
@@ -1650,10 +1661,35 @@ form.pf2e-subsystems.application > header .header-control {
   display: flex;
   align-items: center;
 }
-.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-events-container .research-events-inner-container .research-event-container .research-event-title .research-event-title-inner i {
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-events-container .research-events-inner-container .research-event-container .research-event-title .modifier-card-action-container {
+  padding: 2px 4px 2px 4px;
+  margin-left: 4px;
+  border-width: 2px 2px 2px 2px;
+  border-style: solid;
+  border-radius: 6px;
+  opacity: 0.4;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-events-container .research-events-inner-container .research-event-container .research-event-title .modifier-card-action-container.used {
+  opacity: 1;
+  filter: drop-shadow(0 0 3px gold);
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-events-container .research-events-inner-container .research-event-container .research-event-title .modifier-card-action-container .modifier-card-action {
+  min-width: 13px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-events-container .research-events-inner-container .research-event-container .research-event-title .modifier-card-action-container .modifier-card-action-icon {
   position: absolute;
-  right: -28px;
-  font-size: 20px;
+  top: -4px;
+  font-size: 9px;
+}
+.pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-events-container .research-events-inner-container .research-event-container .research-event-title .modifier-card-action-container .modifier-card-action-icon-slash {
+  position: absolute;
+  top: -4px;
+  font-size: 9px;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-events-container .research-events-inner-container .research-event-container .research-event-text {
   font-style: italic;

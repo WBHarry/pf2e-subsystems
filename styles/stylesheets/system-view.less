@@ -482,7 +482,7 @@
 
                     a {
                         flex: 1;
-                        padding: @paddingNormal;
+                        padding: @paddingSmall @paddingNormal;
                         border-width: 2px;
                         border-style: solid;
                         border-radius: 4px;
@@ -568,6 +568,11 @@
                     flex-direction: column;
                     justify-content: center;
                     align-items: center;
+                    margin: 0 4px;
+
+                    &.edit-mode {
+                        height: 25px;
+                    }
 
                     .subtext {
                         display: flex;

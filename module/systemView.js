@@ -9,7 +9,6 @@ import TextDialog from "./TextDialog";
 import ValueDialog from "./ValueDialog";
 
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
-const { implementation: TextEditor } = foundry.applications.ux.TextEditor;
 
 const getDefaultSelected = (event) => ({
   event: event ?? null,
@@ -113,6 +112,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
         toggleResearchEventHidden: this.toggleResearchEventHidden,
         researchToggleOpenResearchEvent: this.researchToggleOpenResearchEvent,
         researhCheckPointsUpdate: this.researhCheckPointsUpdate,
+        researchToggleEventModifier: this.researchToggleEventModifier,
         /* Infiltration */
         setCurrentInfiltrationObjective: this.setCurrentInfiltrationObjective,
         addInfiltrationObjective: this.addInfiltrationObjective,
@@ -1361,6 +1361,11 @@ export default class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.currentResearchPoints`]: button.dataset.increase ? currentPoints + 1 : currentPoints - 1 });
     }
 
+    static async researchToggleEventModifier(_, button) {
+      const currentActive = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchEvents[button.dataset.researchEvent].modifier.active;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchEvents.${button.dataset.researchEvent}.modifier.active`]: !currentActive });
+    }
+
     //#region Infiltration
     static async setCurrentInfiltrationObjective(_, button) {
       this.selected.infiltration.currentObjective = Number.parseInt(button.dataset.position);
@@ -2480,15 +2485,15 @@ export default class SystemView extends HandlebarsApplicationMixin(
           await this.setupEvents(chaseEvents, context);
           if(context.selectedEvent) {
             context.sidebarTabs = this.getSidebarTabs(context.selectedEvent.pins.sidebar);
-            context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
-            context.selectedEvent.enrichedGMNotes = await TextEditor.enrichHTML(context.selectedEvent.gmNotes);
+            context.selectedEvent.enrichedPremise = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.selectedEvent.premise);
+            context.selectedEvent.enrichedGMNotes = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.selectedEvent.gmNotes);
             context.showRounds = this.editMode || context.selectedEvent.rounds.max;
           }
           
           context.currentObstacleNr = this.selected.chaseObstacle ?? 1;
           context.currentObstacle = context.selectedEvent?.obstacles ? Object.values(context.selectedEvent.extendedObstacles).find(x => x.position === context.currentObstacleNr) : null;
           if(context.currentObstacle) {
-            context.currentObstacle.enrichedOvercome = await TextEditor.enrichHTML(context.currentObstacle.overcome);
+            context.currentObstacle.enrichedOvercome = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.currentObstacle.overcome);
           }
 
           break;
@@ -2505,29 +2510,31 @@ export default class SystemView extends HandlebarsApplicationMixin(
           context.skillCheckTabs = this.getResearchSkillCheckTabs();
           await this.setupEvents(viewEvents, context);
           if(context.selectedEvent) {
+            const dcModifier = context.selectedEvent.researchCheckModifier;
             context.sidebarTabs = this.getSidebarTabs(context.selectedEvent.pins.sidebar);
-            context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
-            context.selectedEvent.enrichedGMNotes = await TextEditor.enrichHTML(context.selectedEvent.gmNotes);
+            context.selectedEvent.enrichedPremise = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.selectedEvent.premise);
+            context.selectedEvent.enrichedGMNotes = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.selectedEvent.gmNotes);
             context.showTimeLimit = this.editMode || context.selectedEvent.timeLimit.max;
             context.selectedEvent.timeLimit.unitName = timeUnits[context.selectedEvent.timeLimit.unit]?.name;
 
             for(var key of Object.keys(context.selectedEvent.researchChecksData)){
               const researchCheck = context.selectedEvent.researchChecks[key];
               researchCheck.open = researchCheck.id === this.selected.research?.openResearchCheck;
-              researchCheck.enrichedDescription = await TextEditor.enrichHTML(researchCheck.description);
+              researchCheck.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(researchCheck.description);
               
               for(var checkKey of Object.keys(researchCheck.skillChecks)) {
                 const checkSkill = researchCheck.skillChecks[checkKey];
-                checkSkill.enrichedDescription = await TextEditor.enrichHTML(checkSkill.description);
+                checkSkill.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(checkSkill.description);
 
                 const skills = Object.keys(checkSkill.skills);
                 for(var skillKey of skills){
                   const skillCheck = checkSkill.skills[skillKey];
+                  const modifiedDC = skillCheck.dc + dcModifier;
                   if(skillCheck.action) {
-                    skillCheck.element = await getActButton(skillCheck.action, skillCheck.variant, skillCheck.skill, skillCheck.dc, false, false, `${game.i18n.localize('PF2ESubsystems.Events.Research.Single')}: ${researchCheck.name}`, false);  
+                    skillCheck.element = await getActButton(skillCheck.action, skillCheck.variant, skillCheck.skill, modifiedDC, false, false, `${game.i18n.localize('PF2ESubsystems.Events.Research.Single')}: ${researchCheck.name}`, false);  
                   }
                   else {
-                    skillCheck.element = await getCheckButton(skillCheck.skill, skillCheck.dc, skillCheck.simple, false, false, `${game.i18n.localize('PF2ESubsystems.Events.Research.Single')}: ${researchCheck.name} (${(skillCheck.lore || !skillCheck.skill) ? skillCheck.skill : game.i18n.localize(extendedSkills()[skillCheck.skill].label)})`);
+                    skillCheck.element = await getCheckButton(skillCheck.skill, modifiedDC, skillCheck.simple, false, false, `${game.i18n.localize('PF2ESubsystems.Events.Research.Single')}: ${researchCheck.name} (${(skillCheck.lore || !skillCheck.skill) ? skillCheck.skill : game.i18n.localize(extendedSkills()[skillCheck.skill].label)})`);
                   }
                   skillCheck.isFirst = skills[0] === skillCheck.id;
                 }
@@ -2537,13 +2544,13 @@ export default class SystemView extends HandlebarsApplicationMixin(
             for(var key of Object.keys(context.selectedEvent.researchBreakpoints)) {
               const researchBreakpoint = context.selectedEvent.researchBreakpoints[key];
               researchBreakpoint.open = researchBreakpoint.id === this.selected.research?.openResearchBreakpoint;
-              researchBreakpoint.enrichedDescription = await TextEditor.enrichHTML(researchBreakpoint.description);
+              researchBreakpoint.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(researchBreakpoint.description);
             }
 
             for(var key of Object.keys(context.selectedEvent.researchEvents)) {
               const researchEvent = context.selectedEvent.researchEvents[key];
               researchEvent.open = researchEvent.id === this.selected.research?.openResearchEvent;
-              researchEvent.enrichedDescription = await TextEditor.enrichHTML(researchEvent.description);
+              researchEvent.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(researchEvent.description);
             }
           }
 
@@ -2586,8 +2593,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
           await this.setupEvents(infiltrationEvents, context);
           if(context.selectedEvent) {
             context.sidebarTabs = this.getSidebarTabs(context.selectedEvent.pins.sidebar);
-            context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
-            context.selectedEvent.enrichedGMNotes = await TextEditor.enrichHTML(context.selectedEvent.gmNotes);
+            context.selectedEvent.enrichedPremise = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.selectedEvent.premise);
+            context.selectedEvent.enrichedGMNotes = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.selectedEvent.gmNotes);
             context.selectedEvent.extendedComplications = context.selectedEvent.complicationsData;
             context.selectedEvent.extendedPreparations = {
               ...context.selectedEvent.preparations,
@@ -2599,7 +2606,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
             context.currentObjective = Object.values(context.selectedEvent.objectives).find(x => x.position === context.currentObjectiveNr);
             for(var key of Object.keys(context.currentObjective.obstacles)) {
               var obstacle = context.currentObjective.obstacles[key];
-              obstacle.enrichedDescription = await TextEditor.enrichHTML(obstacle.description);
+              obstacle.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(obstacle.description);
               obstacle.individualInfiltrationPoints = !obstacle.individual ? [] : game.actors.find(x => x.type === 'party').members.reduce((acc, curr) => {
                 acc[curr.id] = {
                   id: curr.id,
@@ -2698,15 +2705,15 @@ export default class SystemView extends HandlebarsApplicationMixin(
               const edgePoint = context.selectedEvent.edgePoints[key];
               edgePoint.open = this.selected.infiltration.openEdge === edgePoint.id;
 
-              edgePoint.enrichedDescription = await TextEditor.enrichHTML(edgePoint.description);
-              edgePoint.enrichedHiddenDescription = edgePoint.hiddenDescription ? await TextEditor.enrichHTML(edgePoint.hiddenDescription) : null;
+              edgePoint.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(edgePoint.description);
+              edgePoint.enrichedHiddenDescription = edgePoint.hiddenDescription ? await foundry.applications.ux.TextEditor.implementation.enrichHTML(edgePoint.hiddenDescription) : null;
               edgePoint.playerDescription = !edgePoint.faked && edgePoint.enrichedHiddenDescription ? edgePoint.enrichedHiddenDescription : edgePoint.enrichedDescription;
             }
 
             for(var key of Object.keys(context.selectedEvent.awarenessPoints.breakpoints)){
               const breakpoint = context.selectedEvent.awarenessPoints.breakpoints[key];
               breakpoint.description = game.i18n.localize(breakpoint.description);
-              breakpoint.enrichedDescription = await TextEditor.enrichHTML(breakpoint.description);
+              breakpoint.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(breakpoint.description);
               breakpoint.open = this.selected.infiltration.awarenessBreakpoint === breakpoint.id;
               breakpoint.active = context.settings.autoApplyAwareness ? (context.selectedEvent.visibleAwareness) >= breakpoint.breakpoint : breakpoint.inUse;
               breakpoint.showActivate = (game.user.isGM && !context.settings.autoApplyAwareness) || breakpoint.inUse;
@@ -2717,13 +2724,13 @@ export default class SystemView extends HandlebarsApplicationMixin(
             for(var key of Object.keys(context.selectedEvent.opportunities)){
               var opportunity = context.selectedEvent.opportunities[key];
               opportunity.open = this.selected.openInfiltrationOpportunity === opportunity.id;
-              opportunity.enrichedDescription = await TextEditor.enrichHTML(opportunity.description);
+              opportunity.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(opportunity.description);
             }
 
             for(var key of Object.keys(context.selectedEvent.extendedComplications)){
               const complication = context.selectedEvent.extendedComplications[key];
               complication.open = this.selected.openInfiltrationComplication === complication.id;
-              complication.enrichedDescription = await TextEditor.enrichHTML(complication.description);
+              complication.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(complication.description);
 
               for(var key of Object.keys(complication.skillChecks)){
                 const skillCheck = complication.skillChecks[key];
@@ -2754,7 +2761,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
                 const titleElement = `<p><strong class="infiltration-result-container ${complication.resultsOutcome !== result.degreeOfSuccess ? 'inactive' : ''} ${context.isGM ? 'clickable-icon' : ''} tertiary-container primary-text-container infiltration-activity-result-button" ${context.isGM ? 'data-action="infiltrationComplicationToggleResultsOutcome"' : ''} data-event="${context.selectedEvent.id}" data-complication="${complication.id}" data-result="${result.degreeOfSuccess}">${result.name}</strong>`;
                 const descriptionStartsWithParagraph = result.description.match(/^<p>/);
-                result.enrichedDescription = await TextEditor.enrichHTML(descriptionStartsWithParagraph ? result.description.replace('<p>', `${titleElement} `) : `${titleElement} ${result.description}`);
+                result.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(descriptionStartsWithParagraph ? result.description.replace('<p>', `${titleElement} `) : `${titleElement} ${result.description}`);
               }
 
               complication.selectedResult = Object.values(complication.results).find(x => x.degreeOfSuccess === this.selected.infiltration.complicationResultSelect);
@@ -2763,7 +2770,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
             for(var key of Object.keys(context.selectedEvent.extendedPreparations.activities)) {
               var activity = context.selectedEvent.extendedPreparations.activities[key];
               activity.open = this.selected.infiltration.preparations.openActivity === activity.id;
-              activity.enrichedDescription = await TextEditor.enrichHTML(activity.description);
+              activity.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(activity.description);
               activity.displayTags = activity.tags.map(tag => game.i18n.localize(CONFIG.PF2E.actionTraits[tag]));
 
               for(var key of Object.keys(activity.skillChecks)){
@@ -2805,7 +2812,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
                 const shownResultOutcomes = resultOutcomes[result.degreeOfSuccess];
                 const titleElement = `<p><strong class="infiltration-result-container ${result.nrOutcomes === 0 ? 'inactive' : ''} ${context.isGM ? 'clickable-icon' : ''} tertiary-container primary-text-container infiltration-activity-result-button" ${context.isGM ? 'data-action="infiltrationActivityIncreaseResultsOutcome"' : ''} data-event="${context.selectedEvent.id}" data-activity="${activity.id}" data-result="${result.degreeOfSuccess}">${result.name} ${shownResultOutcomes}x</strong>`;
                 const descriptionStartsWithParagraph = result.description.match(/^<p>/);
-                result.enrichedDescription = await TextEditor.enrichHTML(descriptionStartsWithParagraph ? result.description.replace('<p>', `${titleElement} `) : `${titleElement} ${result.description}`);
+                result.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(descriptionStartsWithParagraph ? result.description.replace('<p>', `${titleElement} `) : `${titleElement} ${result.description}`);
               }
 
               activity.selectedResult = Object.values(activity.results).find(x => x.degreeOfSuccess === this.selected.infiltration.preparations.resultSelect);
@@ -2838,8 +2845,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
           if(context.selectedEvent) {
             context.sidebarTabs = this.getSidebarTabs(context.selectedEvent.pins.sidebar);
             context.selectedEvent.linkedNPCs = context.selectedEvent.linkedNPCsData;
-            context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
-            context.selectedEvent.enrichedGMNotes = await TextEditor.enrichHTML(context.selectedEvent.gmNotes);
+            context.selectedEvent.enrichedPremise = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.selectedEvent.premise);
+            context.selectedEvent.enrichedGMNotes = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.selectedEvent.gmNotes);
             context.selectedEvent.extendedDiscoveries = context.selectedEvent.discoveryData;
             context.selectedEvent.extendedInfluenceSkills = context.selectedEvent.influenceSkillData;
             context.dcModifier = context.selectedEvent.dcModifier;
@@ -2888,7 +2895,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
               const influence = context.selectedEvent.influence[key];
               const titleElement = `<strong>${influence.points}</strong>:`;
               const descriptionStartsWithParagraph = influence.description.match(/^<p>/);
-              influence.enrichedDescription = await TextEditor.enrichHTML(descriptionStartsWithParagraph ? influence.description.replace('<p>', `<p>${titleElement} `) : `${titleElement} ${influence.description}`);
+              influence.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(descriptionStartsWithParagraph ? influence.description.replace('<p>', `<p>${titleElement} `) : `${titleElement} ${influence.description}`);
               
               influence.shown = (context.settings.autoRevealInfluence && context.selectedEvent.influencePoints >= influence.points) || game.user.isGM || !influence.hidden;
               influence.hidden = context.settings.autoRevealInfluence ? context.selectedEvent.influencePoints < influence.points : influence.hidden;
@@ -2898,19 +2905,19 @@ export default class SystemView extends HandlebarsApplicationMixin(
             for(var key of Object.keys(context.selectedEvent.weaknesses)) {
               const weakness = context.selectedEvent.weaknesses[key];
               weakness.open =  this.selected.influence.openWeakness === weakness.id;
-              weakness.enrichedDescription = await TextEditor.enrichHTML(weakness.description);
+              weakness.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(weakness.description);
             }
 
             for(var key of Object.keys(context.selectedEvent.resistances)) {
               const resistance = context.selectedEvent.resistances[key];
               resistance.open =  this.selected.influence.openResistance === resistance.id;
-              resistance.enrichedDescription = await TextEditor.enrichHTML(resistance.description);
+              resistance.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(resistance.description);
             }
 
             for(var key of Object.keys(context.selectedEvent.penalties)) {
               const penalty = context.selectedEvent.penalties[key];
               penalty.open =  this.selected.influence.openPenalty === penalty.id;
-              penalty.enrichedDescription = await TextEditor.enrichHTML(penalty.description);
+              penalty.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(penalty.description);
             }
           }
 

@@ -358,13 +358,20 @@
                                                 <div>{{localize "PF2ESubsystems.Basic.Name"}}</div>
                                                 <input type="text" name="{{concat "events." ../event.id ".researchEvents." this.id ".name"}}" value="{{this.name}}" class="tertiary-container" />
                                             </div>
-                                            <div class="event-field-form">
-                                                <div>{{localize "PF2ESubsystems.Research.Timing"}}</div>
-                                                <input type="text" name="{{concat "events." ../event.id ".researchEvents." this.id ".timing"}}" value="{{this.timing}}" class="tertiary-container" />
-                                            </div>
                                             <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon research-event-opener" data-action="researchToggleOpenResearchEvent" data-event="{{this.id}}"></i> 
                                         </div>
-                                        <div class="event-folding {{#if this.open}}unfolded{{/if}}">
+                                        <div class="event-folding spaced {{#if this.open}}unfolded{{/if}}">
+                                            <div class="event-field-group">
+                                                <div class="event-field-form">
+                                                    <div>{{localize "PF2ESubsystems.Research.Timing"}}</div>
+                                                    <input type="text" name="{{concat "events." ../event.id ".researchEvents." this.id ".timing"}}" value="{{this.timing}}" class="tertiary-container" />
+                                                </div>
+                                                 <div class="event-field-form small">
+                                                    <div title="{{localize "PF2ESubsystems.Research.ModifierHint"}}">{{localize "PF2ESubsystems.Research.OptionalModifier"}}</div>
+                                                    <input type="text" data-dtype="Number" name="{{concat "events." ../event.id ".researchEvents." this.id ".modifier.value"}}" value="{{this.modifier.value}}" class="tertiary-container" />
+                                                </div>
+                                            </div>
+
                                             <prose-mirror class="data-input tertiary-container" name="{{concat "events." ../event.id ".researchEvents." this.id ".description"}}" value="{{this.description}}">
                                                 {{{this.enrichedDescription}}}
                                             </prose-mirror>
@@ -372,9 +379,19 @@
                                     {{else}}
                                         <div class="research-event-title">
                                             <div class="research-event-title-inner">
-                                                <div class="title-small-container">{{this.name}}</div>
+                                                <div class="title-small-container">
+                                                    <div>{{this.name}}</div>
+                                                    {{#if ../isGM}}
+                                                        <div class="modifier-card-action-container clickable-icon {{#if this.modifier.active}}used{{/if}}" data-action="researchToggleEventModifier" data-event="{{../event.id}}" data-research-event="{{this.id}}">
+                                                            <div class="modifier-card-action tertiary-container">{{this.modifier.value}}</div>
+                                                            <i class="fa-solid fa-bolt-lightning modifier-card-action-icon"></i>
+                                                            {{#if (not this.modifier.active)}}<i class="fa-solid fa-slash modifier-card-action-icon-slash"></i>{{/if}}
+                                                        </div>
+                                                    {{/if}}
+                                                </div>
                                             </div>
                                             <div class="text-helper-big">{{this.timing}}</div>
+
                                             {{#if ../isGM}}<i class="fa-solid {{#if this.hidden}}fa-eye-slash{{else}}fa-eye{{/if}} clickable-icon research-event-hider" data-action="toggleResearchEventHidden" data-event="{{../event.id}}" data-research-event="{{this.id}}"></i>{{/if}}
                                             <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon research-event-opener" data-action="researchToggleOpenResearchEvent" data-event="{{this.id}}"></i> 
                                         </div>

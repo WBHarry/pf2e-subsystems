@@ -1,7 +1,6 @@
 import { defaultInfiltrationAwarenessBreakpoints, MODULE_ID, settingIDs } from "../data/constants";
 
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
-const { implementation: TextEditor } = foundry.applications.ux.TextEditor;
 
 export default class SubsystemsMenu extends HandlebarsApplicationMixin(
   ApplicationV2,
@@ -146,7 +145,7 @@ export default class SubsystemsMenu extends HandlebarsApplicationMixin(
           
           if(context.selected.awarenessBreakpoint) {
             context.selected.awarenessBreakpoint.description = game.i18n.localize(context.selected.awarenessBreakpoint.description);
-            context.selected.awarenessBreakpoint.enrichedDescription = await TextEditor.enrichHTML(context.selected.awarenessBreakpoint.description);
+            context.selected.awarenessBreakpoint.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.selected.awarenessBreakpoint.description);
           }
 
           break;

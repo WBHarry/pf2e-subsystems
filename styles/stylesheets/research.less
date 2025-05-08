@@ -133,6 +133,12 @@
                         overflow: hidden;
                         transition: all 0.5;
 
+                        &.spaced {
+                            display: flex;
+                            flex-direction: column;
+                            gap: @gapNormal;
+                        }
+
                         &.unfolded {
                             height: auto;
                             margin-top: @marginLarge;
@@ -165,9 +171,11 @@
                                     flex-direction: column;
                                     justify-content: center;
                                     align-items: center;
+                                    height: 28px;
 
                                     &.extended {
                                         padding: 0 64px;
+                                        margin: 4px 0;
                                     }
 
                                     nav {
@@ -480,11 +488,40 @@
                                         position: relative;
                                         display: flex;
                                         align-items: center;
-            
-                                        i {
+                                    }
+
+                                    .modifier-card-action-container {
+                                        padding: @paddingSmall @paddingNormal @paddingSmall @paddingNormal;
+                                        margin-left: @marginNormal;
+                                        border-width: 2px 2px 2px 2px;
+                                        border-style: solid;
+                                        border-radius: 6px;
+                                        opacity: 0.4;
+                                        position: relative;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        font-size: 14px;
+                
+                                        &.used {
+                                            opacity: 1;
+                                            filter: drop-shadow(0 0 3px gold);
+                                        }
+
+                                        .modifier-card-action {
+                                            min-width: 13px;
+                                        }
+                
+                                        .modifier-card-action-icon {
                                             position: absolute;
-                                            right: -28px;
-                                            font-size: 20px;
+                                            top: -4px;
+                                            font-size: 9px;
+                                        }
+                
+                                        .modifier-card-action-icon-slash {
+                                            position: absolute;
+                                            top: -4px;
+                                            font-size: 9px;
                                         }
                                     }
                                 }

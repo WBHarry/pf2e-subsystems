@@ -146,7 +146,18 @@ export class Infiltration extends foundry.abstract.DataModel {
     get totalInfiltrationPoints() {
       return Object.values(this.objectives).reduce((acc, curr) => {
         acc += Object.values(curr.obstacles).reduce((acc, curr) => {
-          acc += curr.infiltrationPoints.current ?? 0;
+          if(curr.individual){
+            acc += Object.keys(curr.infiltrationPointData).reduce((acc, key) => {
+              const partyMembers = game.actors.find(x => x.type === 'party').members;
+              if(!partyMembers.some(member => member.id === key)) return acc;
+
+              const points = curr.infiltrationPointData[key];
+              return Math.min(acc, points);
+            }, curr.infiltrationPoints.max);
+          }
+          else{
+            acc += curr.infiltrationPoints.current ?? 0;
+          }
 
           return acc;
         }, 0);
