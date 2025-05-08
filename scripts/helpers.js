@@ -184,3 +184,13 @@ export const readTextFromFile = (file) => {
         reader.readAsText(file);
     });
 };
+
+export const getNewPositionOnDrop = (startPosition, dropPosition, currentPosition) => {
+    if(startPosition === currentPosition) return dropPosition;
+
+    if(startPosition > dropPosition) {
+        return currentPosition >= dropPosition && currentPosition < startPosition ? currentPosition+1 : currentPosition;
+    }
+
+    return currentPosition <= dropPosition && currentPosition > startPosition ? currentPosition-1 : currentPosition;
+};

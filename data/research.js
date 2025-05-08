@@ -12,6 +12,7 @@ export class Research extends foundry.abstract.DataModel {
       const fields = foundry.data.fields;
       return {
         id: new fields.StringField({ required: true }),
+        position: new fields.NumberField({ required: true }),
         moduleProvider: new fields.StringField(),
         name: new fields.StringField({ required: true }),
         version: new fields.StringField({ required: true }),

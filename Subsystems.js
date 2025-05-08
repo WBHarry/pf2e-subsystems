@@ -12,6 +12,7 @@ class Chase extends foundry.abstract.DataModel {
       const fields = foundry.data.fields;
       return {
         id: new fields.StringField({ required: true }),
+        position: new fields.NumberField({ required: true }),
         moduleProvider: new fields.StringField(),
         name: new fields.StringField({ required: true }),
         version: new fields.StringField({ required: true }),
@@ -498,6 +499,7 @@ class Infiltration extends foundry.abstract.DataModel {
       const fields = foundry.data.fields;
       return {
         id: new fields.StringField({ required: true }),
+        position: new fields.NumberField({ required: true }),
         moduleProvider: new fields.StringField(),
         name: new fields.StringField({ required: true }),
         version: new fields.StringField({ required: true }),
@@ -869,6 +871,7 @@ class Influence extends foundry.abstract.DataModel {
       const fields = foundry.data.fields;
       return {
         id: new fields.StringField({ required: true }),
+        position: new fields.NumberField({ required: true }),
         moduleProvider: new fields.StringField(),
         name: new fields.StringField({ required: true }),
         version: new fields.StringField({ required: true }),
@@ -1070,6 +1073,7 @@ class Research extends foundry.abstract.DataModel {
       const fields = foundry.data.fields;
       return {
         id: new fields.StringField({ required: true }),
+        position: new fields.NumberField({ required: true }),
         moduleProvider: new fields.StringField(),
         name: new fields.StringField({ required: true }),
         version: new fields.StringField({ required: true }),
@@ -1860,6 +1864,16 @@ const readTextFromFile = (file) => {
         
         reader.readAsText(file);
     });
+};
+
+const getNewPositionOnDrop = (startPosition, dropPosition, currentPosition) => {
+    if(startPosition === currentPosition) return dropPosition;
+
+    if(startPosition > dropPosition) {
+        return currentPosition >= dropPosition && currentPosition < startPosition ? currentPosition+1 : currentPosition;
+    }
+
+    return currentPosition <= dropPosition && currentPosition > startPosition ? currentPosition-1 : currentPosition;
 };
 
 const { HandlebarsApplicationMixin: HandlebarsApplicationMixin$5, ApplicationV2: ApplicationV2$5 } = foundry.applications.api;
@@ -2688,6 +2702,11 @@ class SystemView extends HandlebarsApplicationMixin(
       this.clipboardFallback = false;
       this.isTour = isTour;
 
+      this.#dragDrop = this.createDragDropHandlers();
+      this.dragInfo = {
+        event: null,
+      };
+
       this.onUpdateView = Hooks.on(
         socketEvent.UpdateSystemView,
         this.onUpdateSystemView.bind(this),
@@ -2862,6 +2881,7 @@ class SystemView extends HandlebarsApplicationMixin(
         ],
       },
       dragDrop: [
+        { dragSelector: ".event-container", dropSelector: ".events-container" },
         { dragSelector: null, dropSelector: ".participants-outer-container" },
       ],
     };
@@ -2895,8 +2915,15 @@ class SystemView extends HandlebarsApplicationMixin(
       },
     };
 
+    #dragDrop;
+    #eventDropTarget;
+
+    get dragDrop() {
+        return this.#dragDrop;
+    }
+
     _onRender(context, options) {
-      this._dragDrop = this._createDragDropHandlers.bind(this)();
+      this.#dragDrop.forEach((d) => d.bind(this.element));
     }
 
     tabGroups = {
@@ -3226,9 +3253,11 @@ class SystemView extends HandlebarsApplicationMixin(
                 }
               }
 
+              const existingChases = Object.keys(game.settings.get(MODULE_ID, 'chase').events);
               const obstacleId = foundry.utils.randomID();
               return {
                 id: foundry.utils.randomID(),
+                position: existingChases.length+1,
                 name: elements.name.value ? elements.name.value : game.i18n.localize('PF2ESubsystems.View.NewEvent'),
                 version: currentVersion,
                 background: elements.background.value ? elements.background.value : 'icons/skills/movement/feet-winged-boots-glowing-yellow.webp',
@@ -3260,9 +3289,10 @@ class SystemView extends HandlebarsApplicationMixin(
                 }
               }
 
-              foundry.utils.randomID();
+              const existingResearch = Object.keys(game.settings.get(MODULE_ID, 'research').events);
               return {
                 id: foundry.utils.randomID(),
+                position: existingResearch.length+1,
                 name: elements.name.value ? elements.name.value : game.i18n.localize('PF2ESubsystems.View.NewEvent'),
                 version: currentVersion,
                 background: elements.background.value ? elements.background.value : 'icons/skills/trades/academics-merchant-scribe.webp',
@@ -3284,10 +3314,11 @@ class SystemView extends HandlebarsApplicationMixin(
                 }
               }
 
+              const existingInfiltrations = Object.keys(game.settings.get(MODULE_ID, 'infiltration').events);
               const objectiveId = foundry.utils.randomID();
-
               return {
                 id: foundry.utils.randomID(),
+                position: existingInfiltrations.length+1,
                 name: elements.name.value ? elements.name.value : game.i18n.localize('PF2ESubsystems.View.NewEvent'),
                 version: currentVersion,
                 background: elements.background.value ? elements.background.value : 'icons/magic/unholy/silhouette-robe-evil-power.webp',
@@ -3321,8 +3352,10 @@ class SystemView extends HandlebarsApplicationMixin(
                 }
               }
 
+              const existingInfluence = Object.keys(game.settings.get(MODULE_ID, 'influence').events);
               return {
                 id: foundry.utils.randomID(),
+                position: existingInfluence.length+1,
                 name: elements.name.value ? elements.name.value : game.i18n.localize('PF2ESubsystems.View.NewEvent'),
                 version: currentVersion,
                 background: elements.background.value ? elements.background.value : 'icons/magic/perception/eye-ringed-green.webp',
@@ -3420,7 +3453,23 @@ class SystemView extends HandlebarsApplicationMixin(
 
       if(!confirmed) return;
 
-      await updateDataModel(this.tabGroups.main, { [`events.-=${button.dataset.id}`]: null });
+      const events = game.settings.get(MODULE_ID, this.tabGroups.main).events;
+      const removedPosition = events[button.dataset.id].position;
+      const eventsUpdate = Object.keys(events).reduce((acc, key) => {
+        if(key !== button.dataset.id){
+          const event = events[key];
+          acc[key] = {
+            position: event.position > removedPosition ? event.position-1 : event.position, 
+          };
+        }
+        else {
+          acc[`-=${key}`] = null;
+        }
+        
+        return acc;
+      }, {});
+
+      await updateDataModel(this.tabGroups.main, { 'events': eventsUpdate });
       this.render({ parts: [this.tabGroups.main] });
     }
 
@@ -5616,10 +5665,12 @@ class SystemView extends HandlebarsApplicationMixin(
     }
 
     filterEvents(events){
-      return this.eventSearchValue?.length === 0 ? events : Object.keys(events).reduce((acc, key) => {
-        const event = events[key];
+      return this.eventSearchValue?.length === 0 ? Object.values(events).sort((a, b) => a.position-b.position).reduce((acc, event) => {
+        acc[event.id] = event;
+        return acc;
+      }, {}) : Object.values(events).sort((a, b) => a.position-b.position).reduce((acc, event) => {
         const matches = event.name.match(this.eventSearchValue);
-        if(matches && matches.length > 0) acc[key] = events[key];
+        if(matches && matches.length > 0) acc[event.id] = events[event.id];
 
         return acc;
       }, {});
@@ -5654,10 +5705,10 @@ class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { events });
     }
 
-    async setupEvents(chaseEvents, context){
+    async setupEvents(events, context){
       if(!this.isTour){
         await Promise.resolve(new Promise((resolve) => {
-          context.events = this.filterEvents(chaseEvents);
+          context.events = this.filterEvents(events);
           context.selectedEvent = context.selected.event ? Object.values(context.events).find(x => x.id === context.selected.event) : undefined;
           resolve();
         }));
@@ -5673,44 +5724,98 @@ class SystemView extends HandlebarsApplicationMixin(
       }
     }
 
-    _createDragDropHandlers() {
+    createDragDropHandlers() {
       return this.options.dragDrop.map((d) => {
-        d.callbacks = {
-          drop: this._onDrop.bind(this),
-        };
-  
-        const newHandler = new foundry.applications.ux.DragDrop.implementation(d);
-        newHandler.bind(this.element);
-  
-        return newHandler;
+          d.permissions = {
+              dragstart: () => game.user.isGM,
+              drop: () => game.user.isGM,
+          };
+          
+          d.callbacks = {
+              dragstart: this._onDragStart.bind(this),
+              dragover: this._onDragOver.bind(this),
+              drop: this._onDrop.bind(this),
+          };
+
+          return new foundry.applications.ux.DragDrop.implementation(d);
       });
-    }
+  }
 
-    async _onDrop(event) {
-      if (!game.user.isGM) return;
-    
-      const data = JSON.parse(event.dataTransfer.getData('text/plain'));
-      if(event.currentTarget.classList.contains('participants-outer-container')){
-        if(data?.type !== 'Actor') {
-          return;
-        }
+  async _onDragStart(event) {
+    const target = event.currentTarget;
+    if (!target.dataset.event) return;
 
-        const actor = await fromUuid(data.uuid);
-        const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event];
-        if(Object.keys(event.participants).includes(actor.id)){
-          ui.notifications.warn(game.i18n.localize('PF2ESubsystems.Chase.Errors.ParticipantAlreadyExists'));
-          return;
-        }
+    this.dragInfo.event = target.dataset.event;
+    event.dataTransfer.setData("text/plain", JSON.stringify(target.dataset));
+    event.dataTransfer.setDragImage(target, 60, 0);
+  }
 
-        await updateDataModel(this.tabGroups.main, { [`events.${event.id}.participants.${actor.id}`]: {
-          id: actor.id,
-          name: actor.name,
-          img: actor.img,
-          player: actor.system.details.alliance === 'party',
-          position: Object.keys(event.participants).length + 1,
-        }});
+  async _onDragOver(event) {
+    const self = event.target.classList.contains('event-container') ? event.target : event.target.closest('.event-container');
+    this.#eventDropTarget = self;
+    if(!self || self.dataset.event === this.dragInfo.event || self.classList.contains('drop-target')) return;
+    self.classList.toggle('drop-target');
+    self.addEventListener('dragleave', () => self.classList.remove("drop-target"), {once: true});
+    // if (!this.dragData.bookmarkActive) return;
+
+    // let self = event.target;
+    // let dropTarget = self.matches(".bookmark-container.draggable")
+    //   ? self.querySelector(".bookmark")
+    //   : self.closest(".bookmark");
+
+    // if (!dropTarget || dropTarget.classList.contains("drop-hover")) {
+    //   return;
+    // }
+
+    // dropTarget.classList.add("drop-hover");
+    // return false;
+  }
+
+  async _onDrop(event) {
+    if (!game.user.isGM) return;
+  
+    const data = JSON.parse(event.dataTransfer.getData('text/plain'));
+    if(event.currentTarget.classList.contains('participants-outer-container')){
+      if(data?.type !== 'Actor') {
+        return;
       }
+
+      const actor = await fromUuid(data.uuid);
+      const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event];
+      if(Object.keys(event.participants).includes(actor.id)){
+        ui.notifications.warn(game.i18n.localize('PF2ESubsystems.Chase.Errors.ParticipantAlreadyExists'));
+        return;
+      }
+
+      await updateDataModel(this.tabGroups.main, { [`events.${event.id}.participants.${actor.id}`]: {
+        id: actor.id,
+        name: actor.name,
+        img: actor.img,
+        player: actor.system.details.alliance === 'party',
+        position: Object.keys(event.participants).length + 1,
+      }});
     }
+
+    const dropTarget = this.#eventDropTarget?.dataset?.event;
+    if(dropTarget && dropTarget !== data.event) {
+      this.dragInfo.event = null;
+      const events = game.settings.get(MODULE_ID, this.tabGroups.main).events;
+      const startPosition = events[data.event].position;
+      const dropPosition = events[dropTarget].position;
+      const updatedEvents = Object.keys(events).reduce((acc, key) => {
+        const event = events[key];
+        acc[key] = {
+          position: getNewPositionOnDrop(startPosition, dropPosition, event.position),
+        };
+
+        return acc;
+      }, {});
+      await updateDataModel(this.tabGroups.main, { 'events': updatedEvents });
+      // const layers = this.scene.flags[MODULE_ID][ModuleFlags.Scene.CanvasLayers];
+      // const layer = layers[data.layer];
+      // const dropLayer = layers[dropTarget];
+    }
+  }
 }
 
 const openSubsystemView = async (tab, event, options) => {
@@ -5949,12 +6054,35 @@ const handleMigration = async () => {
 };
 
 const migrateEvents = async () => {
+    await migrateChase();
     await migrateInfiltration();
+    await migrateInfluence();
+    await migrateResearch();
+};
+
+const migrateChase = async () => {
+    const chase = game.settings.get(MODULE_ID, 'chase');
+    var events = Object.values(chase.events);
+    for(var i = 0; i < events.length; i++){
+        const event = events[i];
+        if(versionCompare(event.version, '0.8.1')){
+            await chase.updateSource({ events: {
+                [event.id]: {
+                    version: '0.8.1',
+                    position: i+1,
+                }
+            }});
+        }
+    }
+
+    await game.settings.set(MODULE_ID, 'chase', chase);
 };
 
 const migrateInfiltration = async () => {
     const infiltration = game.settings.get(MODULE_ID, 'infiltration');
-    for(var event of Object.values(infiltration.events)){
+    const events = Object.values(infiltration.events);
+    for(var i = 0; i < events.length; i++){
+        const event = events[i];
         if(versionCompare(event.version, '0.7.8')){
             await infiltration.updateSource({ events: {
                 [event.id]: {
@@ -6036,9 +6164,53 @@ const migrateInfiltration = async () => {
                 }
             }});
         }
+        if(versionCompare(event.version, '0.8.1')){
+            await infiltration.updateSource({ events: {
+                [event.id]: {
+                    version: '0.8.1',
+                    position: i+1,
+                }
+            }});
+        }
     }
 
     await game.settings.set(MODULE_ID, 'infiltration', infiltration);
+};
+
+const migrateInfluence = async () => {
+    const influence = game.settings.get(MODULE_ID, 'influence');
+    var events = Object.values(influence.events);
+    for(var i = 0; i < events.length; i++){
+        const event = events[i];
+        if(versionCompare(event.version, '0.8.1')){
+            await influence.updateSource({ events: {
+                [event.id]: {
+                    version: '0.8.1',
+                    position: i+1,
+                }
+            }});
+        }
+    }
+
+    await game.settings.set(MODULE_ID, 'influence', influence);
+};
+
+const migrateResearch = async () => {
+    const research = game.settings.get(MODULE_ID, 'research');
+    var events = Object.values(research.events);
+    for(var i = 0; i < events.length; i++){
+        const event = events[i];
+        if(versionCompare(event.version, '0.8.1')){
+            await research.updateSource({ events: {
+                [event.id]: {
+                    version: '0.8.1',
+                    position: i+1,
+                }
+            }});
+        }
+    }
+
+    await game.settings.set(MODULE_ID, 'research', research);
 };
 
 class RegisterHandlebarsHelpers {

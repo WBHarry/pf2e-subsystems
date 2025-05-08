@@ -15,12 +15,35 @@ export const handleMigration = async () => {
 };
 
 const migrateEvents = async () => {
+    await migrateChase();
     await migrateInfiltration();
+    await migrateInfluence();
+    await migrateResearch();
+};
+
+const migrateChase = async () => {
+    const chase = game.settings.get(MODULE_ID, 'chase');
+    var events = Object.values(chase.events)
+    for(var i = 0; i < events.length; i++){
+        const event = events[i];
+        if(versionCompare(event.version, '0.8.1')){
+            await chase.updateSource({ events: {
+                [event.id]: {
+                    version: '0.8.1',
+                    position: i+1,
+                }
+            }});
+        }
+    }
+
+    await game.settings.set(MODULE_ID, 'chase', chase);
 };
 
 const migrateInfiltration = async () => {
     const infiltration = game.settings.get(MODULE_ID, 'infiltration');
-    for(var event of Object.values(infiltration.events)){
+    const events = Object.values(infiltration.events);
+    for(var i = 0; i < events.length; i++){
+        const event = events[i];
         if(versionCompare(event.version, '0.7.8')){
             await infiltration.updateSource({ events: {
                 [event.id]: {
@@ -102,7 +125,51 @@ const migrateInfiltration = async () => {
                 }
             }});
         }
+        if(versionCompare(event.version, '0.8.1')){
+            await infiltration.updateSource({ events: {
+                [event.id]: {
+                    version: '0.8.1',
+                    position: i+1,
+                }
+            }});
+        }
     }
 
     await game.settings.set(MODULE_ID, 'infiltration', infiltration);
+};
+
+const migrateInfluence = async () => {
+    const influence = game.settings.get(MODULE_ID, 'influence');
+    var events = Object.values(influence.events)
+    for(var i = 0; i < events.length; i++){
+        const event = events[i];
+        if(versionCompare(event.version, '0.8.1')){
+            await influence.updateSource({ events: {
+                [event.id]: {
+                    version: '0.8.1',
+                    position: i+1,
+                }
+            }});
+        }
+    }
+
+    await game.settings.set(MODULE_ID, 'influence', influence);
+};
+
+const migrateResearch = async () => {
+    const research = game.settings.get(MODULE_ID, 'research');
+    var events = Object.values(research.events)
+    for(var i = 0; i < events.length; i++){
+        const event = events[i];
+        if(versionCompare(event.version, '0.8.1')){
+            await research.updateSource({ events: {
+                [event.id]: {
+                    version: '0.8.1',
+                    position: i+1,
+                }
+            }});
+        }
+    }
+
+    await game.settings.set(MODULE_ID, 'research', research);
 };

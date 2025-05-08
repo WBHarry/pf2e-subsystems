@@ -381,7 +381,7 @@
                                             <div class="research-event-title-inner">
                                                 <div class="title-small-container">
                                                     <div>{{this.name}}</div>
-                                                    {{#if ../isGM}}
+                                                    {{#if (and ../isGM this.modifier.value)}}
                                                         <div class="modifier-card-action-container clickable-icon {{#if this.modifier.active}}used{{/if}}" data-action="researchToggleEventModifier" data-event="{{../event.id}}" data-research-event="{{this.id}}">
                                                             <div class="modifier-card-action tertiary-container">{{this.modifier.value}}</div>
                                                             <i class="fa-solid fa-bolt-lightning modifier-card-action-icon"></i>

@@ -411,6 +411,9 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-container .event-container:hover .event-container-header .event-toolbar .event-toolbar-inner {
   top: 0;
 }
+.pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-container .event-container.drop-target {
+  opacity: 0.6;
+}
 .pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-container .event-container .event-container-header {
   border-width: 2px;
   border-style: outset;
