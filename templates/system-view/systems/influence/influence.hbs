@@ -168,13 +168,13 @@
                                         </div>
                                         <div class="event-skill-grid-col">
                                             <div class="event-skill-grid-cell-container last event-skill-grid-cell header tertiary-container accent">
-                                                <i class="fa-solid fa-plus clickable-icon" data-action="influenceDiscoveryAdd" data-event="{{../event.id}}"></i> 
+                                                <i class="fa-solid fa-plus clickable-icon" data-action="addData" data-path="{{concat "events." ../event.id ".discoveries"}}"></i> 
                                             </div>
                                             {{#each this.action}}
                                                 <div class="event-skill-grid-cell-container last">
                                                     <div class="event-skill-grid-cell spaced tools-column-cell">
                                                         <i class="fa-solid fa-tag clickable-icon label-tag {{#if this.label}}active{{/if}}" data-action="useSkillLabelMenu" data-path="{{concat "events." this.event ".discoveries." this.id}}" title="{{localize "PF2ESubsystems.Influence.EditInfluenceSkillLabel"}}"></i>
-                                                        <i class="fa-solid fa-trash clickable-icon" data-action="influenceDiscoveryRemove" data-event="{{this.event}}" data-discovery="{{this.id}}"></i>
+                                                        <i class="fa-solid fa-trash clickable-icon" data-action="removeData" data-id="{{this.id}}" data-path="{{concat "events." this.event ".discoveries"}}"></i>
                                                     </div>
                                                 </div>
                                             {{/each}}
@@ -183,10 +183,13 @@
                                 {{/with}}
                             </div>
                         {{else}}
-                            <div class="skills-container">
+                            <div class="discovery skills-container">
                                 {{#each this.event.extendedDiscoveries.data}}
                                     {{#if (or ../isGM (not this.hidden))}}
-                                        <div class="skill-container {{#if (not this.hidden)}}revealed{{/if}} secondary-container" {{#if ../isGM}}data-action="influenceDiscoveryToggleHidden"{{/if}} data-event="{{../event.id}}" data-discovery="{{this.id}}">
+                                        <div 
+                                            class="discovery skill-container {{#if (not this.hidden)}}revealed{{/if}} secondary-container" {{#if ../isGM}}data-action="influenceDiscoveryToggleHidden"{{/if}} data-event="{{../event.id}}" data-discovery="{{this.id}}"
+                                            data-id="{{this.id}}" data-drop-container="skill-container" data-drop-path="{{concat "events." ../event.id ".discoveries"}}"
+                                        >
                                             <div class="flexrow">
                                                 {{{this.element}}}
                                                 {{#if this.label}}<div class="text-normal italic {{#if this.hidden}}disabled{{/if}}">({{this.label}})</div>{{/if}}
@@ -262,13 +265,13 @@
                                         </div>
                                         <div class="event-skill-grid-col">
                                             <div class="event-skill-grid-cell-container last event-skill-grid-cell header tertiary-container accent">
-                                                <i class="fa-solid fa-plus clickable-icon" data-action="influenceSkillAdd" data-event="{{../event.id}}"></i>
+                                                <i class="fa-solid fa-plus clickable-icon" data-action="addData" data-path="{{concat "events." ../event.id ".influenceSkills"}}"></i>
                                             </div>
                                             {{#each this.action}}
                                                 <div class="event-skill-grid-cell-container last">
                                                     <div class="event-skill-grid-cell spaced tools-column-cell">
                                                         <i class="fa-solid fa-tag clickable-icon label-tag {{#if this.label}}active{{/if}}" data-action="useSkillLabelMenu" data-path="{{concat "events." this.event ".influenceSkills." this.id}}" title="{{localize "PF2ESubsystems.Influence.EditInfluenceSkillLabel"}}"></i>
-                                                        <i class="fa-solid fa-trash clickable-icon" data-action="influenceSkillRemove" data-event="{{this.event}}" data-skill="{{this.id}}"></i>
+                                                        <i class="fa-solid fa-trash clickable-icon" data-action="removeData" data-id="{{this.id}}" data-path="{{concat "events." this.event ".influenceSkills"}}"></i>
                                                     </div>
                                                 </div>
                                             {{/each}}
@@ -277,10 +280,13 @@
                                 {{/with}}
                             </div>
                         {{else}}
-                            <div class="skills-container">
+                            <div class="influence skills-container">
                                 {{#each this.event.extendedInfluenceSkills.data}}
                                     {{#if (or ../isGM (not this.hidden))}}
-                                        <div class="skill-container {{#if (not this.hidden)}}revealed{{/if}} secondary-container" {{#if ../isGM}}data-action="influenceInfluenceSkillToggleHidden"{{/if}} data-event="{{../event.id}}" data-skill="{{this.id}}">
+                                        <div 
+                                            class="influence skill-container {{#if (not this.hidden)}}revealed{{/if}} secondary-container" {{#if ../isGM}}data-action="influenceInfluenceSkillToggleHidden"{{/if}} data-event="{{../event.id}}" data-skill="{{this.id}}"
+                                            data-id="{{this.id}}" data-drop-container="skill-container" data-drop-path="{{concat "events." ../event.id ".influenceSkills"}}"
+                                        >
                                             <div class="flexrow">
                                                 {{{this.element}}}
                                                 {{#if this.label}}<div class="text-normal italic {{#if this.selectedAdjustment}}disabled{{/if}}">({{this.label}})</div>{{/if}}
@@ -309,13 +315,13 @@
                     </div>
                     <div class="event-section-container">  
                         {{#if this.editMode}}
-                            {{#each this.event.influence}}
+                            {{#each this.event.extendedInfluence}}
                                 <div class="event-section-inner-container secondary-container">
                                     <div class="event-section-header-container">
                                         <div class="title-small-container">
                                             {{this.name}}
                                         </div>
-                                        <i class="fa-solid fa-trash clickable-icon event-section-delete-button" data-action="influenceInfluenceRemove" data-event="{{../event.id}}" data-influence={{this.id}}></i>
+                                        <i class="fa-solid fa-trash clickable-icon event-section-delete-button" data-action="removeData" data-id={{this.id}} data-path="{{concat "events." ../event.id ".influence"}}"></i>
                                         <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon event-section-opener" data-action="influenceToggleOpenInfluence" data-influence="{{this.id}}"></i> 
                                     </div>
 
@@ -338,10 +344,12 @@
                             {{/each}}
                         {{else}}
                             <div class="influence-cards">
-                                {{#each this.event.influence}}
+                                {{#each this.event.extendedInfluence}}
                                     {{#if shown}}
-                                        <div class="influence-card secondary-container {{#if (and ../isGM (not ../settings.autoRevealInfluence)) }}clickable-icon{{/if}} {{#if (and ../isGM this.hidden)}}unrevealed{{/if}}" 
+                                        <div 
+                                            class="influence-card secondary-container {{#if (and ../isGM (not ../settings.autoRevealInfluence)) }}clickable-icon{{/if}} {{#if (and ../isGM this.hidden)}}unrevealed{{/if}}" 
                                             {{#if (and ../isGM (not ../settings.autoRevealInfluence))}}data-action="influenceInfluenceToggleHidden"{{/if}} data-event="{{../event.id}}" data-influence="{{this.id}}"
+                                            data-id="{{this.id}}" data-drop-container="influence-card" data-drop-path="{{concat "events." ../event.id ".influence"}}"
                                         >
                                             {{{this.enrichedDescription}}}
                                         </div>
@@ -360,13 +368,13 @@
                     </div>
                     <div class="event-section-container">  
                         {{#if this.editMode}}
-                            {{#each this.event.weaknesses}}
+                            {{#each this.event.extendedWeaknesses}}
                                 <div class="event-section-inner-container secondary-container">
                                     <div class="event-section-header-container">
                                         <div class="title-small-container">
                                             {{this.name}}
                                         </div>
-                                        <i class="fa-solid fa-trash clickable-icon event-section-delete-button" data-action="influenceWeaknessRemove" data-event="{{../event.id}}" data-weakness={{this.id}}></i>
+                                        <i class="fa-solid fa-trash clickable-icon event-section-delete-button" data-action="removeData" data-id="{{this.id}}" data-path="{{concat "events." ../event.id ".weaknesses"}}"></i>
                                         <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon event-section-opener" data-action="influenceToggleOpenWeakness" data-weakness="{{this.id}}"></i> 
                                     </div>
 
@@ -389,9 +397,9 @@
                             {{/each}}
                         {{else}}
                             <div class="weakness-cards">
-                                {{#each this.event.weaknesses}}
+                                {{#each this.event.extendedWeaknesses}}
                                     {{#if (or ../isGM (not this.hidden))}}
-                                        <div class="modifier-card secondary-container">
+                                        <div class="modifier-card secondary-container weakness-card" data-id="{{this.id}}" data-drop-container="weakness-card" data-drop-path="{{concat "events." ../event.id ".weaknesses"}}">
                                             <div class="modifier-card-description {{#if ../isGM}}clickable-icon{{/if}} {{#if this.hidden}}unrevealed{{/if}}" {{#if ../isGM}}data-action="influenceWeaknessToggleHidden"{{/if}} data-event="{{../event.id}}" data-weakness="{{this.id}}">{{{this.enrichedDescription}}}</div>
                                             {{#if ../isGM}}
                                                 <div class="modifier-card-action-container clickable-icon {{#if this.modifier.used}}used{{/if}}" data-action="influenceWeaknessToggleUsed" data-event="{{../event.id}}" data-weakness="{{this.id}}">
@@ -414,13 +422,13 @@
                     </div>
                     <div class="event-section-container">
                         {{#if this.editMode}}
-                            {{#each this.event.resistances}}
+                            {{#each this.event.extendedResistances}}
                                 <div class="event-section-inner-container secondary-container">
                                     <div class="event-section-header-container">
                                         <div class="title-small-container">
                                             {{this.name}}
                                         </div>
-                                        {{#if ../isGM}}<i class="fa-solid fa-trash clickable-icon event-section-delete-button" data-action="influenceResistanceRemove" data-event="{{../event.id}}" data-resistance="{{this.id}}"></i>{{/if}}
+                                        {{#if ../isGM}}<i class="fa-solid fa-trash clickable-icon event-section-delete-button" data-action="removeData" data-id="{{this.id}}" data-path="{{concat "events." ../event.id ".resistances"}}"></i>{{/if}}
                                         <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon event-section-opener" data-action="influenceToggleOpenResistance" data-resistance="{{this.id}}"></i> 
                                     </div>
 
@@ -442,10 +450,10 @@
                                 </div> 
                             {{/each}}
                         {{else}}
-                            <div class="weakness-cards">
-                                {{#each this.event.resistances}}
+                            <div class="resistance-cards">
+                                {{#each this.event.extendedResistances}}
                                     {{#if (or ../isGM (not this.hidden))}}
-                                        <div class="modifier-card secondary-container">
+                                        <div class="modifier-card secondary-container resistance-card" data-id="{{this.id}}" data-drop-container="resistance-card" data-drop-path="{{concat "events." ../event.id ".resistances"}}">
                                             <div class="modifier-card-description {{#if ../isGM}}clickable-icon{{/if}} {{#if this.hidden}}unrevealed{{/if}}" {{#if ../isGM}}data-action="influenceResistanceToggleHidden"{{/if}} data-event="{{../event.id}}" data-resistance="{{this.id}}">{{{this.enrichedDescription}}}</div>
                                             {{#if ../isGM}}
                                                 <div class="modifier-card-action-container clickable-icon {{#if this.modifier.used}}used{{/if}}" data-action="influenceResistanceToggleUsed" data-event="{{../event.id}}" data-resistance="{{this.id}}">
@@ -468,13 +476,13 @@
                     </div>
                     <div class="event-section-container">
                         {{#if this.editMode}}
-                            {{#each this.event.penalties}}
+                            {{#each this.event.extendedPenalties}}
                                 <div class="event-section-inner-container secondary-container">
                                     <div class="event-section-header-container">
                                         <div class="title-small-container">
                                             {{this.name}}
                                         </div>
-                                        {{#if ../isGM}}<i class="fa-solid fa-trash clickable-icon event-section-delete-button" data-action="influencePenaltyRemove" data-event="{{../event.id}}" data-penalty="{{this.id}}"></i>{{/if}}
+                                        {{#if ../isGM}}<i class="fa-solid fa-trash clickable-icon event-section-delete-button" data-action="removeData" data-id="{{this.id}}" data-path="{{concat "events." ../event.id ".penalties"}}"></i>{{/if}}
                                         <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon event-section-opener" data-action="influenceToggleOpenPenalty" data-penalty="{{this.id}}"></i> 
                                     </div>
 
@@ -496,10 +504,10 @@
                                 </div> 
                             {{/each}}
                         {{else}}
-                            <div class="weakness-cards">
-                                {{#each this.event.penalties}}
+                            <div class="penalty-cards">
+                                {{#each this.event.extendedPenalties}}
                                     {{#if (or ../isGM (not this.hidden))}}
-                                        <div class="modifier-card secondary-container">
+                                        <div class="modifier-card secondary-container penalty-card" data-id="{{this.id}}" data-drop-container="penalty-card" data-drop-path="{{concat "events." ../event.id ".penalties"}}">
                                             <div class="modifier-card-description {{#if (not this.modifier.value)}}simple{{/if}} {{#if ../isGM}}clickable-icon{{/if}} {{#if this.hidden}}unrevealed{{/if}}" {{#if ../isGM}}data-action="influencePenaltyToggleHidden"{{/if}} data-event="{{../event.id}}" data-penalty="{{this.id}}">{{{this.enrichedDescription}}}</div>
                                             {{#if (and ../isGM this.modifier.value)}}
                                                 <div class="modifier-card-action-container clickable-icon {{#if this.modifier.used}}used{{/if}}" data-action="influencePenaltyToggleUsed" data-event="{{../event.id}}" data-penalty="{{this.id}}">

@@ -22,7 +22,7 @@
         "manifest": "https://raw.githubusercontent.com/foundryvtt/pf2e/master/system.json",
         "compatibility": {
           "minimum": "7.0.4-alpha",
-          "verified": "7.0.5-beta"
+          "verified": "7.0.6-beta"
         }
       }
     ],

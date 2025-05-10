@@ -38,19 +38,19 @@
                                 {{#if this.isGM}}<i class="fa-solid fa-caret-down clickable-icon {{#if (eq this.event.awarenessPoints.current 0)}}disabled{{/if}} event-section-number-lower" {{#if (gt this.event.awarenessPoints.current 0)}}data-action="infiltrationUpdateAwarenessPoints"{{/if}} data-event="{{this.event.id}}"></i>{{/if}}
                                 {{#if this.isGM}}<i class="fa-solid fa-caret-down clickable-icon {{#if (eq this.event.awarenessPoints.hidden 0)}}disabled{{/if}} event-section-number-lower-diagonal" {{#if (gt this.event.awarenessPoints.hidden 0)}}data-action="infiltrationUpdateHiddenAwarenessPoints"{{/if}} data-event="{{this.event.id}}"></i>{{/if}}
                             {{else}}
-                                <i class="fa-solid fa-plus" data-action="addInfiltrationAwarenessBreakpoint" data-event="{{this.event.id}}" title="{{localize "Add additional awareness breakpoint"}}"></i>
+                                <i class="fa-solid fa-plus" data-action="addData" data-path="{{concat "events." this.event.id ".awarenessPoints.breakpoints"}}" title="{{localize "Add additional awareness breakpoint"}}"></i>
                             {{/if}}
                         </div>
                     </div>
                     <div class="awareness-point-breakpoints-container">
-                        {{#each this.event.awarenessPoints.breakpoints}}
+                        {{#each this.event.extendedAwarenessPointsBreakpoints}}
                             {{#if (or ../isGM (not this.playerHidden))}}
-                                <div class="awareness-point-breakpoint-container {{#if this.open}}open{{/if}} secondary-container {{#if this.active}}accent{{/if}}">
+                                <div class="awareness-point-breakpoint-container {{#if this.open}}open{{/if}} secondary-container {{#if this.active}}accent{{/if}}" data-id="{{this.id}}" data-drop-container="awareness-point-breakpoint-container" data-drop-path="{{concat "events." ../event.id ".awarenessPoints.breakpoints"}}">
                                     <div class="awareness-point-breakpoint-inner-container text-normal bold">
                                         {{this.breakpoint}}
                                         <div>{{localize "PF2ESubsystems.Basic.Points"}}</div>
                                         {{#if ../editMode}}
-                                            <i class="fa-solid fa-trash clickable-icon awareness-point-breakpoint-delete" data-action="infiltrationRemoveAwarenessBreakpoint" data-event="{{../this.event.id}}" data-breakpoint="{{this.id}}"></i>
+                                            <i class="fa-solid fa-trash clickable-icon awareness-point-breakpoint-delete" data-action="removeData" data-id="{{this.id}}" data-path="{{concat "events." ../event.id ".awarenessPoints.breakpoints"}}"></i>
                                         {{else}}
                                             {{#if this.hideable}}<i class="fa-solid {{#if this.hidden}}fa-eye-slash{{else}}fa-eye{{/if}} clickable-icon awareness-point-breakpoint-hider" data-action="infiltrationToggleHideAwarenessBreakpoint" data-event="{{../this.event.id}}" data-breakpoint="{{this.id}}"></i>{{/if}}
                                             {{#if this.showActivate}}<i class="fa-solid fa-check clickable-icon awareness-point-breakpoint-enable {{#if this.inUse}}active{{/if}}" data-action="infiltrationToggleAwarenessBreakpointInUse" data-event="{{../this.event.id}}" data-breakpoint="{{this.id}}" title="{{localize "PF2ESubsystems.Infiltration.Awareness.ActivateAwarenessBreakpoint"}}"></i>{{/if}}
@@ -90,11 +90,11 @@
             <div class="edge-points-container event-section primary-container accent">
                 <div class="event-section-title title-container primary-container">{{localize "PF2ESubsystems.Infiltration.EdgePoints"}}</div>
                 <div class="infiltration-edges-container">
-                    {{#each this.event.edgePoints}}
-                        <div class="event-section-inner-container infiltration-edge-container secondary-container" data-edge="{{this.id}}">
+                    {{#each this.event.extendedEdgePoints}}
+                        <div class="event-section-inner-container infiltration-edge-container secondary-container" data-edge="{{this.id}}" data-id="{{this.id}}" data-drop-container="infiltration-edge-container" data-drop-path="{{concat "events." ../event.id ".edgePoints"}}">
                             {{#if ../editMode}}
                                 <div class="event-section-header-container">
-                                    <i class="fa-solid fa-trash event-section-delete-button" data-action="infiltrationEdgeRemove" data-event="{{../event.id}}" data-edge="{{this.id}}"></i>
+                                    <i class="fa-solid fa-trash event-section-delete-button clickable-icon" data-action="removeData" data-id="{{this.id}}" data-path="{{concat "events." ../event.id ".edgePoints"}}"></i>
                                     <div class="text-normal bold infiltration-edge-title {{#if this.used}}spent{{/if}}">{{this.name}}</div>
                                     <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon event-section-opener" data-action="infiltrationToggleOpenEdge" data-event="{{../event.id}}" data-edge="{{this.id}}"></i> 
                                 </div>
@@ -228,10 +228,10 @@
                         </div>
                         <div class="event-main-view-container primary-container accent">
                             {{#if this.editMode}}<button class="tertiary-container objective-obstacle-add-button" data-action="addInfiltrationObstacle" data-event="{{this.event.id}}" data-objective="{{this.currentObjective.id}}"><i class="fa-solid fa-plus"></i>{{localize "PF2ESubsystems.Infiltration.AddNewObstacle"}}</button>{{/if}}                 
-                            <div class="event-section-container">
-                                {{#each this.currentObjective.obstacles}}
+                            <div class="event-section-container infiltration-obstacles-container">
+                                {{#each this.currentObjective.extendedObstacles}}
                                     {{#if (or ../isGM (not this.hidden))}}
-                                        <div class="event-section-inner-container secondary-container">
+                                        <div class="event-section-inner-container secondary-container infiltration-obstacle-container" data-id="{{id}}" data-drop-container="infiltration-obstacle-container" data-drop-path="{{concat "events." ../event.id ".objectives." ../currentObjective.id ".obstacles"}}">
                                             <div class="event-section-header-container {{#if ../editMode}}edit-mode{{/if}}">
                                                 {{#if ../editMode}}
                                                     {{#if this.open}}
@@ -454,15 +454,15 @@
                                 </div>
                             </div>
                             <div class="event-section-container infiltration-opportunities-container">
-                                {{#each this.event.opportunities}}
+                                {{#each this.event.extendedOpportunities}}
                                     {{#if (or ../isGM (not this.hidden))}}
-                                        <div class="event-section-inner-container secondary-container">
+                                        <div class="event-section-inner-container secondary-container infiltration-opportunity-inner-container" data-id="{{this.id}}" data-drop-container="infiltration-opportunity-inner-container" data-drop-path="{{concat "events." ../event.id ".opportunities"}}">
                                             {{#if ../editMode}}
                                                 <div class="event-section-header-container">
                                                     <div class="title-small-container">
                                                         {{this.name}}
                                                     </div>
-                                                    <i class="fa-solid fa-trash clickable-icon event-section-delete-button" data-action="removeInfiltrationOpportunity" data-event="{{../event.id}}" data-opportunity={{this.id}}></i>
+                                                    <i class="fa-solid fa-trash clickable-icon event-section-delete-button" data-action="removeData" data-id="{{this.id}}" data-path="{{concat "events." ../event.id ".opportunities"}}"></i>
                                                     <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon event-section-opener" data-action="infiltrationToggleOpenOpportunity" data-opportunity="{{this.id}}"></i> 
                                                 </div>
 
@@ -518,7 +518,7 @@
                             <div class="infiltration-complications-container event-section-container">
                                 {{#each this.event.extendedComplications}}
                                     {{#if (or ../isGM (not this.hidden))}}
-                                        <div class="event-section-inner-container secondary-container">
+                                        <div class="event-section-inner-container secondary-container infiltration-complication-inner-container" data-id="{{this.id}}" data-drop-container="infiltration-complication-inner-container" data-drop-path="{{concat "events." ../event.id ".complications"}}">
                                             {{#if ../editMode}}
                                                 <div class="event-section-header-container edit-mode">
                                                     {{#if this.open}}
@@ -541,7 +541,7 @@
                                                         </div>
                                                     {{/if}}
                                                     
-                                                    <i class="fa-solid fa-trash clickable-icon event-section-delete-button" data-action="removeInfiltrationComplication" data-event="{{../event.id}}" data-complication={{this.id}}></i>
+                                                    <i class="fa-solid fa-trash clickable-icon event-section-delete-button" data-action="removeData" data-id="{{this.id}}" data-path="{{concat "events." ../event.id ".complications"}}"></i>
                                                     <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon event-section-opener" data-action="infiltrationToggleOpenComplication" data-complication="{{this.id}}"></i> 
                                                 </div>
                                                 <div class="event-section-body {{#if this.open}}expanded{{/if}}">
@@ -769,7 +769,7 @@
                             {{#each this.event.extendedPreparations.activities}}
                                 {{#if (or ../isGM (not this.hidden))}}
                                     <div class="event-section-inner-container preparation-card primary-container" data-activity="{{this.id}}">
-                                        <div class="event-section-header-container preparation-activity-header">
+                                        <div class="event-section-header-container preparation-activity-header" data-id="{{this.id}}" data-drop-container="preparation-activity-header" data-drop-path="{{concat "events." ../event.id ".preparations.activities"}}">
                                             {{#if ../editMode}}
                                                 {{#if this.open}}
                                                     <nav class="tabs event-inner-tabs">

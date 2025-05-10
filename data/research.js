@@ -34,12 +34,14 @@ export class Research extends foundry.abstract.DataModel {
         researchChecks: new fields.TypedObjectField(new fields.EmbeddedDataField(ResearchChecks)),
         researchBreakpoints: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
+          position: new fields.NumberField({ required: true, integer: true }),
           hidden: new fields.BooleanField({ required: true, initial: true }),
           breakpoint: new fields.NumberField({ requird: true, initial: 5 }),
           description: new fields.HTMLField(),
         })),
         researchEvents: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
+          position: new fields.NumberField({ required: true, integer: true }),
           name: new fields.StringField({ required: true, initial: "New Research Event" }),
           hidden: new fields.BooleanField({ required: true, initial: true }),
           timing: new fields.StringField(),
@@ -136,6 +138,7 @@ class ResearchChecks extends foundry.abstract.DataModel {
     const fields = foundry.data.fields;
     return {
       id: new fields.StringField({ required: true }),
+      position: new fields.NumberField({ required: true, integer: true }),
       name: new fields.StringField({ required: true, initial: "New Check" }),
       hidden: new fields.BooleanField({ required: true, initial: true }),
       description: new fields.HTMLField(),

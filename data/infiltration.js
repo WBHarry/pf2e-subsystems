@@ -14,7 +14,7 @@ export class Infiltration extends foundry.abstract.DataModel {
       const fields = foundry.data.fields;
       return {
         id: new fields.StringField({ required: true }),
-        position: new fields.NumberField({ required: true }),
+        position: new fields.NumberField({ required: true, integer: true }),
         moduleProvider: new fields.StringField(),
         name: new fields.StringField({ required: true }),
         version: new fields.StringField({ required: true }),
@@ -31,6 +31,7 @@ export class Infiltration extends foundry.abstract.DataModel {
           hidden: new fields.NumberField({ required: true, initial: 0}),
           breakpoints: new fields.TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
+            position: new fields.NumberField({ required: true, integer: true }),
             hidden: new fields.BooleanField({ required: true, initial: true }),
             inUse: new fields.BooleanField({ required: true, inttial: false }),
             dcIncrease: new fields.NumberField(),
@@ -40,6 +41,7 @@ export class Infiltration extends foundry.abstract.DataModel {
         }),
         edgePoints: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
+          position: new fields.NumberField({ required: true, integer: true }),
           name: new fields.StringField({ required: true }),
           faked: new fields.BooleanField({ required: true, initial: false }),
           used: new fields.BooleanField({ required: true, initial: false }),
@@ -51,11 +53,13 @@ export class Infiltration extends foundry.abstract.DataModel {
         })),
         objectives: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
+          position: new fields.NumberField({ required: true, integer: true }),
           hidden: new fields.BooleanField({ required: true, initial: false }),
           name: new fields.StringField({ required: true }),
           position: new fields.NumberField({ required: true }),
           obstacles: new fields.TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
+            position: new fields.NumberField({ required: true, integer: true }),
             hidden: new fields.BooleanField({ required: true, initial: false }),
             name: new fields.StringField({ required: true }),
             img: new fields.StringField({}),
@@ -94,6 +98,7 @@ export class Infiltration extends foundry.abstract.DataModel {
         })),
         complications: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
+          position: new fields.NumberField({ required: true, integer: true }),
           hidden: new fields.BooleanField({ required: true, initial: true }),
           name: new fields.StringField({ required: true }),
           infiltrationPoints: new fields.SchemaField({
@@ -135,6 +140,7 @@ export class Infiltration extends foundry.abstract.DataModel {
         })),
         opportunities: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
+          position: new fields.NumberField({ required: true, integer: true }),
           hidden: new fields.BooleanField({ required: true, initial: true }),
           name: new fields.StringField({ required: true }),
           requirements: new fields.StringField(),
@@ -314,6 +320,7 @@ export class Preparations extends foundry.abstract.DataModel {
       usesPreparation: new fields.BooleanField({ required: true, initial: false }),
       activities: new fields.TypedObjectField(new fields.SchemaField({
         id: new fields.StringField({ required: true }),
+        position: new fields.NumberField({ required: true, integer: true }),
         hidden: new fields.BooleanField({ required: true, initial: false }),
         name: new fields.StringField(),
         tags: new fields.ArrayField(new fields.StringField()),

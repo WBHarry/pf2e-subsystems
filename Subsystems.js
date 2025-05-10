@@ -33,13 +33,14 @@ class Chase extends foundry.abstract.DataModel {
           name: new fields.StringField({ required: true }),
           img: new fields.StringField({ required: true }),
           hidden: new fields.BooleanField({ initial: false }),
-          position: new fields.NumberField({ required: true, nullable: true, initial: 0 }),
+          position: new fields.NumberField({ required: true, nullable: true }),
           player: new fields.BooleanField({ required: true, initial: false }),
           obstacle: new fields.NumberField({ required: true, initial: 1 }),
           hasActed: new fields.BooleanField({ required: true, initial: false }),
         })),
         obstacles: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
+          position: new fields.NumberField({ required: true, integer: true }),
           name: new fields.StringField({ required: true }),
           img: new fields.StringField({}),
           position: new fields.NumberField({ required: true, integer: true }),
@@ -499,7 +500,7 @@ class Infiltration extends foundry.abstract.DataModel {
       const fields = foundry.data.fields;
       return {
         id: new fields.StringField({ required: true }),
-        position: new fields.NumberField({ required: true }),
+        position: new fields.NumberField({ required: true, integer: true }),
         moduleProvider: new fields.StringField(),
         name: new fields.StringField({ required: true }),
         version: new fields.StringField({ required: true }),
@@ -516,6 +517,7 @@ class Infiltration extends foundry.abstract.DataModel {
           hidden: new fields.NumberField({ required: true, initial: 0}),
           breakpoints: new fields.TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
+            position: new fields.NumberField({ required: true, integer: true }),
             hidden: new fields.BooleanField({ required: true, initial: true }),
             inUse: new fields.BooleanField({ required: true, inttial: false }),
             dcIncrease: new fields.NumberField(),
@@ -525,6 +527,7 @@ class Infiltration extends foundry.abstract.DataModel {
         }),
         edgePoints: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
+          position: new fields.NumberField({ required: true, integer: true }),
           name: new fields.StringField({ required: true }),
           faked: new fields.BooleanField({ required: true, initial: false }),
           used: new fields.BooleanField({ required: true, initial: false }),
@@ -536,11 +539,13 @@ class Infiltration extends foundry.abstract.DataModel {
         })),
         objectives: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
+          position: new fields.NumberField({ required: true, integer: true }),
           hidden: new fields.BooleanField({ required: true, initial: false }),
           name: new fields.StringField({ required: true }),
           position: new fields.NumberField({ required: true }),
           obstacles: new fields.TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
+            position: new fields.NumberField({ required: true, integer: true }),
             hidden: new fields.BooleanField({ required: true, initial: false }),
             name: new fields.StringField({ required: true }),
             img: new fields.StringField({}),
@@ -579,6 +584,7 @@ class Infiltration extends foundry.abstract.DataModel {
         })),
         complications: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
+          position: new fields.NumberField({ required: true, integer: true }),
           hidden: new fields.BooleanField({ required: true, initial: true }),
           name: new fields.StringField({ required: true }),
           infiltrationPoints: new fields.SchemaField({
@@ -620,6 +626,7 @@ class Infiltration extends foundry.abstract.DataModel {
         })),
         opportunities: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
+          position: new fields.NumberField({ required: true, integer: true }),
           hidden: new fields.BooleanField({ required: true, initial: true }),
           name: new fields.StringField({ required: true }),
           requirements: new fields.StringField(),
@@ -799,6 +806,7 @@ class Preparations extends foundry.abstract.DataModel {
       usesPreparation: new fields.BooleanField({ required: true, initial: false }),
       activities: new fields.TypedObjectField(new fields.SchemaField({
         id: new fields.StringField({ required: true }),
+        position: new fields.NumberField({ required: true, integer: true }),
         hidden: new fields.BooleanField({ required: true, initial: false }),
         name: new fields.StringField(),
         tags: new fields.ArrayField(new fields.StringField()),
@@ -871,7 +879,7 @@ class Influence extends foundry.abstract.DataModel {
       const fields = foundry.data.fields;
       return {
         id: new fields.StringField({ required: true }),
-        position: new fields.NumberField({ required: true }),
+        position: new fields.NumberField({ required: true, integer: true }),
         moduleProvider: new fields.StringField(),
         name: new fields.StringField({ required: true }),
         version: new fields.StringField({ required: true }),
@@ -891,6 +899,7 @@ class Influence extends foundry.abstract.DataModel {
         }),
         discoveries: new fields.TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
+            position: new fields.NumberField({ required: true, integer: true }),
             label: new fields.StringField(),
             hidden: new fields.BooleanField({ required: true, initial: false }),
             skill: new fields.StringField({ required: true, initial: 'acrobatics' }),
@@ -901,6 +910,7 @@ class Influence extends foundry.abstract.DataModel {
         })),
         influenceSkills: new fields.TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
+            position: new fields.NumberField({ required: true, integer: true }),
             name: new fields.StringField({ required: true }),
             label: new fields.StringField(),
             hidden: new fields.BooleanField({ required: true, initial: true }),
@@ -912,6 +922,7 @@ class Influence extends foundry.abstract.DataModel {
         })),
         influence: new fields.TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
+            position: new fields.NumberField({ required: true, integer: true }),
             name: new fields.StringField({ required: true }),
             hidden: new fields.BooleanField({ required: true, initial: true }),
             points: new fields.NumberField({ required: true, integer: true, initial: 0 }),
@@ -919,6 +930,7 @@ class Influence extends foundry.abstract.DataModel {
         })),
         weaknesses: new fields.TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
+            position: new fields.NumberField({ required: true, integer: true }),
             name: new fields.StringField({ required: true }),
             hidden: new fields.BooleanField({ required: true, initial: true }),
             description: new fields.HTMLField({ required: true }),
@@ -929,6 +941,7 @@ class Influence extends foundry.abstract.DataModel {
         })),
         resistances: new fields.TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
+            position: new fields.NumberField({ required: true, integer: true }),
             name: new fields.StringField({ required: true }),
             hidden: new fields.BooleanField({ required: true, initial: true }),
             description: new fields.HTMLField({ required: true }),
@@ -939,6 +952,7 @@ class Influence extends foundry.abstract.DataModel {
         })),
         penalties: new fields.TypedObjectField(new fields.SchemaField({
             id: new fields.StringField({ required: true }),
+            position: new fields.NumberField({ required: true, integer: true }),
             name: new fields.StringField({ required: true }),
             hidden: new fields.BooleanField({ required: true, initial: true }),
             description: new fields.HTMLField({ required: true }),
@@ -1095,12 +1109,14 @@ class Research extends foundry.abstract.DataModel {
         researchChecks: new fields.TypedObjectField(new fields.EmbeddedDataField(ResearchChecks)),
         researchBreakpoints: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
+          position: new fields.NumberField({ required: true, integer: true }),
           hidden: new fields.BooleanField({ required: true, initial: true }),
           breakpoint: new fields.NumberField({ requird: true, initial: 5 }),
           description: new fields.HTMLField(),
         })),
         researchEvents: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
+          position: new fields.NumberField({ required: true, integer: true }),
           name: new fields.StringField({ required: true, initial: "New Research Event" }),
           hidden: new fields.BooleanField({ required: true, initial: true }),
           timing: new fields.StringField(),
@@ -1197,6 +1213,7 @@ class ResearchChecks extends foundry.abstract.DataModel {
     const fields = foundry.data.fields;
     return {
       id: new fields.StringField({ required: true }),
+      position: new fields.NumberField({ required: true, integer: true }),
       name: new fields.StringField({ required: true, initial: "New Check" }),
       hidden: new fields.BooleanField({ required: true, initial: true }),
       description: new fields.HTMLField(),
@@ -1874,6 +1891,10 @@ const getNewPositionOnDrop = (startPosition, dropPosition, currentPosition) => {
     }
 
     return currentPosition <= dropPosition && currentPosition > startPosition ? currentPosition-1 : currentPosition;
+};
+
+const positionSort = (objectValue) => {
+    return Object.values(objectValue).sort((a, b) => a.position-b.position);
 };
 
 const { HandlebarsApplicationMixin: HandlebarsApplicationMixin$5, ApplicationV2: ApplicationV2$5 } = foundry.applications.api;
@@ -2704,7 +2725,8 @@ class SystemView extends HandlebarsApplicationMixin(
 
       this.#dragDrop = this.createDragDropHandlers();
       this.dragInfo = {
-        event: null,
+        id: null,
+        dropContainer: null,
       };
 
       this.onUpdateView = Hooks.on(
@@ -2744,6 +2766,8 @@ class SystemView extends HandlebarsApplicationMixin(
         openImportMenu: this.openImportMenu,
         useEditTextDialog: this.useEditTextDialog,
         useSkillLabelMenu: this.useSkillLabelMenu,
+        addData: this.addData,
+        removeData: this.removeData,
         /* Chases */
         researchUpdateRoundsCurrent: this.researchUpdateRoundsCurrent,
         addPlayerParticipants: this.addPlayerParticipants,
@@ -2760,12 +2784,9 @@ class SystemView extends HandlebarsApplicationMixin(
         updateChasePoints: this.updateChasePoints,
         /* Research */
         researchUpdateTimeLimitCurrent: this.researchUpdateTimeLimitCurrent,
-        addResearchBreakpoint: this.addResearchBreakpoint,
-        removeResearchBreakpoint: this.removeResearchBreakpoint,
         toggleResearchBreakpointHidden: this.toggleResearchBreakpointHidden,
         toggleResearchOpenResearchBreakpoint: this.toggleResearchOpenResearchBreakpoint,
         addResearchCheck: this.addResearchCheck,
-        removeResearchCheck: this.removeResearchCheck,
         toggleResearchCheckHidden: this.toggleResearchCheckHidden,
         researchToggleOpenResearchCheck: this.researchToggleOpenResearchCheck,
         researchAddResearchCheckSkillCheck: this.researchAddResearchCheckSkillCheck,
@@ -2774,8 +2795,6 @@ class SystemView extends HandlebarsApplicationMixin(
         researchAddSkill: this.researchAddSkill,
         researchRemoveSkillCheck: this.researchRemoveSkillCheck,
         researchRemoveSkill: this.researchRemoveSkill,
-        addResearchEvent: this.addResearchEvent,
-        removeResearchEvent: this.removeResearchEvent,
         toggleResearchEventHidden: this.toggleResearchEventHidden,
         researchToggleOpenResearchEvent: this.researchToggleOpenResearchEvent,
         researhCheckPointsUpdate: this.researhCheckPointsUpdate,
@@ -2794,10 +2813,8 @@ class SystemView extends HandlebarsApplicationMixin(
         infiltrationToggleOpenObstacle: this.infiltrationToggleOpenObstacle,
         infiltrationToggleObjectiveHidden: this.infiltrationToggleObjectiveHidden,
         infiltrationToggleObstacleHidden: this.infiltrationToggleObstacleHidden,
-        addInfiltrationAwarenessBreakpoint: this.addInfiltrationAwarenessBreakpoint,
         infiltrationToggleOpenAwarenessBreakpoint: this.infiltrationToggleOpenAwarenessBreakpoint,
         infiltrationToggleHideAwarenessBreakpoint: this.infiltrationToggleHideAwarenessBreakpoint,
-        infiltrationRemoveAwarenessBreakpoint: this.infiltrationRemoveAwarenessBreakpoint,
         infiltrationToggleAwarenessBreakpointInUse: this.infiltrationToggleAwarenessBreakpointInUse,
         addInfiltrationOpportunity: this.addInfiltrationOpportunity,
         addInfiltrationComplication: this.addInfiltrationComplication,
@@ -2805,8 +2822,6 @@ class SystemView extends HandlebarsApplicationMixin(
         infiltrationToggleOpenOpportunity: this.infiltrationToggleOpenOpportunity,
         infiltrationToggleComplicationHidden: this.infiltrationToggleComplicationHidden,
         infiltrationToggleOpenComplication: this.infiltrationToggleOpenComplication,
-        removeInfiltrationOpportunity: this.removeInfiltrationOpportunity,
-        removeInfiltrationComplication: this.removeInfiltrationComplication,
         infiltrationUpdateAwarenessPoints: this.infiltrationUpdateAwarenessPoints,
         infiltrationUpdateHiddenAwarenessPoints: this.infiltrationUpdateHiddenAwarenessPoints,
         infiltrationAddComplicationSkill: this.infiltrationAddComplicationSkill,
@@ -2830,15 +2845,9 @@ class SystemView extends HandlebarsApplicationMixin(
         infiltrationToggleOpenEdge: this.infiltrationToggleOpenEdge,
         infiltrationToggleEdgeFaked: this.infiltrationToggleEdgeFaked,
         infiltrationToggleEdgeUsed: this.infiltrationToggleEdgeUsed,
-        infiltrationEdgeRemove: this.infiltrationEdgeRemove,
         infiltrationPreparationActivityToggleHidden: this.infiltrationPreparationActivityToggleHidden,
         /* Influence */
-        influenceDiscoveryAdd: this.influenceDiscoveryAdd,
-        influenceDiscoveryRemove: this.influenceDiscoveryRemove,
-        influenceSkillAdd: this.influenceSkillAdd,
-        influenceSkillRemove: this.influenceSkillRemove,
         influenceInfluenceAdd: this.influenceInfluenceAdd,
-        influenceInfluenceRemove: this.influenceInfluenceRemove,
         influencePointsUpdate: this.influencePointsUpdate,
         influenceInfluenceToggleHidden: this.influenceInfluenceToggleHidden,
         influenceToggleOpenInfluence: this.influenceToggleOpenInfluence,
@@ -2846,11 +2855,8 @@ class SystemView extends HandlebarsApplicationMixin(
         influenceToggleOpenResistance: this.influenceToggleOpenResistance,
         influenceToggleOpenPenalty: this.influenceToggleOpenPenalty, 
         influenceWeaknessAdd: this.influenceWeaknessAdd,
-        influenceWeaknessRemove: this.influenceWeaknessRemove,
         influenceResistanceAdd: this.influenceResistanceAdd,
-        influenceResistanceRemove: this.influenceResistanceRemove,
         influencePenaltyAdd: this.influencePenaltyAdd,
-        influencePenaltyRemove: this.influencePenaltyRemove,
         influenceDiscoveryToggleHidden: this.influenceDiscoveryToggleHidden,
         influenceInfluenceSkillToggleHidden: this.influenceInfluenceSkillToggleHidden,
         influenceWeaknessToggleHidden: this.influenceWeaknessToggleHidden,
@@ -2882,7 +2888,28 @@ class SystemView extends HandlebarsApplicationMixin(
       },
       dragDrop: [
         { dragSelector: ".event-container", dropSelector: ".events-container" },
+        /* Chase */
+        // { dragSelector: ".radio-button", dropSelector: ".chase-event-display" },
         { dragSelector: null, dropSelector: ".participants-outer-container" },
+        { dragSelector: ".participant-container", dropSelector: ".participants-container" },
+        /* Research */
+        { dragSelector: ".research-check-container", dropSelector: ".research-checks-inner-container" },
+        { dragSelector: ".research-breakpoint-container", dropSelector: ".research-breakpoints-inner-container" },
+        { dragSelector: ".research-event-container", dropSelector: ".research-events-inner-container" },
+        /* Influence */
+        { dragSelector: ".discovery.skill-container", dropSelector: ".discovery.skills-container" },
+        { dragSelector: ".influence.skill-container", dropSelector: ".influence.skills-container" },
+        { dragSelector: ".influence-card", dropSelector: ".influence-cards" },
+        { dragSelector: ".weakness-card", dropSelector: ".weakness-cards" },
+        { dragSelector: ".resistance-card", dropSelector: ".resistance-cards" },
+        { dragSelector: ".penalty-card", dropSelector: ".penalty-cards" },
+        /* Infiltration */
+        { dragSelector: ".awareness-point-breakpoint-container", dropSelector: ".awareness-point-breakpoints-container" },
+        { dragSelector: ".infiltration-edge-container", dropSelector: ".infiltration-edges-container" },
+        { dragSelector: ".infiltration-obstacle-container", dropSelector: ".infiltration-obstacles-container" },
+        { dragSelector: ".infiltration-opportunity-inner-container", dropSelector: ".infiltration-opportunity-container" },
+        { dragSelector: ".infiltration-complication-inner-container", dropSelector: ".infiltration-complication-container" },
+        { dragSelector: ".preparation-activity-header", dropSelector: ".preparation-cards-container" },
       ],
     };
 
@@ -3218,7 +3245,7 @@ class SystemView extends HandlebarsApplicationMixin(
     }
 
     static selectEvent(_, button){
-      this.selected.event = button.dataset.event;
+      this.selected.event = button.dataset.id;
       this.render({ parts: [this.tabGroups.main] });
     }
 
@@ -3265,6 +3292,7 @@ class SystemView extends HandlebarsApplicationMixin(
                 obstacles: {
                   [obstacleId]: {
                     id: obstacleId,
+                    position: 1,
                     img: "icons/svg/cowled.svg",
                     name: game.i18n.localize('PF2ESubsystems.View.NewObstacle'),
                     position: 1,
@@ -3324,7 +3352,11 @@ class SystemView extends HandlebarsApplicationMixin(
                 background: elements.background.value ? elements.background.value : 'icons/magic/unholy/silhouette-robe-evil-power.webp',
                 awarenessPoints: {
                   current: 0,
-                  breakpoints: game.settings.get(MODULE_ID, settingIDs.infiltration.settings).defaultAwarenessBreakpoints,
+                  breakpoints: Object.values(game.settings.get(MODULE_ID, settingIDs.infiltration.settings).defaultAwarenessBreakpoints).reduce((acc, breakpoint, index) => {
+                    acc[breakpoint.id] = { ...breakpoint, position: index+1 };
+
+                    return acc;
+                  }, {}),
                 },
                 objectives: {
                   [objectiveId]: {
@@ -3333,7 +3365,11 @@ class SystemView extends HandlebarsApplicationMixin(
                     position: 1,
                   }
                 },
-                preparations: { activities: defaultInfiltrationPreparations },
+                preparations: { activities: Object.values(defaultInfiltrationPreparations).reduce((acc, activity, index) => {
+                  acc[activity.id] = { ...activity, position: index+1 };
+
+                  return acc;
+                }, {}) },
               };
             },
             attachListeners: this.filePickerListener.bind(this),
@@ -3870,7 +3906,7 @@ class SystemView extends HandlebarsApplicationMixin(
       const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event];
       const currentObstacle = Object.values(event.obstacles).find(x => x.position === Number.parseInt(button.dataset.position));
 
-      if(currentObstacle.position === 1) {
+      if(currentObstacle.position === 1 && !currentObstacle.locked) {
         ui.notifications.error(game.i18n.localize('PF2ESubsystems.Chase.Errors.LockFirstObstacle'));
         return;
       }
@@ -3901,20 +3937,9 @@ class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.timeLimit.current`]: button.dataset.increase ? currentValue + 1 : currentValue -1 });
     }
 
-    static async addResearchBreakpoint(_, button) {
-      const breakpointId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchBreakpoints.${breakpointId}`]: {
-        id: breakpointId,
-      }});
-    }
-
     static async researchUpdateResearchPoints(_, button) {
       const currentResearchPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchPoints;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchPoints`]: button.dataset.increase ? currentResearchPoints + 1 : currentResearchPoints - 1});
-    }
-
-    static async removeResearchBreakpoint(_, button){
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchBreakpoints.-=${button.dataset.breakpoint}`]: null});
     }
 
     static async toggleResearchBreakpointHidden(_, button) {
@@ -3930,23 +3955,17 @@ class SystemView extends HandlebarsApplicationMixin(
     }
 
     static async addResearchCheck(_, button) {
-      const researchCheckId = foundry.utils.randomID();
       const skillCheckId = foundry.utils.randomID();
       const skillId = foundry.utils.randomID();
 
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${researchCheckId}`]: {
-        id: researchCheckId,
+      await this.addByPath(`events.${button.dataset.event}.researchChecks`, {
         [`skillChecks.${skillCheckId}`]: {
           id: skillCheckId,
           [`skills.${skillId}`]: {
             id: skillId,
           }
-        },
-      }});
-    }
-
-    static async removeResearchCheck(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.-=${button.dataset.check}`]: null });
+        }
+      });
     }
 
     static async toggleResearchCheckHidden(_, button) {
@@ -3997,17 +4016,6 @@ class SystemView extends HandlebarsApplicationMixin(
 
     static async researchRemoveSkill(_, button){
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.${button.dataset.skillCheck}.skills.-=${button.dataset.skill}`]: null});
-    }
-
-    static async addResearchEvent(_, button){
-      const researchEventId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchEvents.${researchEventId}`]: {
-        id: researchEventId,
-      }});
-    }
-
-    static async removeResearchEvent(_, button){
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchEvents.-=${button.dataset.researchEvent}`]: null });
     }
 
     static async toggleResearchEventHidden(_, button){
@@ -4224,13 +4232,6 @@ class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.objectives.${button.dataset.objective}.obstacles.${button.dataset.obstacle}.hidden`]: !currentHidden });
     }
 
-    static async addInfiltrationAwarenessBreakpoint(_, button) {
-      const breakpointId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.awarenessPoints.breakpoints.${breakpointId}`]: {
-        id: breakpointId,
-      }});
-    }
-
     static async infiltrationToggleOpenAwarenessBreakpoint(_, button) {
       this.selected.infiltration.awarenessBreakpoint = this.selected.infiltration.awarenessBreakpoint === button.dataset.breakpoint ? null : button.dataset.breakpoint;
       this.render({ parts: [this.tabGroups.main] });
@@ -4241,37 +4242,27 @@ class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.awarenessPoints.breakpoints.${button.dataset.breakpoint}.hidden`]: !currentHidden });
     }
 
-    static async infiltrationRemoveAwarenessBreakpoint(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.awarenessPoints.breakpoints.-=${button.dataset.breakpoint}`]: null });
-    }
-
     static async infiltrationToggleAwarenessBreakpointInUse(_, button) {
       const currentInUse = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].awarenessPoints.breakpoints[button.dataset.breakpoint].inUse;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.awarenessPoints.breakpoints.${button.dataset.breakpoint}.inUse`]: !currentInUse });
     }
 
     static async addInfiltrationOpportunity(_, button) {
-      const opportunityId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.opportunities.${opportunityId}`]: {
-        id: opportunityId,
-        name: game.i18n.localize("PF2ESubsystems.Infiltration.NewOpportunity"),
-      }});
+      await this.addByPath(`events.${button.dataset.event}.opportunities`, { name: game.i18n.localize("PF2ESubsystems.Infiltration.NewOpportunity") });
     }
 
     static async addInfiltrationComplication(_, button) {
-      const complicationId = foundry.utils.randomID();
       const skillCheckId = foundry.utils.randomID();
       const skillId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${complicationId}`]: {
-        id: complicationId,
+      await this.addByPath(`events.${button.dataset.event}.complications`, {
         name: game.i18n.localize("PF2ESubsystems.Infiltration.NewComplication"),
         [`skillChecks.${skillCheckId}`]: {
           id: skillCheckId,
           [`skills.${skillId}`]: {
             id: skillId,
           }
-        },
-      }});
+        }
+      });
     }
 
     static async infiltrationToggleOpportunityHidden(_, button) {
@@ -4298,14 +4289,6 @@ class SystemView extends HandlebarsApplicationMixin(
       this.tabGroups.infiltrationComplication = 'description';
       this.selected.infiltration.complicationResultSelect = null;
       this.render({ parts: [this.tabGroups.main] }); 
-    }
-
-    static async removeInfiltrationOpportunity(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.opportunities.-=${button.dataset.opportunity}`]: null });
-    }
-
-    static async removeInfiltrationComplication(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.-=${button.dataset.complication}`]: null });
     }
 
     static async infiltrationUpdateAwarenessPoints(_, button) {
@@ -4472,6 +4455,7 @@ class SystemView extends HandlebarsApplicationMixin(
 
       if(totalAttempts === activity.maxAttempts) return;
 
+      const edgePoints = Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].edgePoints);
       const edgeId = foundry.utils.randomID();
       const result = activity.results[button.dataset.result];
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}`]: {
@@ -4479,6 +4463,7 @@ class SystemView extends HandlebarsApplicationMixin(
         edgePoints: {
           [edgeId]: {
             id: edgeId,
+            position: edgePoints.length+1,
             faked: Boolean(result.fakeDegreeOfSuccess),
             name: activity.edgeLabel,
             originActivity: button.dataset.activity,
@@ -4583,10 +4568,6 @@ class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.edgePoints.${button.dataset.edge}.used`]: !currentUsed });
     }
 
-    static async infiltrationEdgeRemove(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.edgePoints.-=${button.dataset.edge}`]: null });
-    }
-
     static async infiltrationPreparationActivityToggleHidden(_, button) {
       const currentHidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].preparations.activities[button.dataset.activity].hidden;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.hidden`]: !currentHidden });
@@ -4594,31 +4575,8 @@ class SystemView extends HandlebarsApplicationMixin(
     //#endregion 
 
     //#region influence
-    static async influenceDiscoveryAdd(_, button) {
-      const discoveryId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.discoveries.${discoveryId}`]: { id: discoveryId } });
-    }
-
-    static async influenceDiscoveryRemove(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.discoveries.-=${button.dataset.discovery}`]:  null });
-    }
-
-    static async influenceSkillAdd(_, button) {
-      const skillId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influenceSkills.${skillId}`]: { id: skillId } });
-    }
-
-    static async influenceSkillRemove(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influenceSkills.-=${button.dataset.skill}`]:  null });
-    }
-
     static async influenceInfluenceAdd(_, button) {
-      const influenceId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influence.${influenceId}`]: { id: influenceId, name: 'New Influence' } });
-    }
-
-    static async influenceInfluenceRemove(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influence.-=${button.dataset.influence}`]:  null });
+      await this.addByPath(`events.${button.dataset.event}.influence`, { name: 'New Influence' });
     }
 
     static async influencePointsUpdate(_, button) {
@@ -4664,30 +4622,15 @@ class SystemView extends HandlebarsApplicationMixin(
     }
 
     static async influenceWeaknessAdd(_, button) {
-      const weaknessId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.weaknesses.${weaknessId}`]: { id: weaknessId, name: 'New Weakness' } });
-    }
-
-    static async influenceWeaknessRemove(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.weaknesses.-=${button.dataset.weakness}`]: null });
+      await this.addByPath(`events.${button.dataset.event}.weaknesses`, { name: 'New Weakness' });
     }
 
     static async influenceResistanceAdd(_, button) {
-      const resistanceId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.resistances.${resistanceId}`]: { id: resistanceId, name: 'New Resistance' } });
-    }
-
-    static async influenceResistanceRemove(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.resistances.-=${button.dataset.resistance}`]: null });
+      await this.addByPath(`events.${button.dataset.event}.resistances`, { name: 'New Resistance' });
     }
 
     static async influencePenaltyAdd(_, button) {
-      const penaltyId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.penalties.${penaltyId}`]: { id: penaltyId, name: 'New Penalty' } });
-    }
-
-    static async influencePenaltyRemove(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.penalties.-=${button.dataset.penalty}`]: null });
+      await this.addByPath(`events.${button.dataset.event}.penalties`, { name: 'New Penalty' });
     }
 
     static async influenceDiscoveryToggleHidden(_, button) {
@@ -4751,6 +4694,38 @@ class SystemView extends HandlebarsApplicationMixin(
       }).then(async value => {
         await updateDataModel(this.tabGroups.main, { [`${button.dataset.path}.label`]: value });
       });
+    }
+
+    async addByPath(path, update={}) {
+      const current = foundry.utils.getProperty(game.settings.get(MODULE_ID, this.tabGroups.main), path);
+      const newId = foundry.utils.randomID();
+      await updateDataModel(this.tabGroups.main, { [path]: {
+        [newId]: { 
+          id: newId, 
+          position: Object.keys(current).length+1,
+          ...update,
+        }
+      }});
+    }
+
+    static async addData(_, button) {
+      await this.addByPath(button.dataset.path);
+    }
+
+    static async removeData(_, button) {
+      const data = foundry.utils.getProperty(game.settings.get(MODULE_ID, this.tabGroups.main), button.dataset.path);
+      const currentPosition = data[button.dataset.id].position;
+      const updatedData = Object.values(data).reduce((acc, curr) => {
+        if(curr.id === button.dataset.id) {
+          acc[`-=${curr.id}`] = null;
+        }
+        else {
+          acc[curr.id] = { position: curr.position > currentPosition ? curr.position-1 : curr.position };
+        }
+
+        return acc;
+      }, {});
+      await updateDataModel(this.tabGroups.main, { [button.dataset.path]: updatedData });
     }
 
     static async influenceRoundsUpdate(_, button) {
@@ -5175,6 +5150,9 @@ class SystemView extends HandlebarsApplicationMixin(
             context.selectedEvent.enrichedPremise = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.selectedEvent.premise);
             context.selectedEvent.enrichedGMNotes = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.selectedEvent.gmNotes);
             context.showRounds = this.editMode || context.selectedEvent.rounds.max;
+          
+            context.selectedEvent.obstacles = positionSort(context.selectedEvent.obstacles);
+            context.selectedEvent.extendedParticipants = positionSort(context.selectedEvent.participants);
           }
           
           context.currentObstacleNr = this.selected.chaseObstacle ?? 1;
@@ -5227,18 +5205,21 @@ class SystemView extends HandlebarsApplicationMixin(
                 }
               }
             }
+            context.selectedEvent.extendedResearchChecksData = positionSort(context.selectedEvent.researchChecks);
 
             for(var key of Object.keys(context.selectedEvent.researchBreakpoints)) {
               const researchBreakpoint = context.selectedEvent.researchBreakpoints[key];
               researchBreakpoint.open = researchBreakpoint.id === this.selected.research?.openResearchBreakpoint;
               researchBreakpoint.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(researchBreakpoint.description);
             }
+            context.selectedEvent.extendedResearchBreakpoints = positionSort(context.selectedEvent.researchBreakpoints);
 
             for(var key of Object.keys(context.selectedEvent.researchEvents)) {
               const researchEvent = context.selectedEvent.researchEvents[key];
               researchEvent.open = researchEvent.id === this.selected.research?.openResearchEvent;
               researchEvent.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(researchEvent.description);
             }
+            context.selectedEvent.extendedResearchEvents = positionSort(context.selectedEvent.researchEvents);
           }
 
           context.revealedResearchChecks = context.selectedEvent ? Object.values(context.selectedEvent.researchChecks).filter(x => !x.hidden).length : 0;
@@ -5291,6 +5272,7 @@ class SystemView extends HandlebarsApplicationMixin(
             const awarenessDCIncrease = context.selectedEvent.awarenessDCIncrease;
 
             context.currentObjective = Object.values(context.selectedEvent.objectives).find(x => x.position === context.currentObjectiveNr);
+            context.selectedEvent.extendedObjectives = positionSort(context.selectedEvent.objectives);
             for(var key of Object.keys(context.currentObjective.obstacles)) {
               var obstacle = context.currentObjective.obstacles[key];
               obstacle.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(obstacle.description);
@@ -5387,6 +5369,7 @@ class SystemView extends HandlebarsApplicationMixin(
                 }
               }
             }
+            context.currentObjective.extendedObstacles = positionSort(context.currentObjective.obstacles);
 
             for(var key of Object.keys(context.selectedEvent.edgePoints)){
               const edgePoint = context.selectedEvent.edgePoints[key];
@@ -5396,6 +5379,7 @@ class SystemView extends HandlebarsApplicationMixin(
               edgePoint.enrichedHiddenDescription = edgePoint.hiddenDescription ? await foundry.applications.ux.TextEditor.implementation.enrichHTML(edgePoint.hiddenDescription) : null;
               edgePoint.playerDescription = !edgePoint.faked && edgePoint.enrichedHiddenDescription ? edgePoint.enrichedHiddenDescription : edgePoint.enrichedDescription;
             }
+            context.selectedEvent.extendedEdgePoints = positionSort(context.selectedEvent.edgePoints);
 
             for(var key of Object.keys(context.selectedEvent.awarenessPoints.breakpoints)){
               const breakpoint = context.selectedEvent.awarenessPoints.breakpoints[key];
@@ -5407,12 +5391,14 @@ class SystemView extends HandlebarsApplicationMixin(
               breakpoint.playerHidden = context.settings.autoRevealAwareness ? context.selectedEvent.awarenessPoints.current < breakpoint.breakpoint : breakpoint.hidden;
               breakpoint.hideable = game.user.isGM && !context.settings.autoRevealAwareness && !context.editMode;
             }
+            context.selectedEvent.extendedAwarenessPointsBreakpoints = positionSort(context.selectedEvent.awarenessPoints.breakpoints);
 
             for(var key of Object.keys(context.selectedEvent.opportunities)){
               var opportunity = context.selectedEvent.opportunities[key];
               opportunity.open = this.selected.openInfiltrationOpportunity === opportunity.id;
               opportunity.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(opportunity.description);
             }
+            context.selectedEvent.extendedOpportunities = positionSort(context.selectedEvent.opportunities);
 
             for(var key of Object.keys(context.selectedEvent.extendedComplications)){
               const complication = context.selectedEvent.extendedComplications[key];
@@ -5453,6 +5439,7 @@ class SystemView extends HandlebarsApplicationMixin(
 
               complication.selectedResult = Object.values(complication.results).find(x => x.degreeOfSuccess === this.selected.infiltration.complicationResultSelect);
             }
+            context.selectedEvent.extendedComplications = positionSort(context.selectedEvent.extendedComplications);
 
             for(var key of Object.keys(context.selectedEvent.extendedPreparations.activities)) {
               var activity = context.selectedEvent.extendedPreparations.activities[key];
@@ -5504,6 +5491,7 @@ class SystemView extends HandlebarsApplicationMixin(
 
               activity.selectedResult = Object.values(activity.results).find(x => x.degreeOfSuccess === this.selected.infiltration.preparations.resultSelect);
             }
+            context.selectedEvent.extendedPreparations.activities = positionSort(context.selectedEvent.extendedPreparations.activities);
           }
 
           context.skillOptions = [
@@ -5558,6 +5546,7 @@ class SystemView extends HandlebarsApplicationMixin(
                 }
               }
             }
+            context.selectedEvent.extendedDiscoveries.data = positionSort(context.selectedEvent.extendedDiscoveries.data);
 
             for(var key of Object.keys(context.selectedEvent.extendedInfluenceSkills.data)) {
               const skill = context.selectedEvent.extendedInfluenceSkills.data[key];
@@ -5577,6 +5566,7 @@ class SystemView extends HandlebarsApplicationMixin(
                 }
               }
             }
+            context.selectedEvent.extendedInfluenceSkills.data = positionSort(context.selectedEvent.extendedInfluenceSkills.data);
 
             for(var key of Object.keys(context.selectedEvent.influence)) {
               const influence = context.selectedEvent.influence[key];
@@ -5588,24 +5578,28 @@ class SystemView extends HandlebarsApplicationMixin(
               influence.hidden = context.settings.autoRevealInfluence ? context.selectedEvent.influencePoints < influence.points : influence.hidden;
               influence.open = this.selected.influence.openInfluence === influence.id;
             }
+            context.selectedEvent.extendedInfluence = positionSort(context.selectedEvent.influence);
 
             for(var key of Object.keys(context.selectedEvent.weaknesses)) {
               const weakness = context.selectedEvent.weaknesses[key];
               weakness.open =  this.selected.influence.openWeakness === weakness.id;
               weakness.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(weakness.description);
             }
+            context.selectedEvent.extendedWeaknesses = positionSort(context.selectedEvent.weaknesses);
 
             for(var key of Object.keys(context.selectedEvent.resistances)) {
               const resistance = context.selectedEvent.resistances[key];
               resistance.open =  this.selected.influence.openResistance === resistance.id;
               resistance.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(resistance.description);
             }
+            context.selectedEvent.extendedResistances = positionSort(context.selectedEvent.resistances);
 
             for(var key of Object.keys(context.selectedEvent.penalties)) {
               const penalty = context.selectedEvent.penalties[key];
               penalty.open =  this.selected.influence.openPenalty === penalty.id;
               penalty.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(penalty.description);
             }
+            context.selectedEvent.extendedPenalties = positionSort(context.selectedEvent.penalties);
           }
 
           context.skillOptions = [
@@ -5743,38 +5737,34 @@ class SystemView extends HandlebarsApplicationMixin(
 
   async _onDragStart(event) {
     const target = event.currentTarget;
-    if (!target.dataset.event) return;
+    if (!target.dataset.id) {
+      event.preventDefault();
+      return;
+    }
 
-    this.dragInfo.event = target.dataset.event;
+    this.dragInfo.id = target.dataset.id;
+    this.dragInfo.dropContainer = `.${target.dataset.dropContainer}`;
     event.dataTransfer.setData("text/plain", JSON.stringify(target.dataset));
-    event.dataTransfer.setDragImage(target, 60, 0);
+    event.dataTransfer.setDragImage(target, 60, target.clientHeight/2);
   }
 
   async _onDragOver(event) {
-    const self = event.target.classList.contains('event-container') ? event.target : event.target.closest('.event-container');
+    if(!this.dragInfo.dropContainer) return;
+    
+    const self = event.target.classList.contains(this.dragInfo.dropContainer) ? event.target : event.target.closest(this.dragInfo.dropContainer);
     this.#eventDropTarget = self;
-    if(!self || self.dataset.event === this.dragInfo.event || self.classList.contains('drop-target')) return;
+    if(!self || self.dataset.event === this.dragInfo.id || self.classList.contains('drop-target')) return;
     self.classList.toggle('drop-target');
     self.addEventListener('dragleave', () => self.classList.remove("drop-target"), {once: true});
-    // if (!this.dragData.bookmarkActive) return;
-
-    // let self = event.target;
-    // let dropTarget = self.matches(".bookmark-container.draggable")
-    //   ? self.querySelector(".bookmark")
-    //   : self.closest(".bookmark");
-
-    // if (!dropTarget || dropTarget.classList.contains("drop-hover")) {
-    //   return;
-    // }
-
-    // dropTarget.classList.add("drop-hover");
-    // return false;
   }
 
   async _onDrop(event) {
     if (!game.user.isGM) return;
   
-    const data = JSON.parse(event.dataTransfer.getData('text/plain'));
+    const dataString = event.dataTransfer.getData('text/plain');
+    if(!dataString) return;
+
+    const data = JSON.parse(dataString);
     if(event.currentTarget.classList.contains('participants-outer-container')){
       if(data?.type !== 'Actor') {
         return;
@@ -5796,11 +5786,12 @@ class SystemView extends HandlebarsApplicationMixin(
       }});
     }
 
-    const dropTarget = this.#eventDropTarget?.dataset?.event;
-    if(dropTarget && dropTarget !== data.event) {
-      this.dragInfo.event = null;
-      const events = game.settings.get(MODULE_ID, this.tabGroups.main).events;
-      const startPosition = events[data.event].position;
+    const dropTarget = this.#eventDropTarget?.dataset?.id;
+    if(dropTarget) {
+      this.dragInfo.id = null;
+      this.dragInfo.dropContainer = null;
+      const events = foundry.utils.getProperty(game.settings.get(MODULE_ID, this.tabGroups.main), data.dropPath);
+      const startPosition = events[data.id].position;
       const dropPosition = events[dropTarget].position;
       const updatedEvents = Object.keys(events).reduce((acc, key) => {
         const event = events[key];
@@ -5810,7 +5801,7 @@ class SystemView extends HandlebarsApplicationMixin(
 
         return acc;
       }, {});
-      await updateDataModel(this.tabGroups.main, { 'events': updatedEvents });
+      await updateDataModel(this.tabGroups.main, { [data.dropPath]: updatedEvents });
       // const layers = this.scene.flags[MODULE_ID][ModuleFlags.Scene.CanvasLayers];
       // const layer = layers[data.layer];
       // const dropLayer = layers[dropTarget];
@@ -6070,6 +6061,11 @@ const migrateChase = async () => {
                 [event.id]: {
                     version: '0.8.1',
                     position: i+1,
+                    obstacles: Object.values(event.obstacles).reduce((acc, obstacle, index) => {
+                        acc[obstacle.id] = { ...obstacle, position: index+1 };
+
+                        return acc;
+                    }, {}),
                 }
             }});
         }
@@ -6164,11 +6160,55 @@ const migrateInfiltration = async () => {
                 }
             }});
         }
-        if(versionCompare(event.version, '0.8.1')){
+        if(versionCompare(event.version, '0.8.2')){
             await infiltration.updateSource({ events: {
                 [event.id]: {
                     version: '0.8.1',
                     position: i+1,
+                    awarenessPoints: {
+                        ...event.awarenessPoints,
+                        breakpoints: Object.values(event.awarenessPoints.breakpoints).reduce((acc, breakpoint, index) => {
+                            acc[breakpoint.id] = { ...breakpoint, position: index+1 };
+
+                            return acc;
+                        }, {}),
+                    },
+                    edgePoints: Object.values(event.edgePoints).reduce((acc, edgePoint, index) => {
+                        acc[edgePoint.id] = { ...edgePoint, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    objectives: Object.values(event.objectives).reduce((acc, objective, index) => {
+                        acc[objective.id] = { 
+                            ...objective, 
+                            position: index+1,
+                            obstacles: Object.values(objective.obstacles).reduce((acc, obstacle, index) => {
+                                acc[obstacle.id] = { ...obstacle, position: index+1 };
+
+                                return acc;
+                            }, {}),
+                        };
+
+                        return acc;
+                    }, {}),
+                    complications: Object.values(event.complications).reduce((acc, complication, index) => {
+                        acc[complication.id] = { ...complication, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    opportunities: Object.values(event.opportunities).reduce((acc, opportunity, index) => {
+                        acc[opportunity.id] = { ...opportunity, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    preparations: {
+                        ...event.preparations,
+                        activities: Object.values(event.preparations.activities).reduce((acc, activity, index) => {
+                            acc[activity.id] = { ...activity, position: index+1 };
+
+                            return acc;
+                        }, {}),
+                    },
                 }
             }});
         }
@@ -6187,6 +6227,36 @@ const migrateInfluence = async () => {
                 [event.id]: {
                     version: '0.8.1',
                     position: i+1,
+                    discoveries: Object.values(event.discoveries).reduce((acc, discovery, index) => {
+                        acc[discovery.id] = { ...discovery, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    influenceSkills: Object.values(event.influenceSkills).reduce((acc, skill, index) => {
+                        acc[skill.id] = { ...skill, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    influence: Object.values(event.influence).reduce((acc, influence, index) => {
+                        acc[influence.id] = { ...influence, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    weaknesses: Object.values(event.weaknesses).reduce((acc, weakness, index) => {
+                        acc[weakness.id] = { ...weakness, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    resistances: Object.values(event.resistances).reduce((acc, resistance, index) => {
+                        acc[resistance.id] = { ...resistance, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    penalties: Object.values(event.penalties).reduce((acc, penalty, index) => {
+                        acc[penalty.id] = { ...penalty, position: index+1 };
+
+                        return acc;
+                    }, {}),
                 }
             }});
         }
@@ -6205,6 +6275,21 @@ const migrateResearch = async () => {
                 [event.id]: {
                     version: '0.8.1',
                     position: i+1,
+                    researchChecks: Object.values(event.researchChecks).reduce((acc, check, index) => {
+                        acc[check.id] = { ...check, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    researchBreakpoints: Object.values(event.researchBreakpoints).reduce((acc, point, index) => {
+                        acc[point.id] = { ...point, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    researchEvents: Object.values(event.researchEvents).reduce((acc, event, index) => {
+                        acc[event.id] = { ...event, position: index+1 };
+
+                        return acc;
+                    }, {}),
                 }
             }});
         }

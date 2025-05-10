@@ -194,3 +194,7 @@ export const getNewPositionOnDrop = (startPosition, dropPosition, currentPositio
 
     return currentPosition <= dropPosition && currentPosition > startPosition ? currentPosition-1 : currentPosition;
 };
+
+export const positionSort = (objectValue) => {
+    return Object.values(objectValue).sort((a, b) => a.position-b.position);
+}
