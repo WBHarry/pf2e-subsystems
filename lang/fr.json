@@ -40,6 +40,10 @@
                 "Single": "Mois",
                 "Plural": "Mois"
             },
+            "Week": {
+                "Single": "Semaine",
+                "Plural": "Semaines"
+            },
             "Day": {
                 "Single": "Jour",
                 "Plural": "Jours"
@@ -193,6 +197,8 @@
             "Lore": "Connaissance",
             "Basic": "Simple",
             "Timing": "Timing",
+            "OptionalModifier": "Modificateur facultatif",
+            "ModifierHint": "Affiche un bouton optionnel pour le MJ qui augmentera ou diminuera les DD des tests de recherche de la valeur saisie lorsqu'il est activé.",
             "ResearchEvents": "Événements de recherche",
             "ResearchBreakpoints": "Seuils de recherche",
             "ResearchBreakpoint": "Seuil",
@@ -238,7 +244,9 @@
                 "IsUsed": "Préparations Activé",
                 "NotUsed": "Préparations Désactivé",
                 "AwarenessPoints": "Points de vigilance",
-                "FakeDegreeOfSuccess": "Faux degré montré aux joueurs"
+                "FakeDegreeOfSuccess": "Faux degré montré aux joueurs",
+                "ConfirmDeletePreparationActivityTitle": "Supprimer l'activité de préparation",
+                "ConfirmDeletePreparationActivityText": "Êtes-vous sûr de vouloir supprimer l'activité {activity} ?"
             },
             "InfiltrationTab": {
                 "Infiltration": "Infiltration",
