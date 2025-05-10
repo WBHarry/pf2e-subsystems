@@ -2330,6 +2330,11 @@ const migrateResearch = async () => {
     var events = Object.values(research.events);
     for(var i = 0; i < events.length; i++){
         const event = events[i];
+
+        if(!event.version && research.events['undefined']) {
+                await research.updateSource({ [`events.-=undefined`]: null });
+        }
+
         if(versionCompare(event.version, '0.8.1')){
             await research.updateSource({ events: {
                 [event.id]: {
