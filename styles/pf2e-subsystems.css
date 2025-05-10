@@ -2450,6 +2450,10 @@ form.pf2e-subsystems.application > header .header-control {
   /* Tagify */
   /* Visibility */
 }
+.pf2e-subsystems a.inline-check[data-pf2-traits*=secret] {
+  background: var(--visibility-gm-bg);
+  border-color: #720073;
+}
 .pf2e-subsystems .prosemirror,
 .pf2e-subsystems prose-mirror {
   gap: 0;

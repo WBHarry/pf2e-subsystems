@@ -2116,6 +2116,11 @@ const migrateChase = async () => {
     var events = Object.values(chase.events);
     for(var i = 0; i < events.length; i++){
         const event = events[i];
+
+        if(!event.version && chase.events['undefined']) {
+            await chase.updateSource({ [`events.-=undefined`]: null });
+        }
+
         if(versionCompare(event.version, '0.8.1')){
             await chase.updateSource({ events: {
                 [event.id]: {
@@ -2139,6 +2144,11 @@ const migrateInfiltration = async () => {
     const events = Object.values(infiltration.events);
     for(var i = 0; i < events.length; i++){
         const event = events[i];
+
+        if(!event.version && infiltration.events['undefined']) {
+            await infiltration.updateSource({ [`events.-=undefined`]: null });
+        }
+
         if(versionCompare(event.version, '0.7.8')){
             await infiltration.updateSource({ events: {
                 [event.id]: {
@@ -2282,6 +2292,11 @@ const migrateInfluence = async () => {
     var events = Object.values(influence.events);
     for(var i = 0; i < events.length; i++){
         const event = events[i];
+
+        if(!event.version && influence.events['undefined']) {
+            await influence.updateSource({ [`events.-=undefined`]: null });
+        }
+
         if(versionCompare(event.version, '0.8.1')){
             await influence.updateSource({ events: {
                 [event.id]: {
