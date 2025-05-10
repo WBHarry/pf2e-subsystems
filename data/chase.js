@@ -79,16 +79,16 @@ export class Chase extends foundry.abstract.DataModel {
       return Object.values(this.obstacles)
         .sort((a, b) => a.position - b.position)
         .reduce((acc, obstacle) => {
-          acc[obstacle.id] = {
+          acc.push({
             ...obstacle,
             chasePoints: {
               ...obstacle.chasePoints,
               atStart: obstacle.chasePoints.current === 0,
               finished: obstacle.chasePoints.current === obstacle.chasePoints.goal,
             }
-          };
+          });
 
           return acc;
-      }, {});
+      }, []);
     }
 }

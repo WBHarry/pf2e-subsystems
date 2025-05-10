@@ -794,6 +794,9 @@ form.pf2e-subsystems.application > header .header-control {
   align-items: center;
   text-align: center;
 }
+.pf2e-subsystems.systems-view .event-outer-container .event-container .event-radio-container .title-container .event-radio-title-outer .event-radio-title input {
+  text-align: center;
+}
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-radio-container .title-container .event-radio-title-outer .event-radio-title .event-radio-lock {
   position: absolute;
   top: 0;
@@ -1185,6 +1188,9 @@ form.pf2e-subsystems.application > header .header-control {
   position: relative;
   display: flex;
   align-items: center;
+  text-align: center;
+}
+.pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .title-container .chase-event-header-inner .chase-event-header-title input {
   text-align: center;
 }
 .pf2e-subsystems .chase-view .event-outer-container .event-container .event-main-container .chase-event-container .title-container .chase-event-header-inner .chase-event-header-title .chase-event-header-title-delete {

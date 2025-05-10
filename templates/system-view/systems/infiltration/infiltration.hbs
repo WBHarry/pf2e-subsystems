@@ -201,10 +201,10 @@
             <div class="event-tab tab {{this.infiltrationTabs.infiltration.cssClass}}" data-group="{{this.infiltrationTabs.infiltration.group}}" data-tab="{{this.infiltrationTabs.infiltration.id}}">
                 <div class="event-tab-container-major">
                     <fieldset class="event-radio-container infiltration-obstacle-container {{this.infiltrationObstacleStyle}} primary-container">
-                        <legend class="event-radio-header">
-                            {{#each this.event.objectives as |objective id|}}
+                        <legend class="event-radio-header infiltration-obstacle-inner-container">
+                            {{#each this.event.extendedObjectives as |objective id|}}
                                 {{#if (or (not objective.hidden) ../isGM)}}
-                                    {{> "modules/pf2e-subsystems/templates/partials/radio-button.hbs" selected=(eq objective.position ../currentObjectiveNr) locked=this.hidden event=../event.id action="setCurrentInfiltrationObjective" obstacle=objective.position }}
+                                    {{> "modules/pf2e-subsystems/templates/partials/radio-button.hbs" selected=(eq objective.id ../currentObjective.id) locked=this.hidden event=../event.id action="setCurrentInfiltrationObjective" id=objective.id dropPath=(concat "events." ../event.id ".objectives") }}
                                 {{/if}}
                             {{/each}}
                             {{#if this.editMode}}<i class="fa-solid fa-plus chase-event-display-add clickable-icon" data-action="addInfiltrationObjective" data-event="{{this.event.id}}" title="{{localize "PF2ESubsystems.Chase.AddObjective"}}"></i>{{/if}}
@@ -220,7 +220,7 @@
                                             <span>{{this.currentObjective.name}}</span>
                                         </div>
                                         {{#if (and (not this.settings.hideObstacleLockIcon) (and this.isGM (not (eq this.currentObjective.position 1))))}}
-                                            <i class="fa-solid {{#if this.currentObjective.hidden}}fa-lock{{else}}fa-lock-open{{/if}} event-radio-lock clickable-icon" data-action="onToggleObstacleLock" data-event="{{this.event.id}}" data-position="{{this.currentObjective.position}}"></i>
+                                            <i class="fa-solid {{#if this.currentObjective.hidden}}fa-lock{{else}}fa-lock-open{{/if}} event-radio-lock clickable-icon" data-action="onToggleObjectiveLock" data-event="{{this.event.id}}" data-id="{{this.currentObjective.id}}"></i>
                                         {{/if}}
                                     {{/if}}
                                 </div>

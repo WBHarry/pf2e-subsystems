@@ -1,6 +1,6 @@
 <div 
-    class="radio-button {{#if this.selected}}selected{{/if}} clickable-icon" data-action="{{this.action}}" data-event="{{this.event}}" data-position="{{this.position}}" 
-    {{!-- {{#if this.dropPath}}data-id="{{this.dropId}}" data-drop-container="radio-button" data-drop-path="{{this.dropPath}}" {{/if}} --}}
+    class="radio-button {{#if this.selected}}selected{{/if}} clickable-icon" data-action="{{this.action}}" data-event="{{this.event}}" data-id="{{this.id}}" 
+    {{#if this.dropPath}}data-id="{{this.id}}" data-drop-container="radio-button" data-drop-path="{{this.dropPath}}" {{/if}}
 >
     {{#if this.locked}}
         <div class="radio-button-locked">

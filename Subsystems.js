@@ -79,17 +79,17 @@ class Chase extends foundry.abstract.DataModel {
       return Object.values(this.obstacles)
         .sort((a, b) => a.position - b.position)
         .reduce((acc, obstacle) => {
-          acc[obstacle.id] = {
+          acc.push({
             ...obstacle,
             chasePoints: {
               ...obstacle.chasePoints,
               atStart: obstacle.chasePoints.current === 0,
               finished: obstacle.chasePoints.current === obstacle.chasePoints.goal,
             }
-          };
+          });
 
           return acc;
-      }, {});
+      }, []);
     }
 }
 
@@ -2967,10 +2967,10 @@ const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
 
 const getDefaultSelected = (event) => ({
   event: event ?? null,
-  chaseObstacle: 1,
+  chaseObstacle: null,
   research: {},
   infiltration: { 
-    currentObjective: 1,
+    currentObjective: null,
     preparations: {
       openActivity: 1,
     } 
@@ -3141,6 +3141,7 @@ class SystemView extends HandlebarsApplicationMixin(
         influenceInfluenceSkillToggleOpen: this.influenceInfluenceSkillToggleOpen,
         influenceRoundsUpdate: this.influenceRoundsUpdate,
         influenceOpenLinkedNPCs: this.influenceOpenLinkedNPCs,
+        onToggleObjectiveLock: this.onToggleObjectiveLock,
       },
       form: { handler: this.updateData, submitOnChange: true },
       window: {
@@ -3161,7 +3162,7 @@ class SystemView extends HandlebarsApplicationMixin(
       dragDrop: [
         { dragSelector: ".event-container", dropSelector: ".events-container" },
         /* Chase */
-        // { dragSelector: ".radio-button", dropSelector: ".chase-event-display" },
+        { dragSelector: ".radio-button", dropSelector: ".chase-event-display" },
         { dragSelector: null, dropSelector: ".participants-outer-container" },
         { dragSelector: ".participant-container", dropSelector: ".participants-container" },
         /* Research */
@@ -3176,6 +3177,7 @@ class SystemView extends HandlebarsApplicationMixin(
         { dragSelector: ".resistance-card", dropSelector: ".resistance-cards" },
         { dragSelector: ".penalty-card", dropSelector: ".penalty-cards" },
         /* Infiltration */
+        { dragSelector: ".radio-button", dropSelector: ".infiltration-obstacle-inner-container" },
         { dragSelector: ".awareness-point-breakpoint-container", dropSelector: ".awareness-point-breakpoints-container" },
         { dragSelector: ".infiltration-edge-container", dropSelector: ".infiltration-edges-container" },
         { dragSelector: ".infiltration-obstacle-header-container", dropSelector: ".infiltration-obstacles-container" },
@@ -3518,6 +3520,16 @@ class SystemView extends HandlebarsApplicationMixin(
 
     static selectEvent(_, button){
       this.selected.event = button.dataset.id;
+
+      switch(this.tabGroups.main) {
+        case 'chase':
+          this.selected.chaseObstacle = Object.values(game.settings.get(MODULE_ID, 'chase').events[this.selected.event].obstacles).filter(x => game.user.isGM || !x.locked)[0]?.id;  
+          break;
+        case 'infiltration':
+          this.selected.infiltration.currentObjective = Object.values(game.settings.get(MODULE_ID, 'infiltration').events[this.selected.event].objectives).filter(x => game.user.isGM || !x.hidden)[0]?.id;
+          break;
+      }
+
       this.render({ parts: [this.tabGroups.main] });
     }
 
@@ -4106,7 +4118,6 @@ class SystemView extends HandlebarsApplicationMixin(
     static async addObstacle(_, button) {
       const newId = foundry.utils.randomID();
       const currentObstacles = Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].obstacles).length;
-      const newPosition = currentObstacles+1;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.obstacles.${newId}`]: {
         id: newId,
         img: "icons/svg/cowled.svg",
@@ -4115,17 +4126,18 @@ class SystemView extends HandlebarsApplicationMixin(
         locked: true,
       }});
 
-      this.selected.chaseObstacle = newPosition;
+      this.selected.chaseObstacle = newId;
       this.render({ parts: [this.tabGroups.main] });
     }
 
     static async removeObstacle(_, button) {
       const chases = game.settings.get(MODULE_ID, this.tabGroups.main);
       const removedPosition = chases.events[button.dataset.event].obstacles[button.dataset.obstacle].position;
-      const obstacles = Object.keys(chases.events[button.dataset.event].obstacles).reduce((acc, x) => {
-        const obstacle = chases.events[button.dataset.event].obstacles[x];
+
+      const obstacleValues = Object.values(chases.events[button.dataset.event].obstacles);
+      const obstacles = obstacleValues.reduce((acc, obstacle) => {
         if(obstacle.id !== button.dataset.obstacle) {
-          acc[x] = {
+          acc[obstacle.id] = {
             ...obstacle,
             position: obstacle.position > removedPosition ? obstacle.position -1 : obstacle.position,
           };
@@ -4153,7 +4165,8 @@ class SystemView extends HandlebarsApplicationMixin(
 
       await game.settings.set(MODULE_ID, this.tabGroups.main, chases);
 
-      this.selected.chaseObstacle = Math.min(this.selected.chaseObstacle, Object.keys(obstacles).length);
+      const newObstacleValues =  Object.values(obstacles);
+      this.selected.chaseObstacle =  this.selected.chaseObstacle === button.dataset.obstacle ? newObstacleValues.find(x => x.position === Math.min(removedPosition, newObstacleValues.length))?.id : this.selected.chaseObstacle;
 
       await game.socket.emit(SOCKET_ID, {
         action: socketEvent.UpdateSystemView,
@@ -4164,7 +4177,7 @@ class SystemView extends HandlebarsApplicationMixin(
     }
 
     static setCurrentObstacle(_, button) {
-      this.selected.chaseObstacle = Number.parseInt(button.dataset.position);
+      this.selected.chaseObstacle = button.dataset.id;
       this.render({ parts: [this.tabGroups.main] });
     }
 
@@ -4177,7 +4190,7 @@ class SystemView extends HandlebarsApplicationMixin(
 
       const button = baseButton ?? e.currentTarget;
       const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event];
-      const currentObstacle = Object.values(event.obstacles).find(x => x.position === Number.parseInt(button.dataset.position));
+      const currentObstacle = Object.values(event.obstacles).find(x => x.id === button.dataset.id);
 
       if(currentObstacle.position === 1 && !currentObstacle.locked) {
         ui.notifications.error(game.i18n.localize('PF2ESubsystems.Chase.Errors.LockFirstObstacle'));
@@ -4336,7 +4349,7 @@ class SystemView extends HandlebarsApplicationMixin(
 
     //#region Infiltration
     static async setCurrentInfiltrationObjective(_, button) {
-      this.selected.infiltration.currentObjective = Number.parseInt(button.dataset.position);
+      this.selected.infiltration.currentObjective = button.dataset.id;
       this.render({ parts: [this.tabGroups.main] });
     }
 
@@ -4361,7 +4374,7 @@ class SystemView extends HandlebarsApplicationMixin(
         }
       }});
 
-      this.selected.infiltration.currentObjective = newPosition;
+      this.selected.infiltration.currentObjective = newId;
     }
 
 
@@ -4387,7 +4400,8 @@ class SystemView extends HandlebarsApplicationMixin(
 
       await game.settings.set(MODULE_ID, this.tabGroups.main, infiltrations);
 
-      this.selected.infiltration.currentObjective = Math.min(this.selected.infiltration.currentObjective, Object.keys(objectives).length);
+      const currentObjectivesValues = Object.values(objectives);
+      this.selected.infiltration.currentObjective = this.selected.infiltration.currentObjective === button.dataset.objective ? currentObjectivesValues.find(x => x.position === Math.min(removedPosition, currentObjectivesValues.length))?.id : this.selected.infiltration.currentObjective;
 
       await game.socket.emit(SOCKET_ID, {
         action: socketEvent.UpdateSystemView,
@@ -4491,7 +4505,7 @@ class SystemView extends HandlebarsApplicationMixin(
 
       const button = baseButton ?? e.currentTarget;
       const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event];
-      const currentObjective = Object.values(event.objectives).find(x => x.position === Number.parseInt(button.dataset.position));
+      const currentObjective = Object.values(event.objectives).find(x => x.id === button.dataset.id);
 
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.objectives.${currentObjective.id}.hidden`]: !currentObjective.hidden });
     }
@@ -5018,6 +5032,10 @@ class SystemView extends HandlebarsApplicationMixin(
       button.dataset.event;
     }
 
+     static async onToggleObjectiveLock(event) {
+      await this.toggleObjectiveHidden(undefined, event.srcElement);
+    }
+
     async updateInfluenceDiscoveryLore(event) {
       event.stopPropagation();
       const button = event.currentTarget;
@@ -5424,12 +5442,10 @@ class SystemView extends HandlebarsApplicationMixin(
             context.selectedEvent.enrichedGMNotes = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.selectedEvent.gmNotes);
             context.showRounds = this.editMode || context.selectedEvent.rounds.max;
           
-            context.selectedEvent.obstacles = positionSort(context.selectedEvent.obstacles);
             context.selectedEvent.extendedParticipants = positionSort(context.selectedEvent.participants);
           }
           
-          context.currentObstacleNr = this.selected.chaseObstacle ?? 1;
-          context.currentObstacle = context.selectedEvent?.obstacles ? Object.values(context.selectedEvent.extendedObstacles).find(x => x.position === context.currentObstacleNr) : null;
+          context.currentObstacle = context.selectedEvent?.obstacles ? context.selectedEvent.extendedObstacles.find(x => x.id === this.selected.chaseObstacle) : null;
           if(context.currentObstacle) {
             context.currentObstacle.enrichedOvercome = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.currentObstacle.overcome);
           }
@@ -5541,108 +5557,111 @@ class SystemView extends HandlebarsApplicationMixin(
               ...context.selectedEvent.preparations,
               activities: context.selectedEvent.preparationsActivitiesData
             };
-            context.currentObjectiveNr = (this.selected.infiltration.currentObjective ?? 1);
+
             const awarenessDCIncrease = context.selectedEvent.awarenessDCIncrease;
 
-            context.currentObjective = Object.values(context.selectedEvent.objectives).find(x => x.position === context.currentObjectiveNr);
+            context.currentObjective = Object.values(context.selectedEvent.objectives).find(x => x.id === this.selected.infiltration.currentObjective);
             context.selectedEvent.extendedObjectives = positionSort(context.selectedEvent.objectives);
-            for(var key of Object.keys(context.currentObjective.obstacles)) {
-              var obstacle = context.currentObjective.obstacles[key];
-              obstacle.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(obstacle.description);
-              obstacle.individualInfiltrationPoints = !obstacle.individual ? [] : game.actors.find(x => x.type === 'party').members.reduce((acc, curr) => {
-                acc[curr.id] = {
-                  id: curr.id,
-                  name: curr.name,
-                  value: obstacle.infiltrationPointData[curr.id] ?? 0,
-                };
+            if(context.currentObjective){
+              for(var key of Object.keys(context.currentObjective.obstacles)) {
+                var obstacle = context.currentObjective.obstacles[key];
+                obstacle.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(obstacle.description);
+                obstacle.individualInfiltrationPoints = !obstacle.individual ? [] : game.actors.find(x => x.type === 'party').members.reduce((acc, curr) => {
+                  acc[curr.id] = {
+                    id: curr.id,
+                    name: curr.name,
+                    value: obstacle.infiltrationPointData[curr.id] ?? 0,
+                  };
 
-                return acc;
-              }, {});
-              obstacle.skillChecks = Object.values(obstacle.skillChecks).reduce((acc, skillCheck) => {
-                acc[skillCheck.id] = {
-                  ...skillCheck,
-                  columns: Object.values(skillCheck.skills).reduce((acc, skill) => {
-                    acc.lore.push({ 
-                      event: context.selectedEvent.id,
-                      objective: context.currentObjective.id,
-                      obstacle: obstacle.id,
-                      skillCheck: skillCheck.id,
-                      id: skill.id,
-                      lore: skill.lore,
-                    });
-                    acc.skill.push({ 
-                      event: context.selectedEvent.id,
-                      objective: context.currentObjective.id,
-                      obstacle: obstacle.id,
-                      skillCheck: skillCheck.id,
-                      id: skill.id,
-                      skill: skill.skill,
-                      lore: skill.lore,
-                    });
-                    acc.action.push({ 
-                      event: context.selectedEvent.id,
-                      objective: context.currentObjective.id,
-                      obstacle: obstacle.id,
-                      skillCheck: skillCheck.id,
-                      id: skill.id,
-                      action: skill.action,
-                      label: skill.label,
-                    });
-                    acc.variant.push({ 
-                      event: context.selectedEvent.id,
-                      objective: context.currentObjective.id,
-                      obstacle: obstacle.id,
-                      skillCheck: skillCheck.id,
-                      id: skill.id,
-                      variantOptions: skill.action ? [...game.pf2e.actions.get(skill.action).variants].map(x => ({ value: x.slug, name: x.name })) : [],
-                      variant: skill.variant,
-                      disabled: skill.action ? game.pf2e.actions.get(skill.action).variants.size === 0 : true,
-                    });
-                    acc.dc.push({ 
-                      event: context.selectedEvent.id,
-                      objective: context.currentObjective.id,
-                      obstacle: obstacle.id,
-                      skillCheck: skillCheck.id,
-                      id: skill.id,
-                      skill: skill.skill,
-                      dc: skill.difficulty.DC,
-                      leveledDC: skill.difficulty.leveledDC,
-                    });
+                  return acc;
+                }, {});
+                obstacle.skillChecks = Object.values(obstacle.skillChecks).reduce((acc, skillCheck) => {
+                  acc[skillCheck.id] = {
+                    ...skillCheck,
+                    columns: Object.values(skillCheck.skills).reduce((acc, skill) => {
+                      acc.lore.push({ 
+                        event: context.selectedEvent.id,
+                        objective: context.currentObjective.id,
+                        obstacle: obstacle.id,
+                        skillCheck: skillCheck.id,
+                        id: skill.id,
+                        lore: skill.lore,
+                      });
+                      acc.skill.push({ 
+                        event: context.selectedEvent.id,
+                        objective: context.currentObjective.id,
+                        obstacle: obstacle.id,
+                        skillCheck: skillCheck.id,
+                        id: skill.id,
+                        skill: skill.skill,
+                        lore: skill.lore,
+                      });
+                      acc.action.push({ 
+                        event: context.selectedEvent.id,
+                        objective: context.currentObjective.id,
+                        obstacle: obstacle.id,
+                        skillCheck: skillCheck.id,
+                        id: skill.id,
+                        action: skill.action,
+                        label: skill.label,
+                      });
+                      acc.variant.push({ 
+                        event: context.selectedEvent.id,
+                        objective: context.currentObjective.id,
+                        obstacle: obstacle.id,
+                        skillCheck: skillCheck.id,
+                        id: skill.id,
+                        variantOptions: skill.action ? [...game.pf2e.actions.get(skill.action).variants].map(x => ({ value: x.slug, name: x.name })) : [],
+                        variant: skill.variant,
+                        disabled: skill.action ? game.pf2e.actions.get(skill.action).variants.size === 0 : true,
+                      });
+                      acc.dc.push({ 
+                        event: context.selectedEvent.id,
+                        objective: context.currentObjective.id,
+                        obstacle: obstacle.id,
+                        skillCheck: skillCheck.id,
+                        id: skill.id,
+                        skill: skill.skill,
+                        dc: skill.difficulty.DC,
+                        leveledDC: skill.difficulty.leveledDC,
+                      });
+      
+                      return acc;
+                    }, { lore: [], skill: [], action: [], variant: [], dc: [] }),
+                  };
+      
+                  return acc;
+                }, {});
+              }
+
+              for(var key of Object.keys(context.currentObjective.obstacles)){
+                var obstacle = context.currentObjective.obstacles[key];
+                obstacle.open = obstacle.id === this.selected.openInfiltrationObstacle;
+
+                for(var key of Object.keys(obstacle.skillChecks)){
+                  const skillCheck = obstacle.skillChecks[key];
+                  skillCheck.dcAdjustmentValues = skillCheck.dcAdjustments.map(x => ({
+                    name: game.i18n.localize(dcAdjustments[x].name),
+                    value: x,
+                  }));
     
-                    return acc;
-                  }, { lore: [], skill: [], action: [], variant: [], dc: [] }),
-                };
-    
-                return acc;
-              }, {});
-            }
-
-            for(var key of Object.keys(context.currentObjective.obstacles)){
-              var obstacle = context.currentObjective.obstacles[key];
-              obstacle.open = obstacle.id === this.selected.openInfiltrationObstacle;
-
-              for(var key of Object.keys(obstacle.skillChecks)){
-                const skillCheck = obstacle.skillChecks[key];
-                skillCheck.dcAdjustmentValues = skillCheck.dcAdjustments.map(x => ({
-                  name: game.i18n.localize(dcAdjustments[x].name),
-                  value: x,
-                }));
-  
-                const dcAdjustment = (skillCheck.selectedAdjustment ? getDCAdjustmentNumber(skillCheck.selectedAdjustment) : 0) + awarenessDCIncrease;
-                const disableElement = skillCheck.dcAdjustments.length > 0 && !skillCheck.selectedAdjustment;
-                for(var key of Object.keys(skillCheck.skills)){
-                  const skill = skillCheck.skills[key];
-                  let dc = (skill.difficulty.leveledDC ? getSelfDC() : (skill.difficulty.DC??0)) + dcAdjustment;
-                  if(skill.action) {
-                    skill.element = await getActButton(skill.action, skill.variant, skill.skill, dc, disableElement, false, `${game.i18n.localize('PF2ESubsystems.Events.Infiltration.Single')}: ${obstacle.name}`);
-                  }
-                  else {
-                    skill.element = await getCheckButton(skill.skill, dc, skill.simple, disableElement, false, `${game.i18n.localize('PF2ESubsystems.Events.Infiltration.Single')}: ${obstacle.name} (${(skill.lore || !skill.skill) ? skill.skill : game.i18n.localize(extendedSkills()[skill.skill].label)})`);
+                  const dcAdjustment = (skillCheck.selectedAdjustment ? getDCAdjustmentNumber(skillCheck.selectedAdjustment) : 0) + awarenessDCIncrease;
+                  const disableElement = skillCheck.dcAdjustments.length > 0 && !skillCheck.selectedAdjustment;
+                  for(var key of Object.keys(skillCheck.skills)){
+                    const skill = skillCheck.skills[key];
+                    let dc = (skill.difficulty.leveledDC ? getSelfDC() : (skill.difficulty.DC??0)) + dcAdjustment;
+                    if(skill.action) {
+                      skill.element = await getActButton(skill.action, skill.variant, skill.skill, dc, disableElement, false, `${game.i18n.localize('PF2ESubsystems.Events.Infiltration.Single')}: ${obstacle.name}`);
+                    }
+                    else {
+                      skill.element = await getCheckButton(skill.skill, dc, skill.simple, disableElement, false, `${game.i18n.localize('PF2ESubsystems.Events.Infiltration.Single')}: ${obstacle.name} (${(skill.lore || !skill.skill) ? skill.skill : game.i18n.localize(extendedSkills()[skill.skill].label)})`);
+                    }
                   }
                 }
               }
+
+              context.currentObjective.extendedObstacles = positionSort(context.currentObjective.obstacles);
             }
-            context.currentObjective.extendedObstacles = positionSort(context.currentObjective.obstacles);
 
             for(var key of Object.keys(context.selectedEvent.edgePoints)){
               const edgePoint = context.selectedEvent.edgePoints[key];
@@ -5948,14 +5967,20 @@ class SystemView extends HandlebarsApplicationMixin(
         switch(this.tabGroups.main){
           case 'chase':
             if(this.selected.event) {
-              const nrObstacles = Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event].obstacles).length;
-              this.selected.chaseObstacle = this.selected.chaseObstacle > nrObstacles ? this.selected.chaseObstacle-1 : this.selected.chaseObstacle; 
+              const obstacles = Object.values(game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event].obstacles);
+              const currentObstacle = obstacles.find(x => x.id === this.selected.chaseObstacle);
+
+              const currentId = currentObstacle?.id && (game.user.isGM || !currentObstacle?.hidden) ? currentObstacle.id : null;
+              this.selected.chaseObstacle = currentId ?? obstacles.find(x => game.user.isGM ? true : !x.locked)?.id; 
             }
             break;
           case 'infiltration':
             if(this.selected.event) {
-              const nrObjectives = Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event].objectives).length;
-              this.selected.infiltration.currentObjective = this.selected.infiltration.currentObjective > nrObjectives ? this.selected.infiltration.currentObjective-1 : this.selected.infiltration.currentObjective; 
+              const objectives = Object.values(game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event].objectives);
+              const currentObjective = objectives.find(x => x.id === this.selected.infiltration.currentObjective);
+              
+              const currentId = currentObjective?.id && (game.user.isGM || !currentObjective?.hidden) ? currentObjective.id : null;
+              this.selected.infiltration.currentObjective = currentId ?? objectives.find(x => game.user.isGM ? true : !x.hidden)?.id; 
             }
             break;
         }
@@ -5967,7 +5992,6 @@ class SystemView extends HandlebarsApplicationMixin(
     static async updateData(event, element, formData) {
       const { selected, editMode, events, eventSearchValue }= foundry.utils.expandObject(formData.object);
       this.selected = foundry.utils.mergeObject(this.selected, selected);
-      console.log(this.selected);
       this.eventSearchValue = eventSearchValue;
 
       await updateDataModel(this.tabGroups.main, { events });
@@ -6076,9 +6100,6 @@ class SystemView extends HandlebarsApplicationMixin(
         return acc;
       }, {});
       await updateDataModel(this.tabGroups.main, { [data.dropPath]: updatedEvents });
-      // const layers = this.scene.flags[MODULE_ID][ModuleFlags.Scene.CanvasLayers];
-      // const layer = layers[data.layer];
-      // const dropLayer = layers[dropTarget];
     }
   }
 }
