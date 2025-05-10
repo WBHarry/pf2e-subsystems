@@ -130,7 +130,7 @@ const migrateInfiltration = async () => {
                 }
             }});
         }
-        if(versionCompare(event.version, '0.8.2')){
+        if(versionCompare(event.version, '0.8.1')){
             await infiltration.updateSource({ events: {
                 [event.id]: {
                     version: '0.8.1',
