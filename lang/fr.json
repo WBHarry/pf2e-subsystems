@@ -40,6 +40,10 @@
                 "Single": "Mois",
                 "Plural": "Mois"
             },
+            "Week": {
+                "Single": "Semaine",
+                "Plural": "Semaines"
+            },
             "Day": {
                 "Single": "Jour",
                 "Plural": "Jours"
@@ -193,6 +197,8 @@
             "Lore": "Connaissance",
             "Basic": "Simple",
             "Timing": "Timing",
+            "OptionalModifier": "Modificateur facultatif",
+            "ModifierHint": "Affiche un bouton optionnel pour le MJ qui augmentera ou diminuera les DD des tests de recherche de la valeur saisie lorsqu'il est activé.",
             "ResearchEvents": "Événements de recherche",
             "ResearchBreakpoints": "Seuils de recherche",
             "ResearchBreakpoint": "Seuil",
