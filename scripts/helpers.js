@@ -3,8 +3,6 @@ import { levelDCTable } from "../data/statisticsData";
 import { socketEvent } from "./socket";
 import Tagify from "@yaireo/tagify";
 
-const { implementation: TextEditor } = foundry.applications.ux.TextEditor;
-
 export async function updateDataModel(setting, data){
     if(game.user.isGM){
         Hooks.callAll(socketEvent.GMUpdate, { setting, data });
@@ -150,11 +148,11 @@ const correctBackground = (html) => {
 };
 
 export const getActButton = async(action, variant, skill, dc, disableElement, secret = false, title, simpleTitle) => {
-    return correctBackground(disableRollButton(disableElement, await TextEditor.enrichHTML(`[[/act ${action} ${variant ? `variant=${variant} ` : ''}stat=${skill} dc=${dc}${title ? ` title=${hyphenateText(title)}` : ''}${simpleTitle ? ' simpleTitle' : ''}${secret ? ' traits=secret' : ''}]]`)));
+    return correctBackground(disableRollButton(disableElement, await foundry.applications.ux.TextEditor.implementation.enrichHTML(`[[/act ${action} ${variant ? `variant=${variant} ` : ''}stat=${skill} dc=${dc}${title ? ` title=${hyphenateText(title)}` : ''}${simpleTitle ? ' simpleTitle' : ''}${secret ? ' traits=secret' : ''}]]`)));
 }
 
 export const getCheckButton = async(skill, dc, simple, disableElement, secret = false, title) => {
-    return correctBackground(disableRollButton(disableElement, await TextEditor.enrichHTML(`@Check[type:${skill}|dc:${dc}|simple:${simple}${title ? `|title:${title}` : ''}${secret ? '|traits:secret' : ''}]`)));
+    return correctBackground(disableRollButton(disableElement, await foundry.applications.ux.TextEditor.implementation.enrichHTML(`@Check[type:${skill}|dc:${dc}|simple:${simple}${title ? `|title:${title}` : ''}${secret ? '|traits:secret' : ''}]`)));
 }
 
 export const versionCompare = (current, target) => {
@@ -186,3 +184,17 @@ export const readTextFromFile = (file) => {
         reader.readAsText(file);
     });
 };
+
+export const getNewPositionOnDrop = (startPosition, dropPosition, currentPosition) => {
+    if(startPosition === currentPosition) return dropPosition;
+
+    if(startPosition > dropPosition) {
+        return currentPosition >= dropPosition && currentPosition < startPosition ? currentPosition+1 : currentPosition;
+    }
+
+    return currentPosition <= dropPosition && currentPosition > startPosition ? currentPosition-1 : currentPosition;
+};
+
+export const positionSort = (objectValue) => {
+    return Object.values(objectValue).sort((a, b) => a.position-b.position);
+}

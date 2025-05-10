@@ -13,7 +13,7 @@
         <div class="events-container">
             {{#each this.events}}
                 {{#if (or (not this.hidden) ../isGM)}}
-                    <div class="event-container" data-action="selectEvent" data-event="{{this.id}}">
+                    <div class="event-container" data-action="selectEvent" data-id="{{this.id}}" data-drop-container="event-container" data-drop-path="events">
                         <div class="event-container-header primary-container">
                             <div class="event-title">{{this.name}}</div>
                             {{#if ../isGM}}

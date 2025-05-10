@@ -75,6 +75,12 @@
             "selector": ".research-events-container",
             "title": "Research Overview",
             "content": "Optional events that can occur during the research event at certain timings or when certain things occur.\nIf you don't add any of these, then this section won't be shown!"
+        },
+        {
+            "id": "research-overview-81",
+            "selector": ".research-events-container .research-event-container:last-child .research-event-title",
+            "title": "Research Overview",
+            "content": "Research Events can optionally have a related modifier. If this is set there will be a button only the GM can see. Clicking it adds that modifier to all Research Check DCs.\nThis can be used as the result of an event. It can also be used purely as a GM switch for arbitrary setups, since the event can be kept hidden."
         }
     ],
     "events": {
@@ -411,6 +417,17 @@
                     "hidden": false,
                     "timing": "Day 4",
                     "description": "Uh-oh."
+                },
+                "event-2": {
+                    "id": "event-2",
+                    "name": "Sink Into The Bog",
+                    "hidden": false,
+                    "timing": "Day 4",
+                    "description": "Uh-oh.",
+                    "modifier": {
+                        "value": -2,
+                        "active": true
+                    }
                 }
             }
         }

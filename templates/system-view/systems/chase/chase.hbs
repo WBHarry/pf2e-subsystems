@@ -108,8 +108,8 @@
                     {{#if this.editMode}}<div class="participants-helper-text text-helper">{{localize "PF2ESubsystems.Chase.AddOrDragInActor"}}</div>{{/if}}
                 </div>
                 <div class="participants-container">
-                    {{#each this.event.participants as |participant|}}
-                        <div class="participant-container secondary-container {{#if (and (not ../editMode) this.hasActed)}}accent{{/if}}">
+                    {{#each this.event.extendedParticipants as |participant|}}
+                        <div class="participant-container secondary-container {{#if (and (not ../editMode) this.hasActed)}}accent{{/if}}" data-id="{{this.id}}" data-drop-container="participant-container" data-drop-path="{{concat "events." ../event.id ".participants"}}">
                             <img src={{participant.img}} />
                             <div class="participant-data-container">
                                 <div class="participant-data-container-label">{{participant.name}}</div>
@@ -153,9 +153,9 @@
             </div>
             <fieldset class="chase-event-container primary-container">
                 <legend class="chase-event-display">
-                    {{#each this.event.obstacles as |obstacle id|}}
+                    {{#each this.event.extendedObstacles as |obstacle id|}}
                         {{#if (or (not obstacle.locked) ../isGM)}}
-                            {{> "modules/pf2e-subsystems/templates/partials/radio-button.hbs" locked=obstacle.locked selected=(eq obstacle.position ../currentObstacleNr) event=../event.id action="setCurrentObstacle" position=obstacle.position }}
+                            {{> "modules/pf2e-subsystems/templates/partials/radio-button.hbs" locked=obstacle.locked selected=(eq obstacle.id ../currentObstacle.id) event=../event.id action="setCurrentObstacle" id=obstacle.id dropPath=(concat "events." ../event.id ".obstacles") }}
                         {{/if}}
                     {{/each}}
                     {{#if this.editMode}}<i class="fa-solid fa-plus chase-event-display-add clickable-icon" data-action="addObstacle" data-event="{{this.event.id}}" title="{{localize "PF2ESubsystems.Chase.AddObstacle"}}"></i>{{/if}}
@@ -171,7 +171,7 @@
                                     <span>{{this.currentObstacle.name}}</span>
                                 </div>
                                 {{#if (and (not this.settings.hideObstacleLockIcon) (and this.isGM (not (eq this.currentObstacle.position 1))))}}
-                                    <i class="fa-solid {{#if this.currentObstacle.locked}}fa-lock{{else}}fa-lock-open{{/if}} chase-event-lock clickable-icon" data-action="onToggleObstacleLock" data-event="{{this.event.id}}" data-position="{{this.currentObstacle.position}}"></i>
+                                    <i class="fa-solid {{#if this.currentObstacle.locked}}fa-lock{{else}}fa-lock-open{{/if}} chase-event-lock clickable-icon" data-action="onToggleObstacleLock" data-event="{{this.event.id}}" data-id="{{this.currentObstacle.id}}"></i>
                                 {{/if}}
                             {{/if}}
                         </div>

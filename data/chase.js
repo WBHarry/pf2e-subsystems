@@ -12,6 +12,7 @@ export class Chase extends foundry.abstract.DataModel {
       const fields = foundry.data.fields;
       return {
         id: new fields.StringField({ required: true }),
+        position: new fields.NumberField({ required: true }),
         moduleProvider: new fields.StringField(),
         name: new fields.StringField({ required: true }),
         version: new fields.StringField({ required: true }),
@@ -32,13 +33,14 @@ export class Chase extends foundry.abstract.DataModel {
           name: new fields.StringField({ required: true }),
           img: new fields.StringField({ required: true }),
           hidden: new fields.BooleanField({ initial: false }),
-          position: new fields.NumberField({ required: true, nullable: true, initial: 0 }),
+          position: new fields.NumberField({ required: true, nullable: true }),
           player: new fields.BooleanField({ required: true, initial: false }),
           obstacle: new fields.NumberField({ required: true, initial: 1 }),
           hasActed: new fields.BooleanField({ required: true, initial: false }),
         })),
         obstacles: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
+          position: new fields.NumberField({ required: true, integer: true }),
           name: new fields.StringField({ required: true }),
           img: new fields.StringField({}),
           position: new fields.NumberField({ required: true, integer: true }),
@@ -77,16 +79,16 @@ export class Chase extends foundry.abstract.DataModel {
       return Object.values(this.obstacles)
         .sort((a, b) => a.position - b.position)
         .reduce((acc, obstacle) => {
-          acc[obstacle.id] = {
+          acc.push({
             ...obstacle,
             chasePoints: {
               ...obstacle.chasePoints,
               atStart: obstacle.chasePoints.current === 0,
               finished: obstacle.chasePoints.current === obstacle.chasePoints.goal,
             }
-          };
+          });
 
           return acc;
-      }, {});
+      }, []);
     }
 }

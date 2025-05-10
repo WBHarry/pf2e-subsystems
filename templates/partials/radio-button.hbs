@@ -1,4 +1,7 @@
-<div class="radio-button {{#if this.selected}}selected{{/if}} clickable-icon" data-action="{{this.action}}" data-event="{{this.event}}" data-position="{{this.position}}">
+<div 
+    class="radio-button {{#if this.selected}}selected{{/if}} clickable-icon" data-action="{{this.action}}" data-event="{{this.event}}" data-id="{{this.id}}" 
+    {{#if this.dropPath}}data-id="{{this.id}}" data-drop-container="radio-button" data-drop-path="{{this.dropPath}}" {{/if}}
+>
     {{#if this.locked}}
         <div class="radio-button-locked">
             <i class="fa-solid fa-lock locked-section"></i>

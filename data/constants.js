@@ -39,6 +39,10 @@ export const timeUnits = {
         value: 'month',
         name: 'PF2ESubsystems.TimeUnits.Month.Plural',
     },
+    week: {
+        value: 'week',
+        name: 'PF2ESubsystems.TimeUnits.Week.Plural',
+    }, 
     day: {
         value: 'day',
         name: 'PF2ESubsystems.TimeUnits.Day.Plural',

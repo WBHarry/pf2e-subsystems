@@ -14,13 +14,51 @@ export const handleMigration = async () => {
     await migrateEvents();
 };
 
-const migrateEvents = async () => {
+export const migrateEvents = async () => {
+    await migrateChase();
     await migrateInfiltration();
+    await migrateInfluence();
+    await migrateResearch();
+};
+
+const migrateChase = async () => {
+    const chase = game.settings.get(MODULE_ID, 'chase');
+    var events = Object.values(chase.events)
+    for(var i = 0; i < events.length; i++){
+        const event = events[i];
+
+        if(!event.version && chase.events['undefined']) {
+            await chase.updateSource({ [`events.-=undefined`]: null });
+        }
+
+        if(versionCompare(event.version, '0.8.1')){
+            await chase.updateSource({ events: {
+                [event.id]: {
+                    version: '0.8.1',
+                    position: i+1,
+                    obstacles: Object.values(event.obstacles).reduce((acc, obstacle, index) => {
+                        acc[obstacle.id] = { ...obstacle, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                }
+            }});
+        }
+    }
+
+    await game.settings.set(MODULE_ID, 'chase', chase);
 };
 
 const migrateInfiltration = async () => {
     const infiltration = game.settings.get(MODULE_ID, 'infiltration');
-    for(var event of Object.values(infiltration.events)){
+    const events = Object.values(infiltration.events);
+    for(var i = 0; i < events.length; i++){
+        const event = events[i];
+
+        if(!event.version && infiltration.events['undefined']) {
+            await infiltration.updateSource({ [`events.-=undefined`]: null });
+        }
+
         if(versionCompare(event.version, '0.7.8')){
             await infiltration.updateSource({ events: {
                 [event.id]: {
@@ -102,7 +140,150 @@ const migrateInfiltration = async () => {
                 }
             }});
         }
+        if(versionCompare(event.version, '0.8.1')){
+            await infiltration.updateSource({ events: {
+                [event.id]: {
+                    version: '0.8.1',
+                    position: i+1,
+                    awarenessPoints: {
+                        ...event.awarenessPoints,
+                        breakpoints: Object.values(event.awarenessPoints.breakpoints).reduce((acc, breakpoint, index) => {
+                            acc[breakpoint.id] = { ...breakpoint, position: index+1 };
+
+                            return acc;
+                        }, {}),
+                    },
+                    edgePoints: Object.values(event.edgePoints).reduce((acc, edgePoint, index) => {
+                        acc[edgePoint.id] = { ...edgePoint, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    objectives: Object.values(event.objectives).reduce((acc, objective, index) => {
+                        acc[objective.id] = { 
+                            ...objective, 
+                            position: index+1,
+                            obstacles: Object.values(objective.obstacles).reduce((acc, obstacle, index) => {
+                                acc[obstacle.id] = { ...obstacle, position: index+1 };
+
+                                return acc;
+                            }, {}),
+                        };
+
+                        return acc;
+                    }, {}),
+                    complications: Object.values(event.complications).reduce((acc, complication, index) => {
+                        acc[complication.id] = { ...complication, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    opportunities: Object.values(event.opportunities).reduce((acc, opportunity, index) => {
+                        acc[opportunity.id] = { ...opportunity, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    preparations: {
+                        ...event.preparations,
+                        activities: Object.values(event.preparations.activities).reduce((acc, activity, index) => {
+                            acc[activity.id] = { ...activity, position: index+1 };
+
+                            return acc;
+                        }, {}),
+                    },
+                }
+            }});
+        }
     }
 
     await game.settings.set(MODULE_ID, 'infiltration', infiltration);
+};
+
+const migrateInfluence = async () => {
+    const influence = game.settings.get(MODULE_ID, 'influence');
+    var events = Object.values(influence.events)
+    for(var i = 0; i < events.length; i++){
+        const event = events[i];
+
+        if(!event.version && influence.events['undefined']) {
+            await influence.updateSource({ [`events.-=undefined`]: null });
+        }
+
+        if(versionCompare(event.version, '0.8.1')){
+            await influence.updateSource({ events: {
+                [event.id]: {
+                    version: '0.8.1',
+                    position: i+1,
+                    discoveries: Object.values(event.discoveries).reduce((acc, discovery, index) => {
+                        acc[discovery.id] = { ...discovery, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    influenceSkills: Object.values(event.influenceSkills).reduce((acc, skill, index) => {
+                        acc[skill.id] = { ...skill, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    influence: Object.values(event.influence).reduce((acc, influence, index) => {
+                        acc[influence.id] = { ...influence, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    weaknesses: Object.values(event.weaknesses).reduce((acc, weakness, index) => {
+                        acc[weakness.id] = { ...weakness, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    resistances: Object.values(event.resistances).reduce((acc, resistance, index) => {
+                        acc[resistance.id] = { ...resistance, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    penalties: Object.values(event.penalties).reduce((acc, penalty, index) => {
+                        acc[penalty.id] = { ...penalty, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                }
+            }});
+        }
+    }
+
+    await game.settings.set(MODULE_ID, 'influence', influence);
+};
+
+const migrateResearch = async () => {
+    const research = game.settings.get(MODULE_ID, 'research');
+    var events = Object.values(research.events)
+    for(var i = 0; i < events.length; i++){
+        const event = events[i];
+
+        if(!event.version && research.events['undefined']) {
+                await research.updateSource({ [`events.-=undefined`]: null });
+        }
+
+        if(versionCompare(event.version, '0.8.1')){
+            await research.updateSource({ events: {
+                [event.id]: {
+                    version: '0.8.1',
+                    position: i+1,
+                    researchChecks: Object.values(event.researchChecks).reduce((acc, check, index) => {
+                        acc[check.id] = { ...check, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    researchBreakpoints: Object.values(event.researchBreakpoints).reduce((acc, point, index) => {
+                        acc[point.id] = { ...point, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    researchEvents: Object.values(event.researchEvents).reduce((acc, event, index) => {
+                        acc[event.id] = { ...event, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                }
+            }});
+        }
+    }
+
+    await game.settings.set(MODULE_ID, 'research', research);
 };

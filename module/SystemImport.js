@@ -1,5 +1,6 @@
 import { MODULE_ID } from "../data/constants";
 import { readTextFromFile } from "../scripts/helpers";
+import { migrateEvents } from "../scripts/migration";
 
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
 
@@ -473,6 +474,8 @@ export default class SystemImport extends HandlebarsApplicationMixin(Application
 
             await game.settings.set(MODULE_ID, 'infiltration', infiltration);
         }
+
+        await migrateEvents();
 
         ui.notifications.info(game.i18n.localize('PF2ESubsystems.Import.ImportSuccessful'));
         this.resolve();

@@ -12,6 +12,7 @@ export class Research extends foundry.abstract.DataModel {
       const fields = foundry.data.fields;
       return {
         id: new fields.StringField({ required: true }),
+        position: new fields.NumberField({ required: true }),
         moduleProvider: new fields.StringField(),
         name: new fields.StringField({ required: true }),
         version: new fields.StringField({ required: true }),
@@ -33,15 +34,21 @@ export class Research extends foundry.abstract.DataModel {
         researchChecks: new fields.TypedObjectField(new fields.EmbeddedDataField(ResearchChecks)),
         researchBreakpoints: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
+          position: new fields.NumberField({ required: true, integer: true }),
           hidden: new fields.BooleanField({ required: true, initial: true }),
           breakpoint: new fields.NumberField({ requird: true, initial: 5 }),
           description: new fields.HTMLField(),
         })),
         researchEvents: new fields.TypedObjectField(new fields.SchemaField({
           id: new fields.StringField({ required: true }),
+          position: new fields.NumberField({ required: true, integer: true }),
           name: new fields.StringField({ required: true, initial: "New Research Event" }),
           hidden: new fields.BooleanField({ required: true, initial: true }),
           timing: new fields.StringField(),
+          modifier: new fields.SchemaField({
+            value: new fields.NumberField({ integer: true, nullable: true, initial: null }),
+            active: new fields.BooleanField({ initial: false }),
+          }),
           description: new fields.HTMLField(),
         })),
       }
@@ -114,6 +121,16 @@ export class Research extends foundry.abstract.DataModel {
         return acc;
       }, {});
     }
+
+    get researchCheckModifier() {
+      return Object.values(this.researchEvents).reduce((acc, event) => {
+        if(event.modifier.value !== null && event.modifier.active) {
+          acc += event.modifier.value;
+        }
+
+        return acc;
+      }, 0);
+    }
 }
 
 class ResearchChecks extends foundry.abstract.DataModel {
@@ -121,6 +138,7 @@ class ResearchChecks extends foundry.abstract.DataModel {
     const fields = foundry.data.fields;
     return {
       id: new fields.StringField({ required: true }),
+      position: new fields.NumberField({ required: true, integer: true }),
       name: new fields.StringField({ required: true, initial: "New Check" }),
       hidden: new fields.BooleanField({ required: true, initial: true }),
       description: new fields.HTMLField(),

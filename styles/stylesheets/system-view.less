@@ -44,6 +44,10 @@
             }
           }
 
+        .drop-target {
+            opacity: 0.6 !important;
+        }
+
         .systems-container {
             width: 100%;
             height: 100%;
@@ -482,7 +486,7 @@
 
                     a {
                         flex: 1;
-                        padding: @paddingNormal;
+                        padding: @paddingSmall @paddingNormal;
                         border-width: 2px;
                         border-style: solid;
                         border-radius: 4px;
@@ -568,6 +572,11 @@
                     flex-direction: column;
                     justify-content: center;
                     align-items: center;
+                    margin: 0 4px;
+
+                    &.edit-mode {
+                        height: 25px;
+                    }
 
                     .subtext {
                         display: flex;
@@ -722,6 +731,10 @@
                                 display: flex;
                                 align-items: center;
                                 text-align: center;
+
+                                input {
+                                    text-align: center;
+                                }
 
                                 .event-radio-lock {
                                     position: absolute;

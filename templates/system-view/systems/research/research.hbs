@@ -108,12 +108,12 @@
                     {{#if (and (not this.isGM) (eq this.revealedResearchChecks 0))}}
                         <div class="event-section-placeholder">{{localize "PF2ESubsystems.Research.ResearchChecksUnknown"}}</div>
                     {{else}}
-                        {{#each this.event.researchChecksData}}
+                        {{#each this.event.extendedResearchChecksData}}
                             {{#if (or ../isGM (not this.hidden))}}
-                                <div class="research-check-container secondary-container">
+                                <div class="research-check-container secondary-container" data-id="{{this.id}}" data-drop-container="research-check-container" data-drop-path="{{concat "events." ../event.id ".researchChecks"}}">
                                     {{#if ../editMode}}
                                         <div class="research-check-header">
-                                            <i class="fa-solid fa-trash clickable-icon research-check-delete-button" data-action="removeResearchCheck" data-event="{{../event.id}}" data-check={{this.id}}></i>
+                                            <i class="fa-solid fa-trash clickable-icon research-check-delete-button" data-action="removeData" data-path="{{concat "events." ../event.id ".researchChecks"}}" data-id="{{this.id}}"></i>
 
                                             {{#if (eq this.id ../selected.openResearchCheck)}}
                                                 <nav class="tabs">
@@ -292,20 +292,20 @@
                 <div class="title-container primary-container">
                     <div class="title-container-inner">
                         {{localize "PF2ESubsystems.Research.ResearchBreakpoints"}}
-                        {{#if this.editMode}}<i class="fa-solid fa-plus clickable-icon" data-action="addResearchBreakpoint" data-event="{{this.event.id}}"></i>{{/if}}
+                        {{#if this.editMode}}<i class="fa-solid fa-plus clickable-icon" data-action="addData" data-id="{{this.event.id}}" data-path="{{concat "events." this.event.id ".researchBreakpoints"}}"></i>{{/if}}
                     </div>
                 </div>
                 <div class="research-breakpoints-inner-container primary-text-container">
                     {{#if (and (not this.isGM) (eq this.revealedResearchBreakpoints 0))}}
                         <div class="event-section-placeholder">{{localize "PF2ESubsystems.Research.ResearchBreakpointsUnknown"}}</div>
                     {{else}}
-                        {{#each this.event.researchBreakpoints}}
+                        {{#each this.event.extendedResearchBreakpoints}}
                             {{#if (or ../isGM (not this.hidden))}}
-                                <div class="research-breakpoint-container secondary-container">
+                                <div class="research-breakpoint-container secondary-container" data-id="{{this.id}}" data-drop-container="research-breakpoint-container" data-drop-path="{{concat "events." ../event.id ".researchBreakpoints"}}">
                                     {{#if ../editMode}}
                                         <div class="event-field-group research-breakpoint-number">
                                             <div class="event-field-form">
-                                                <i class="fa-solid fa-trash clickable-icon research-breakpoint-delete-button" data-action="removeResearchBreakpoint" data-event="{{../event.id}}" data-breakpoint="{{this.id}}"></i>
+                                                <i class="fa-solid fa-trash clickable-icon research-breakpoint-delete-button" data-action="removeData" data-id="{{this.id}}" data-path="{{concat "events." ../event.id ".researchBreakpoints"}}"></i>
                                                 <div>{{localize "PF2ESubsystems.Research.ResearchBreakpoint"}}</div>
                                                 <input type="text" data-dtype="Number" name="{{concat "events." ../event.id ".researchBreakpoints." this.id ".breakpoint"}}" value="{{this.breakpoint}}" class="tertiary-container primary-text-container" />
                                                 <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon research-breakpoint-opener" data-action="toggleResearchOpenResearchBreakpoint" data-breakpoint="{{this.id}}"></i> 
@@ -344,27 +344,34 @@
                     <div class="title-container primary-container">
                         <div class="title-container-inner">
                             {{localize "PF2ESubsystems.Research.ResearchEvents"}}
-                            {{#if this.editMode}}<i class="fa-solid fa-plus clickable-icon" data-action="addResearchEvent" data-event="{{this.event.id}}"></i>{{/if}}
+                            {{#if this.editMode}}<i class="fa-solid fa-plus clickable-icon" data-action="addData" data-path="{{concat "events." this.event.id ".researchEvents"}}"></i>{{/if}}
                         </div>
                     </div>
                     <div class="research-events-inner-container primary-text-container">
-                        {{#each this.event.researchEvents}}
+                        {{#each this.event.extendedResearchEvents}}
                             {{#if (or ../isGM (not this.hidden))}}
-                                <div class="research-event-container secondary-container">
+                                <div class="research-event-container secondary-container" data-id="{{this.id}}" data-drop-container="research-event-container" data-drop-path="{{concat "events." ../event.id ".researchEvents"}}">
                                     {{#if ../editMode}}
                                         <div class="event-field-group research-event-header">
-                                            <i class="fa-solid fa-trash clickable-icon research-event-delete-button" data-action="removeResearchEvent" data-event="{{../event.id}}" data-research-event={{this.id}}></i>
+                                            <i class="fa-solid fa-trash clickable-icon research-event-delete-button" data-action="removeData" data-path="{{concat "events." ../event.id ".researchEvents"}}" data-id="{{this.id}}"></i>
                                             <div class="event-field-form">
                                                 <div>{{localize "PF2ESubsystems.Basic.Name"}}</div>
                                                 <input type="text" name="{{concat "events." ../event.id ".researchEvents." this.id ".name"}}" value="{{this.name}}" class="tertiary-container" />
                                             </div>
-                                            <div class="event-field-form">
-                                                <div>{{localize "PF2ESubsystems.Research.Timing"}}</div>
-                                                <input type="text" name="{{concat "events." ../event.id ".researchEvents." this.id ".timing"}}" value="{{this.timing}}" class="tertiary-container" />
-                                            </div>
                                             <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon research-event-opener" data-action="researchToggleOpenResearchEvent" data-event="{{this.id}}"></i> 
                                         </div>
-                                        <div class="event-folding {{#if this.open}}unfolded{{/if}}">
+                                        <div class="event-folding spaced {{#if this.open}}unfolded{{/if}}">
+                                            <div class="event-field-group">
+                                                <div class="event-field-form">
+                                                    <div>{{localize "PF2ESubsystems.Research.Timing"}}</div>
+                                                    <input type="text" name="{{concat "events." ../event.id ".researchEvents." this.id ".timing"}}" value="{{this.timing}}" class="tertiary-container" />
+                                                </div>
+                                                 <div class="event-field-form small">
+                                                    <div title="{{localize "PF2ESubsystems.Research.ModifierHint"}}">{{localize "PF2ESubsystems.Research.OptionalModifier"}}</div>
+                                                    <input type="text" data-dtype="Number" name="{{concat "events." ../event.id ".researchEvents." this.id ".modifier.value"}}" value="{{this.modifier.value}}" class="tertiary-container" />
+                                                </div>
+                                            </div>
+
                                             <prose-mirror class="data-input tertiary-container" name="{{concat "events." ../event.id ".researchEvents." this.id ".description"}}" value="{{this.description}}">
                                                 {{{this.enrichedDescription}}}
                                             </prose-mirror>
@@ -372,9 +379,19 @@
                                     {{else}}
                                         <div class="research-event-title">
                                             <div class="research-event-title-inner">
-                                                <div class="title-small-container">{{this.name}}</div>
+                                                <div class="title-small-container">
+                                                    <div>{{this.name}}</div>
+                                                    {{#if (and ../isGM this.modifier.value)}}
+                                                        <div class="modifier-card-action-container clickable-icon {{#if this.modifier.active}}used{{/if}}" data-action="researchToggleEventModifier" data-event="{{../event.id}}" data-research-event="{{this.id}}">
+                                                            <div class="modifier-card-action tertiary-container">{{this.modifier.value}}</div>
+                                                            <i class="fa-solid fa-bolt-lightning modifier-card-action-icon"></i>
+                                                            {{#if (not this.modifier.active)}}<i class="fa-solid fa-slash modifier-card-action-icon-slash"></i>{{/if}}
+                                                        </div>
+                                                    {{/if}}
+                                                </div>
                                             </div>
                                             <div class="text-helper-big">{{this.timing}}</div>
+
                                             {{#if ../isGM}}<i class="fa-solid {{#if this.hidden}}fa-eye-slash{{else}}fa-eye{{/if}} clickable-icon research-event-hider" data-action="toggleResearchEventHidden" data-event="{{../event.id}}" data-research-event="{{this.id}}"></i>{{/if}}
                                             <i class="fa-solid {{#if this.open}}fa-angle-down{{else}}fa-angle-up{{/if}} clickable-icon research-event-opener" data-action="researchToggleOpenResearchEvent" data-event="{{this.id}}"></i> 
                                         </div>

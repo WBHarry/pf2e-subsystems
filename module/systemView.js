@@ -1,5 +1,5 @@
 import { dcAdjustments, defaultInfiltrationPreparations, degreesOfSuccess, extendedSkills, MODULE_ID, settingIDs, SOCKET_ID, timeUnits } from "../data/constants";
-import { copyToClipboard, getActButton, getCheckButton, getDCAdjustmentNumber, getSelfDC, setupTagify, translateSubsystem, updateDataModel } from "../scripts/helpers";
+import { copyToClipboard, getActButton, getCheckButton, getDCAdjustmentNumber, getNewPositionOnDrop, getSelfDC, positionSort, setupTagify, translateSubsystem, updateDataModel } from "../scripts/helpers";
 import { currentVersion } from "../scripts/setup";
 import { socketEvent } from "../scripts/socket";
 import LinkDialog from "./LinkDialog";
@@ -9,14 +9,13 @@ import TextDialog from "./TextDialog";
 import ValueDialog from "./ValueDialog";
 
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
-const { implementation: TextEditor } = foundry.applications.ux.TextEditor;
 
 const getDefaultSelected = (event) => ({
   event: event ?? null,
-  chaseObstacle: 1,
+  chaseObstacle: null,
   research: {},
   infiltration: { 
-    currentObjective: 1,
+    currentObjective: null,
     preparations: {
       openActivity: 1,
     } 
@@ -40,6 +39,12 @@ export default class SystemView extends HandlebarsApplicationMixin(
       this.editMode = false;
       this.clipboardFallback = false;
       this.isTour = isTour;
+
+      this.#dragDrop = this.createDragDropHandlers();
+      this.dragInfo = {
+        id: null,
+        dropContainer: null,
+      };
 
       this.onUpdateView = Hooks.on(
         socketEvent.UpdateSystemView,
@@ -78,6 +83,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
         openImportMenu: this.openImportMenu,
         useEditTextDialog: this.useEditTextDialog,
         useSkillLabelMenu: this.useSkillLabelMenu,
+        addData: this.addData,
+        removeData: this.removeData,
         /* Chases */
         researchUpdateRoundsCurrent: this.researchUpdateRoundsCurrent,
         addPlayerParticipants: this.addPlayerParticipants,
@@ -94,12 +101,9 @@ export default class SystemView extends HandlebarsApplicationMixin(
         updateChasePoints: this.updateChasePoints,
         /* Research */
         researchUpdateTimeLimitCurrent: this.researchUpdateTimeLimitCurrent,
-        addResearchBreakpoint: this.addResearchBreakpoint,
-        removeResearchBreakpoint: this.removeResearchBreakpoint,
         toggleResearchBreakpointHidden: this.toggleResearchBreakpointHidden,
         toggleResearchOpenResearchBreakpoint: this.toggleResearchOpenResearchBreakpoint,
         addResearchCheck: this.addResearchCheck,
-        removeResearchCheck: this.removeResearchCheck,
         toggleResearchCheckHidden: this.toggleResearchCheckHidden,
         researchToggleOpenResearchCheck: this.researchToggleOpenResearchCheck,
         researchAddResearchCheckSkillCheck: this.researchAddResearchCheckSkillCheck,
@@ -108,11 +112,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
         researchAddSkill: this.researchAddSkill,
         researchRemoveSkillCheck: this.researchRemoveSkillCheck,
         researchRemoveSkill: this.researchRemoveSkill,
-        addResearchEvent: this.addResearchEvent,
-        removeResearchEvent: this.removeResearchEvent,
         toggleResearchEventHidden: this.toggleResearchEventHidden,
         researchToggleOpenResearchEvent: this.researchToggleOpenResearchEvent,
         researhCheckPointsUpdate: this.researhCheckPointsUpdate,
+        researchToggleEventModifier: this.researchToggleEventModifier,
         /* Infiltration */
         setCurrentInfiltrationObjective: this.setCurrentInfiltrationObjective,
         addInfiltrationObjective: this.addInfiltrationObjective,
@@ -127,10 +130,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
         infiltrationToggleOpenObstacle: this.infiltrationToggleOpenObstacle,
         infiltrationToggleObjectiveHidden: this.infiltrationToggleObjectiveHidden,
         infiltrationToggleObstacleHidden: this.infiltrationToggleObstacleHidden,
-        addInfiltrationAwarenessBreakpoint: this.addInfiltrationAwarenessBreakpoint,
         infiltrationToggleOpenAwarenessBreakpoint: this.infiltrationToggleOpenAwarenessBreakpoint,
         infiltrationToggleHideAwarenessBreakpoint: this.infiltrationToggleHideAwarenessBreakpoint,
-        infiltrationRemoveAwarenessBreakpoint: this.infiltrationRemoveAwarenessBreakpoint,
         infiltrationToggleAwarenessBreakpointInUse: this.infiltrationToggleAwarenessBreakpointInUse,
         addInfiltrationOpportunity: this.addInfiltrationOpportunity,
         addInfiltrationComplication: this.addInfiltrationComplication,
@@ -138,8 +139,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
         infiltrationToggleOpenOpportunity: this.infiltrationToggleOpenOpportunity,
         infiltrationToggleComplicationHidden: this.infiltrationToggleComplicationHidden,
         infiltrationToggleOpenComplication: this.infiltrationToggleOpenComplication,
-        removeInfiltrationOpportunity: this.removeInfiltrationOpportunity,
-        removeInfiltrationComplication: this.removeInfiltrationComplication,
         infiltrationUpdateAwarenessPoints: this.infiltrationUpdateAwarenessPoints,
         infiltrationUpdateHiddenAwarenessPoints: this.infiltrationUpdateHiddenAwarenessPoints,
         infiltrationAddComplicationSkill: this.infiltrationAddComplicationSkill,
@@ -163,15 +162,9 @@ export default class SystemView extends HandlebarsApplicationMixin(
         infiltrationToggleOpenEdge: this.infiltrationToggleOpenEdge,
         infiltrationToggleEdgeFaked: this.infiltrationToggleEdgeFaked,
         infiltrationToggleEdgeUsed: this.infiltrationToggleEdgeUsed,
-        infiltrationEdgeRemove: this.infiltrationEdgeRemove,
         infiltrationPreparationActivityToggleHidden: this.infiltrationPreparationActivityToggleHidden,
         /* Influence */
-        influenceDiscoveryAdd: this.influenceDiscoveryAdd,
-        influenceDiscoveryRemove: this.influenceDiscoveryRemove,
-        influenceSkillAdd: this.influenceSkillAdd,
-        influenceSkillRemove: this.influenceSkillRemove,
         influenceInfluenceAdd: this.influenceInfluenceAdd,
-        influenceInfluenceRemove: this.influenceInfluenceRemove,
         influencePointsUpdate: this.influencePointsUpdate,
         influenceInfluenceToggleHidden: this.influenceInfluenceToggleHidden,
         influenceToggleOpenInfluence: this.influenceToggleOpenInfluence,
@@ -179,11 +172,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
         influenceToggleOpenResistance: this.influenceToggleOpenResistance,
         influenceToggleOpenPenalty: this.influenceToggleOpenPenalty, 
         influenceWeaknessAdd: this.influenceWeaknessAdd,
-        influenceWeaknessRemove: this.influenceWeaknessRemove,
         influenceResistanceAdd: this.influenceResistanceAdd,
-        influenceResistanceRemove: this.influenceResistanceRemove,
         influencePenaltyAdd: this.influencePenaltyAdd,
-        influencePenaltyRemove: this.influencePenaltyRemove,
         influenceDiscoveryToggleHidden: this.influenceDiscoveryToggleHidden,
         influenceInfluenceSkillToggleHidden: this.influenceInfluenceSkillToggleHidden,
         influenceWeaknessToggleHidden: this.influenceWeaknessToggleHidden,
@@ -196,6 +186,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
         influenceInfluenceSkillToggleOpen: this.influenceInfluenceSkillToggleOpen,
         influenceRoundsUpdate: this.influenceRoundsUpdate,
         influenceOpenLinkedNPCs: this.influenceOpenLinkedNPCs,
+        onToggleObjectiveLock: this.onToggleObjectiveLock,
       },
       form: { handler: this.updateData, submitOnChange: true },
       window: {
@@ -214,7 +205,30 @@ export default class SystemView extends HandlebarsApplicationMixin(
         ],
       },
       dragDrop: [
+        { dragSelector: ".event-container", dropSelector: ".events-container" },
+        /* Chase */
+        { dragSelector: ".radio-button", dropSelector: ".chase-event-display" },
         { dragSelector: null, dropSelector: ".participants-outer-container" },
+        { dragSelector: ".participant-container", dropSelector: ".participants-container" },
+        /* Research */
+        { dragSelector: ".research-check-container", dropSelector: ".research-checks-inner-container" },
+        { dragSelector: ".research-breakpoint-container", dropSelector: ".research-breakpoints-inner-container" },
+        { dragSelector: ".research-event-container", dropSelector: ".research-events-inner-container" },
+        /* Influence */
+        { dragSelector: ".discovery.skill-container", dropSelector: ".discovery.skills-container" },
+        { dragSelector: ".influence.skill-container", dropSelector: ".influence.skills-container" },
+        { dragSelector: ".influence-card", dropSelector: ".influence-cards" },
+        { dragSelector: ".weakness-card", dropSelector: ".weakness-cards" },
+        { dragSelector: ".resistance-card", dropSelector: ".resistance-cards" },
+        { dragSelector: ".penalty-card", dropSelector: ".penalty-cards" },
+        /* Infiltration */
+        { dragSelector: ".radio-button", dropSelector: ".infiltration-obstacle-inner-container" },
+        { dragSelector: ".awareness-point-breakpoint-container", dropSelector: ".awareness-point-breakpoints-container" },
+        { dragSelector: ".infiltration-edge-container", dropSelector: ".infiltration-edges-container" },
+        { dragSelector: ".infiltration-obstacle-header-container", dropSelector: ".infiltration-obstacles-container" },
+        { dragSelector: ".infiltration-opportunity-inner-container", dropSelector: ".infiltration-opportunity-container" },
+        { dragSelector: ".infiltration-complication-inner-container", dropSelector: ".infiltration-complication-container" },
+        { dragSelector: ".preparation-activity-header", dropSelector: ".preparation-cards-container" },
       ],
     };
 
@@ -247,8 +261,15 @@ export default class SystemView extends HandlebarsApplicationMixin(
       },
     };
 
+    #dragDrop;
+    #eventDropTarget;
+
+    get dragDrop() {
+        return this.#dragDrop;
+    }
+
     _onRender(context, options) {
-      this._dragDrop = this._createDragDropHandlers.bind(this)();
+      this.#dragDrop.forEach((d) => d.bind(this.element));
     }
 
     tabGroups = {
@@ -553,7 +574,17 @@ export default class SystemView extends HandlebarsApplicationMixin(
     }
 
     static selectEvent(_, button){
-      this.selected.event = button.dataset.event;
+      this.selected.event = button.dataset.id;
+
+      switch(this.tabGroups.main) {
+        case 'chase':
+          this.selected.chaseObstacle = Object.values(game.settings.get(MODULE_ID, 'chase').events[this.selected.event].obstacles).filter(x => game.user.isGM || !x.locked)[0]?.id;  
+          break;
+        case 'infiltration':
+          this.selected.infiltration.currentObjective = Object.values(game.settings.get(MODULE_ID, 'infiltration').events[this.selected.event].objectives).filter(x => game.user.isGM || !x.hidden)[0]?.id;
+          break;
+      }
+
       this.render({ parts: [this.tabGroups.main] });
     }
 
@@ -588,9 +619,11 @@ export default class SystemView extends HandlebarsApplicationMixin(
                 }
               }
 
+              const existingChases = Object.keys(game.settings.get(MODULE_ID, 'chase').events);
               const obstacleId = foundry.utils.randomID();
               return {
                 id: foundry.utils.randomID(),
+                position: existingChases.length+1,
                 name: elements.name.value ? elements.name.value : game.i18n.localize('PF2ESubsystems.View.NewEvent'),
                 version: currentVersion,
                 background: elements.background.value ? elements.background.value : 'icons/skills/movement/feet-winged-boots-glowing-yellow.webp',
@@ -598,6 +631,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
                 obstacles: {
                   [obstacleId]: {
                     id: obstacleId,
+                    position: 1,
                     img: "icons/svg/cowled.svg",
                     name: game.i18n.localize('PF2ESubsystems.View.NewObstacle'),
                     position: 1,
@@ -622,9 +656,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
                 }
               }
 
-              const obstacleId = foundry.utils.randomID();
+              const existingResearch = Object.keys(game.settings.get(MODULE_ID, 'research').events);
               return {
                 id: foundry.utils.randomID(),
+                position: existingResearch.length+1,
                 name: elements.name.value ? elements.name.value : game.i18n.localize('PF2ESubsystems.View.NewEvent'),
                 version: currentVersion,
                 background: elements.background.value ? elements.background.value : 'icons/skills/trades/academics-merchant-scribe.webp',
@@ -646,16 +681,21 @@ export default class SystemView extends HandlebarsApplicationMixin(
                 }
               }
 
+              const existingInfiltrations = Object.keys(game.settings.get(MODULE_ID, 'infiltration').events);
               const objectiveId = foundry.utils.randomID();
-
               return {
                 id: foundry.utils.randomID(),
+                position: existingInfiltrations.length+1,
                 name: elements.name.value ? elements.name.value : game.i18n.localize('PF2ESubsystems.View.NewEvent'),
                 version: currentVersion,
                 background: elements.background.value ? elements.background.value : 'icons/magic/unholy/silhouette-robe-evil-power.webp',
                 awarenessPoints: {
                   current: 0,
-                  breakpoints: game.settings.get(MODULE_ID, settingIDs.infiltration.settings).defaultAwarenessBreakpoints,
+                  breakpoints: Object.values(game.settings.get(MODULE_ID, settingIDs.infiltration.settings).defaultAwarenessBreakpoints).reduce((acc, breakpoint, index) => {
+                    acc[breakpoint.id] = { ...breakpoint, position: index+1 };
+
+                    return acc;
+                  }, {}),
                 },
                 objectives: {
                   [objectiveId]: {
@@ -664,7 +704,11 @@ export default class SystemView extends HandlebarsApplicationMixin(
                     position: 1,
                   }
                 },
-                preparations: { activities: defaultInfiltrationPreparations },
+                preparations: { activities: Object.values(defaultInfiltrationPreparations).reduce((acc, activity, index) => {
+                  acc[activity.id] = { ...activity, position: index+1 };
+
+                  return acc;
+                }, {}) },
               };
             },
             attachListeners: this.filePickerListener.bind(this),
@@ -683,8 +727,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
                 }
               }
 
+              const existingInfluence = Object.keys(game.settings.get(MODULE_ID, 'influence').events);
               return {
                 id: foundry.utils.randomID(),
+                position: existingInfluence.length+1,
                 name: elements.name.value ? elements.name.value : game.i18n.localize('PF2ESubsystems.View.NewEvent'),
                 version: currentVersion,
                 background: elements.background.value ? elements.background.value : 'icons/magic/perception/eye-ringed-green.webp',
@@ -782,7 +828,23 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
       if(!confirmed) return;
 
-      await updateDataModel(this.tabGroups.main, { [`events.-=${button.dataset.id}`]: null });
+      const events = game.settings.get(MODULE_ID, this.tabGroups.main).events;
+      const removedPosition = events[button.dataset.id].position;
+      const eventsUpdate = Object.keys(events).reduce((acc, key) => {
+        if(key !== button.dataset.id){
+          const event = events[key];
+          acc[key] = {
+            position: event.position > removedPosition ? event.position-1 : event.position, 
+          };
+        }
+        else {
+          acc[`-=${key}`] = null;
+        }
+        
+        return acc;
+      }, {});
+
+      await updateDataModel(this.tabGroups.main, { 'events': eventsUpdate });
       this.render({ parts: [this.tabGroups.main] });
     }
 
@@ -790,6 +852,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
       this.selected = getDefaultSelected();
       this.editMode = false;
       this.tabGroups.sidebar = '';
+      this.tabGroups.infiltration = 'infiltration';
       this.render({ parts: [this.tabGroups.main] });
     }
 
@@ -1110,7 +1173,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
     static async addObstacle(_, button) {
       const newId = foundry.utils.randomID();
       const currentObstacles = Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].obstacles).length;
-      const newPosition = currentObstacles+1;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.obstacles.${newId}`]: {
         id: newId,
         img: "icons/svg/cowled.svg",
@@ -1119,17 +1181,18 @@ export default class SystemView extends HandlebarsApplicationMixin(
         locked: true,
       }});
 
-      this.selected.chaseObstacle = newPosition;
+      this.selected.chaseObstacle = newId;
       this.render({ parts: [this.tabGroups.main] });
     }
 
     static async removeObstacle(_, button) {
       const chases = game.settings.get(MODULE_ID, this.tabGroups.main);
       const removedPosition = chases.events[button.dataset.event].obstacles[button.dataset.obstacle].position;
-      const obstacles = Object.keys(chases.events[button.dataset.event].obstacles).reduce((acc, x) => {
-        const obstacle = chases.events[button.dataset.event].obstacles[x];
+
+      const obstacleValues = Object.values(chases.events[button.dataset.event].obstacles);
+      const obstacles = obstacleValues.reduce((acc, obstacle) => {
         if(obstacle.id !== button.dataset.obstacle) {
-          acc[x] = {
+          acc[obstacle.id] = {
             ...obstacle,
             position: obstacle.position > removedPosition ? obstacle.position -1 : obstacle.position,
           };
@@ -1157,7 +1220,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
       await game.settings.set(MODULE_ID, this.tabGroups.main, chases);
 
-      this.selected.chaseObstacle = Math.min(this.selected.chaseObstacle, Object.keys(obstacles).length);
+      const newObstacleValues =  Object.values(obstacles);
+      this.selected.chaseObstacle =  this.selected.chaseObstacle === button.dataset.obstacle ? newObstacleValues.find(x => x.position === Math.min(removedPosition, newObstacleValues.length))?.id : this.selected.chaseObstacle;
 
       await game.socket.emit(SOCKET_ID, {
         action: socketEvent.UpdateSystemView,
@@ -1168,7 +1232,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
     }
 
     static setCurrentObstacle(_, button) {
-      this.selected.chaseObstacle = Number.parseInt(button.dataset.position);
+      this.selected.chaseObstacle = button.dataset.id;
       this.render({ parts: [this.tabGroups.main] });
     }
 
@@ -1181,9 +1245,9 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
       const button = baseButton ?? e.currentTarget;
       const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event];
-      const currentObstacle = Object.values(event.obstacles).find(x => x.position === Number.parseInt(button.dataset.position));
+      const currentObstacle = Object.values(event.obstacles).find(x => x.id === button.dataset.id);
 
-      if(currentObstacle.position === 1) {
+      if(currentObstacle.position === 1 && !currentObstacle.locked) {
         ui.notifications.error(game.i18n.localize('PF2ESubsystems.Chase.Errors.LockFirstObstacle'));
         return;
       }
@@ -1214,20 +1278,9 @@ export default class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.timeLimit.current`]: button.dataset.increase ? currentValue + 1 : currentValue -1 });
     }
 
-    static async addResearchBreakpoint(_, button) {
-      const breakpointId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchBreakpoints.${breakpointId}`]: {
-        id: breakpointId,
-      }});
-    }
-
     static async researchUpdateResearchPoints(_, button) {
       const currentResearchPoints = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchPoints;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchPoints`]: button.dataset.increase ? currentResearchPoints + 1 : currentResearchPoints - 1});
-    }
-
-    static async removeResearchBreakpoint(_, button){
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchBreakpoints.-=${button.dataset.breakpoint}`]: null});
     }
 
     static async toggleResearchBreakpointHidden(_, button) {
@@ -1243,23 +1296,17 @@ export default class SystemView extends HandlebarsApplicationMixin(
     }
 
     static async addResearchCheck(_, button) {
-      const researchCheckId = foundry.utils.randomID();
       const skillCheckId = foundry.utils.randomID();
       const skillId = foundry.utils.randomID();
 
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${researchCheckId}`]: {
-        id: researchCheckId,
+      await this.addByPath(`events.${button.dataset.event}.researchChecks`, {
         [`skillChecks.${skillCheckId}`]: {
           id: skillCheckId,
           [`skills.${skillId}`]: {
             id: skillId,
           }
-        },
-      }});
-    }
-
-    static async removeResearchCheck(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.-=${button.dataset.check}`]: null });
+        }
+      });
     }
 
     static async toggleResearchCheckHidden(_, button) {
@@ -1312,17 +1359,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.skillChecks.${button.dataset.skillCheck}.skills.-=${button.dataset.skill}`]: null});
     }
 
-    static async addResearchEvent(_, button){
-      const researchEventId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchEvents.${researchEventId}`]: {
-        id: researchEventId,
-      }});
-    }
-
-    static async removeResearchEvent(_, button){
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchEvents.-=${button.dataset.researchEvent}`]: null });
-    }
-
     static async toggleResearchEventHidden(_, button){
       const currentHidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchEvents[button.dataset.researchEvent].hidden;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchEvents.${button.dataset.researchEvent}.hidden`]: !currentHidden });
@@ -1361,9 +1397,14 @@ export default class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchChecks.${button.dataset.check}.currentResearchPoints`]: button.dataset.increase ? currentPoints + 1 : currentPoints - 1 });
     }
 
+    static async researchToggleEventModifier(_, button) {
+      const currentActive = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].researchEvents[button.dataset.researchEvent].modifier.active;
+      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.researchEvents.${button.dataset.researchEvent}.modifier.active`]: !currentActive });
+    }
+
     //#region Infiltration
     static async setCurrentInfiltrationObjective(_, button) {
-      this.selected.infiltration.currentObjective = Number.parseInt(button.dataset.position);
+      this.selected.infiltration.currentObjective = button.dataset.id;
       this.render({ parts: [this.tabGroups.main] });
     }
 
@@ -1388,7 +1429,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
         }
       }});
 
-      this.selected.infiltration.currentObjective = newPosition;
+      this.selected.infiltration.currentObjective = newId;
     }
 
 
@@ -1414,7 +1455,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
       await game.settings.set(MODULE_ID, this.tabGroups.main, infiltrations);
 
-      this.selected.infiltration.currentObjective = Math.min(this.selected.infiltration.currentObjective, Object.keys(objectives).length);
+      const currentObjectivesValues = Object.values(objectives);
+      this.selected.infiltration.currentObjective = this.selected.infiltration.currentObjective === button.dataset.objective ? currentObjectivesValues.find(x => x.position === Math.min(removedPosition, currentObjectivesValues.length))?.id : this.selected.infiltration.currentObjective;
 
       await game.socket.emit(SOCKET_ID, {
         action: socketEvent.UpdateSystemView,
@@ -1518,7 +1560,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
       const button = baseButton ?? e.currentTarget;
       const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event];
-      const currentObjective = Object.values(event.objectives).find(x => x.position === Number.parseInt(button.dataset.position));
+      const currentObjective = Object.values(event.objectives).find(x => x.id === button.dataset.id);
 
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.objectives.${currentObjective.id}.hidden`]: !currentObjective.hidden });
     }
@@ -1532,13 +1574,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.objectives.${button.dataset.objective}.obstacles.${button.dataset.obstacle}.hidden`]: !currentHidden });
     }
 
-    static async addInfiltrationAwarenessBreakpoint(_, button) {
-      const breakpointId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.awarenessPoints.breakpoints.${breakpointId}`]: {
-        id: breakpointId,
-      }});
-    }
-
     static async infiltrationToggleOpenAwarenessBreakpoint(_, button) {
       this.selected.infiltration.awarenessBreakpoint = this.selected.infiltration.awarenessBreakpoint === button.dataset.breakpoint ? null : button.dataset.breakpoint;
       this.render({ parts: [this.tabGroups.main] });
@@ -1549,37 +1584,27 @@ export default class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.awarenessPoints.breakpoints.${button.dataset.breakpoint}.hidden`]: !currentHidden });
     }
 
-    static async infiltrationRemoveAwarenessBreakpoint(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.awarenessPoints.breakpoints.-=${button.dataset.breakpoint}`]: null });
-    }
-
     static async infiltrationToggleAwarenessBreakpointInUse(_, button) {
       const currentInUse = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].awarenessPoints.breakpoints[button.dataset.breakpoint].inUse;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.awarenessPoints.breakpoints.${button.dataset.breakpoint}.inUse`]: !currentInUse });
     }
 
     static async addInfiltrationOpportunity(_, button) {
-      const opportunityId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.opportunities.${opportunityId}`]: {
-        id: opportunityId,
-        name: game.i18n.localize("PF2ESubsystems.Infiltration.NewOpportunity"),
-      }});
+      await this.addByPath(`events.${button.dataset.event}.opportunities`, { name: game.i18n.localize("PF2ESubsystems.Infiltration.NewOpportunity") });
     }
 
     static async addInfiltrationComplication(_, button) {
-      const complicationId = foundry.utils.randomID();
       const skillCheckId = foundry.utils.randomID();
       const skillId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${complicationId}`]: {
-        id: complicationId,
+      await this.addByPath(`events.${button.dataset.event}.complications`, {
         name: game.i18n.localize("PF2ESubsystems.Infiltration.NewComplication"),
         [`skillChecks.${skillCheckId}`]: {
           id: skillCheckId,
           [`skills.${skillId}`]: {
             id: skillId,
           }
-        },
-      }});
+        }
+      });
     }
 
     static async infiltrationToggleOpportunityHidden(_, button) {
@@ -1606,14 +1631,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
       this.tabGroups.infiltrationComplication = 'description';
       this.selected.infiltration.complicationResultSelect = null;
       this.render({ parts: [this.tabGroups.main] }); 
-    }
-
-    static async removeInfiltrationOpportunity(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.opportunities.-=${button.dataset.opportunity}`]: null });
-    }
-
-    static async removeInfiltrationComplication(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.-=${button.dataset.complication}`]: null });
     }
 
     static async infiltrationUpdateAwarenessPoints(_, button) {
@@ -1780,6 +1797,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
       if(totalAttempts === activity.maxAttempts) return;
 
+      const edgePoints = Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].edgePoints);
       const edgeId = foundry.utils.randomID();
       const result = activity.results[button.dataset.result];
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}`]: {
@@ -1787,6 +1805,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
         edgePoints: {
           [edgeId]: {
             id: edgeId,
+            position: edgePoints.length+1,
             faked: Boolean(result.fakeDegreeOfSuccess),
             name: activity.edgeLabel,
             originActivity: button.dataset.activity,
@@ -1891,10 +1910,6 @@ export default class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.edgePoints.${button.dataset.edge}.used`]: !currentUsed });
     }
 
-    static async infiltrationEdgeRemove(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.edgePoints.-=${button.dataset.edge}`]: null });
-    }
-
     static async infiltrationPreparationActivityToggleHidden(_, button) {
       const currentHidden = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].preparations.activities[button.dataset.activity].hidden;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.hidden`]: !currentHidden });
@@ -1902,31 +1917,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
     //#endregion 
 
     //#region influence
-    static async influenceDiscoveryAdd(_, button) {
-      const discoveryId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.discoveries.${discoveryId}`]: { id: discoveryId } });
-    }
-
-    static async influenceDiscoveryRemove(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.discoveries.-=${button.dataset.discovery}`]:  null });
-    }
-
-    static async influenceSkillAdd(_, button) {
-      const skillId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influenceSkills.${skillId}`]: { id: skillId } });
-    }
-
-    static async influenceSkillRemove(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influenceSkills.-=${button.dataset.skill}`]:  null });
-    }
-
     static async influenceInfluenceAdd(_, button) {
-      const influenceId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influence.${influenceId}`]: { id: influenceId, name: 'New Influence' } });
-    }
-
-    static async influenceInfluenceRemove(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.influence.-=${button.dataset.influence}`]:  null });
+      await this.addByPath(`events.${button.dataset.event}.influence`, { name: 'New Influence' });
     }
 
     static async influencePointsUpdate(_, button) {
@@ -1972,30 +1964,15 @@ export default class SystemView extends HandlebarsApplicationMixin(
     }
 
     static async influenceWeaknessAdd(_, button) {
-      const weaknessId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.weaknesses.${weaknessId}`]: { id: weaknessId, name: 'New Weakness' } });
-    }
-
-    static async influenceWeaknessRemove(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.weaknesses.-=${button.dataset.weakness}`]: null });
+      await this.addByPath(`events.${button.dataset.event}.weaknesses`, { name: 'New Weakness' });
     }
 
     static async influenceResistanceAdd(_, button) {
-      const resistanceId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.resistances.${resistanceId}`]: { id: resistanceId, name: 'New Resistance' } });
-    }
-
-    static async influenceResistanceRemove(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.resistances.-=${button.dataset.resistance}`]: null });
+      await this.addByPath(`events.${button.dataset.event}.resistances`, { name: 'New Resistance' });
     }
 
     static async influencePenaltyAdd(_, button) {
-      const penaltyId = foundry.utils.randomID();
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.penalties.${penaltyId}`]: { id: penaltyId, name: 'New Penalty' } });
-    }
-
-    static async influencePenaltyRemove(_, button) {
-      await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.penalties.-=${button.dataset.penalty}`]: null });
+      await this.addByPath(`events.${button.dataset.event}.penalties`, { name: 'New Penalty' });
     }
 
     static async influenceDiscoveryToggleHidden(_, button) {
@@ -2061,6 +2038,38 @@ export default class SystemView extends HandlebarsApplicationMixin(
       });
     }
 
+    async addByPath(path, update={}) {
+      const current = foundry.utils.getProperty(game.settings.get(MODULE_ID, this.tabGroups.main), path);
+      const newId = foundry.utils.randomID();
+      await updateDataModel(this.tabGroups.main, { [path]: {
+        [newId]: { 
+          id: newId, 
+          position: Object.keys(current).length+1,
+          ...update,
+        }
+      }});
+    }
+
+    static async addData(_, button) {
+      await this.addByPath(button.dataset.path);
+    }
+
+    static async removeData(_, button) {
+      const data = foundry.utils.getProperty(game.settings.get(MODULE_ID, this.tabGroups.main), button.dataset.path);
+      const currentPosition = data[button.dataset.id].position;
+      const updatedData = Object.values(data).reduce((acc, curr) => {
+        if(curr.id === button.dataset.id) {
+          acc[`-=${curr.id}`] = null;
+        }
+        else {
+          acc[curr.id] = { position: curr.position > currentPosition ? curr.position-1 : curr.position };
+        }
+
+        return acc;
+      }, {});
+      await updateDataModel(this.tabGroups.main, { [button.dataset.path]: updatedData });
+    }
+
     static async influenceRoundsUpdate(_, button) {
       const currentRound = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].timeLimit.current;
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.timeLimit.current`]: button.dataset.increase ? currentRound + 1 : currentRound - 1 });
@@ -2076,6 +2085,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
       });
 
       button.dataset.event
+    }
+
+     static async onToggleObjectiveLock(event) {
+      await this.toggleObjectiveHidden(undefined, event.srcElement);
     }
 
     async updateInfluenceDiscoveryLore(event) {
@@ -2480,15 +2493,16 @@ export default class SystemView extends HandlebarsApplicationMixin(
           await this.setupEvents(chaseEvents, context);
           if(context.selectedEvent) {
             context.sidebarTabs = this.getSidebarTabs(context.selectedEvent.pins.sidebar);
-            context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
-            context.selectedEvent.enrichedGMNotes = await TextEditor.enrichHTML(context.selectedEvent.gmNotes);
+            context.selectedEvent.enrichedPremise = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.selectedEvent.premise);
+            context.selectedEvent.enrichedGMNotes = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.selectedEvent.gmNotes);
             context.showRounds = this.editMode || context.selectedEvent.rounds.max;
+          
+            context.selectedEvent.extendedParticipants = positionSort(context.selectedEvent.participants);
           }
           
-          context.currentObstacleNr = this.selected.chaseObstacle ?? 1;
-          context.currentObstacle = context.selectedEvent?.obstacles ? Object.values(context.selectedEvent.extendedObstacles).find(x => x.position === context.currentObstacleNr) : null;
+          context.currentObstacle = context.selectedEvent?.obstacles ? context.selectedEvent.extendedObstacles.find(x => x.id === this.selected.chaseObstacle) : null;
           if(context.currentObstacle) {
-            context.currentObstacle.enrichedOvercome = await TextEditor.enrichHTML(context.currentObstacle.overcome);
+            context.currentObstacle.enrichedOvercome = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.currentObstacle.overcome);
           }
 
           break;
@@ -2505,46 +2519,51 @@ export default class SystemView extends HandlebarsApplicationMixin(
           context.skillCheckTabs = this.getResearchSkillCheckTabs();
           await this.setupEvents(viewEvents, context);
           if(context.selectedEvent) {
+            const dcModifier = context.selectedEvent.researchCheckModifier;
             context.sidebarTabs = this.getSidebarTabs(context.selectedEvent.pins.sidebar);
-            context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
-            context.selectedEvent.enrichedGMNotes = await TextEditor.enrichHTML(context.selectedEvent.gmNotes);
+            context.selectedEvent.enrichedPremise = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.selectedEvent.premise);
+            context.selectedEvent.enrichedGMNotes = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.selectedEvent.gmNotes);
             context.showTimeLimit = this.editMode || context.selectedEvent.timeLimit.max;
             context.selectedEvent.timeLimit.unitName = timeUnits[context.selectedEvent.timeLimit.unit]?.name;
 
             for(var key of Object.keys(context.selectedEvent.researchChecksData)){
               const researchCheck = context.selectedEvent.researchChecks[key];
               researchCheck.open = researchCheck.id === this.selected.research?.openResearchCheck;
-              researchCheck.enrichedDescription = await TextEditor.enrichHTML(researchCheck.description);
+              researchCheck.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(researchCheck.description);
               
               for(var checkKey of Object.keys(researchCheck.skillChecks)) {
                 const checkSkill = researchCheck.skillChecks[checkKey];
-                checkSkill.enrichedDescription = await TextEditor.enrichHTML(checkSkill.description);
+                checkSkill.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(checkSkill.description);
 
                 const skills = Object.keys(checkSkill.skills);
                 for(var skillKey of skills){
                   const skillCheck = checkSkill.skills[skillKey];
+                  const modifiedDC = skillCheck.dc + dcModifier;
                   if(skillCheck.action) {
-                    skillCheck.element = await getActButton(skillCheck.action, skillCheck.variant, skillCheck.skill, skillCheck.dc, false, false, `${game.i18n.localize('PF2ESubsystems.Events.Research.Single')}: ${researchCheck.name}`, false);  
+                    skillCheck.element = await getActButton(skillCheck.action, skillCheck.variant, skillCheck.skill, modifiedDC, false, false, `${game.i18n.localize('PF2ESubsystems.Events.Research.Single')}: ${researchCheck.name}`, false);  
                   }
                   else {
-                    skillCheck.element = await getCheckButton(skillCheck.skill, skillCheck.dc, skillCheck.simple, false, false, `${game.i18n.localize('PF2ESubsystems.Events.Research.Single')}: ${researchCheck.name} (${(skillCheck.lore || !skillCheck.skill) ? skillCheck.skill : game.i18n.localize(extendedSkills()[skillCheck.skill].label)})`);
+                    skillCheck.element = await getCheckButton(skillCheck.skill, modifiedDC, skillCheck.simple, false, false, `${game.i18n.localize('PF2ESubsystems.Events.Research.Single')}: ${researchCheck.name} (${(skillCheck.lore || !skillCheck.skill) ? skillCheck.skill : game.i18n.localize(extendedSkills()[skillCheck.skill].label)})`);
                   }
                   skillCheck.isFirst = skills[0] === skillCheck.id;
                 }
               }
             }
+            context.selectedEvent.extendedResearchChecksData = positionSort(context.selectedEvent.researchChecks);
 
             for(var key of Object.keys(context.selectedEvent.researchBreakpoints)) {
               const researchBreakpoint = context.selectedEvent.researchBreakpoints[key];
               researchBreakpoint.open = researchBreakpoint.id === this.selected.research?.openResearchBreakpoint;
-              researchBreakpoint.enrichedDescription = await TextEditor.enrichHTML(researchBreakpoint.description);
+              researchBreakpoint.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(researchBreakpoint.description);
             }
+            context.selectedEvent.extendedResearchBreakpoints = positionSort(context.selectedEvent.researchBreakpoints);
 
             for(var key of Object.keys(context.selectedEvent.researchEvents)) {
               const researchEvent = context.selectedEvent.researchEvents[key];
               researchEvent.open = researchEvent.id === this.selected.research?.openResearchEvent;
-              researchEvent.enrichedDescription = await TextEditor.enrichHTML(researchEvent.description);
+              researchEvent.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(researchEvent.description);
             }
+            context.selectedEvent.extendedResearchEvents = positionSort(context.selectedEvent.researchEvents);
           }
 
           context.revealedResearchChecks = context.selectedEvent ? Object.values(context.selectedEvent.researchChecks).filter(x => !x.hidden).length : 0;
@@ -2586,144 +2605,152 @@ export default class SystemView extends HandlebarsApplicationMixin(
           await this.setupEvents(infiltrationEvents, context);
           if(context.selectedEvent) {
             context.sidebarTabs = this.getSidebarTabs(context.selectedEvent.pins.sidebar);
-            context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
-            context.selectedEvent.enrichedGMNotes = await TextEditor.enrichHTML(context.selectedEvent.gmNotes);
+            context.selectedEvent.enrichedPremise = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.selectedEvent.premise);
+            context.selectedEvent.enrichedGMNotes = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.selectedEvent.gmNotes);
             context.selectedEvent.extendedComplications = context.selectedEvent.complicationsData;
             context.selectedEvent.extendedPreparations = {
               ...context.selectedEvent.preparations,
               activities: context.selectedEvent.preparationsActivitiesData
             };
-            context.currentObjectiveNr = (this.selected.infiltration.currentObjective ?? 1);
+
             const awarenessDCIncrease = context.selectedEvent.awarenessDCIncrease;
 
-            context.currentObjective = Object.values(context.selectedEvent.objectives).find(x => x.position === context.currentObjectiveNr);
-            for(var key of Object.keys(context.currentObjective.obstacles)) {
-              var obstacle = context.currentObjective.obstacles[key];
-              obstacle.enrichedDescription = await TextEditor.enrichHTML(obstacle.description);
-              obstacle.individualInfiltrationPoints = !obstacle.individual ? [] : game.actors.find(x => x.type === 'party').members.reduce((acc, curr) => {
-                acc[curr.id] = {
-                  id: curr.id,
-                  name: curr.name,
-                  value: obstacle.infiltrationPointData[curr.id] ?? 0,
-                };
+            context.currentObjective = Object.values(context.selectedEvent.objectives).find(x => x.id === this.selected.infiltration.currentObjective);
+            context.selectedEvent.extendedObjectives = positionSort(context.selectedEvent.objectives);
+            if(context.currentObjective){
+              for(var key of Object.keys(context.currentObjective.obstacles)) {
+                var obstacle = context.currentObjective.obstacles[key];
+                obstacle.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(obstacle.description);
+                obstacle.individualInfiltrationPoints = !obstacle.individual ? [] : game.actors.find(x => x.type === 'party').members.reduce((acc, curr) => {
+                  acc[curr.id] = {
+                    id: curr.id,
+                    name: curr.name,
+                    value: obstacle.infiltrationPointData[curr.id] ?? 0,
+                  };
 
-                return acc;
-              }, {});
-              obstacle.skillChecks = Object.values(obstacle.skillChecks).reduce((acc, skillCheck) => {
-                acc[skillCheck.id] = {
-                  ...skillCheck,
-                  columns: Object.values(skillCheck.skills).reduce((acc, skill) => {
-                    acc.lore.push({ 
-                      event: context.selectedEvent.id,
-                      objective: context.currentObjective.id,
-                      obstacle: obstacle.id,
-                      skillCheck: skillCheck.id,
-                      id: skill.id,
-                      lore: skill.lore,
-                    });
-                    acc.skill.push({ 
-                      event: context.selectedEvent.id,
-                      objective: context.currentObjective.id,
-                      obstacle: obstacle.id,
-                      skillCheck: skillCheck.id,
-                      id: skill.id,
-                      skill: skill.skill,
-                      lore: skill.lore,
-                    });
-                    acc.action.push({ 
-                      event: context.selectedEvent.id,
-                      objective: context.currentObjective.id,
-                      obstacle: obstacle.id,
-                      skillCheck: skillCheck.id,
-                      id: skill.id,
-                      action: skill.action,
-                      label: skill.label,
-                    });
-                    acc.variant.push({ 
-                      event: context.selectedEvent.id,
-                      objective: context.currentObjective.id,
-                      obstacle: obstacle.id,
-                      skillCheck: skillCheck.id,
-                      id: skill.id,
-                      variantOptions: skill.action ? [...game.pf2e.actions.get(skill.action).variants].map(x => ({ value: x.slug, name: x.name })) : [],
-                      variant: skill.variant,
-                      disabled: skill.action ? game.pf2e.actions.get(skill.action).variants.size === 0 : true,
-                    });
-                    acc.dc.push({ 
-                      event: context.selectedEvent.id,
-                      objective: context.currentObjective.id,
-                      obstacle: obstacle.id,
-                      skillCheck: skillCheck.id,
-                      id: skill.id,
-                      skill: skill.skill,
-                      dc: skill.difficulty.DC,
-                      leveledDC: skill.difficulty.leveledDC,
-                    });
-    
-                    return acc;
-                  }, { lore: [], skill: [], action: [], variant: [], dc: [] }),
-                }
-    
-                return acc;
-              }, {})
-            }
-
-            for(var key of Object.keys(context.currentObjective.obstacles)){
-              var obstacle = context.currentObjective.obstacles[key];
-              obstacle.open = obstacle.id === this.selected.openInfiltrationObstacle;
-
-              for(var key of Object.keys(obstacle.skillChecks)){
-                const skillCheck = obstacle.skillChecks[key];
-                skillCheck.dcAdjustmentValues = skillCheck.dcAdjustments.map(x => ({
-                  name: game.i18n.localize(dcAdjustments[x].name),
-                  value: x,
-                }));
-  
-                const dcAdjustment = (skillCheck.selectedAdjustment ? getDCAdjustmentNumber(skillCheck.selectedAdjustment) : 0) + awarenessDCIncrease;
-                const disableElement = skillCheck.dcAdjustments.length > 0 && !skillCheck.selectedAdjustment;
-                for(var key of Object.keys(skillCheck.skills)){
-                  const skill = skillCheck.skills[key];
-                  let dc = (skill.difficulty.leveledDC ? getSelfDC() : (skill.difficulty.DC??0)) + dcAdjustment;
-                  if(skill.action) {
-                    skill.element = await getActButton(skill.action, skill.variant, skill.skill, dc, disableElement, false, `${game.i18n.localize('PF2ESubsystems.Events.Infiltration.Single')}: ${obstacle.name}`, false);
+                  return acc;
+                }, {});
+                obstacle.skillChecks = Object.values(obstacle.skillChecks).reduce((acc, skillCheck) => {
+                  acc[skillCheck.id] = {
+                    ...skillCheck,
+                    columns: Object.values(skillCheck.skills).reduce((acc, skill) => {
+                      acc.lore.push({ 
+                        event: context.selectedEvent.id,
+                        objective: context.currentObjective.id,
+                        obstacle: obstacle.id,
+                        skillCheck: skillCheck.id,
+                        id: skill.id,
+                        lore: skill.lore,
+                      });
+                      acc.skill.push({ 
+                        event: context.selectedEvent.id,
+                        objective: context.currentObjective.id,
+                        obstacle: obstacle.id,
+                        skillCheck: skillCheck.id,
+                        id: skill.id,
+                        skill: skill.skill,
+                        lore: skill.lore,
+                      });
+                      acc.action.push({ 
+                        event: context.selectedEvent.id,
+                        objective: context.currentObjective.id,
+                        obstacle: obstacle.id,
+                        skillCheck: skillCheck.id,
+                        id: skill.id,
+                        action: skill.action,
+                        label: skill.label,
+                      });
+                      acc.variant.push({ 
+                        event: context.selectedEvent.id,
+                        objective: context.currentObjective.id,
+                        obstacle: obstacle.id,
+                        skillCheck: skillCheck.id,
+                        id: skill.id,
+                        variantOptions: skill.action ? [...game.pf2e.actions.get(skill.action).variants].map(x => ({ value: x.slug, name: x.name })) : [],
+                        variant: skill.variant,
+                        disabled: skill.action ? game.pf2e.actions.get(skill.action).variants.size === 0 : true,
+                      });
+                      acc.dc.push({ 
+                        event: context.selectedEvent.id,
+                        objective: context.currentObjective.id,
+                        obstacle: obstacle.id,
+                        skillCheck: skillCheck.id,
+                        id: skill.id,
+                        skill: skill.skill,
+                        dc: skill.difficulty.DC,
+                        leveledDC: skill.difficulty.leveledDC,
+                      });
+      
+                      return acc;
+                    }, { lore: [], skill: [], action: [], variant: [], dc: [] }),
                   }
-                  else {
-                    skill.element = await getCheckButton(skill.skill, dc, skill.simple, disableElement, false, `${game.i18n.localize('PF2ESubsystems.Events.Infiltration.Single')}: ${obstacle.name} (${(skill.lore || !skill.skill) ? skill.skill : game.i18n.localize(extendedSkills()[skill.skill].label)})`);
+      
+                  return acc;
+                }, {})
+              }
+
+              for(var key of Object.keys(context.currentObjective.obstacles)){
+                var obstacle = context.currentObjective.obstacles[key];
+                obstacle.open = obstacle.id === this.selected.openInfiltrationObstacle;
+
+                for(var key of Object.keys(obstacle.skillChecks)){
+                  const skillCheck = obstacle.skillChecks[key];
+                  skillCheck.dcAdjustmentValues = skillCheck.dcAdjustments.map(x => ({
+                    name: game.i18n.localize(dcAdjustments[x].name),
+                    value: x,
+                  }));
+    
+                  const dcAdjustment = (skillCheck.selectedAdjustment ? getDCAdjustmentNumber(skillCheck.selectedAdjustment) : 0) + awarenessDCIncrease;
+                  const disableElement = skillCheck.dcAdjustments.length > 0 && !skillCheck.selectedAdjustment;
+                  for(var key of Object.keys(skillCheck.skills)){
+                    const skill = skillCheck.skills[key];
+                    let dc = (skill.difficulty.leveledDC ? getSelfDC() : (skill.difficulty.DC??0)) + dcAdjustment;
+                    if(skill.action) {
+                      skill.element = await getActButton(skill.action, skill.variant, skill.skill, dc, disableElement, false, `${game.i18n.localize('PF2ESubsystems.Events.Infiltration.Single')}: ${obstacle.name}`, false);
+                    }
+                    else {
+                      skill.element = await getCheckButton(skill.skill, dc, skill.simple, disableElement, false, `${game.i18n.localize('PF2ESubsystems.Events.Infiltration.Single')}: ${obstacle.name} (${(skill.lore || !skill.skill) ? skill.skill : game.i18n.localize(extendedSkills()[skill.skill].label)})`);
+                    }
                   }
                 }
               }
+
+              context.currentObjective.extendedObstacles = positionSort(context.currentObjective.obstacles);
             }
 
             for(var key of Object.keys(context.selectedEvent.edgePoints)){
               const edgePoint = context.selectedEvent.edgePoints[key];
               edgePoint.open = this.selected.infiltration.openEdge === edgePoint.id;
 
-              edgePoint.enrichedDescription = await TextEditor.enrichHTML(edgePoint.description);
-              edgePoint.enrichedHiddenDescription = edgePoint.hiddenDescription ? await TextEditor.enrichHTML(edgePoint.hiddenDescription) : null;
+              edgePoint.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(edgePoint.description);
+              edgePoint.enrichedHiddenDescription = edgePoint.hiddenDescription ? await foundry.applications.ux.TextEditor.implementation.enrichHTML(edgePoint.hiddenDescription) : null;
               edgePoint.playerDescription = !edgePoint.faked && edgePoint.enrichedHiddenDescription ? edgePoint.enrichedHiddenDescription : edgePoint.enrichedDescription;
             }
+            context.selectedEvent.extendedEdgePoints = positionSort(context.selectedEvent.edgePoints);
 
             for(var key of Object.keys(context.selectedEvent.awarenessPoints.breakpoints)){
               const breakpoint = context.selectedEvent.awarenessPoints.breakpoints[key];
               breakpoint.description = game.i18n.localize(breakpoint.description);
-              breakpoint.enrichedDescription = await TextEditor.enrichHTML(breakpoint.description);
+              breakpoint.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(breakpoint.description);
               breakpoint.open = this.selected.infiltration.awarenessBreakpoint === breakpoint.id;
               breakpoint.active = context.settings.autoApplyAwareness ? (context.selectedEvent.visibleAwareness) >= breakpoint.breakpoint : breakpoint.inUse;
               breakpoint.showActivate = (game.user.isGM && !context.settings.autoApplyAwareness) || breakpoint.inUse;
               breakpoint.playerHidden = context.settings.autoRevealAwareness ? context.selectedEvent.awarenessPoints.current < breakpoint.breakpoint : breakpoint.hidden;
               breakpoint.hideable = game.user.isGM && !context.settings.autoRevealAwareness && !context.editMode;
             }
+            context.selectedEvent.extendedAwarenessPointsBreakpoints = positionSort(context.selectedEvent.awarenessPoints.breakpoints);
 
             for(var key of Object.keys(context.selectedEvent.opportunities)){
               var opportunity = context.selectedEvent.opportunities[key];
               opportunity.open = this.selected.openInfiltrationOpportunity === opportunity.id;
-              opportunity.enrichedDescription = await TextEditor.enrichHTML(opportunity.description);
+              opportunity.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(opportunity.description);
             }
+            context.selectedEvent.extendedOpportunities = positionSort(context.selectedEvent.opportunities);
 
             for(var key of Object.keys(context.selectedEvent.extendedComplications)){
               const complication = context.selectedEvent.extendedComplications[key];
               complication.open = this.selected.openInfiltrationComplication === complication.id;
-              complication.enrichedDescription = await TextEditor.enrichHTML(complication.description);
+              complication.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(complication.description);
 
               for(var key of Object.keys(complication.skillChecks)){
                 const skillCheck = complication.skillChecks[key];
@@ -2754,16 +2781,17 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
                 const titleElement = `<p><strong class="infiltration-result-container ${complication.resultsOutcome !== result.degreeOfSuccess ? 'inactive' : ''} ${context.isGM ? 'clickable-icon' : ''} tertiary-container primary-text-container infiltration-activity-result-button" ${context.isGM ? 'data-action="infiltrationComplicationToggleResultsOutcome"' : ''} data-event="${context.selectedEvent.id}" data-complication="${complication.id}" data-result="${result.degreeOfSuccess}">${result.name}</strong>`;
                 const descriptionStartsWithParagraph = result.description.match(/^<p>/);
-                result.enrichedDescription = await TextEditor.enrichHTML(descriptionStartsWithParagraph ? result.description.replace('<p>', `${titleElement} `) : `${titleElement} ${result.description}`);
+                result.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(descriptionStartsWithParagraph ? result.description.replace('<p>', `${titleElement} `) : `${titleElement} ${result.description}`);
               }
 
               complication.selectedResult = Object.values(complication.results).find(x => x.degreeOfSuccess === this.selected.infiltration.complicationResultSelect);
             }
+            context.selectedEvent.extendedComplications = positionSort(context.selectedEvent.extendedComplications);
 
             for(var key of Object.keys(context.selectedEvent.extendedPreparations.activities)) {
               var activity = context.selectedEvent.extendedPreparations.activities[key];
               activity.open = this.selected.infiltration.preparations.openActivity === activity.id;
-              activity.enrichedDescription = await TextEditor.enrichHTML(activity.description);
+              activity.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(activity.description);
               activity.displayTags = activity.tags.map(tag => game.i18n.localize(CONFIG.PF2E.actionTraits[tag]));
 
               for(var key of Object.keys(activity.skillChecks)){
@@ -2805,11 +2833,12 @@ export default class SystemView extends HandlebarsApplicationMixin(
                 const shownResultOutcomes = resultOutcomes[result.degreeOfSuccess];
                 const titleElement = `<p><strong class="infiltration-result-container ${result.nrOutcomes === 0 ? 'inactive' : ''} ${context.isGM ? 'clickable-icon' : ''} tertiary-container primary-text-container infiltration-activity-result-button" ${context.isGM ? 'data-action="infiltrationActivityIncreaseResultsOutcome"' : ''} data-event="${context.selectedEvent.id}" data-activity="${activity.id}" data-result="${result.degreeOfSuccess}">${result.name} ${shownResultOutcomes}x</strong>`;
                 const descriptionStartsWithParagraph = result.description.match(/^<p>/);
-                result.enrichedDescription = await TextEditor.enrichHTML(descriptionStartsWithParagraph ? result.description.replace('<p>', `${titleElement} `) : `${titleElement} ${result.description}`);
+                result.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(descriptionStartsWithParagraph ? result.description.replace('<p>', `${titleElement} `) : `${titleElement} ${result.description}`);
               }
 
               activity.selectedResult = Object.values(activity.results).find(x => x.degreeOfSuccess === this.selected.infiltration.preparations.resultSelect);
             }
+            context.selectedEvent.extendedPreparations.activities = positionSort(context.selectedEvent.extendedPreparations.activities);
           }
 
           context.skillOptions = [
@@ -2838,8 +2867,8 @@ export default class SystemView extends HandlebarsApplicationMixin(
           if(context.selectedEvent) {
             context.sidebarTabs = this.getSidebarTabs(context.selectedEvent.pins.sidebar);
             context.selectedEvent.linkedNPCs = context.selectedEvent.linkedNPCsData;
-            context.selectedEvent.enrichedPremise = await TextEditor.enrichHTML(context.selectedEvent.premise);
-            context.selectedEvent.enrichedGMNotes = await TextEditor.enrichHTML(context.selectedEvent.gmNotes);
+            context.selectedEvent.enrichedPremise = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.selectedEvent.premise);
+            context.selectedEvent.enrichedGMNotes = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.selectedEvent.gmNotes);
             context.selectedEvent.extendedDiscoveries = context.selectedEvent.discoveryData;
             context.selectedEvent.extendedInfluenceSkills = context.selectedEvent.influenceSkillData;
             context.dcModifier = context.selectedEvent.dcModifier;
@@ -2864,6 +2893,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
                 }
               }
             }
+            context.selectedEvent.extendedDiscoveries.data = positionSort(context.selectedEvent.extendedDiscoveries.data);
 
             for(var key of Object.keys(context.selectedEvent.extendedInfluenceSkills.data)) {
               const skill = context.selectedEvent.extendedInfluenceSkills.data[key];
@@ -2883,35 +2913,40 @@ export default class SystemView extends HandlebarsApplicationMixin(
                 }
               }
             }
+            context.selectedEvent.extendedInfluenceSkills.data = positionSort(context.selectedEvent.extendedInfluenceSkills.data);
 
             for(var key of Object.keys(context.selectedEvent.influence)) {
               const influence = context.selectedEvent.influence[key];
               const titleElement = `<strong>${influence.points}</strong>:`;
               const descriptionStartsWithParagraph = influence.description.match(/^<p>/);
-              influence.enrichedDescription = await TextEditor.enrichHTML(descriptionStartsWithParagraph ? influence.description.replace('<p>', `<p>${titleElement} `) : `${titleElement} ${influence.description}`);
+              influence.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(descriptionStartsWithParagraph ? influence.description.replace('<p>', `<p>${titleElement} `) : `${titleElement} ${influence.description}`);
               
               influence.shown = (context.settings.autoRevealInfluence && context.selectedEvent.influencePoints >= influence.points) || game.user.isGM || !influence.hidden;
               influence.hidden = context.settings.autoRevealInfluence ? context.selectedEvent.influencePoints < influence.points : influence.hidden;
               influence.open = this.selected.influence.openInfluence === influence.id;
             }
+            context.selectedEvent.extendedInfluence = positionSort(context.selectedEvent.influence);
 
             for(var key of Object.keys(context.selectedEvent.weaknesses)) {
               const weakness = context.selectedEvent.weaknesses[key];
               weakness.open =  this.selected.influence.openWeakness === weakness.id;
-              weakness.enrichedDescription = await TextEditor.enrichHTML(weakness.description);
+              weakness.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(weakness.description);
             }
+            context.selectedEvent.extendedWeaknesses = positionSort(context.selectedEvent.weaknesses);
 
             for(var key of Object.keys(context.selectedEvent.resistances)) {
               const resistance = context.selectedEvent.resistances[key];
               resistance.open =  this.selected.influence.openResistance === resistance.id;
-              resistance.enrichedDescription = await TextEditor.enrichHTML(resistance.description);
+              resistance.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(resistance.description);
             }
+            context.selectedEvent.extendedResistances = positionSort(context.selectedEvent.resistances);
 
             for(var key of Object.keys(context.selectedEvent.penalties)) {
               const penalty = context.selectedEvent.penalties[key];
               penalty.open =  this.selected.influence.openPenalty === penalty.id;
-              penalty.enrichedDescription = await TextEditor.enrichHTML(penalty.description);
+              penalty.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(penalty.description);
             }
+            context.selectedEvent.extendedPenalties = positionSort(context.selectedEvent.penalties);
           }
 
           context.skillOptions = [
@@ -2971,10 +3006,12 @@ export default class SystemView extends HandlebarsApplicationMixin(
     }
 
     filterEvents(events){
-      return this.eventSearchValue?.length === 0 ? events : Object.keys(events).reduce((acc, key) => {
-        const event = events[key];
+      return this.eventSearchValue?.length === 0 ? Object.values(events).sort((a, b) => a.position-b.position).reduce((acc, event) => {
+        acc[event.id] = event;
+        return acc;
+      }, {}) : Object.values(events).sort((a, b) => a.position-b.position).reduce((acc, event) => {
         const matches = event.name.match(this.eventSearchValue);
-        if(matches && matches.length > 0) acc[key] = events[key];
+        if(matches && matches.length > 0) acc[event.id] = events[event.id];
 
         return acc;
       }, {});
@@ -2985,14 +3022,20 @@ export default class SystemView extends HandlebarsApplicationMixin(
         switch(this.tabGroups.main){
           case 'chase':
             if(this.selected.event) {
-              const nrObstacles = Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event].obstacles).length;
-              this.selected.chaseObstacle = this.selected.chaseObstacle > nrObstacles ? this.selected.chaseObstacle-1 : this.selected.chaseObstacle; 
+              const obstacles = Object.values(game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event].obstacles);
+              const currentObstacle = obstacles.find(x => x.id === this.selected.chaseObstacle);
+
+              const currentId = currentObstacle?.id && (game.user.isGM || !currentObstacle?.hidden) ? currentObstacle.id : null;
+              this.selected.chaseObstacle = currentId ?? obstacles.find(x => game.user.isGM ? true : !x.locked)?.id; 
             }
             break;
           case 'infiltration':
             if(this.selected.event) {
-              const nrObjectives = Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event].objectives).length;
-              this.selected.infiltration.currentObjective = this.selected.infiltration.currentObjective > nrObjectives ? this.selected.infiltration.currentObjective-1 : this.selected.infiltration.currentObjective; 
+              const objectives = Object.values(game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event].objectives);
+              const currentObjective = objectives.find(x => x.id === this.selected.infiltration.currentObjective);
+              
+              const currentId = currentObjective?.id && (game.user.isGM || !currentObjective?.hidden) ? currentObjective.id : null;
+              this.selected.infiltration.currentObjective = currentId ?? objectives.find(x => game.user.isGM ? true : !x.hidden)?.id; 
             }
             break;
         }
@@ -3009,10 +3052,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
       await updateDataModel(this.tabGroups.main, { events });
     }
 
-    async setupEvents(chaseEvents, context){
+    async setupEvents(events, context){
       if(!this.isTour){
         await Promise.resolve(new Promise((resolve) => {
-          context.events = this.filterEvents(chaseEvents);
+          context.events = this.filterEvents(events);
           context.selectedEvent = context.selected.event ? Object.values(context.events).find(x => x.id === context.selected.event) : undefined;
           resolve();
         }));
@@ -3028,42 +3071,90 @@ export default class SystemView extends HandlebarsApplicationMixin(
       }
     }
 
-    _createDragDropHandlers() {
+    createDragDropHandlers() {
       return this.options.dragDrop.map((d) => {
-        d.callbacks = {
-          drop: this._onDrop.bind(this),
-        };
-  
-        const newHandler = new foundry.applications.ux.DragDrop.implementation(d);
-        newHandler.bind(this.element);
-  
-        return newHandler;
+          d.permissions = {
+              dragstart: () => game.user.isGM,
+              drop: () => game.user.isGM,
+          };
+          
+          d.callbacks = {
+              dragstart: this._onDragStart.bind(this),
+              dragover: this._onDragOver.bind(this),
+              drop: this._onDrop.bind(this),
+          };
+
+          return new foundry.applications.ux.DragDrop.implementation(d);
       });
+  }
+
+  async _onDragStart(event) {
+    const target = event.currentTarget;
+    if (!target.dataset.id) {
+      event.preventDefault();
+      return;
     }
 
-    async _onDrop(event) {
-      if (!game.user.isGM) return;
+    this.dragInfo.id = target.dataset.id;
+    this.dragInfo.dropContainer = `.${target.dataset.dropContainer}`;
+    event.dataTransfer.setData("text/plain", JSON.stringify(target.dataset));
+    event.dataTransfer.setDragImage(target, 60, target.clientHeight/2);
+  }
+
+  async _onDragOver(event) {
+    if(!this.dragInfo.dropContainer) return;
     
-      const data = JSON.parse(event.dataTransfer.getData('text/plain'));
-      if(event.currentTarget.classList.contains('participants-outer-container')){
-        if(data?.type !== 'Actor') {
-          return;
-        }
+    const self = event.target.classList.contains(this.dragInfo.dropContainer) ? event.target : event.target.closest(this.dragInfo.dropContainer);
+    this.#eventDropTarget = self;
+    if(!self || self.dataset.event === this.dragInfo.id || self.classList.contains('drop-target')) return;
+    self.classList.toggle('drop-target');
+    self.addEventListener('dragleave', () => self.classList.remove("drop-target"), {once: true});
+  }
 
-        const actor = await fromUuid(data.uuid);
-        const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event];
-        if(Object.keys(event.participants).includes(actor.id)){
-          ui.notifications.warn(game.i18n.localize('PF2ESubsystems.Chase.Errors.ParticipantAlreadyExists'));
-          return;
-        }
+  async _onDrop(event) {
+    if (!game.user.isGM) return;
+  
+    const dataString = event.dataTransfer.getData('text/plain');
+    if(!dataString) return;
 
-        await updateDataModel(this.tabGroups.main, { [`events.${event.id}.participants.${actor.id}`]: {
-          id: actor.id,
-          name: actor.name,
-          img: actor.img,
-          player: actor.system.details.alliance === 'party',
-          position: Object.keys(event.participants).length + 1,
-        }});
+    const data = JSON.parse(dataString);
+    if(event.currentTarget.classList.contains('participants-outer-container')){
+      if(data?.type !== 'Actor') {
+        return;
       }
+
+      const actor = await fromUuid(data.uuid);
+      const event = game.settings.get(MODULE_ID, this.tabGroups.main).events[this.selected.event];
+      if(Object.keys(event.participants).includes(actor.id)){
+        ui.notifications.warn(game.i18n.localize('PF2ESubsystems.Chase.Errors.ParticipantAlreadyExists'));
+        return;
+      }
+
+      await updateDataModel(this.tabGroups.main, { [`events.${event.id}.participants.${actor.id}`]: {
+        id: actor.id,
+        name: actor.name,
+        img: actor.img,
+        player: actor.system.details.alliance === 'party',
+        position: Object.keys(event.participants).length + 1,
+      }});
     }
+
+    const dropTarget = this.#eventDropTarget?.dataset?.id;
+    if(dropTarget) {
+      this.dragInfo.id = null;
+      this.dragInfo.dropContainer = null;
+      const events = foundry.utils.getProperty(game.settings.get(MODULE_ID, this.tabGroups.main), data.dropPath);
+      const startPosition = events[data.id].position;
+      const dropPosition = events[dropTarget].position;
+      const updatedEvents = Object.keys(events).reduce((acc, key) => {
+        const event = events[key];
+        acc[key] = {
+          position: getNewPositionOnDrop(startPosition, dropPosition, event.position),
+        }
+
+        return acc;
+      }, {});
+      await updateDataModel(this.tabGroups.main, { [data.dropPath]: updatedEvents });
+    }
+  }
 };
