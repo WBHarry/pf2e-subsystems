@@ -134,6 +134,10 @@ const timeUnits = {
         value: 'month',
         name: 'PF2ESubsystems.TimeUnits.Month.Plural',
     },
+    week: {
+        value: 'week',
+        name: 'PF2ESubsystems.TimeUnits.Week.Plural',
+    }, 
     day: {
         value: 'day',
         name: 'PF2ESubsystems.TimeUnits.Day.Plural',
@@ -2088,6 +2092,272 @@ class SystemExport extends HandlebarsApplicationMixin$4(ApplicationV2$4) {
     }
 }
 
+const handleMigration = async () => {
+    if (!game.user.isGM) return;
+
+    var version = game.settings.get(MODULE_ID, "version");
+    if (!version) {
+        version = currentVersion;
+        await game.settings.set(MODULE_ID, "version", version);
+    }
+
+    await migrateEvents();
+};
+
+const migrateEvents = async () => {
+    await migrateChase();
+    await migrateInfiltration();
+    await migrateInfluence();
+    await migrateResearch();
+};
+
+const migrateChase = async () => {
+    const chase = game.settings.get(MODULE_ID, 'chase');
+    var events = Object.values(chase.events);
+    for(var i = 0; i < events.length; i++){
+        const event = events[i];
+        if(versionCompare(event.version, '0.8.1')){
+            await chase.updateSource({ events: {
+                [event.id]: {
+                    version: '0.8.1',
+                    position: i+1,
+                    obstacles: Object.values(event.obstacles).reduce((acc, obstacle, index) => {
+                        acc[obstacle.id] = { ...obstacle, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                }
+            }});
+        }
+    }
+
+    await game.settings.set(MODULE_ID, 'chase', chase);
+};
+
+const migrateInfiltration = async () => {
+    const infiltration = game.settings.get(MODULE_ID, 'infiltration');
+    const events = Object.values(infiltration.events);
+    for(var i = 0; i < events.length; i++){
+        const event = events[i];
+        if(versionCompare(event.version, '0.7.8')){
+            await infiltration.updateSource({ events: {
+                [event.id]: {
+                    version: '0.7.8',
+                    objectives: Object.values(event.objectives).reduce((acc, objective) => {
+                        acc[objective.id] = {
+                            obstacles: Object.values(objective.obstacles).reduce((acc, obstacle) => {
+                                acc[obstacle.id] = {
+                                    skillChecks: Object.values(obstacle.skillChecks).reduce((acc, skillCheck) => {
+                                        acc[skillCheck.id] = {
+                                            skills: Object.values(skillCheck.skills).reduce((acc, skill) => {
+                                                acc[skill.id] = {
+                                                    difficulty: {
+                                                        DC: skillCheck.difficulty.DC,
+                                                        leveledDC: skillCheck.difficulty.leveledDC,
+                                                    }
+                                                };
+    
+                                                return acc;
+                                            }, {}),
+                                        };
+    
+                                        return acc;
+                                    }, {}),
+                                };
+    
+                                return acc;
+                            }, {}),
+                        };
+        
+                        return acc;
+                    }, {}),
+                    complications: Object.values(event.complications).reduce((acc, complication) => {
+                        acc[complication.id] = {
+                            skillChecks: Object.values(complication.skillChecks).reduce((acc, skillCheck) => {
+                                acc[skillCheck.id] = {
+                                    skills: Object.values(skillCheck.skills).reduce((acc, skill) => {
+                                        acc[skill.id] = {
+                                            difficulty: {
+                                                DC: skillCheck.difficulty.DC,
+                                                leveledDC: skillCheck.difficulty.leveledDC,
+                                            }
+                                        };
+
+                                        return acc;
+                                    }, {}),
+                                };
+
+                                return acc;
+                            }, {}),
+                        };
+
+                        return acc;
+                    }, {}),
+                    preparations: {
+                        activities: Object.values(event.preparations.activities).reduce((acc, activity) => {
+                            acc[activity.id] = {
+                                skillChecks: Object.values(activity.skillChecks).reduce((acc, skillCheck) => {
+                                    acc[skillCheck.id] = {
+                                        skills: Object.values(skillCheck.skills).reduce((acc, skill) => {
+                                            acc[skill.id] = {
+                                                difficulty: {
+                                                    DC: skillCheck.difficulty.DC,
+                                                    leveledDC: skillCheck.difficulty.leveledDC,
+                                                }
+                                            };
+    
+                                            return acc;
+                                        }, {}),
+                                    };
+    
+                                    return acc;
+                                }, {}),
+                            };
+    
+                            return acc;
+                        }, {}),
+                    }
+                }
+            }});
+        }
+        if(versionCompare(event.version, '0.8.2')){
+            await infiltration.updateSource({ events: {
+                [event.id]: {
+                    version: '0.8.1',
+                    position: i+1,
+                    awarenessPoints: {
+                        ...event.awarenessPoints,
+                        breakpoints: Object.values(event.awarenessPoints.breakpoints).reduce((acc, breakpoint, index) => {
+                            acc[breakpoint.id] = { ...breakpoint, position: index+1 };
+
+                            return acc;
+                        }, {}),
+                    },
+                    edgePoints: Object.values(event.edgePoints).reduce((acc, edgePoint, index) => {
+                        acc[edgePoint.id] = { ...edgePoint, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    objectives: Object.values(event.objectives).reduce((acc, objective, index) => {
+                        acc[objective.id] = { 
+                            ...objective, 
+                            position: index+1,
+                            obstacles: Object.values(objective.obstacles).reduce((acc, obstacle, index) => {
+                                acc[obstacle.id] = { ...obstacle, position: index+1 };
+
+                                return acc;
+                            }, {}),
+                        };
+
+                        return acc;
+                    }, {}),
+                    complications: Object.values(event.complications).reduce((acc, complication, index) => {
+                        acc[complication.id] = { ...complication, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    opportunities: Object.values(event.opportunities).reduce((acc, opportunity, index) => {
+                        acc[opportunity.id] = { ...opportunity, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    preparations: {
+                        ...event.preparations,
+                        activities: Object.values(event.preparations.activities).reduce((acc, activity, index) => {
+                            acc[activity.id] = { ...activity, position: index+1 };
+
+                            return acc;
+                        }, {}),
+                    },
+                }
+            }});
+        }
+    }
+
+    await game.settings.set(MODULE_ID, 'infiltration', infiltration);
+};
+
+const migrateInfluence = async () => {
+    const influence = game.settings.get(MODULE_ID, 'influence');
+    var events = Object.values(influence.events);
+    for(var i = 0; i < events.length; i++){
+        const event = events[i];
+        if(versionCompare(event.version, '0.8.1')){
+            await influence.updateSource({ events: {
+                [event.id]: {
+                    version: '0.8.1',
+                    position: i+1,
+                    discoveries: Object.values(event.discoveries).reduce((acc, discovery, index) => {
+                        acc[discovery.id] = { ...discovery, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    influenceSkills: Object.values(event.influenceSkills).reduce((acc, skill, index) => {
+                        acc[skill.id] = { ...skill, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    influence: Object.values(event.influence).reduce((acc, influence, index) => {
+                        acc[influence.id] = { ...influence, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    weaknesses: Object.values(event.weaknesses).reduce((acc, weakness, index) => {
+                        acc[weakness.id] = { ...weakness, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    resistances: Object.values(event.resistances).reduce((acc, resistance, index) => {
+                        acc[resistance.id] = { ...resistance, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    penalties: Object.values(event.penalties).reduce((acc, penalty, index) => {
+                        acc[penalty.id] = { ...penalty, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                }
+            }});
+        }
+    }
+
+    await game.settings.set(MODULE_ID, 'influence', influence);
+};
+
+const migrateResearch = async () => {
+    const research = game.settings.get(MODULE_ID, 'research');
+    var events = Object.values(research.events);
+    for(var i = 0; i < events.length; i++){
+        const event = events[i];
+        if(versionCompare(event.version, '0.8.1')){
+            await research.updateSource({ events: {
+                [event.id]: {
+                    version: '0.8.1',
+                    position: i+1,
+                    researchChecks: Object.values(event.researchChecks).reduce((acc, check, index) => {
+                        acc[check.id] = { ...check, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    researchBreakpoints: Object.values(event.researchBreakpoints).reduce((acc, point, index) => {
+                        acc[point.id] = { ...point, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                    researchEvents: Object.values(event.researchEvents).reduce((acc, event, index) => {
+                        acc[event.id] = { ...event, position: index+1 };
+
+                        return acc;
+                    }, {}),
+                }
+            }});
+        }
+    }
+
+    await game.settings.set(MODULE_ID, 'research', research);
+};
+
 const { HandlebarsApplicationMixin: HandlebarsApplicationMixin$3, ApplicationV2: ApplicationV2$3 } = foundry.applications.api;
 
 class SystemImport extends HandlebarsApplicationMixin$3(ApplicationV2$3) {
@@ -2561,6 +2831,8 @@ class SystemImport extends HandlebarsApplicationMixin$3(ApplicationV2$3) {
             await game.settings.set(MODULE_ID, 'infiltration', infiltration);
         }
 
+        await migrateEvents();
+
         ui.notifications.info(game.i18n.localize('PF2ESubsystems.Import.ImportSuccessful'));
         this.resolve();
         this.close({ updateClose: true });
@@ -2906,7 +3178,7 @@ class SystemView extends HandlebarsApplicationMixin(
         /* Infiltration */
         { dragSelector: ".awareness-point-breakpoint-container", dropSelector: ".awareness-point-breakpoints-container" },
         { dragSelector: ".infiltration-edge-container", dropSelector: ".infiltration-edges-container" },
-        { dragSelector: ".infiltration-obstacle-container", dropSelector: ".infiltration-obstacles-container" },
+        { dragSelector: ".infiltration-obstacle-header-container", dropSelector: ".infiltration-obstacles-container" },
         { dragSelector: ".infiltration-opportunity-inner-container", dropSelector: ".infiltration-opportunity-container" },
         { dragSelector: ".infiltration-complication-inner-container", dropSelector: ".infiltration-complication-container" },
         { dragSelector: ".preparation-activity-header", dropSelector: ".preparation-cards-container" },
@@ -3513,6 +3785,7 @@ class SystemView extends HandlebarsApplicationMixin(
       this.selected = getDefaultSelected();
       this.editMode = false;
       this.tabGroups.sidebar = '';
+      this.tabGroups.infiltration = 'infiltration';
       this.render({ parts: [this.tabGroups.main] });
     }
 
@@ -5694,6 +5967,7 @@ class SystemView extends HandlebarsApplicationMixin(
     static async updateData(event, element, formData) {
       const { selected, editMode, events, eventSearchValue }= foundry.utils.expandObject(formData.object);
       this.selected = foundry.utils.mergeObject(this.selected, selected);
+      console.log(this.selected);
       this.eventSearchValue = eventSearchValue;
 
       await updateDataModel(this.tabGroups.main, { events });
@@ -6031,272 +6305,6 @@ var lib = /*#__PURE__*/Object.freeze({
   registerSubsystemEvents: registerSubsystemEvents,
   startEvent: startEvent
 });
-
-const handleMigration = async () => {
-    if (!game.user.isGM) return;
-
-    var version = game.settings.get(MODULE_ID, "version");
-    if (!version) {
-        version = currentVersion;
-        await game.settings.set(MODULE_ID, "version", version);
-    }
-
-    await migrateEvents();
-};
-
-const migrateEvents = async () => {
-    await migrateChase();
-    await migrateInfiltration();
-    await migrateInfluence();
-    await migrateResearch();
-};
-
-const migrateChase = async () => {
-    const chase = game.settings.get(MODULE_ID, 'chase');
-    var events = Object.values(chase.events);
-    for(var i = 0; i < events.length; i++){
-        const event = events[i];
-        if(versionCompare(event.version, '0.8.1')){
-            await chase.updateSource({ events: {
-                [event.id]: {
-                    version: '0.8.1',
-                    position: i+1,
-                    obstacles: Object.values(event.obstacles).reduce((acc, obstacle, index) => {
-                        acc[obstacle.id] = { ...obstacle, position: index+1 };
-
-                        return acc;
-                    }, {}),
-                }
-            }});
-        }
-    }
-
-    await game.settings.set(MODULE_ID, 'chase', chase);
-};
-
-const migrateInfiltration = async () => {
-    const infiltration = game.settings.get(MODULE_ID, 'infiltration');
-    const events = Object.values(infiltration.events);
-    for(var i = 0; i < events.length; i++){
-        const event = events[i];
-        if(versionCompare(event.version, '0.7.8')){
-            await infiltration.updateSource({ events: {
-                [event.id]: {
-                    version: '0.7.8',
-                    objectives: Object.values(event.objectives).reduce((acc, objective) => {
-                        acc[objective.id] = {
-                            obstacles: Object.values(objective.obstacles).reduce((acc, obstacle) => {
-                                acc[obstacle.id] = {
-                                    skillChecks: Object.values(obstacle.skillChecks).reduce((acc, skillCheck) => {
-                                        acc[skillCheck.id] = {
-                                            skills: Object.values(skillCheck.skills).reduce((acc, skill) => {
-                                                acc[skill.id] = {
-                                                    difficulty: {
-                                                        DC: skillCheck.difficulty.DC,
-                                                        leveledDC: skillCheck.difficulty.leveledDC,
-                                                    }
-                                                };
-    
-                                                return acc;
-                                            }, {}),
-                                        };
-    
-                                        return acc;
-                                    }, {}),
-                                };
-    
-                                return acc;
-                            }, {}),
-                        };
-        
-                        return acc;
-                    }, {}),
-                    complications: Object.values(event.complications).reduce((acc, complication) => {
-                        acc[complication.id] = {
-                            skillChecks: Object.values(complication.skillChecks).reduce((acc, skillCheck) => {
-                                acc[skillCheck.id] = {
-                                    skills: Object.values(skillCheck.skills).reduce((acc, skill) => {
-                                        acc[skill.id] = {
-                                            difficulty: {
-                                                DC: skillCheck.difficulty.DC,
-                                                leveledDC: skillCheck.difficulty.leveledDC,
-                                            }
-                                        };
-
-                                        return acc;
-                                    }, {}),
-                                };
-
-                                return acc;
-                            }, {}),
-                        };
-
-                        return acc;
-                    }, {}),
-                    preparations: {
-                        activities: Object.values(event.preparations.activities).reduce((acc, activity) => {
-                            acc[activity.id] = {
-                                skillChecks: Object.values(activity.skillChecks).reduce((acc, skillCheck) => {
-                                    acc[skillCheck.id] = {
-                                        skills: Object.values(skillCheck.skills).reduce((acc, skill) => {
-                                            acc[skill.id] = {
-                                                difficulty: {
-                                                    DC: skillCheck.difficulty.DC,
-                                                    leveledDC: skillCheck.difficulty.leveledDC,
-                                                }
-                                            };
-    
-                                            return acc;
-                                        }, {}),
-                                    };
-    
-                                    return acc;
-                                }, {}),
-                            };
-    
-                            return acc;
-                        }, {}),
-                    }
-                }
-            }});
-        }
-        if(versionCompare(event.version, '0.8.2')){
-            await infiltration.updateSource({ events: {
-                [event.id]: {
-                    version: '0.8.1',
-                    position: i+1,
-                    awarenessPoints: {
-                        ...event.awarenessPoints,
-                        breakpoints: Object.values(event.awarenessPoints.breakpoints).reduce((acc, breakpoint, index) => {
-                            acc[breakpoint.id] = { ...breakpoint, position: index+1 };
-
-                            return acc;
-                        }, {}),
-                    },
-                    edgePoints: Object.values(event.edgePoints).reduce((acc, edgePoint, index) => {
-                        acc[edgePoint.id] = { ...edgePoint, position: index+1 };
-
-                        return acc;
-                    }, {}),
-                    objectives: Object.values(event.objectives).reduce((acc, objective, index) => {
-                        acc[objective.id] = { 
-                            ...objective, 
-                            position: index+1,
-                            obstacles: Object.values(objective.obstacles).reduce((acc, obstacle, index) => {
-                                acc[obstacle.id] = { ...obstacle, position: index+1 };
-
-                                return acc;
-                            }, {}),
-                        };
-
-                        return acc;
-                    }, {}),
-                    complications: Object.values(event.complications).reduce((acc, complication, index) => {
-                        acc[complication.id] = { ...complication, position: index+1 };
-
-                        return acc;
-                    }, {}),
-                    opportunities: Object.values(event.opportunities).reduce((acc, opportunity, index) => {
-                        acc[opportunity.id] = { ...opportunity, position: index+1 };
-
-                        return acc;
-                    }, {}),
-                    preparations: {
-                        ...event.preparations,
-                        activities: Object.values(event.preparations.activities).reduce((acc, activity, index) => {
-                            acc[activity.id] = { ...activity, position: index+1 };
-
-                            return acc;
-                        }, {}),
-                    },
-                }
-            }});
-        }
-    }
-
-    await game.settings.set(MODULE_ID, 'infiltration', infiltration);
-};
-
-const migrateInfluence = async () => {
-    const influence = game.settings.get(MODULE_ID, 'influence');
-    var events = Object.values(influence.events);
-    for(var i = 0; i < events.length; i++){
-        const event = events[i];
-        if(versionCompare(event.version, '0.8.1')){
-            await influence.updateSource({ events: {
-                [event.id]: {
-                    version: '0.8.1',
-                    position: i+1,
-                    discoveries: Object.values(event.discoveries).reduce((acc, discovery, index) => {
-                        acc[discovery.id] = { ...discovery, position: index+1 };
-
-                        return acc;
-                    }, {}),
-                    influenceSkills: Object.values(event.influenceSkills).reduce((acc, skill, index) => {
-                        acc[skill.id] = { ...skill, position: index+1 };
-
-                        return acc;
-                    }, {}),
-                    influence: Object.values(event.influence).reduce((acc, influence, index) => {
-                        acc[influence.id] = { ...influence, position: index+1 };
-
-                        return acc;
-                    }, {}),
-                    weaknesses: Object.values(event.weaknesses).reduce((acc, weakness, index) => {
-                        acc[weakness.id] = { ...weakness, position: index+1 };
-
-                        return acc;
-                    }, {}),
-                    resistances: Object.values(event.resistances).reduce((acc, resistance, index) => {
-                        acc[resistance.id] = { ...resistance, position: index+1 };
-
-                        return acc;
-                    }, {}),
-                    penalties: Object.values(event.penalties).reduce((acc, penalty, index) => {
-                        acc[penalty.id] = { ...penalty, position: index+1 };
-
-                        return acc;
-                    }, {}),
-                }
-            }});
-        }
-    }
-
-    await game.settings.set(MODULE_ID, 'influence', influence);
-};
-
-const migrateResearch = async () => {
-    const research = game.settings.get(MODULE_ID, 'research');
-    var events = Object.values(research.events);
-    for(var i = 0; i < events.length; i++){
-        const event = events[i];
-        if(versionCompare(event.version, '0.8.1')){
-            await research.updateSource({ events: {
-                [event.id]: {
-                    version: '0.8.1',
-                    position: i+1,
-                    researchChecks: Object.values(event.researchChecks).reduce((acc, check, index) => {
-                        acc[check.id] = { ...check, position: index+1 };
-
-                        return acc;
-                    }, {}),
-                    researchBreakpoints: Object.values(event.researchBreakpoints).reduce((acc, point, index) => {
-                        acc[point.id] = { ...point, position: index+1 };
-
-                        return acc;
-                    }, {}),
-                    researchEvents: Object.values(event.researchEvents).reduce((acc, event, index) => {
-                        acc[event.id] = { ...event, position: index+1 };
-
-                        return acc;
-                    }, {}),
-                }
-            }});
-        }
-    }
-
-    await game.settings.set(MODULE_ID, 'research', research);
-};
 
 class RegisterHandlebarsHelpers {
     static registerHelpers() {

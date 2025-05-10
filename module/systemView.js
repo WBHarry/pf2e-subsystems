@@ -223,7 +223,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
         /* Infiltration */
         { dragSelector: ".awareness-point-breakpoint-container", dropSelector: ".awareness-point-breakpoints-container" },
         { dragSelector: ".infiltration-edge-container", dropSelector: ".infiltration-edges-container" },
-        { dragSelector: ".infiltration-obstacle-container", dropSelector: ".infiltration-obstacles-container" },
+        { dragSelector: ".infiltration-obstacle-header-container", dropSelector: ".infiltration-obstacles-container" },
         { dragSelector: ".infiltration-opportunity-inner-container", dropSelector: ".infiltration-opportunity-container" },
         { dragSelector: ".infiltration-complication-inner-container", dropSelector: ".infiltration-complication-container" },
         { dragSelector: ".preparation-activity-header", dropSelector: ".preparation-cards-container" },
@@ -840,6 +840,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
       this.selected = getDefaultSelected();
       this.editMode = false;
       this.tabGroups.sidebar = '';
+      this.tabGroups.infiltration = 'infiltration';
       this.render({ parts: [this.tabGroups.main] });
     }
 
@@ -3021,6 +3022,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
     static async updateData(event, element, formData) {
       const { selected, editMode, events, eventSearchValue }= foundry.utils.expandObject(formData.object);
       this.selected = foundry.utils.mergeObject(this.selected, selected);
+      console.log(this.selected);
       this.eventSearchValue = eventSearchValue;
 
       await updateDataModel(this.tabGroups.main, { events });

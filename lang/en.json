@@ -40,6 +40,10 @@
                 "Single": "Month",
                 "Plural": "Months"
             },
+            "Week": {
+                "Single": "Week",
+                "Plural": "Weeks"
+            },
             "Day": {
                 "Single": "Day",
                 "Plural": "Days"

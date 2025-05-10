@@ -231,8 +231,8 @@
                             <div class="event-section-container infiltration-obstacles-container">
                                 {{#each this.currentObjective.extendedObstacles}}
                                     {{#if (or ../isGM (not this.hidden))}}
-                                        <div class="event-section-inner-container secondary-container infiltration-obstacle-container" data-id="{{id}}" data-drop-container="infiltration-obstacle-container" data-drop-path="{{concat "events." ../event.id ".objectives." ../currentObjective.id ".obstacles"}}">
-                                            <div class="event-section-header-container {{#if ../editMode}}edit-mode{{/if}}">
+                                        <div class="event-section-inner-container secondary-container">
+                                            <div class="event-section-header-container infiltration-obstacle-header-container {{#if ../editMode}}edit-mode{{/if}}" data-id="{{id}}" data-drop-container="infiltration-obstacle-header-container" data-drop-path="{{concat "events." ../event.id ".objectives." ../currentObjective.id ".obstacles"}}">
                                                 {{#if ../editMode}}
                                                     {{#if this.open}}
                                                         <nav class="tabs event-inner-tabs">

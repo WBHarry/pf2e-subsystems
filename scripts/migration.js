@@ -14,7 +14,7 @@ export const handleMigration = async () => {
     await migrateEvents();
 };
 
-const migrateEvents = async () => {
+export const migrateEvents = async () => {
     await migrateChase();
     await migrateInfiltration();
     await migrateInfluence();
