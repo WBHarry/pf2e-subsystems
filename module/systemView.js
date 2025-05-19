@@ -2205,7 +2205,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
       const complication = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].complications[button.dataset.complication];
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}`]: {
         infiltrationPoints: {
-          current: Math.min(complication.infiltrationPoints.current, newMax),
+          current: Math.min(complication.infiltrationPoints.current??0, newMax),
           max: newMax,
         }
       }});

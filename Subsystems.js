@@ -644,13 +644,10 @@ class Infiltration extends foundry.abstract.DataModel {
       return Object.values(this.objectives).reduce((acc, curr) => {
         acc += Object.values(curr.obstacles).reduce((acc, curr) => {
           if(curr.individual){
-            acc += Object.keys(curr.infiltrationPointData).reduce((acc, key) => {
-              const partyMembers = game.actors.find(x => x.type === 'party').members;
-              if(!partyMembers.some(member => member.id === key)) return acc;
-
-              const points = curr.infiltrationPointData[key];
-              return Math.min(acc, points);
-            }, curr.infiltrationPoints.max);
+            const currentPlayers = game.actors.find(x => x.type === 'party').members;
+            const pointDataKeys = Object.keys(curr.infiltrationPointData);
+            const currentValues = pointDataKeys.filter(x => currentPlayers.some(player => player.id === x)).map(x => curr.infiltrationPointData[x]);
+            acc += currentValues.length > 0 && currentValues.length === currentPlayers.length ? Math.min(...currentValues) : 0;
           }
           else {
             acc += curr.infiltrationPoints.current ?? 0;
@@ -1500,7 +1497,7 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$6(
   }
 }
 
-const currentVersion = '0.8.2';
+const currentVersion = '0.8.3';
 
 const registerKeyBindings = () => {
   game.keybindings.register(MODULE_ID, "open-system-view", {
@@ -5170,7 +5167,7 @@ class SystemView extends HandlebarsApplicationMixin(
       const complication = game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].complications[button.dataset.complication];
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.complications.${button.dataset.complication}`]: {
         infiltrationPoints: {
-          current: Math.min(complication.infiltrationPoints.current, newMax),
+          current: Math.min(complication.infiltrationPoints.current??0, newMax),
           max: newMax,
         }
       }});
