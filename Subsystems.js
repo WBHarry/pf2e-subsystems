@@ -1500,7 +1500,7 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$6(
   }
 }
 
-const currentVersion = '0.8.1';
+const currentVersion = '0.8.2';
 
 const registerKeyBindings = () => {
   game.keybindings.register(MODULE_ID, "open-system-view", {
@@ -5514,7 +5514,7 @@ class SystemView extends HandlebarsApplicationMixin(
                 }
               }
             }
-            context.selectedEvent.extendedResearchChecksData = positionSort(context.selectedEvent.researchChecks);
+            context.selectedEvent.extendedResearchChecksData = positionSort(context.selectedEvent.researchChecksData);
 
             for(var key of Object.keys(context.selectedEvent.researchBreakpoints)) {
               const researchBreakpoint = context.selectedEvent.researchBreakpoints[key];

@@ -2549,7 +2549,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
                 }
               }
             }
-            context.selectedEvent.extendedResearchChecksData = positionSort(context.selectedEvent.researchChecks);
+            context.selectedEvent.extendedResearchChecksData = positionSort(context.selectedEvent.researchChecksData);
 
             for(var key of Object.keys(context.selectedEvent.researchBreakpoints)) {
               const researchBreakpoint = context.selectedEvent.researchBreakpoints[key];
