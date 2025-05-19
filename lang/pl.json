@@ -40,6 +40,10 @@
                 "Single": "Miesiąc",
                 "Plural": "Miesiące"
             },
+            "Week": {
+                "Single": "Tydzień",
+                "Plural": "Tygodnie"
+            },
             "Day": {
                 "Single": "Dzień",
                 "Plural": "Dni"
