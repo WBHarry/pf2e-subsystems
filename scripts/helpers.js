@@ -111,9 +111,9 @@ export const setupTagify = (html, htmlClass, options, onChange) => {
         `;
         }
 
-    const input = html.querySelector(htmlClass);
-    if(input) {
-        const traitsTagify = new Tagify(input, {
+    for(var input of html.querySelectorAll(htmlClass))
+    {
+        new Tagify(input, {
             tagTextProp: "name",
             enforceWhitelist: true,
             whitelist: options.map((option) => {

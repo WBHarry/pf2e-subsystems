@@ -1810,8 +1810,8 @@ const setupTagify = (html, htmlClass, options, onChange) => {
         `;
         };
 
-    const input = html.querySelector(htmlClass);
-    if(input) {
+    for(var input of html.querySelectorAll(htmlClass))
+    {
         new Q(input, {
             tagTextProp: "name",
             enforceWhitelist: true,
