@@ -10,7 +10,7 @@
   ],
   "compatibility": {
     "minimum": 13,
-    "verified": "13.345",
+    "verified": "13.346",
     "maximum": 13
   },
   "relationships": {
@@ -21,7 +21,7 @@
         "manifest": "https://raw.githubusercontent.com/foundryvtt/pf2e/master/system.json",
         "compatibility": {
           "minimum": "7.1.0",
-          "verified": "7.1.1"
+          "verified": "7.2.3"
         }
       }
     ],
@@ -31,7 +31,7 @@
         "type": "module",
         "manifest": "https://github.com/WBHarry/pf2e-subsystem-theming/releases/latest/download/module.json",
         "compatibility": {
-          "verified": "0.9.1"
+          "verified": "0.9.4"
         }
       }
     ]
