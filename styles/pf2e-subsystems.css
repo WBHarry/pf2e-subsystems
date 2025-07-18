@@ -1770,7 +1770,7 @@ form.pf2e-subsystems.application > header .header-control {
   grid-template-columns: 0fr 2fr 2fr 1fr 0.8fr 0fr;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complication-container .infiltration-complications-container {
-  overflow: hidden;
+  overflow: auto;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complication-container .infiltration-complications-container .event-section-item-container {
   flex: 1;
@@ -2287,6 +2287,9 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems .influence-view .event-outer-container .event-container .skills-container .skill-container.revealed {
   border-style: solid;
   opacity: 1;
+}
+.pf2e-subsystems .influence-view .event-outer-container .event-container .skills-container .skill-container span[data-secret] {
+  color: black;
 }
 .pf2e-subsystems.pf2e-subsystems-menu .menu-outer-container {
   display: flex;

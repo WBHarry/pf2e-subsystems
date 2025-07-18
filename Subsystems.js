@@ -6052,7 +6052,8 @@ class SystemView extends HandlebarsApplicationMixin(
 
   async _onDragStart(event) {
     const target = event.currentTarget;
-    if (!target.dataset.id) {
+
+    if (this.editMode || !target.dataset.id) {
       event.preventDefault();
       return;
     }
