@@ -2500,7 +2500,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
             context.selectedEvent.extendedParticipants = positionSort(context.selectedEvent.participants);
           }
           
-          context.currentObstacle = context.selectedEvent?.obstacles ? context.selectedEvent.extendedObstacles.find(x => x.id === this.selected.chaseObstacle) : null;
+          context.currentObstacle = context.selectedEvent?.obstacles ? Object.values(context.selectedEvent.extendedObstacles).find(x => x.id === this.selected.chaseObstacle) : null;
           if(context.currentObstacle) {
             context.currentObstacle.enrichedOvercome = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.currentObstacle.overcome);
           }
