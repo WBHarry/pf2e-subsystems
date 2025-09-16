@@ -82,7 +82,7 @@ export const getDCAdjustmentNumber = (adjustment) => {
 
 export const getSelfDC = () => {
     if(game.user.isGM || !game.user.character) {
-        const highestPartyLevel = game.actors.find(x => x.type === 'party').members.reduce((acc, curr) => {
+        const highestPartyLevel = game.actors.find(x => x.type === 'party' && x.active).members.reduce((acc, curr) => {
             if(curr.system.details.level.value > acc) return curr.system.details.level.value;
             return acc;
         }, 1);

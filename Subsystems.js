@@ -644,7 +644,7 @@ class Infiltration extends foundry.abstract.DataModel {
       return Object.values(this.objectives).reduce((acc, curr) => {
         acc += Object.values(curr.obstacles).reduce((acc, curr) => {
           if(curr.individual){
-            const currentPlayers = game.actors.find(x => x.type === 'party').members;
+            const currentPlayers = game.actors.find(x => x.type === 'party' && x.active).members;
             const pointDataKeys = Object.keys(curr.infiltrationPointData);
             const currentValues = pointDataKeys.filter(x => currentPlayers.some(player => player.id === x)).map(x => curr.infiltrationPointData[x]);
             acc += currentValues.length > 0 && currentValues.length === currentPlayers.length ? Math.min(...currentValues) : 0;
@@ -1497,7 +1497,7 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$6(
   }
 }
 
-const currentVersion = '0.8.6';
+const currentVersion = '0.8.7';
 
 const registerKeyBindings = () => {
   game.keybindings.register(MODULE_ID, "open-system-view", {
@@ -1781,7 +1781,7 @@ const getDCAdjustmentNumber = (adjustment) => {
 
 const getSelfDC = () => {
     if(game.user.isGM || !game.user.character) {
-        const highestPartyLevel = game.actors.find(x => x.type === 'party').members.reduce((acc, curr) => {
+        const highestPartyLevel = game.actors.find(x => x.type === 'party' && x.active).members.reduce((acc, curr) => {
             if(curr.system.details.level.value > acc) return curr.system.details.level.value;
             return acc;
         }, 1);
@@ -4011,7 +4011,7 @@ class SystemView extends HandlebarsApplicationMixin(
 
     static async addPlayerParticipants(_, button){
       const currentParticipants = Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].participants);
-      const players = game.actors.find(x => x.type === 'party').members.filter(x => !currentParticipants.some(key => x.id === key)).reduce((acc, x, index) => {
+      const players = game.actors.find(x => x.type === 'party' && x.active).members.filter(x => !currentParticipants.some(key => x.id === key)).reduce((acc, x, index) => {
         acc[x.id] = {
           id: x.id,
           name: x.name,
@@ -5583,7 +5583,7 @@ class SystemView extends HandlebarsApplicationMixin(
               for(var key of Object.keys(context.currentObjective.obstacles)) {
                 var obstacle = context.currentObjective.obstacles[key];
                 obstacle.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(obstacle.description);
-                obstacle.individualInfiltrationPoints = !obstacle.individual ? [] : game.actors.find(x => x.type === 'party').members.reduce((acc, curr) => {
+                obstacle.individualInfiltrationPoints = !obstacle.individual ? [] : game.actors.find(x => x.type === 'party' && x.active).members.reduce((acc, curr) => {
                   acc[curr.id] = {
                     id: curr.id,
                     name: curr.name,

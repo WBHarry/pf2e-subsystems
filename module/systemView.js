@@ -1049,7 +1049,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
 
     static async addPlayerParticipants(_, button){
       const currentParticipants = Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].participants);
-      const players = game.actors.find(x => x.type === 'party').members.filter(x => !currentParticipants.some(key => x.id === key)).reduce((acc, x, index) => {
+      const players = game.actors.find(x => x.type === 'party' && x.active).members.filter(x => !currentParticipants.some(key => x.id === key)).reduce((acc, x, index) => {
         acc[x.id] = {
           id: x.id,
           name: x.name,
@@ -2621,7 +2621,7 @@ export default class SystemView extends HandlebarsApplicationMixin(
               for(var key of Object.keys(context.currentObjective.obstacles)) {
                 var obstacle = context.currentObjective.obstacles[key];
                 obstacle.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(obstacle.description);
-                obstacle.individualInfiltrationPoints = !obstacle.individual ? [] : game.actors.find(x => x.type === 'party').members.reduce((acc, curr) => {
+                obstacle.individualInfiltrationPoints = !obstacle.individual ? [] : game.actors.find(x => x.type === 'party' && x.active).members.reduce((acc, curr) => {
                   acc[curr.id] = {
                     id: curr.id,
                     name: curr.name,

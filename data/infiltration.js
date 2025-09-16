@@ -154,7 +154,7 @@ export class Infiltration extends foundry.abstract.DataModel {
       return Object.values(this.objectives).reduce((acc, curr) => {
         acc += Object.values(curr.obstacles).reduce((acc, curr) => {
           if(curr.individual){
-            const currentPlayers = game.actors.find(x => x.type === 'party').members;
+            const currentPlayers = game.actors.find(x => x.type === 'party' && x.active).members;
             const pointDataKeys = Object.keys(curr.infiltrationPointData);
             const currentValues = pointDataKeys.filter(x => currentPlayers.some(player => player.id === x)).map(x => curr.infiltrationPointData[x]);
             acc += currentValues.length > 0 && currentValues.length === currentPlayers.length ? Math.min(...currentValues) : 0;
