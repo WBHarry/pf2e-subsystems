@@ -5462,7 +5462,9 @@ class SystemView extends HandlebarsApplicationMixin(
             context.selectedEvent.extendedParticipants = positionSort(context.selectedEvent.participants);
           }
           
-          context.currentObstacle = context.selectedEvent?.obstacles ? context.selectedEvent.extendedObstacles.find(x => x.id === this.selected.chaseObstacle) : null;
+          const extendedObstacles = context.selectedEvent?.extendedObstacles;
+          const obstaclesArray = Array.isArray(extendedObstacles) ? extendedObstacles : Object.values(extendedObstacles ?? {});
+          context.currentObstacle = context.selectedEvent?.obstacles ? obstaclesArray.find(x => x.id === this.selected.chaseObstacle) : null;
           if(context.currentObstacle) {
             context.currentObstacle.enrichedOvercome = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.currentObstacle.overcome);
           }
