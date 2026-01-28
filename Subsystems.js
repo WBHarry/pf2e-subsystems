@@ -5464,6 +5464,10 @@ class SystemView extends HandlebarsApplicationMixin(
           
           const extendedObstacles = context.selectedEvent?.extendedObstacles;
           const obstaclesArray = Array.isArray(extendedObstacles) ? extendedObstacles : Object.values(extendedObstacles ?? {});
+          // Initialize chaseObstacle if not set (e.g., in tour mode)
+          if(!this.selected.chaseObstacle && obstaclesArray.length > 0) {
+            this.selected.chaseObstacle = obstaclesArray.filter(x => game.user.isGM || !x.locked)[0]?.id;
+          }
           context.currentObstacle = context.selectedEvent?.obstacles ? obstaclesArray.find(x => x.id === this.selected.chaseObstacle) : null;
           if(context.currentObstacle) {
             context.currentObstacle.enrichedOvercome = await foundry.applications.ux.TextEditor.implementation.enrichHTML(context.currentObstacle.overcome);
