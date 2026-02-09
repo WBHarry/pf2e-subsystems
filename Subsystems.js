@@ -1497,7 +1497,7 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$6(
   }
 }
 
-const currentVersion = '0.8.7';
+const currentVersion = '0.8.8';
 
 const registerKeyBindings = () => {
   game.keybindings.register(MODULE_ID, "open-system-view", {
@@ -5460,6 +5460,10 @@ class SystemView extends HandlebarsApplicationMixin(
             context.showRounds = this.editMode || context.selectedEvent.rounds.max;
           
             context.selectedEvent.extendedParticipants = positionSort(context.selectedEvent.participants);
+          }
+
+          if(!this.selected.chaseObstacle && context.selectedEvent?.extendedObstacles?.length) {
+            this.selected.chaseObstacle = context.selectedEvent?.extendedObstacles.filter(x => game.user.isGM || !x.locked)[0]?.id;
           }
           
           context.currentObstacle = context.selectedEvent?.obstacles ? context.selectedEvent.extendedObstacles.find(x => x.id === this.selected.chaseObstacle) : null;

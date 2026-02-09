@@ -2499,6 +2499,10 @@ export default class SystemView extends HandlebarsApplicationMixin(
           
             context.selectedEvent.extendedParticipants = positionSort(context.selectedEvent.participants);
           }
+
+          if(!this.selected.chaseObstacle && context.selectedEvent?.extendedObstacles?.length) {
+            this.selected.chaseObstacle = context.selectedEvent?.extendedObstacles.filter(x => game.user.isGM || !x.locked)[0]?.id;
+          }
           
           context.currentObstacle = context.selectedEvent?.obstacles ? context.selectedEvent.extendedObstacles.find(x => x.id === this.selected.chaseObstacle) : null;
           if(context.currentObstacle) {

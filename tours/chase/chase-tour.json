@@ -131,8 +131,8 @@
                     "hasActed": false
                 }
             },
-            "obstacles": {
-                "obstacle-1": {
+            "obstacles": [
+                {
                     "id": "obstacle-1",
                     "name": "Lava Geysers",
                     "img": "icons/environment/wilderness/cave-entrance-vulcano.webp",
@@ -144,7 +144,7 @@
                     },
                     "overcome": "<i>As you rush through the ashen landscape, the ground suddenly beings to shake. What seemed like harmless holes in the ground suddenly start to spew out molten rock and bursts of flame as you rush through!</i>\n<strong>Dodge And Weave!</strong>: @Check[type:acrobatics|dc:22]\n<strong>Find A Path Through!</strong>: @Check[type:survival|dc:20] @Check[type:nature|dc:24]"
                 },
-                "obstacle-2": {
+                {
                     "id": "obstacle-2",
                     "name": "Lava Geysers",
                     "img": "icons/environment/wilderness/cave-entrance-vulcano.webp",
@@ -156,7 +156,7 @@
                     },
                     "overcome": ""
                 },
-                "obstacle-3": {
+                {
                     "id": "obstacle-3",
                     "name": "Lava Geysers",
                     "img": "icons/environment/wilderness/cave-entrance-vulcano.webp",
@@ -168,7 +168,7 @@
                     },
                     "overcome": ""
                 },
-                "obstacle-4": {
+                {
                     "id": "obstacle-4",
                     "name": "Lava Geysers",
                     "img": "icons/environment/wilderness/cave-entrance-vulcano.webp",
@@ -180,7 +180,7 @@
                     },
                     "overcome": ""
                 },
-                "obstacle-5": {
+                {
                     "id": "obstacle-5",
                     "name": "Lava Geysers",
                     "img": "icons/environment/wilderness/cave-entrance-vulcano.webp",
@@ -192,9 +192,9 @@
                     },
                     "overcome": ""
                 }
-            },
-            "extendedObstacles": {
-                "obstacle-1": {
+            ],
+            "extendedObstacles": [
+                {
                     "id": "obstacle-1",
                     "name": "Lava Geysers",
                     "img": "icons/environment/wilderness/cave-entrance-vulcano.webp",
@@ -206,7 +206,7 @@
                     },
                     "overcome": "<i>As you rush through the ashen landscape, the ground suddenly begins to shake. What seemed like harmless holes in the ground suddenly start to spew out molten rock and bursts of flame as you rush through!</i>\n\n<div style=\"display: flex; align-items: center; gap: 2px;\"><strong>Dodge And Weave!:</strong> @Check[type:acrobatics|dc:22]</div>\n<div style=\"display: flex; align-items: center; gap: 2px;\"><strong>Find A Path Through!:</strong> @Check[type:survival|dc:20] @Check[type:nature|dc:24]</div>"
                 },
-                "obstacle-2": {
+                {
                     "id": "obstacle-2",
                     "name": "Lava Geysers",
                     "img": "icons/environment/wilderness/cave-entrance-vulcano.webp",
@@ -218,7 +218,7 @@
                     },
                     "overcome": ""
                 },
-                "obstacle-3": {
+                {
                     "id": "obstacle-3",
                     "name": "Lava Geysers",
                     "img": "icons/environment/wilderness/cave-entrance-vulcano.webp",
@@ -230,7 +230,7 @@
                     },
                     "overcome": ""
                 },
-                "obstacle-4": {
+                {
                     "id": "obstacle-4",
                     "name": "Lava Geysers",
                     "img": "icons/environment/wilderness/cave-entrance-vulcano.webp",
@@ -242,7 +242,7 @@
                     },
                     "overcome": ""
                 },
-                "obstacle-5": {
+                {
                     "id": "obstacle-5",
                     "name": "Lava Geysers",
                     "img": "icons/environment/wilderness/cave-entrance-vulcano.webp",
@@ -254,7 +254,7 @@
                     },
                     "overcome": ""
                 }
-            }
+            ]
         }
     }
 }

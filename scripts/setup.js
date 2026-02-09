@@ -6,7 +6,7 @@ import { Researches } from "../data/research";
 import { ChaseSettings, InfiltrationSettings, InfluenceSettings, ResearchSettings } from "../data/settings";
 import SubsystemsMenu from "../module/SubsystemsMenu";
 
-export const currentVersion = '0.8.7';
+export const currentVersion = '0.8.8';
 
 export const registerKeyBindings = () => {
   game.keybindings.register(MODULE_ID, "open-system-view", {
