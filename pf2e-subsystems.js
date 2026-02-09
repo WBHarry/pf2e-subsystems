@@ -80,7 +80,7 @@ Hooks.on("renderJournalDirectory", async (tab, html, _, options) => {
     buttons.insertAdjacentHTML('afterbegin', `
             <button id="pf2e-subsystems">
                 <i class="fa-solid fa-list" />
-                <span style="font-weight: 400; font-family: var(--font-sans);">${game.i18n.localize("PF2ESubsystems.Name")}</span>
+                <span style="font-weight: 400; font-family: var(--font-sans);">${game.i18n.localize(game.system.id === 'sf2e' ? "PF2ESubsystems.StarfinderName" : "PF2ESubsystems.Name")}</span>
             </button>`);
 
     buttons.querySelector("#pf2e-subsystems").onclick = () => {

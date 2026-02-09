@@ -1,6 +1,7 @@
 {
     "PF2ESubsystems": {
         "Name": "PF2e Subsystems",
+        "StarfinderName": "SF2e Subsystems",
         "Basic": {
             "Confirm": "Confirm",
             "Cancel": "Cancel",
