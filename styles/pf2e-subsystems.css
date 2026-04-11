@@ -374,8 +374,6 @@ form.pf2e-subsystems.application > header .header-control {
   margin-top: 0;
 }
 .pf2e-subsystems.systems-view .event-select-container .events-outer-container .system-title-container .system-title-inner-container .system-title-add-button {
-  position: absolute;
-  right: -30px;
   font-size: 30px;
 }
 .pf2e-subsystems.systems-view .event-select-container .events-outer-container .events-header {
@@ -625,7 +623,7 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-section-number-container .event-section-number-upper-diagonal {
   position: absolute;
   top: -1px;
-  right: -10px;
+  right: -13px;
   font-size: 16px;
   rotate: 60deg;
 }
@@ -637,7 +635,7 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-section-number-container .event-section-number-lower-diagonal {
   position: absolute;
   bottom: -1px;
-  left: -10px;
+  left: -14px;
   font-size: 16px;
   rotate: -300deg;
 }

@@ -1497,7 +1497,7 @@ class SubsystemsMenu extends HandlebarsApplicationMixin$6(
   }
 }
 
-const currentVersion = '0.8.8';
+const currentVersion = '0.8.9';
 
 const registerKeyBindings = () => {
   game.keybindings.register(MODULE_ID, "open-system-view", {
@@ -6688,7 +6688,7 @@ Hooks.on("renderJournalDirectory", async (tab, html, _, options) => {
     
     const buttons = tab.element.querySelector(".directory-footer.action-buttons");
     buttons.insertAdjacentHTML('afterbegin', `
-            <button id="pf2e-subsystems">
+            <button id="pf2e-subsystems" class="flexrow">
                 <i class="fa-solid fa-list" />
                 <span style="font-weight: 400; font-family: var(--font-sans);">${game.i18n.localize(game.system.id === 'sf2e' ? "PF2ESubsystems.StarfinderName" : "PF2ESubsystems.Name")}</span>
             </button>`);
