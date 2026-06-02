@@ -438,6 +438,7 @@ form.pf2e-subsystems.application > header .header-control {
   height: 79px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 8px;
   transition: top 0.3s;
 }
@@ -895,7 +896,7 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-container .title-container .title-container-inner i,
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-container .title-small-container .title-container-inner i {
   position: absolute;
-  right: -24px;
+  right: -32px;
   font-size: 24px;
 }
 .pf2e-subsystems.systems-view .event-outer-container .event-container .event-main-container .event-header-container {
@@ -1361,7 +1362,7 @@ form.pf2e-subsystems.application > header .header-control {
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .title-container .title-container-inner i,
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .title-small-container .title-container-inner i {
   position: absolute;
-  right: -24px;
+  right: -32px;
   font-size: 24px;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .event-folding {
@@ -1516,7 +1517,7 @@ form.pf2e-subsystems.application > header .header-control {
   margin-top: 2px;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-outer-container .research-check-skill-checks-container .research-check-skill-check-inner-container .research-skill-grid {
-  grid-template-columns: 0fr 2fr 2fr 1fr 0.5fr 0fr;
+  grid-template-columns: 0fr 2fr 2fr 1fr 0.5fr 47px;
 }
 .pf2e-subsystems .research-view .event-outer-container .event-container .event-main-container .research-checks-container .research-checks-inner-container .research-check-container .research-check-skill-checks-outer-container .research-check-skill-checks-container .research-check-skill-check-inner-container .research-check-skill-check-value-container {
   display: flex;
@@ -1762,10 +1763,10 @@ form.pf2e-subsystems.application > header .header-control {
   font-size: 24px;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-obstacle-container .obstacle-skill-grid {
-  grid-template-columns: 0fr 2fr 2fr 1fr 0.8fr 0fr;
+  grid-template-columns: 0fr 2fr 2fr 1fr 0.8fr 47px;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complication-container .complication-skill-grid {
-  grid-template-columns: 0fr 2fr 2fr 1fr 0.8fr 0fr;
+  grid-template-columns: 0fr 2fr 2fr 1fr 0.8fr 47px;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .infiltration-complication-container .infiltration-complications-container {
   overflow: auto;
@@ -2105,7 +2106,7 @@ form.pf2e-subsystems.application > header .header-control {
   line-height: 18px;
 }
 .pf2e-subsystems .infiltration-view .event-outer-container .event-container .preparation-container .activity-skill-grid {
-  grid-template-columns: 0fr 2fr 2fr 1fr 0.8fr 0fr;
+  grid-template-columns: 0fr 2fr 2fr 1fr 0.8fr 47px;
 }
 .pf2e-subsystems .influence-view .event-outer-container .event-npc-selection {
   padding: 4px;
@@ -2252,10 +2253,10 @@ form.pf2e-subsystems.application > header .header-control {
   font-size: 32px;
 }
 .pf2e-subsystems .influence-view .event-outer-container .event-container .discovery-container .influence-skill-grid {
-  grid-template-columns: 0fr 2fr 2fr 1fr 0.5fr 0fr;
+  grid-template-columns: 0fr 2fr 2fr 1fr 0.5fr 47px;
 }
 .pf2e-subsystems .influence-view .event-outer-container .event-container .influence-skills-container .influence-skill-grid {
-  grid-template-columns: 0fr 2fr 2fr 1fr 0.5fr 0fr;
+  grid-template-columns: 0fr 2fr 2fr 1fr 0.5fr 47px;
 }
 .pf2e-subsystems .influence-view .event-outer-container .event-container .influence-container .influence-header-container {
   position: relative;

@@ -4011,7 +4011,7 @@ class SystemView extends HandlebarsApplicationMixin(
 
     static async addPlayerParticipants(_, button){
       const currentParticipants = Object.keys(game.settings.get(MODULE_ID, this.tabGroups.main).events[button.dataset.event].participants);
-      const players = game.actors.find(x => x.type === 'party' && x.active).members.filter(x => !currentParticipants.some(key => x.id === key)).reduce((acc, x, index) => {
+      const players = game.actors.find(x => x.type === 'party' && x.active).members.filter(x => !['familiar', 'companion', 'eidolon'].includes(x.type) && !currentParticipants.some(key => x.id === key)).reduce((acc, x, index) => {
         acc[x.id] = {
           id: x.id,
           name: x.name,
@@ -4789,41 +4789,6 @@ class SystemView extends HandlebarsApplicationMixin(
 
       Object.values(event.edgePoints).find(x => x.originActivity === button.dataset.activity && x.originResult === `${button.dataset.result}_${currentOutcomes}`);
 
-      // new foundry.applications.api.DialogV2({
-      //   buttons: [
-      //     {
-      //       action: "ok",
-      //       label: "Remove Edge",
-      //       callback: async () => {
-      //         await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.edgePoints.-=${edgeToRemove.id}`]: null });
-      //         await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.results.${button.dataset.result}.nrOutcomes`]: currentOutcomes - 1 });
-      //       }
-      //     },
-      //     {
-      //       action: "keep",
-      //       label: "Keep Edge",
-      //       callback: async () => {
-      //         await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.results.${button.dataset.result}.nrOutcomes`]: currentOutcomes - 1 });
-      //       }
-      //     },
-      //     {
-      //       action: "cancel",
-      //       label: "Cancel",
-      //       icon: "fa-solid fa-x",
-      //       default: true,
-      //     },
-      //   ],
-      //   content: game.i18n.format("PF2ESubsystems.Infiltration.ConfirmRemoveEdgeText", { edge: edgeToRemove.name }),
-      //   rejectClose: false,
-      //   modal: false,
-      //   position: {},
-      //   window: {
-      //     title: game.i18n.localize(
-      //       "PF2ESubsystems.Infiltration.ConfirmRemoveEdgeTitle",
-      //     ),
-      //   },
-      // }).render(true);
-
       await updateDataModel(this.tabGroups.main, { [`events.${button.dataset.event}.preparations.activities.${button.dataset.activity}.results.${button.dataset.result}.nrOutcomes`]: currentOutcomes - 1 });
     }
 
@@ -4993,7 +4958,7 @@ class SystemView extends HandlebarsApplicationMixin(
         new ValueDialog(resolve, reject, activeSkill.label, game.i18n.format("PF2ESubsystems.Influence.InfluenceSkillLabelTitle", { 
           skill: 
             activeSkill.lore ? activeSkill.skill :
-            activeSkill.skill ? `${game.i18n.localize(CONFIG.PF2E.skills[activeSkill.skill].label)}` : game.i18n.localize("PF2ESubsystems.Basic.Skill") 
+            activeSkill.skill ? `${game.i18n.localize(extendedSkills()[activeSkill.skill].name)}` : game.i18n.localize("PF2ESubsystems.Basic.Skill") 
         })).render(true);
       }).then(async value => {
         await updateDataModel(this.tabGroups.main, { [`${button.dataset.path}.label`]: value });
